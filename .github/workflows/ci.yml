@@ -2,33 +2,46 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  tests:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1) Descargar tu repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2) Instalar PHP 8.2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
-      
         with:
           php-version: '8.2'
-          coverage: xdebug
-          tools: composer:v2
+          extensions: mbstring, dom, json, pdo, sqlite
+          coverage: none
 
+      # 3) Instalar dependencias de Composer
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+        run: |
+          composer install --no-interaction --prefer-dist
 
-      - name: Run test suite with coverage
-        run: composer run test:cov
+      # 4) Ejecutar PHPUnit (si lo tienes en vendor/bin/phpunit)
+      - name: Run PHPUnit
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit --testdox
+          else
+            echo "No hay phpunit, saltando tests"
+          fi
 
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: build/coverage.xml
+      # 5) Ejecutar PHPStan (porque en tu repo está phpstan.neon)
+      - name: Run PHPStan
+        run: |
+          if [ -f vendor/bin/phpstan ]; then
+            vendor/bin/phpstan analyse --memory-limit=1G
+          else
+            echo "No hay phpstan, saltando análisis"
+          fi

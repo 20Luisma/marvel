@@ -68,7 +68,10 @@
       "label": "📸 Git: commit rápido (si hay cambios)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'commit rápido desde VS Code'; else echo '🔹 No hay cambios para commitear'; fi"],
+      "args": [
+        "-c",
+        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'commit rápido desde VS Code'; else echo '🔹 No hay cambios para commitear'; fi"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -77,7 +80,10 @@
       "label": "⬆️ Git: push seguro (rama actual)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'sync desde local'; fi; git push origin \"$branch\""],
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'sync desde local'; fi; git push origin \"$branch\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -86,7 +92,10 @@
       "label": "⬇️ Git: pull seguro (rebase)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "branch=$(git rev-parse --abbrev-ref HEAD); git pull --rebase origin \"$branch\""],
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); git pull --rebase origin \"$branch\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -117,7 +126,10 @@
       "label": "💀 Git: reset duro a remoto (descartar todo local)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "branch=$(git rev-parse --abbrev-ref HEAD); git fetch origin && git reset --hard origin/$branch"],
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); git fetch origin && git reset --hard origin/$branch"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -135,7 +147,10 @@
       "label": "🏷️ Git: crear tag (versión)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "read -p 'Nombre del tag: ' tag; git tag -a $tag -m 'Versión $tag' && git push origin $tag"],
+      "args": [
+        "-c",
+        "read -p 'Nombre del tag: ' tag; git tag -a $tag -m 'Versión $tag' && git push origin $tag"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -148,7 +163,10 @@
       "label": "🧨 Git: subir TODO y pisar remoto (FORCE)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "git add -A && git commit -m 'subida limpia desde local' || true; git push --force origin main"],
+      "args": [
+        "-c",
+        "git add -A && git commit -m \"subida limpia desde local\" || true; git push --force origin main"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
