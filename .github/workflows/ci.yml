@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Descargar el repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2) Instalar PHP 8.2 (como en tu máquina)
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -21,23 +23,22 @@ jobs:
           extensions: mbstring, dom, json, pdo, sqlite
           coverage: none
 
+      # 3) Instalar dependencias
       - name: Install dependencies
         run: |
           composer install --no-interaction --prefer-dist
 
-      # PHPUnit puede fallar, pero no queremos que rompa el CI
+      # 4) Ejecutar PHPUnit usando la MISMA config que usaste en local
       - name: Run PHPUnit
-        continue-on-error: true
         run: |
-          if [ -f vendor/bin/phpunit ]; then
-            vendor/bin/phpunit --testdox
+          if [ -f phpunit.xml.dist ]; then
+            vendor/bin/phpunit --configuration phpunit.xml.dist --testdox
           else
-            echo "No hay phpunit, saltando tests"
+            vendor/bin/phpunit --testdox
           fi
 
-      # PHPStan también lo dejamos opcional
+      # 5) Ejecutar PHPStan (también te pasó local)
       - name: Run PHPStan
-        continue-on-error: true
         run: |
           if [ -f vendor/bin/phpstan ]; then
             vendor/bin/phpstan analyse --memory-limit=1G
