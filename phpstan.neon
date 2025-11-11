@@ -1,0 +1,18 @@
+parameters:
+  level: 6
+  paths:
+    - src
+  excludePaths:
+    - src/Dev
+
+  treatPhpDocTypesAsCertain: false
+
+  ignoreErrors:
+    # 1) "on left side of ?? always exists and is not nullable."
+    - '#always exists and is not nullable#'
+
+    # 2) "will always evaluate to true."
+    - '#will always evaluate to true#'
+
+    # 3) "has no value type specified in iterable type array."
+    - '#no value type specified in iterable type array#'

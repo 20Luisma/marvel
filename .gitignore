@@ -1,0 +1,67 @@
+# -----------------------------
+# Clean Marvel Album - Git Ignore
+# -----------------------------
+
+# Dependencias
+/vendor/
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales o caché
+*.log
+*.cache
+*.tmp
+*.swp
+*.bak
+
+# Configuración local
+/.idea/
+
+# Storage y backups
+/storage/*.json
+/storage/backups/
+/storage/tmp/
+/storage/cache/
+/storage/logs/
+
+# Tests y cobertura
+/.phpunit.cache/
+/coverage/
+/tests/.phpunit.result.cache
+
+# Archivos generados o de build
+/build/
+/dist/
+/public/uploads/
+/public/assets/tmp/
+
+# Archivos del servidor local
+phpunit.xml
+phpunit.xml.dist
+
+# Archivos de IA o análisis local
+/openai_cache/
+/ai_outputs/
+
+# Seeds y datos de desarrollo
+/src/Dev/Seed/*.json
+/src/Dev/Seed/*.bak
+
+# Archivos Docker y entorno de desarrollo
+/docker-compose.yml
+/.docker/
+/.env.local
+.env.development
+.env.production
+
+# Archivos de configuración temporal o personalizados
+*.local
+*.env.example
+*.secret
+*.bakup
+*.old
+/.env
+/openai-service/.env

@@ -1,0 +1,229 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Iniciar servidor PHP (8080)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8080", "-t", "public"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Ejecutar Tests PHPUnit",
+      "type": "shell",
+      "command": "vendor/bin/phpunit",
+      "args": ["--colors=always", "--testdox"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 Analizar código (PHPStan)",
+      "type": "shell",
+      "command": "vendor/bin/phpstan",
+      "args": ["analyse", "--memory-limit=1G"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⚙️ Validar composer",
+      "type": "shell",
+      "command": "composer",
+      "args": ["validate"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 QA completo (tests + phpstan + composer)",
+      "dependsOn": [
+        "🧪 Ejecutar Tests PHPUnit",
+        "🔍 Analizar código (PHPStan)",
+        "⚙️ Validar composer"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+
+    /* ======================
+       🔐 TAREAS GIT SEGURAS
+       ====================== */
+
+    {
+      "label": "📸 Git: commit rápido (si hay cambios)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"commit rápido desde VS Code\"; else echo \"🔹 No hay cambios para commitear\"; fi"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⬆️ Git: push seguro (rama actual)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"sync desde local\"; fi; git push origin \"$branch\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧹 Git: mostrar estado antes de tocar nada",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo \"📦 Rama actual:\" $(git rev-parse --abbrev-ref HEAD); echo \"📄 Estado:\"; git status -sb"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+
+    /* ======================
+       🟣 SERVICIOS LOCALES
+       ====================== */
+
+    {
+      "label": "🤖 Run OpenAI Service (8081)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8081", "-t", "public"],
+      "options": {
+        "cwd": "${workspaceFolder}/openai-service"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧬 Run RAG Service (8082)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8082", "-t", "public"],
+      "options": {
+        "cwd": "${workspaceFolder}/rag-service"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🚀 Run All Services (8080 + 8081 + 8082)",
+      "dependsOn": [
+        "🚀 Iniciar servidor PHP (8080)",
+        "🤖 Run OpenAI Service (8081)",
+        "🧬 Run RAG Service (8082)"
+      ],
+      "dependsOrder": "parallel",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+
+    /* ======================
+       🤖 CLI CODEX
+       ====================== */
+    {
+      "label": "🤖 Abrir CLI Codex (agent.md)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "codex agent.md"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true
+      },
+      "problemMatcher": []
+    }
+
+    /*
+    ======================
+    ⚠️ TAREAS PELIGROSAS (DESACTIVADAS)
+    Las dejo aquí comentadas por si algún día quieres usarlas,
+    pero así no las puedes ejecutar por accidente.
+    ======================
+
+    {
+      "label": "💣 Git: vaciar remoto (DEJAR GITHUB EN BLANCO)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "echo '⚠️ Esta tarea está desactivada en la versión segura'"]
+    },
+    {
+      "label": "📦 Git: subir TODO el proyecto (FORCE a main)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "echo '⚠️ Esta tarea hacía --force. Revísa antes de usar.'"]
+    },
+    {
+      "label": "🧨 Git: sobrescribir remoto con mi local (FORCE)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "echo '⚠️ Esta tarea hacía push --force. Desactivada.'"]
+    }
+    */
+  ]
+}

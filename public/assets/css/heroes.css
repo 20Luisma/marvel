@@ -1,0 +1,65 @@
+.hero-focus-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 13, 23, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+body[data-hero-focus="true"] .hero-focus-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-focus-panel {
+  position: relative;
+  z-index: 40;
+  max-width: 62.5rem;
+  width: 100%;
+  margin-inline: auto;
+  transform: translateY(20px);
+  opacity: 0;
+  filter: none;
+  backdrop-filter: none;
+}
+
+body[data-hero-focus="true"] .hero-focus-panel {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.hero-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  height: auto;
+  display: block;
+}
+
+.hero-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.hero-card-meta {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+body[data-hero-focus="true"] #heroes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+body[data-hero-focus="true"] #heroes-controls {
+  display: none;
+}

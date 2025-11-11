@@ -1,0 +1,75 @@
+.test-item-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.test-item-path {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.focus-edit-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 13, 23, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+body[data-edit-focus="true"] .focus-edit-backdrop {
+  opacity: 1;
+}
+
+.focus-edit-panel {
+  position: relative;
+  z-index: 40;
+  max-width: 62.5rem;
+  width: 100%;
+  margin-inline: auto;
+  transform: translateY(20px);
+  opacity: 0;
+  filter: none;
+  backdrop-filter: none;
+}
+
+body[data-edit-focus="true"] .focus-edit-panel {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.album-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.album-card-meta {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+body[data-edit-focus="true"] #albums-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cover-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(237, 29, 36, 0.85), rgba(124, 10, 15, 0.7), #0b0d17);
+}

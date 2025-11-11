@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "esbenp.prettier-vscode",
+    "xdebug.php-debug",
+    "donjayamanne.githistory",
+    "mikestead.dotenv",
+    "oderwat.indent-rainbow",
+    "github.vscode-pull-request-github",
+    "formulahendry.code-runner",
+    "brapifra.phpserver"
+  ]
+}

@@ -1,0 +1,198 @@
+.msc-panel {
+  position: relative;
+  padding: 1.5rem 1.6rem;
+  display: grid;
+  gap: 1.25rem;
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.88));
+  border: 1px solid rgba(71, 85, 105, 0.45);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .32s ease, transform .32s ease;
+  pointer-events: auto;
+  visibility: visible;
+}
+.msc-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  visibility: hidden;
+}
+.msc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.msc-title {
+  font-weight: 800;
+  color: #e2e8f0;
+  font-size: 1.05rem;
+}
+.msc-title-canal {
+  background: -webkit-linear-gradient(45deg, #a5b4fc, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+}
+.msc-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+  border: 1px solid rgba(191, 219, 254, 0.35);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  padding: .28rem .75rem;
+  border-radius: 9999px;
+}
+.msc-subtitle {
+  color: #cbd5f5;
+  font-size: .78rem;
+  letter-spacing: .02em;
+}
+.msc-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .45rem;
+}
+.msc-step {
+  font-size: .76rem;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.45);
+  border-radius: .75rem;
+  padding: .4rem .65rem;
+  border: 1px solid transparent;
+  transition: all .18s ease;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.msc-step.msc-active {
+  color: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.55);
+  background: rgba(59, 130, 246, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.15);
+}
+.msc-status {
+  font-size: .76rem;
+  min-height: 1.2rem;
+  color: #94a3b8;
+}
+.msc-success {
+  color: #4ade80;
+}
+.msc-error {
+  color: #fda4af;
+}
+.msc-retry {
+  justify-self: flex-start;
+  background: rgba(248, 113, 113, 0.18);
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+  font-size: .72rem;
+  border-radius: .75rem;
+  padding: .35rem .9rem .4rem;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
+}
+.msc-retry:hover {
+  background: rgba(248, 113, 113, 0.3);
+  transform: translateY(-1px);
+}
+.msc-step.msc-active {
+  border-color: rgba(148, 163, 184, 0.65);
+  background: rgba(59, 130, 246, 0.3);
+  color: #f8fafc;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+}
+
+#comic-creation-card {
+  position: relative;
+  display: grid;
+  align-items: stretch;
+  padding: 1.35rem 1.5rem;
+  gap: 0;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  grid-auto-rows: minmax(0, auto);
+}
+
+#comic-creation-card > * {
+  min-height: 0;
+}
+
+#comic-creation-content,
+#microservice-comm-panel,
+#rag-comm-panel {
+  grid-area: 1 / 1 / 2 / 2;
+  transition: opacity .32s ease, transform .32s ease, visibility .32s ease;
+}
+
+#comic-creation-card #comic-creation-content {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+#comic-creation-card #microservice-comm-panel,
+#comic-creation-card #rag-comm-panel {
+  opacity: 0;
+  transform: translateY(20px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#comic-creation-card.msc-active #comic-creation-content {
+  opacity: 0;
+  transform: translateY(-20px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#comic-creation-card.msc-active #microservice-comm-panel {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#comic-creation-card.msc-active #rag-comm-panel {
+  opacity: 0;
+  transform: translateY(20px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#comic-creation-card.rag-active #comic-creation-content,
+#comic-creation-card.rag-active #microservice-comm-panel {
+  opacity: 0;
+  transform: translateY(-20px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#comic-creation-card.rag-active #rag-comm-panel {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#comic-creation-card h2 {
+  font-size: 1.75rem;
+}
+
+#comic-creation-card p {
+  font-size: 0.88rem;
+}
+
+#comic-creation-card .btn {
+  min-height: 2.1rem;
+  padding: 0.45rem 1.05rem;
+  font-size: 0.9rem;
+}
