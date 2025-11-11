@@ -15,11 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Instalar PHP 8.2 (como en tu máquina)
+      # 2) Instalar PHP 8.4 (igual que en tu local)
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           extensions: mbstring, dom, json, pdo, sqlite
           coverage: none
 
@@ -28,7 +28,7 @@ jobs:
         run: |
           composer install --no-interaction --prefer-dist
 
-      # 4) Ejecutar PHPUnit usando la MISMA config que usaste en local
+      # 4) Ejecutar PHPUnit con tu config
       - name: Run PHPUnit
         run: |
           if [ -f phpunit.xml.dist ]; then
@@ -37,7 +37,7 @@ jobs:
             vendor/bin/phpunit --testdox
           fi
 
-      # 5) Ejecutar PHPStan (también te pasó local)
+      # 5) Ejecutar PHPStan
       - name: Run PHPStan
         run: |
           if [ -f vendor/bin/phpstan ]; then
