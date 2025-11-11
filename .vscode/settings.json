@@ -1,0 +1,13 @@
+{
+    "CodeGPT.apiKey": "Gemini CLI",
+    "editor.formatOnSave": true,
+    "editor.fontFamily": "JetBrains Mono, Menlo, Monaco, 'Courier New', monospace",
+    "git.enableSmartCommit": true,
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true
+    },
+    "intelephense.environment.phpVersion": "8.2",
+    "php.validate.executablePath": "/usr/bin/php",
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+}

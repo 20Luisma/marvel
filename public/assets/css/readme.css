@@ -1,0 +1,156 @@
+/* Botón */
+.btn-readme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11rem;
+  height: 2.6rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(237, 29, 36, 0.5);
+  color: #f9fafb;
+  box-shadow: 0 12px 26px rgba(237, 29, 36, 0.15);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-readme:hover {
+  background: rgba(237, 29, 36, 0.18);
+  box-shadow: 0 18px 32px rgba(237, 29, 36, 0.25);
+}
+
+.btn-readme:focus-visible {
+  outline: 2px solid rgba(237, 29, 36, 0.6);
+  outline-offset: 3px;
+}
+
+/* Overlay modal */
+.readme-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+}
+
+/* Contenedor principal del modal */
+.readme-container {
+  max-width: 880px;
+  margin: 3rem auto;
+  background: #ffffff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+/* Header del modal */
+.readme-header {
+  display: flex;
+  align-items: center;
+  justify-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.readme-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.readme-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Contenido scrolleable */
+.readme-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 1.25rem 1.25rem 1.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  line-height: 1.6;
+}
+
+/* Estilos básicos para el markdown convertido */
+.readme-content h1,
+.readme-content h2,
+.readme-content h3 {
+  color: #0f172a;
+  margin-top: 1.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.readme-content h2 {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3rem;
+}
+
+.readme-content p {
+  margin-bottom: 0.8rem;
+}
+
+.readme-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  margin-bottom: 1.1rem;
+}
+
+.readme-content code {
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.readme-content a {
+  color: #0f766e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.readme-content a:hover {
+  text-decoration: underline;
+}
+
+.readme-content--page {
+  background: transparent;
+  color: #e2e8f0;
+  padding: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.readme-content--page h1,
+.readme-content--page h2,
+.readme-content--page h3 {
+  color: #f9fafb;
+}
+
+.readme-content--page p,
+.readme-content--page li,
+.readme-content--page a {
+  color: #e2e8f0;
+}
+
+.readme-content--page code {
+  color: #ffedd5;
+  background: rgba(15, 23, 42, 0.35);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.35rem;
+}

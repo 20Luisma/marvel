@@ -1,0 +1,117 @@
+{
+  "name": "Daily Marvel YouTube Video Fetcher and Backend Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "de30d3da-fa08-4505-9817-6423a9e0cede",
+      "name": "🕒 Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG4SxhcOpVPJCyB4OsPch6gTlrIOC_VUQ"
+            },
+            {
+              "name": "part",
+              "value": "snippet,id"
+            },
+            {
+              "name": "order",
+              "value": "date"
+            },
+            {
+              "name": "maxResults",
+              "value": "1"
+            },
+            {
+              "name": "channelId",
+              "value": "UCvC4D8onUfXzvjTOM-dBfEA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "55c818c5-8bd5-4dcf-a034-8cbd3db15307",
+      "name": "🪣 Get Marvel Latest Video (API Key)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://iamasterbigschool.contenido.creawebes.com/api/actualizar-video-marvel.php",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "89c3c447-5b07-4655-85a8-08d0f163b742",
+      "name": "📤 Send Marvel Video to PHP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        448,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "🕒 Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "🪣 Get Marvel Latest Video (API Key)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🪣 Get Marvel Latest Video (API Key)": {
+      "main": [
+        [
+          {
+            "node": "📤 Send Marvel Video to PHP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e514f6c0-6d9c-4712-9e7a-b0fa5a2ee484",
+  "meta": {
+    "instanceId": "2b5742407a47930366aba183f83c213a863eee41bde1542e2a78c8e157e11372"
+  },
+  "id": "KTb9DrBDnH5NQt5I",
+  "tags": []
+}

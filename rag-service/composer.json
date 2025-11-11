@@ -1,0 +1,12 @@
+{
+  "name": "creawebes/rag-service",
+  "description": "Microservicio PHP para comparaciones RAG de héroes",
+  "require": {
+    "php": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Creawebes\\Rag\\": "src/"
+    }
+  }
+}

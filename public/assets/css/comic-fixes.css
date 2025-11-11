@@ -1,0 +1,60 @@
+/* comic-fixes.css */
+
+#comic-creation-card {
+  overflow: hidden;
+  /* Ensure padding and border are included in the element's total width and height */
+  box-sizing: border-box;
+}
+
+#comic-creation-card * {
+  box-sizing: border-box;
+}
+
+#comic-creation-card img,
+#comic-creation-card video,
+#comic-creation-card canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+#comic-creation-card p,
+#comic-creation-card h2,
+#comic-creation-card h3,
+#comic-creation-card span {
+  word-break: break-word;
+}
+
+.comic-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem; /* Corresponds to Tailwind's gap-3 */
+  justify-content: center;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Ensure buttons within the container share the same footprint */
+.comic-buttons-container .btn {
+  flex: 1 1 clamp(10.5rem, 45%, 14.5rem); /* Mirrors localhost proportions */
+  max-width: clamp(11rem, 48%, 16.5rem);
+  min-width: clamp(10rem, 42%, 12.25rem);
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap; /* Keep label on a single line */
+  box-sizing: border-box;
+}
+
+@media (max-width: 639px) {
+  .comic-buttons-container .btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* Force content to fit within the card */
+#comic-creation-content,
+#comic-form,
+#comic-form > div {
+  max-width: 100%;
+  overflow: hidden;
+}

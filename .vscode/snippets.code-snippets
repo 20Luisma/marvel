@@ -1,0 +1,66 @@
+{
+    "Clean Architecture Controller": {
+        "scope": "php",
+        "prefix": "cleancontroller",
+        "body": [
+            "<?php",
+            "",
+            "declare(strict_types=1);",
+            "",
+            "namespace Src\\\\Controllers;",
+            "",
+            "use App\\\\Shared\\\\Http\\\\JsonResponse;",
+            "",
+            "final class ${1:SampleController}",
+            "{",
+            "    public function __construct(private readonly ${2:SomeUseCase} $useCase)",
+            "    {",
+            "    }",
+            "",
+            "    public function __invoke(${3:Request} $request): void",
+            "    {",
+            "        $result = $this->useCase->execute(${4:$request});",
+            "        JsonResponse::success($result);",
+            "    }",
+            "}"
+        ],
+        "description": "Controlador estilo Clean Architecture preparado para invocar un Use Case."
+    },
+    "View With Layout Includes": {
+        "scope": "php",
+        "prefix": "cleanview",
+        "body": [
+            "<?php",
+            "",
+            "declare(strict_types=1);",
+            "",
+            "$pageTitle = '${1:Clean Marvel Page}';",
+            "$additionalStyles = ${2:[]};",
+            "require __DIR__ . '/../layouts/header.php';",
+            "",
+            "?>",
+            "<main class=\\"site-main\\">",
+            "  <div class=\\"max-w-7xl mx-auto py-8 px-4\\">",
+            "    ${3:<!-- Content goes here -->}",
+            "  </div>",
+            "</main>",
+            "<?php",
+            "$scripts = ${4:[]};",
+            "require __DIR__ . '/../layouts/footer.php';",
+            "?>"
+        ],
+        "description": "Plantilla de vista con includes relativos usando __DIR__."
+    },
+    "Partial Include Template": {
+        "scope": "php",
+        "prefix": "cleanpartial",
+        "body": [
+            "<?php",
+            "",
+            "declare(strict_types=1);",
+            "",
+            "require __DIR__ . '/../partials/${1:partial-name}.php';"
+        ],
+        "description": "Snippet rápido para incluir un parcial mediante __DIR__."
+    }
+}
