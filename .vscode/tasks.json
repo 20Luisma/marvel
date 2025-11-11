@@ -1,5 +1,19 @@
 {
   "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "nuevaRama",
+      "type": "promptString",
+      "description": "Nombre de la nueva rama",
+      "default": "feature/nueva-rama"
+    },
+    {
+      "id": "nuevoTag",
+      "type": "promptString",
+      "description": "Nombre del tag (v1.0.0)",
+      "default": "v1.0.0"
+    }
+  ],
   "tasks": [
     /* ======================
        🚀 SERVIDOR Y QA
@@ -59,7 +73,10 @@
       "label": "🧹 Git: mostrar estado",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "echo '📦 Rama actual:' $(git rev-parse --abbrev-ref HEAD); git status -sb"],
+      "args": [
+        "-c",
+        "echo '📦 Rama actual:' $(git rev-parse --abbrev-ref HEAD); git status -sb"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -70,7 +87,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'commit rápido desde VS Code'; else echo '🔹 No hay cambios para commitear'; fi"
+        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"commit rápido desde VS Code\"; else echo \"🔹 No hay cambios para commitear\"; fi"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -82,7 +99,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m 'sync desde local'; fi; git push origin \"$branch\""
+        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"sync desde local\"; fi; git push origin \"$branch\""
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -117,13 +134,16 @@
       "label": "🌱 Git: crear nueva rama",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "read -p 'Nombre de la nueva rama: ' branch; git checkout -b $branch"],
+      "args": [
+        "-c",
+        "git checkout -b \"${input:nuevaRama}\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      "label": "💀 Git: reset duro a remoto (descartar todo local)",
+      "label": "💀 Git: reset duro a remoto (DESCARTA LOCAL)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -138,7 +158,10 @@
       "label": "🧹 Git: limpiar archivos sin seguimiento",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "git clean -fd && git status"],
+      "args": [
+        "-c",
+        "git clean -fd && git status"
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -149,7 +172,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "read -p 'Nombre del tag: ' tag; git tag -a $tag -m 'Versión $tag' && git push origin $tag"
+        "git tag -a \"${input:nuevoTag}\" -m \"Versión ${input:nuevoTag}\" && git push origin \"${input:nuevoTag}\""
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
