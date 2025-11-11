@@ -1,23 +1,46 @@
 {
   "version": "2.0.0",
+
+  /* ======================
+     📝 INPUTS (para pedir nombres de ramas/tags)
+     ====================== */
   "inputs": [
     {
       "id": "nuevaRama",
       "type": "promptString",
-      "description": "Nombre de la nueva rama",
+      "description": "Nombre de la rama (ej: feature/nueva-rama)",
       "default": "feature/nueva-rama"
+    },
+    {
+      "id": "cambiarRama",
+      "type": "promptString",
+      "description": "Rama a la que querés cambiar (ej: feature/video)",
+      "default": "feature/video"
     },
     {
       "id": "nuevoTag",
       "type": "promptString",
-      "description": "Nombre del tag (v1.0.0)",
+      "description": "Nombre del tag (ej: v1.0.0)",
       "default": "v1.0.0"
+    },
+    {
+      "id": "ramaBorrarLocal",
+      "type": "promptString",
+      "description": "Nombre de la rama LOCAL a borrar",
+      "default": "feature/nueva-rama"
+    },
+    {
+      "id": "ramaBorrarRemota",
+      "type": "promptString",
+      "description": "Nombre de la rama REMOTA (GitHub) a borrar",
+      "default": "feature/nueva-rama"
     }
   ],
+
   "tasks": [
-    /* ======================
-       🚀 SERVIDOR Y QA
-       ====================== */
+    /* =========================================================
+       🚀 SERVIDOR Y QA (tus tareas originales)
+       ========================================================= */
     {
       "label": "🚀 Iniciar servidor PHP (8080)",
       "type": "shell",
@@ -66,11 +89,13 @@
       "problemMatcher": []
     },
 
-    /* ======================
-       🔐 TAREAS GIT SEGURAS
-       ====================== */
+    /* =========================================================
+       🧩 GIT COMMANDS (todos juntos y ordenados)
+       ========================================================= */
+
     {
-      "label": "🧹 Git: mostrar estado // SEGURO",
+      /* Ver dónde estoy y qué cambié */
+      "label": "Git | mostrar estado (ver rama y cambios)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -82,7 +107,61 @@
       "problemMatcher": []
     },
     {
-      "label": "📸 Git: commit rápido (si hay cambios) // SEGURO",
+      /* Ver todas las ramas que tengo en local */
+      "label": "Git | mostrar ramas (todas las que tengo)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git branch -vv"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* Crear una rama nueva desde la actual (normalmente main) */
+      "label": "Git | crear nueva rama (probar sin romper main)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout -b \"${input:nuevaRama}\""],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* Cambiarme a una rama que ya existe (las que decías en standby) */
+      "label": "Git | cambiar de rama (escribir nombre)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout \"${input:cambiarRama}\""],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* Volver al main estable */
+      "label": "Git | volver a main",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout main"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* Si la rama salió bien, la uno al main */
+      "label": "Git | fusionar rama actual en main (si salió bien)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "current=$(git rev-parse --abbrev-ref HEAD); if [ \"$current\" = \"main\" ]; then echo '⚠️ Estás en main. Primero cambiate a la rama que querés fusionar.'; else git checkout main && git merge \"$current\"; fi"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* Guardar cambios rápidos en local */
+      "label": "Git | commit rápido (si hay cambios)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -94,7 +173,8 @@
       "problemMatcher": []
     },
     {
-      "label": "⬆️ Git: push seguro (rama actual) // SEGURO",
+      /* Subir a GitHub lo que tengo en la rama actual */
+      "label": "Git | push seguro (subir a GitHub la rama actual)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -106,7 +186,8 @@
       "problemMatcher": []
     },
     {
-      "label": "⬇️ Git: pull seguro (rebase) // SEGURO",
+      /* Traer lo último de GitHub para la rama actual */
+      "label": "Git | pull seguro (traer de GitHub)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -117,39 +198,35 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
-
-    /* ======================
-       🌿 GESTIÓN DE RAMAS
-       ====================== */
     {
-      "label": "🌿 Git: mostrar ramas // SEGURO",
+      /* Borrar una rama LOCAL que ya no sirve (la de tu máquina) */
+      "label": "Git | borrar rama LOCAL (ya no la quiero)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "git branch -vv"],
+      "args": [
+        "-c",
+        "git branch -d \"${input:ramaBorrarLocal}\" || git branch -D \"${input:ramaBorrarLocal}\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      "label": "🌱 Git: crear nueva rama // SEGURO",
+      /* Borrar una rama en GitHub si también la subiste */
+      "label": "Git | borrar rama REMOTA (GitHub)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "git checkout -b \"${input:nuevaRama}\""],
+      "args": [
+        "-c",
+        "git push origin --delete \"${input:ramaBorrarRemota}\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      "label": "🧹 Git: limpiar archivos sin seguimiento // CUIDADO (solo borra archivos fuera de Git)",
-      "type": "shell",
-      "command": "bash",
-      "args": ["-c", "git clean -fd && git status"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "🏷️ Git: crear tag (versión) // SEGURO",
+      /* Crear versión/tag y subirla */
+      "label": "Git | crear tag (versión y subir)",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -160,12 +237,22 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
-
-    /* ======================
-       💣 TAREA GIT AVANZADA
-       ====================== */
     {
-      "label": "🧨 Git: subir TODO y pisar remoto (FORCE) // ⚠️ PELIGROSO: reemplaza GitHub con lo local",
+      /* Limpiar archivos que Git no controla (cuidado) */
+      "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git clean -fd && git status -sb"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      /* El que querías mantener: pisa GitHub con lo que hay en local */
+      "label": "Git | subir TODO y pisar remoto (FORCE) ⚠️⚠️⚠️",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -177,9 +264,9 @@
       "problemMatcher": []
     },
 
-    /* ======================
-       🟣 SERVICIOS LOCALES
-       ====================== */
+    /* =========================================================
+       🟣 SERVICIOS LOCALES (los tuyos)
+       ========================================================= */
     {
       "label": "🤖 Run OpenAI Service (8081)",
       "type": "shell",
@@ -212,9 +299,9 @@
       "group": { "kind": "build", "isDefault": true }
     },
 
-    /* ======================
-       🤖 CLI CODEX
-       ====================== */
+    /* =========================================================
+       🤖 CLI CODEX (lo tuyo)
+       ========================================================= */
     {
       "label": "🤖 Abrir CLI Codex (agent.md)",
       "type": "shell",
