@@ -70,7 +70,7 @@
        🔐 TAREAS GIT SEGURAS
        ====================== */
     {
-      "label": "🧹 Git: mostrar estado",
+      "label": "🧹 Git: mostrar estado // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -82,7 +82,7 @@
       "problemMatcher": []
     },
     {
-      "label": "📸 Git: commit rápido (si hay cambios)",
+      "label": "📸 Git: commit rápido (si hay cambios) // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -94,7 +94,7 @@
       "problemMatcher": []
     },
     {
-      "label": "⬆️ Git: push seguro (rama actual)",
+      "label": "⬆️ Git: push seguro (rama actual) // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -106,7 +106,7 @@
       "problemMatcher": []
     },
     {
-      "label": "⬇️ Git: pull seguro (rebase)",
+      "label": "⬇️ Git: pull seguro (rebase) // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -122,7 +122,7 @@
        🌿 GESTIÓN DE RAMAS
        ====================== */
     {
-      "label": "🌿 Git: mostrar ramas",
+      "label": "🌿 Git: mostrar ramas // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": ["-c", "git branch -vv"],
@@ -131,43 +131,25 @@
       "problemMatcher": []
     },
     {
-      "label": "🌱 Git: crear nueva rama",
+      "label": "🌱 Git: crear nueva rama // SEGURO",
       "type": "shell",
       "command": "bash",
-      "args": [
-        "-c",
-        "git checkout -b \"${input:nuevaRama}\""
-      ],
+      "args": ["-c", "git checkout -b \"${input:nuevaRama}\""],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      "label": "💀 Git: reset duro a remoto (DESCARTA LOCAL)",
+      "label": "🧹 Git: limpiar archivos sin seguimiento // CUIDADO (solo borra archivos fuera de Git)",
       "type": "shell",
       "command": "bash",
-      "args": [
-        "-c",
-        "branch=$(git rev-parse --abbrev-ref HEAD); git fetch origin && git reset --hard origin/$branch"
-      ],
+      "args": ["-c", "git clean -fd && git status"],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      "label": "🧹 Git: limpiar archivos sin seguimiento",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-c",
-        "git clean -fd && git status"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "🏷️ Git: crear tag (versión)",
+      "label": "🏷️ Git: crear tag (versión) // SEGURO",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -180,10 +162,10 @@
     },
 
     /* ======================
-       💣 TAREAS GIT AVANZADAS
+       💣 TAREA GIT AVANZADA
        ====================== */
     {
-      "label": "🧨 Git: subir TODO y pisar remoto (FORCE)",
+      "label": "🧨 Git: subir TODO y pisar remoto (FORCE) // ⚠️ PELIGROSO: reemplaza GitHub con lo local",
       "type": "shell",
       "command": "bash",
       "args": [
