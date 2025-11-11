@@ -1,4 +1,4 @@
-name: CI
+name: CI - Clean Marvel Tests
 
 on:
   push:
@@ -11,37 +11,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Descargar el repo
+      # 1️⃣ Clona el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Instalar PHP 8.4 (igual que en tu local)
-      - name: Setup PHP
+      # 2️⃣ Configura PHP 8.4 con las extensiones necesarias
+      - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: mbstring, dom, json, pdo, sqlite
           coverage: none
 
-      # 3) Instalar dependencias
-      - name: Install dependencies
-        run: |
-          composer install --no-interaction --prefer-dist
+      # 3️⃣ Instala dependencias de Composer
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-      # 4) Ejecutar PHPUnit con tu config
-      - name: Run PHPUnit
+      # 4️⃣ Valida el archivo composer.json
+      - name: Validate Composer configuration
+        run: composer validate --strict
+
+      # 5️⃣ Ejecuta los tests de PHPUnit
+      - name: Run PHPUnit tests
         run: |
-          if [ -f phpunit.xml.dist ]; then
-            vendor/bin/phpunit --configuration phpunit.xml.dist --testdox
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit --testdox --configuration phpunit.xml.dist
           else
-            vendor/bin/phpunit --testdox
+            echo "PHPUnit no encontrado"
+            exit 1
           fi
 
-      # 5) Ejecutar PHPStan
-      - name: Run PHPStan
+      # 6️⃣ Ejecuta PHPStan para análisis estático
+      - name: Run PHPStan analysis
         run: |
           if [ -f vendor/bin/phpstan ]; then
             vendor/bin/phpstan analyse --memory-limit=1G
           else
-            echo "No hay phpstan, saltando análisis"
+            echo "PHPStan no encontrado"
+            exit 1
           fi
