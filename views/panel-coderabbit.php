@@ -12,10 +12,66 @@ $endpoint = sprintf(
     http_build_query(['from' => $from, 'to' => $to])
 );
 
-// Llama al backend local
-$ctx = stream_context_create(["http" => ["timeout" => 15]]);
-$json = @file_get_contents($endpoint, false, $ctx);
-$data = $json ? json_decode($json, true) : null;
+/**
+ * Intenta consumir un endpoint HTTP local y devuelve el JSON decodificado.
+ *
+ * @return array<string, mixed>|array<int, mixed>|null
+ */
+function fetch_panel_json(string $url): ?array
+{
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_FOLLOWLOCATION => true,
+        ]);
+        $body = curl_exec($ch);
+        $error = curl_error($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 0;
+        curl_close($ch);
+
+        if ($body === false || $body === '') {
+            return ['error' => 'No se pudo contactar al endpoint local.', 'detail' => $error ?: 'Respuesta vacía', 'status' => $status];
+        }
+
+        $decoded = json_decode($body, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $decoded;
+        }
+
+        return [
+            'error' => 'La respuesta del endpoint no es JSON válido.',
+            'detail' => json_last_error_msg(),
+            'status' => $status,
+            'body' => $body,
+        ];
+    }
+
+    // Fallback a file_get_contents si cURL no está disponible.
+    $ctx = stream_context_create(['http' => ['timeout' => 15]]);
+    $body = @file_get_contents($url, false, $ctx);
+    if ($body === false || $body === '') {
+        $phpError = error_get_last();
+        return [
+            'error' => 'No se pudo contactar al endpoint local.',
+            'detail' => $phpError['message'] ?? 'Respuesta vacía',
+        ];
+    }
+
+    $decoded = json_decode($body, true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        return $decoded;
+    }
+
+    return [
+        'error' => 'La respuesta del endpoint no es JSON válido.',
+        'detail' => json_last_error_msg(),
+        'body' => $body,
+    ];
+}
+
+$data = fetch_panel_json($endpoint);
 
 function md_to_html($s)
 {
@@ -140,7 +196,15 @@ function md_to_html($s)
                 <strong>Sin datos del API.</strong>
                 <div class="muted">
                     <?= htmlspecialchars($data['error'] ?? 'Error desconocido') ?><br>
-                    <?php if (isset($data['body'])) echo '<small>' . htmlspecialchars(json_encode($data['body'])) . '</small>'; ?>
+                    <?php if (isset($data['detail'])): ?>
+                        <small>Detalle: <?= htmlspecialchars((string) $data['detail']) ?></small><br>
+                    <?php endif; ?>
+                    <?php if (isset($data['status'])): ?>
+                        <small>HTTP: <?= htmlspecialchars((string) $data['status']) ?></small><br>
+                    <?php endif; ?>
+                    <?php if (isset($data['body'])): ?>
+                        <small>Payload: <?= htmlspecialchars(is_string($data['body']) ? $data['body'] : json_encode($data['body'])) ?></small><br>
+                    <?php endif; ?>
                 </div>
                 <div class="muted">Revisa que <code>CODERABBIT_API_KEY</code> esté configurada y tu plan tenga acceso a Reports.</div>
             </div>
