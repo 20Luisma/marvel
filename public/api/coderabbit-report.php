@@ -3,7 +3,7 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json; charset=utf-8');
 
-$rootPath = dirname(__DIR__, 1);
+$rootPath = dirname(__DIR__, 2);
 $envFile = $rootPath . '/.env';
 
 /**
