@@ -1,0 +1,1 @@
+// forzar detección de coderabbit.yaml
