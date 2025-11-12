@@ -2,7 +2,7 @@
 configVersion: 2
 
 settings:
-  language: "en"
+  language: "es"
   enableFreeTier: true
   review:
     enabled: true
