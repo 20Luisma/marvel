@@ -1,0 +1,23 @@
+# .coderabbit.yaml
+version: 1
+
+review:
+  enabled: true
+  max_comments: 20
+  summary: true
+  labels:
+    - codereview
+    - ai-review
+  exclude:
+    - vendor/
+    - public/
+    - storage/
+    - node_modules/
+    - .vscode/
+
+rules:
+  style: true
+  best_practices: true
+  performance: true
+  security: true
+  documentation: true
