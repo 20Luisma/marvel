@@ -1,23 +1,22 @@
-# .coderabbit.yaml
-version: 1
+# .coderabbit.yaml — versión moderna compatible
+configVersion: 2
 
-review:
-  enabled: true
-  max_comments: 20
-  summary: true
-  labels:
-    - codereview
-    - ai-review
-  exclude:
-    - vendor/
-    - public/
-    - storage/
-    - node_modules/
-    - .vscode/
-
-rules:
-  style: true
-  best_practices: true
-  performance: true
-  security: true
-  documentation: true
+settings:
+  language: "en"
+  enableFreeTier: true
+  review:
+    enabled: true
+    maxComments: 20
+    tone: "professional"
+    exclude:
+      - vendor/
+      - public/
+      - storage/
+      - node_modules/
+      - .vscode/
+    rules:
+      - style
+      - best_practices
+      - performance
+      - security
+      - documentation
