@@ -60,13 +60,14 @@ function normalizeDateView(string $value): ?string
 $dateError = null;
 $from = normalizeDateParamView('from', date('Y-m-d', strtotime('-14 days')), $dateError);
 $to   = normalizeDateParamView('to', date('Y-m-d'), $dateError);
+$toExclusive = date('Y-m-d', strtotime($to . ' +1 day'));
 
 if ($dateError !== null) {
     $data = $dateError;
 } else {
     // Se evita el cURL hacia localhost para no bloquear el servidor embebido mono-hilo.
     $client = new \App\Services\CoderabbitClient($root);
-    $data = $client->generateReport($from, $to);
+    $data = $client->generateReport($from, $toExclusive);
 }
 
 /**
@@ -93,6 +94,10 @@ function extract_report_blocks($payload): array
 
     if (isset($payload['data']) && is_array($payload['data'])) {
         return $payload['data'];
+    }
+    // Soportar variantes de respuesta que devuelven 'reports'.
+    if (isset($payload['reports']) && is_array($payload['reports'])) {
+        return $payload['reports'];
     }
 
     if (isset($payload['group']) || isset($payload['report'])) {
