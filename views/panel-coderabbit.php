@@ -21,10 +21,13 @@ function fetch_panel_json(string $url): ?array
 {
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
+        // Timeout alto para evitar falsos fallos cuando CodeRabbit demora la respuesta.
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 20,
+            CURLOPT_TIMEOUT => 650,
+            CURLOPT_CONNECTTIMEOUT => 15,
             CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 3,
         ]);
         $body = curl_exec($ch);
         $error = curl_error($ch);
@@ -49,7 +52,8 @@ function fetch_panel_json(string $url): ?array
     }
 
     // Fallback a file_get_contents si cURL no está disponible.
-    $ctx = stream_context_create(['http' => ['timeout' => 15]]);
+    // Timeout alto para evitar falsos fallos cuando CodeRabbit demora la respuesta.
+    $ctx = stream_context_create(['http' => ['timeout' => 650]]);
     $body = @file_get_contents($url, false, $ctx);
     if ($body === false || $body === '') {
         $phpError = error_get_last();
@@ -244,6 +248,9 @@ function md_to_html($s)
                     <?php endif; ?>
                     <?php if (isset($data['status'])): ?>
                         <small>HTTP: <?= htmlspecialchars((string) $data['status']) ?></small><br>
+                    <?php endif; ?>
+                    <?php if (isset($data['remote_message'])): ?>
+                        <small>API: <?= htmlspecialchars((string) $data['remote_message']) ?></small><br>
                     <?php endif; ?>
                     <?php if (isset($data['body'])): ?>
                         <small>Payload: <?= htmlspecialchars(is_string($data['body']) ? $data['body'] : json_encode($data['body'])) ?></small><br>
