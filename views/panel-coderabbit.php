@@ -73,6 +73,49 @@ function fetch_panel_json(string $url): ?array
 
 $data = fetch_panel_json($endpoint);
 
+/**
+ * @param array<string, mixed>|array<int, mixed>|null $payload
+ * @return array<int, array<string, mixed>>
+ */
+function extract_report_blocks($payload): array
+{
+    if (!is_array($payload)) {
+        return [];
+    }
+
+    if (isset($payload['error'])) {
+        return [];
+    }
+
+    if (array_is_list($payload)) {
+        return $payload;
+    }
+
+    if (isset($payload['result']['data']) && is_array($payload['result']['data'])) {
+        return $payload['result']['data'];
+    }
+
+    if (isset($payload['data']) && is_array($payload['data'])) {
+        return $payload['data'];
+    }
+
+    if (isset($payload['group']) || isset($payload['report'])) {
+        return [$payload];
+    }
+
+    $blocks = [];
+    foreach ($payload as $value) {
+        if (is_array($value)) {
+            $blocks[] = $value;
+        }
+    }
+
+    return $blocks;
+}
+
+$blocks = extract_report_blocks($data);
+$hasError = !is_array($data) || isset($data['error']);
+
 function md_to_html($s)
 {
     if (!is_string($s)) return '';
@@ -191,7 +234,7 @@ function md_to_html($s)
             <button type="submit">Actualizar</button>
         </form>
 
-        <?php if (!$data || isset($data['error'])): ?>
+        <?php if ($hasError): ?>
             <div class="card err">
                 <strong>Sin datos del API.</strong>
                 <div class="muted">
@@ -208,9 +251,14 @@ function md_to_html($s)
                 </div>
                 <div class="muted">Revisa que <code>CODERABBIT_API_KEY</code> esté configurada y tu plan tenga acceso a Reports.</div>
             </div>
+        <?php elseif (!$blocks): ?>
+            <div class="card">
+                <div class="group">CodeRabbit – Respuesta vacía</div>
+                <div class="muted">El endpoint respondió sin bloques para mostrar.</div>
+            </div>
         <?php else: ?>
             <div class="row">
-                <?php foreach ($data as $block): ?>
+                <?php foreach ($blocks as $block): ?>
                     <div class="card">
                         <div class="group"><?= htmlspecialchars($block['group'] ?? 'Report') ?></div>
                         <div><?= md_to_html($block['report'] ?? '') ?></div>
