@@ -1,81 +1,73 @@
 <?php
+@ini_set('max_execution_time', '650');
+@ini_set('default_socket_timeout', '650');
+@set_time_limit(650);
 // views/panel-coderabbit.php
-$from = $_GET['from'] ?? date('Y-m-d', strtotime('-14 days'));
-$to   = $_GET['to']   ?? date('Y-m-d');
-
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
-$endpoint = sprintf(
-    '%s://%s/api/coderabbit-report.php?%s',
-    $scheme,
-    $host,
-    http_build_query(['from' => $from, 'to' => $to])
-);
+$root = dirname(__DIR__, 1);
+require_once $root . '/app/Services/CoderabbitClient.php';
 
 /**
- * Intenta consumir un endpoint HTTP local y devuelve el JSON decodificado.
+ * Normaliza una fecha proveniente del query string a YYYY-MM-DD.
  *
- * @return array<string, mixed>|array<int, mixed>|null
+ * @param array<string, mixed>|null $errorRef
  */
-function fetch_panel_json(string $url): ?array
+function normalizeDateParamView(string $param, string $default, ?array &$errorRef): string
 {
-    if (function_exists('curl_init')) {
-        $ch = curl_init($url);
-        // Timeout alto para evitar falsos fallos cuando CodeRabbit demora la respuesta.
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 650,
-            CURLOPT_CONNECTTIMEOUT => 15,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 3,
-        ]);
-        $body = curl_exec($ch);
-        $error = curl_error($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 0;
-        curl_close($ch);
+    $raw = $_GET[$param] ?? null;
+    if ($raw === null || trim((string) $raw) === '') {
+        return $default;
+    }
 
-        if ($body === false || $body === '') {
-            return ['error' => 'No se pudo contactar al endpoint local.', 'detail' => $error ?: 'Respuesta vacía', 'status' => $status];
-        }
-
-        $decoded = json_decode($body, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return $decoded;
-        }
-
-        return [
-            'error' => 'La respuesta del endpoint no es JSON válido.',
-            'detail' => json_last_error_msg(),
-            'status' => $status,
-            'body' => $body,
+    $normalized = normalizeDateView((string) $raw);
+    if ($normalized === null) {
+        $errorRef = [
+            'error' => "Fecha '{$param}' inválida. Usa YYYY-MM-DD o DD/MM/AAAA.",
+            'status' => 400,
+            'detail' => 'Formato de fecha inválido en el panel.',
         ];
+        return $default;
     }
 
-    // Fallback a file_get_contents si cURL no está disponible.
-    // Timeout alto para evitar falsos fallos cuando CodeRabbit demora la respuesta.
-    $ctx = stream_context_create(['http' => ['timeout' => 650]]);
-    $body = @file_get_contents($url, false, $ctx);
-    if ($body === false || $body === '') {
-        $phpError = error_get_last();
-        return [
-            'error' => 'No se pudo contactar al endpoint local.',
-            'detail' => $phpError['message'] ?? 'Respuesta vacía',
-        ];
-    }
-
-    $decoded = json_decode($body, true);
-    if (json_last_error() === JSON_ERROR_NONE) {
-        return $decoded;
-    }
-
-    return [
-        'error' => 'La respuesta del endpoint no es JSON válido.',
-        'detail' => json_last_error_msg(),
-        'body' => $body,
-    ];
+    return $normalized;
 }
 
-$data = fetch_panel_json($endpoint);
+/**
+ * @return string|null
+ */
+function normalizeDateView(string $value): ?string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return null;
+    }
+
+    $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
+    foreach ($formats as $format) {
+        $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
+        if ($dt instanceof DateTimeImmutable) {
+            return $dt->format('Y-m-d');
+        }
+    }
+
+    $timestamp = strtotime($value);
+    if ($timestamp !== false) {
+        return gmdate('Y-m-d', $timestamp);
+    }
+
+    return null;
+}
+
+$dateError = null;
+$from = normalizeDateParamView('from', date('Y-m-d', strtotime('-14 days')), $dateError);
+$to   = normalizeDateParamView('to', date('Y-m-d'), $dateError);
+
+if ($dateError !== null) {
+    $data = $dateError;
+} else {
+    // Se evita el cURL hacia localhost para no bloquear el servidor embebido mono-hilo.
+    $client = new \App\Services\CoderabbitClient($root);
+    $data = $client->generateReport($from, $to);
+}
 
 /**
  * @param array<string, mixed>|array<int, mixed>|null $payload
