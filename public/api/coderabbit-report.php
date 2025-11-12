@@ -2,6 +2,14 @@
 // public/api/coderabbit-report.php
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if ($requestMethod === 'OPTIONS') {
+    echo json_encode(['status' => 'ok'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 $rootPath = dirname(__DIR__, 2);
 $envFile = $rootPath . '/.env';
@@ -130,7 +138,11 @@ function requestCoderabbit(string $url, string $method, ?array $payload, string 
 
     $options = [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 30,
+        CURLOPT_TIMEOUT => 600,
+        CURLOPT_CONNECTTIMEOUT => 15,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS => 3,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2TLS,
         CURLOPT_HTTPHEADER => $headers,
     ];
 
@@ -163,6 +175,32 @@ function requestCoderabbit(string $url, string $method, ?array $payload, string 
         'decoded' => $decoded,
         'error' => $error ?: null,
     ];
+}
+
+/**
+ * @param mixed $decoded
+ */
+function extractRemoteMessage($decoded): ?string
+{
+    if (!is_array($decoded)) {
+        return null;
+    }
+
+    foreach (['message', 'error'] as $key) {
+        if (isset($decoded[$key]) && is_string($decoded[$key]) && $decoded[$key] !== '') {
+            return $decoded[$key];
+        }
+    }
+
+    if (isset($decoded['error']) && is_array($decoded['error'])) {
+        foreach (['message', 'error'] as $key) {
+            if (isset($decoded['error'][$key]) && is_string($decoded['error'][$key]) && $decoded['error'][$key] !== '') {
+                return $decoded['error'][$key];
+            }
+        }
+    }
+
+    return null;
 }
 
 $reportResponse = requestCoderabbit(
@@ -202,11 +240,9 @@ function fetchProjectsFallback(string $apiKey, array $reportResponse): ?array
         "- Código HTTP: " . ($reportResponse['status'] ?: '0'),
     ];
 
-    if (is_array($reportResponse['decoded'])) {
-        $remoteMessage = $reportResponse['decoded']['message'] ?? $reportResponse['decoded']['error'] ?? null;
-        if ($remoteMessage) {
-            $lines[] = "- Mensaje: " . $remoteMessage;
-        }
+    $remoteMessage = extractRemoteMessage($reportResponse['decoded']);
+    if ($remoteMessage) {
+        $lines[] = "- Mensaje: " . $remoteMessage;
     }
 
     $lines[] = "";
@@ -254,6 +290,11 @@ $errorPayload = [
     'error' => 'CodeRabbit API rechazó la solicitud.',
     'status' => $status,
 ];
+
+$remoteMessage = extractRemoteMessage($reportResponse['decoded']);
+if ($remoteMessage !== null) {
+    $errorPayload['remote_message'] = $remoteMessage;
+}
 
 if ($reportResponse['decoded'] !== null) {
     $errorPayload['body'] = $reportResponse['decoded'];
