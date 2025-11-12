@@ -75,9 +75,18 @@ function respondInvalidDate(string $param, string $value): void
 
 $from = normalizeDateParam('from', date('Y-m-d', strtotime('-14 days')));
 $to   = normalizeDateParam('to', date('Y-m-d'));
+// Hacer inclusivo el límite superior: CodeRabbit trata 'to' como exclusivo (UTC).
+$toExclusive = date('Y-m-d', strtotime($to . ' +1 day'));
+
+$payloadLog = ['from' => $from, 'to' => $toExclusive];
+file_put_contents(
+    __DIR__ . '/coderabbit-debug.log',
+    sprintf("[%s] payload -> %s\n", date('c'), json_encode($payloadLog)),
+    FILE_APPEND
+);
 
 $client = new \App\Services\CoderabbitClient($rootPath);
-$json = $client->generateReport($from, $to);
+$json = $client->generateReport($from, $toExclusive);
 
 if (isset($json['status']) && is_int($json['status'])) {
     http_response_code($json['status']);

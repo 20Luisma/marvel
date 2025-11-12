@@ -111,7 +111,7 @@ final class CoderabbitClient
     /**
      * @return array<int, array{group: string, report: string}>|array<string, mixed>
      */
-    public function generateReport(string $from, string $to): array
+    public function generateReport(string $from, string $toExclusive): array
     {
         if ($this->apiKey === '') {
             return [
@@ -122,7 +122,7 @@ final class CoderabbitClient
 
         $payload = [
             'from' => $from,
-            'to' => $to,
+            'to' => $toExclusive,
         ];
 
         $reportResponse = self::requestCoderabbit(
@@ -133,7 +133,12 @@ final class CoderabbitClient
         );
 
         if ($reportResponse['ok'] && is_array($reportResponse['decoded'])) {
-            return $reportResponse['decoded'];
+            $decoded = $reportResponse['decoded'];
+            $remoteMessage = self::extractRemoteMessage($decoded);
+            if ($remoteMessage !== null && !isset($decoded['remote_message'])) {
+                $decoded['remote_message'] = $remoteMessage;
+            }
+            return $decoded;
         }
 
         $fallback = $this->fetchProjectsFallback($reportResponse);
