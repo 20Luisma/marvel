@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $pageTitle = 'Clean Marvel Album — Create Your Comic';
 $additionalStyles = ['/assets/css/comic.css', '/assets/css/microservice-communication.css', '/assets/css/comic-fixes.css'];
+$activeTopAction = 'comic';
 require __DIR__ . '/../layouts/header.php';
 ?>
 

@@ -94,7 +94,6 @@
        ========================================================= */
 
     {
-      /* Ver dónde estoy y qué cambié */
       "label": "Git | mostrar estado (ver rama y cambios)",
       "type": "shell",
       "command": "bash",
@@ -107,7 +106,6 @@
       "problemMatcher": []
     },
     {
-      /* Ver todas las ramas que tengo en local */
       "label": "Git | mostrar ramas (todas las que tengo)",
       "type": "shell",
       "command": "bash",
@@ -117,7 +115,6 @@
       "problemMatcher": []
     },
     {
-      /* Crear una rama nueva desde la actual (normalmente main) */
       "label": "Git | crear nueva rama (probar sin romper main)",
       "type": "shell",
       "command": "bash",
@@ -127,7 +124,6 @@
       "problemMatcher": []
     },
     {
-      /* Cambiarme a una rama que ya existe (las que decías en standby) */
       "label": "Git | cambiar de rama (escribir nombre)",
       "type": "shell",
       "command": "bash",
@@ -137,7 +133,6 @@
       "problemMatcher": []
     },
     {
-      /* Volver al main estable */
       "label": "Git | volver a main",
       "type": "shell",
       "command": "bash",
@@ -146,21 +141,23 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+
+    /* 🔥🔥🔥 TAREA ARREGLADA AQUÍ 🔥🔥🔥 */
     {
-      /* Si la rama salió bien, la uno al main */
       "label": "Git | fusionar rama actual en main (si salió bien)",
       "type": "shell",
       "command": "bash",
       "args": [
         "-c",
-        "current=$(git rev-parse --abbrev-ref HEAD); if [ \"$current\" = \"main\" ]; then echo '⚠️ Estás en main. Primero cambiate a la rama que querés fusionar.'; else git checkout main && git merge \"$current\"; fi"
+        "current=$(git rev-parse --abbrev-ref HEAD); if [ \"$current\" = \"main\" ]; then echo \"⚠️ Estás en main. Primero cambiate a la rama que querés fusionar.\"; else echo \"🔀 Fusionando rama $current → main...\"; git checkout main && git merge \"$current\"; fi"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+    /* FIN DE LA TAREA ARREGLADA ✔️ */
+
     {
-      /* Guardar cambios rápidos en local */
       "label": "Git | commit rápido (si hay cambios)",
       "type": "shell",
       "command": "bash",
@@ -173,7 +170,6 @@
       "problemMatcher": []
     },
     {
-      /* Subir a GitHub lo que tengo en la rama actual */
       "label": "Git | push seguro (subir a GitHub la rama actual)",
       "type": "shell",
       "command": "bash",
@@ -186,7 +182,6 @@
       "problemMatcher": []
     },
     {
-      /* Traer lo último de GitHub para la rama actual */
       "label": "Git | pull seguro (traer de GitHub)",
       "type": "shell",
       "command": "bash",
@@ -199,7 +194,6 @@
       "problemMatcher": []
     },
     {
-      /* Borrar una rama LOCAL que ya no sirve (la de tu máquina) */
       "label": "Git | borrar rama LOCAL (ya no la quiero)",
       "type": "shell",
       "command": "bash",
@@ -212,7 +206,6 @@
       "problemMatcher": []
     },
     {
-      /* Borrar una rama en GitHub si también la subiste */
       "label": "Git | borrar rama REMOTA (GitHub)",
       "type": "shell",
       "command": "bash",
@@ -225,7 +218,6 @@
       "problemMatcher": []
     },
     {
-      /* Crear versión/tag y subirla */
       "label": "Git | crear tag (versión y subir)",
       "type": "shell",
       "command": "bash",
@@ -238,20 +230,15 @@
       "problemMatcher": []
     },
     {
-      /* Limpiar archivos que Git no controla (cuidado) */
       "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
       "type": "shell",
       "command": "bash",
-      "args": [
-        "-c",
-        "git clean -fd && git status -sb"
-      ],
+      "args": ["-c", "git clean -fd && git status -sb"],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
-      /* El que querías mantener: pisa GitHub con lo que hay en local */
       "label": "Git | subir TODO y pisar remoto (FORCE) ⚠️⚠️⚠️",
       "type": "shell",
       "command": "bash",
