@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $pageTitle = 'Clean Marvel Album — README';
 $additionalStyles = ['/assets/css/readme.css'];
+$activeTopAction = 'readme';
 require __DIR__ . '/../layouts/header.php';
 ?>
 
