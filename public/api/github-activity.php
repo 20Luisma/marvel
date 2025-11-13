@@ -1,5 +1,5 @@
 <?php
-// public/api/coderabbit-report.php
+// public/api/github-activity.php
 @ini_set('max_execution_time', '650');
 @ini_set('default_socket_timeout', '650');
 @set_time_limit(650);
@@ -17,7 +17,7 @@ if ($requestMethod === 'OPTIONS') {
 }
 
 $rootPath = dirname(__DIR__, 2);
-require_once $rootPath . '/app/Services/CoderabbitClient.php';
+require_once $rootPath . '/app/Services/GithubClient.php';
 
 /**
  * Normaliza una fecha proveniente de la query string a YYYY-MM-DD.
@@ -75,18 +75,9 @@ function respondInvalidDate(string $param, string $value): void
 
 $from = normalizeDateParam('from', date('Y-m-d', strtotime('-14 days')));
 $to   = normalizeDateParam('to', date('Y-m-d'));
-// Hacer inclusivo el límite superior: CodeRabbit trata 'to' como exclusivo (UTC).
-$toExclusive = date('Y-m-d', strtotime($to . ' +1 day'));
 
-$payloadLog = ['from' => $from, 'to' => $toExclusive];
-file_put_contents(
-    __DIR__ . '/coderabbit-debug.log',
-    sprintf("[%s] payload -> %s\n", date('c'), json_encode($payloadLog)),
-    FILE_APPEND
-);
-
-$client = new \App\Services\CoderabbitClient($rootPath);
-$json = $client->generateReport($from, $toExclusive);
+$client = new \App\Services\GithubClient($rootPath);
+$json = $client->fetchActivity($from, $to);
 
 if (isset($json['status']) && is_int($json['status'])) {
     http_response_code($json['status']);
