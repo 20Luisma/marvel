@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $pageTitle = 'Clean Marvel Album — Álbumes';
 $additionalStyles = ['/assets/css/albums.css', '/assets/css/readme.css'];
+$activeTopAction = 'home';
 
 require __DIR__ . '/../layouts/header.php';
 require __DIR__ . '/../albums/hero.php';
