@@ -203,6 +203,13 @@ npm run <script>                     # reservado para tooling/ui cuando se agreg
 
 > Nota: aunque hoy no existe `package.json`, se recomienda tener Node/npm listos para scripts de frontend o tooling (linters, bundlers) descritos en la documentación cuando se integren.
 
+## 📈 SonarCloud y tipos de tests
+
+- **SonarCloud:** configurado mediante `sonar-project.properties` apuntando a `coverage.xml` generado por PHPUnit (`composer test:cov`). No se requiere credencial en local; el pipeline remoto sube el reporte consolidado.
+- **Tipos de pruebas:** mantenemos suites unitarias (entidades, servicios puros, fakes), de aplicación/integración ligera (casos de uso con repositorios en memoria) y dobles de infraestructura en `tests/Fakes` y `tests/Doubles`. No se tocan archivos reales ni servicios externos en las suites.
+- **Herramientas:** PHPUnit 10.5 para ejecución y cobertura, PHPStan nivel 6 para estática. `docs/TASKS_AUTOMATION.md` incluye tasks de VS Code para lanzar ambas en un clic.
+- **Artefactos:** la cobertura se guarda en `build/coverage.xml` (incluida en `.gitignore`), y SonarCloud usa ese archivo para calcular el porcentaje de líneas cubiertas.
+
 ## 📚 Documentación complementaria
 
 - `docs/ARCHITECTURE.md`: detalle de las capas y flujo Clean.  
