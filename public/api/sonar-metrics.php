@@ -130,7 +130,7 @@ if ($response === false) {
 if ($statusCode < 200 || $statusCode >= 300) {
     jsonErrorResponse(
         $statusCode ?: 502,
-        'SonarCloud devolvió un error inesperado al consultar las métricas (HTTP ' . $statusCode . ').'
+        'SonarCloud devolvió un error inesperado al consultar las métrricas (HTTP ' . $statusCode . ').'
     );
 }
 
@@ -169,13 +169,19 @@ $result = [
     'metrics' => $metricsOutput,
 ];
 
-// Calculamos un score de calidad propio (0–100)
+// Calculamos un score de calidad propio (0–100) un poco más suave
 $result['quality_score'] = computeQualityScore($metricsOutput);
 
 // Respondemos
 jsonResponse(200, $result);
 
 /**
+ * Calcula un score de calidad 0–100 inspirado en Sonar, pero más suave.
+ *
+ * Premia fuerte tener 0 bugs y 0 vulnerabilidades,
+ * penaliza poco por code smells y duplicación moderada,
+ * y solo penaliza cobertura si Sonar tiene un valor real.
+ *
  * @param array<string, array{key:string,value:int|float|string|null}> $metrics
  */
 function computeQualityScore(array $metrics): int
@@ -186,27 +192,52 @@ function computeQualityScore(array $metrics): int
     $bugs = (int) round((float) ($metrics['bugs']['value'] ?? 0));
     $vulnerabilities = (int) round((float) ($metrics['vulnerabilities']['value'] ?? 0));
     $duplication = (float) ($metrics['duplicated_code']['value'] ?? 0.0);
-    $coverage = (float) ($metrics['coverage']['value'] ?? 0.0);
 
-    // Penalizaciones
-    $score -= min(30, (int) ceil($codeSmells / 25));
-    $score -= min(20, (int) ceil($bugs * 1.5));
-    $score -= min(15, (int) ceil($vulnerabilities * 2));
-    $score -= min(15, (int) round($duplication / 2));
+    // Coverage: respetamos null para saber si hay dato real o no
+    $coverageRaw = $metrics['coverage']['value'] ?? null;
+    $coverage = is_numeric($coverageRaw) ? (float) $coverageRaw : null;
 
-    if ($coverage < 80) {
-        $score -= (int) min(10, ceil((80 - $coverage) / 5));
+    // 1) Code smells: penalización suave (1 punto cada 40, máx 20)
+    if ($codeSmells > 0) {
+        $score -= min(20, (int) ceil($codeSmells / 40));
     }
 
+    // 2) Bugs: seguimos siendo duros
+    if ($bugs > 0) {
+        $score -= min(20, (int) ceil($bugs * 1.5));
+    }
+
+    // 3) Vulnerabilidades: muy duros
+    if ($vulnerabilities > 0) {
+        $score -= min(15, (int) ceil($vulnerabilities * 2));
+    }
+
+    // 4) Duplicación: cada 2% de duplicación resta 1 punto, máx 15
+    if ($duplication > 0) {
+        $score -= min(15, (int) round($duplication / 2));
+    }
+
+    // 5) Cobertura: solo penalizamos si hay dato real
+    if ($coverage !== null && $coverage < 80.0) {
+        // Cada 10% por debajo de 80 quita 1 punto, máx 8
+        $score -= (int) min(8, ceil((80 - $coverage) / 10));
+    }
+
+    // 6) Rating de mantenibilidad (sqale_rating)
     $rating = (string) ($metrics['sqale_rating']['value'] ?? 'A');
     $ratingPenalty = [
         'A' => 0,
-        'B' => 4,
-        'C' => 8,
-        'D' => 12,
-        'E' => 20,
+        'B' => 3,
+        'C' => 6,
+        'D' => 10,
+        'E' => 15,
     ];
     $score -= $ratingPenalty[$rating] ?? 5;
+
+    // BONUS: si no hay bugs ni vulnerabilidades, premio extra
+    if ($bugs === 0 && $vulnerabilities === 0) {
+        $score += 5;
+    }
 
     return max(0, min(100, $score));
 }
