@@ -386,7 +386,6 @@ function toDisplayLabels() {
 
 // aplica los textos al HUD de microservicios y al HUD de RAG
 function applyMicroserviceLabels(labels) {
-  const display = toDisplayLabels();
   const titleText = 'Canal Microservicios';
   const ragTitleText = 'Sistema RAG';
   const subtitleText = 'Web principal ↔ Microservicios Open IA';
@@ -402,16 +401,16 @@ function applyMicroserviceLabels(labels) {
   // Panel general (crear cómic)
   update('#microservice-comm-panel .msc-title', titleText);
   update('#microservice-comm-panel .msc-subtitle', subtitleText);
-  update('#microservice-comm-panel .msc-step[data-step=\"process\"]', '⚙ Procesando en Microservicios Open IA…');
-  update('#microservice-comm-panel .msc-step[data-step=\"return\"]', '⬅ Devolviendo a la Web principal…');
+  update('#microservice-comm-panel .msc-step[data-step="process"]', '⚙ Procesando en Microservicios Open IA…');
+  update('#microservice-comm-panel .msc-step[data-step="return"]', '⬅ Devolviendo a la Web principal…');
 
   // Panel RAG (botón "Comparar héroes (RAG)")
   update('#rag-comm-panel .msc-title', ragTitleText);
   update('#rag-comm-panel .msc-subtitle', ragSubtitleText);
-  update('#rag-comm-panel .msc-step[data-step=\"send\"]', '▶ Enviando héroes seleccionados…');
-  update('#rag-comm-panel .msc-step[data-step=\"process\"]', '🤖 Consultando la base RAG…');
-  update('#rag-comm-panel .msc-step[data-step=\"relay\"]', '📡 Comunicando con modelo IA…');
-  update('#rag-comm-panel .msc-step[data-step=\"return\"]', '⬅ Respondiendo a la Web principal…');
+  update('#rag-comm-panel .msc-step[data-step="send"]', '▶ Enviando héroes seleccionados…');
+  update('#rag-comm-panel .msc-step[data-step="process"]', '🤖 Consultando la base RAG…');
+  update('#rag-comm-panel .msc-step[data-step="relay"]', '📡 Comunicando con modelo IA…');
+  update('#rag-comm-panel .msc-step[data-step="return"]', '⬅ Respondiendo a la Web principal…');
 }
 
 function escapeSelector(value) {
@@ -547,29 +546,29 @@ function renderRagResult(answer, contexts, heroIds) {
   const heroEntries = [];
 
   if (Array.isArray(contexts) && contexts.length > 0) {
-    contexts.forEach((context) => {
+    for (const context of contexts) {
       const contextHeroId = typeof context.heroId === 'string' ? context.heroId : null;
       if (!contextHeroId) return;
       const hero = heroState.selected.get(contextHeroId) || heroState.all.find(item => (item.heroId || item.id) === contextHeroId);
       if (!hero) return;
       heroEntries.push(hero);
-    });
+    }
   }
 
   if (heroEntries.length === 0) {
-    heroIds.forEach((heroId) => {
+    for (const heroId of heroIds) {
       const hero = heroState.selected.get(heroId);
       if (hero) {
         heroEntries.push(hero);
       }
-    });
+    }
   }
 
   if (heroEntries.length === 0) {
     heroEntries.push(...Array.from(heroState.selected.values()));
   }
 
-  heroEntries.slice(0, 4).forEach((hero) => {
+  for (const hero of heroEntries.slice(0, 4)) {
     const card = document.createElement('article');
     card.className = 'rag-hero-card';
 
@@ -595,7 +594,7 @@ function renderRagResult(answer, contexts, heroIds) {
 
     card.appendChild(body);
     ragHeroesPreview.appendChild(card);
-  });
+  }
 }
 
 function hideCommunicationPanel() {
@@ -642,8 +641,8 @@ function buildComicNarrationText(story, panels) {
   if (title !== '') sections.push(title);
   if (summary !== '') sections.push(summary);
 
-  safePanels.forEach((panel, index) => {
-    if (!panel || typeof panel !== 'object') return;
+  for (const [index, panel] of safePanels.entries()) {
+    if (!panel || typeof panel !== 'object') continue;
     const parts = [];
     const panelTitle = typeof panel.title === 'string' ? panel.title.trim() : '';
     const panelDescription = typeof panel.description === 'string' ? panel.description.trim() : '';
@@ -654,7 +653,7 @@ function buildComicNarrationText(story, panels) {
     if (parts.length > 0) {
       sections.push(`Viñeta ${index + 1}: ${parts.join(' ')}`);
     }
-  });
+  }
 
   return sections.join('\n\n').trim();
 }
@@ -663,9 +662,9 @@ let currentSlide = 0;
 function showSlide(index) {
   const slides = slideshowContainer.children;
   if (!slides || slides.length === 0) return;
-  Array.from(slides).forEach((slide, i) => {
-    slide.classList.toggle('hidden', i !== index);
-  });
+  for (let i = 0; i < slides.length; i += 1) {
+    slides[i].classList.toggle('hidden', i !== index);
+  }
 }
 
 function nextSlide() {
@@ -738,13 +737,13 @@ function renderGeneratedComic(data) {
   if (slideshowContainer) {
     slideshowContainer.innerHTML = '';
     if (selectedHeroes.length > 0) {
-      selectedHeroes.forEach((hero, index) => {
+      for (const [index, hero] of selectedHeroes.entries()) {
         const slide = document.createElement('div');
         slide.className = 'transition-opacity duration-700 ease-in-out';
         if (index !== 0) slide.classList.add('hidden');
         slide.innerHTML = `<img src="${hero.imagen}" class="absolute block w-full h-full object-cover" alt="${hero.nombre}">`;
         slideshowContainer.appendChild(slide);
-      });
+      }
     }
 
     const slides = slideshowContainer.children;
@@ -768,7 +767,7 @@ function renderGeneratedComic(data) {
 
   if (comicOutputPanels) {
     comicOutputPanels.innerHTML = '';
-    panels.forEach((panel, index) => {
+    for (const [index, panel] of panels.entries()) {
       const panelCard = document.createElement('article');
       panelCard.className = 'rounded-xl border border-slate-700/60 bg-slate-900/50 p-4 space-y-3';
 
@@ -800,7 +799,7 @@ function renderGeneratedComic(data) {
       }
 
       comicOutputPanels.appendChild(panelCard);
-    });
+    }
   }
 
   if (comicOutputPanelsEmpty) {
@@ -944,7 +943,7 @@ function updateSelectedHeroesUI() {
     selectedHeroesEmpty.classList.remove('hidden');
   } else {
     selectedHeroesEmpty.classList.add('hidden');
-    entries.forEach(([heroId, hero]) => {
+    for (const [heroId, hero] of entries) {
       const badge = document.createElement('span');
       badge.className = 'selected-hero-badge';
       badge.innerHTML = `
@@ -952,7 +951,7 @@ function updateSelectedHeroesUI() {
         <button type="button" class="selected-hero-remove" aria-label="Quitar ${hero.nombre}" data-hero-id="${heroId}">✕</button>
       `;
       selectedHeroesList.appendChild(badge);
-    });
+    }
   }
 
   selectedHeroesCount.textContent = entries.length.toString();
@@ -1034,7 +1033,9 @@ function renderHeroes() {
   heroCountLabel.textContent = `${heroes.length} ${heroes.length === 1 ? 'héroe' : 'héroes'}`;
 
   const fragment = document.createDocumentFragment();
-  heroes.forEach(hero => fragment.appendChild(buildHeroCard(hero)));
+  for (const hero of heroes) {
+    fragment.appendChild(buildHeroCard(hero));
+  }
   heroGrid.appendChild(fragment);
 }
 
@@ -1063,10 +1064,10 @@ heroSearchInput.addEventListener('input', () => {
 function resetSelections(options = {}) {
   const { suppressActivity = false } = options;
   heroState.selected.clear();
-  heroGrid.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+  for (const checkbox of heroGrid.querySelectorAll('input[type="checkbox"]')) {
     checkbox.checked = false;
     checkbox.closest('.hero-card')?.classList.remove('is-selected');
-  });
+  }
   updateSelectedHeroesUI();
   showHeroSelectionWarning('');
   if (!suppressActivity) {
@@ -1167,7 +1168,6 @@ async function compareSelectedHeroesRag() {
   await ensureServiceConfig();
   const displayLabels = toDisplayLabels();
   const ragHostLabel = displayLabels.rag;
-  const appHostLabel = displayLabels.app;
   const targetEndpoint = getRagEndpoint();
 
   setComparingRagState(true);
@@ -1289,8 +1289,8 @@ function cleanRagAnswer(answer) {
   const filtered = segments.filter((segment) => {
     const trimmed = segment.trim();
     if (trimmed === '') return false;
-    const isTableLine = /^[\|\-:\s\*☆★]+$/.test(trimmed.replaceAll(/[A-Za-zÁÉÍÓÚÜÑ0-9().,+/]/g, ''));
-    const startsWithHeader = /^\|?[\s\-_:|]+\|?$/i.test(trimmed);
+    const isTableLine = /^[|:\s*☆★-]+$/.test(trimmed.replaceAll(/[A-Za-zÁÉÍÓÚÜÑ0-9().,+/]/g, ''));
+    const startsWithHeader = /^[|]?[\s_|:-]+[|]?$/i.test(trimmed);
     return !(trimmed.includes('|') || isTableLine || startsWithHeader);
   });
 
