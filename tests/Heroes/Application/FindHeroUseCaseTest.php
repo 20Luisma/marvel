@@ -26,6 +26,17 @@ final class FindHeroUseCaseTest extends TestCase
         self::assertSame('album-1', $result['albumId']);
     }
 
+    public function test_it_throws_exception_when_hero_not_found(): void
+    {
+        $repository = new InMemoryHeroRepository();
+        $useCase = new FindHeroUseCase($repository);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Héroe no encontrado.');
+
+        $useCase->execute('missing-hero');
+    }
+
     public function testItFailsWhenHeroIsMissing(): void
     {
         $repository = new InMemoryHeroRepository();

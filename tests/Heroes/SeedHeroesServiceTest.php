@@ -15,7 +15,7 @@ use Tests\Fakes\FakeHeroRepository;
 
 final class SeedHeroesServiceTest extends TestCase
 {
-    public function test_seed_force_populates_fake_repository_with_expected_fields(): void
+    public function test_seed_force_populates_fake_repository_and_skips_duplicates(): void
     {
         $albumRepository = new InMemoryAlbumRepository();
         $heroRepository = new FakeHeroRepository();
@@ -24,16 +24,24 @@ final class SeedHeroesServiceTest extends TestCase
         $seedService = new SeedHeroesService($albumRepository, $heroRepository, $createHeroUseCase);
 
         $createAlbumUseCase = new CreateAlbumUseCase($albumRepository);
-        $createAlbumUseCase->execute(new CreateAlbumRequest('Avengers', null));
+        $albumResponse = $createAlbumUseCase->execute(new CreateAlbumRequest('Avengers', null));
+        $albumId = $albumResponse->toArray()['albumId'];
 
         $created = $seedService->seedForce();
 
         $storedHeroes = $heroRepository->findAll();
 
-        self::assertGreaterThan(0, $created);
+        self::assertSame(5, $created);
+        self::assertCount(5, $storedHeroes);
         self::assertNotEmpty($storedHeroes);
         self::assertArrayHasKey('nombre', $storedHeroes[0]);
         self::assertArrayHasKey('imagen', $storedHeroes[0]);
         self::assertArrayHasKey('contenido', $storedHeroes[0]);
+        self::assertContains($albumId, array_column($storedHeroes, 'albumId'));
+
+        $createdAgain = $seedService->seedForce();
+
+        self::assertSame(0, $createdAgain);
+        self::assertCount(5, $heroRepository->findAll());
     }
 }
