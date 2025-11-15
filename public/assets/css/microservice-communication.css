@@ -4,8 +4,8 @@
   display: grid;
   gap: 1.25rem;
   border-radius: 1.15rem;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.88));
-  border: 1px solid rgba(71, 85, 105, 0.45);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.9));
+  border: 1px solid #475569;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
   opacity: 1;
   transform: translateY(0);
@@ -37,9 +37,9 @@
   text-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
 }
 .msc-badge {
-  background: rgba(59, 130, 246, 0.2);
+  background: #122443; /* fix contraste SonarCloud */
   color: #bfdbfe;
-  border: 1px solid rgba(191, 219, 254, 0.35);
+  border: 1px solid #3b82f6;
   font-size: .7rem;
   text-transform: uppercase;
   letter-spacing: .12em;
@@ -60,11 +60,11 @@
 }
 .msc-step {
   font-size: .76rem;
-  color: #94a3b8;
-  background: rgba(30, 41, 59, 0.45);
+  color: #cbd5f5;
+  background: #1a2438;
   border-radius: .75rem;
   padding: .4rem .65rem;
-  border: 1px solid transparent;
+  border: 1px solid #27344d;
   transition: all .18s ease;
   display: flex;
   align-items: center;
@@ -72,14 +72,14 @@
 }
 .msc-step.msc-active {
   color: #f8fafc;
-  border-color: rgba(148, 163, 184, 0.55);
-  background: rgba(59, 130, 246, 0.25);
-  box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.15);
+  border-color: #93c5fd;
+  background: #1d3a8a;
+  box-shadow: inset 0 0 0 1px #1d4ed8;
 }
 .msc-status {
   font-size: .76rem;
   min-height: 1.2rem;
-  color: #94a3b8;
+  color: #cbd5f5;
 }
 .msc-success {
   color: #4ade80;
@@ -89,9 +89,9 @@
 }
 .msc-retry {
   justify-self: flex-start;
-  background: rgba(248, 113, 113, 0.18);
-  border: 1px solid rgba(248, 113, 113, 0.5);
-  color: #fecaca;
+  background: #551a1e;
+  border: 1px solid #f87171;
+  color: #ffe4e6;
   font-size: .72rem;
   border-radius: .75rem;
   padding: .35rem .9rem .4rem;
@@ -99,14 +99,14 @@
   transition: background .18s ease, transform .18s ease;
 }
 .msc-retry:hover {
-  background: rgba(248, 113, 113, 0.3);
+  background: #7f1d1d;
   transform: translateY(-1px);
 }
 .msc-step.msc-active {
-  border-color: rgba(148, 163, 184, 0.65);
-  background: rgba(59, 130, 246, 0.3);
+  border-color: #93c5fd;
+  background: #1d3a8a;
   color: #f8fafc;
-  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+  box-shadow: inset 0 0 0 1px #1d4ed8;
 }
 
 #comic-creation-card {
