@@ -29,7 +29,8 @@
           "parameters": [
             {
               "name": "key",
-              "value": "AIzaSyAG4SxhcOpVPJCyB4OsPch6gTlrIOC_VUQ"
+              "value": "={{ $env.GOOGLE_YT_API_KEY }}"
+
             },
             {
               "name": "part",
