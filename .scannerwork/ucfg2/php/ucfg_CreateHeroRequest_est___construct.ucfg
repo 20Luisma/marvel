@@ -1,0 +1,50 @@
+
+9app\heroes\application\dto\createherorequest::__construct|
+r/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/DTO/CreateHeroRequest.php	 	("1*…
+1
+CreateHeroRequest.phpP
+N
+	 	(
+
+$albumId"__id*0
+
+__unknown_file (
+
+$albumIdstringN
+L
+	 	(	
+$nombre"__id*/
+
+__unknown_file (
+
+$nombrestringT
+R
+	 	(
+
+$contenido"__id*2
+
+__unknown_file (
+
+
+$contenidostringN
+L
+	 	(	
+$imagen"__id*/
+
+__unknown_file (
+
+$imagenstring"
+ (
+implicit return:
+
+ 
+((
+$albumIdstring:
+ ('
+$nombrestring: 
+ (*
+
+$contenidostring:
+ ('
+$imagenstringB0.
+,app\heroes\application\dto\createherorequestH

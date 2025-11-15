@@ -1,0 +1,155 @@
+
+&src\shared\http\router::herocontrollerh
+\/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Http/Router.php½ ½(#"1*¿	
+2
+À À(*VT
+
+À À()
+%2*6
+
+__unknown_file (
+src\shared\http\router2usecasesE
+C
+
+À À()
+	$useCases"__id*"
+
+__unknown_file (
+
+%2u
+s
+
+Ã Ã('
+%4"__mapGet*)
+
+__unknown_file (
+
+	$useCases**
+
+__unknown_file (
+
+listHeroesu
+s
+
+Ä Ä('
+%5"__mapGet*)
+
+__unknown_file (
+
+	$useCases**
+
+__unknown_file (
+
+createHerou
+s
+
+Å Å('
+%6"__mapGet*)
+
+__unknown_file (
+
+	$useCases**
+
+__unknown_file (
+
+updateHerou
+s
+
+Æ Æ('
+%7"__mapGet*)
+
+__unknown_file (
+
+	$useCases**
+
+__unknown_file (
+
+deleteHeros
+q
+
+Ç Ç(%
+%8"__mapGet*)
+
+__unknown_file (
+
+	$useCases*(
+
+__unknown_file (
+
+findHero42
+
+Â$ È(
+%3"src\controllers\herocontrollerš
+—
+
+Â$ È(
+%9"+src\controllers\herocontroller::__construct*"
+
+__unknown_file (
+
+%3*"
+
+__unknown_file (
+
+%4*"
+
+__unknown_file (
+
+%5*"
+
+__unknown_file (
+
+%6*"
+
+__unknown_file (
+
+%7*"
+
+__unknown_file (
+
+%8f
+d
+
+Â È(,
+src\shared\http\router"
+heroController"__id*"
+
+__unknown_file (
+
+%3*
+3*‘
+3
+Ë Ë(%g
+e
+
+Ë Ë($
+%10"__id*J
+
+__unknown_file (.*,
+src\shared\http\router"
+heroController`
+^
+
+Ë Ë(%%
+%11src\controllers\herocontroller"__id*#
+
+__unknown_file (
+
+%10"5
+
+Ë Ë(%'
+%
+%11src\controllers\herocontroller*
+1
+¿ ¿(*f
+d
+
+¿ ¿(!
+%1"__id*J
+
+__unknown_file (.*,
+src\shared\http\router"
+heroController*
+2
+3B
+src\shared\http\routerH

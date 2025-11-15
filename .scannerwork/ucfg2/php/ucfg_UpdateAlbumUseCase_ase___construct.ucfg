@@ -1,0 +1,26 @@
+
+>app\albums\application\usecase\updatealbumusecase::__constructÅ
+w/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Application/UseCase/UpdateAlbumUseCase.php ("1*®
+1
+UpdateAlbumUseCase.php|
+z
+ (
+$repository"__id*Y
+
+__unknown_file (=
+;
+$repository,app\albums\domain\repository\albumrepositoryj
+h
+ (
+	$eventBus"__id*I
+
+__unknown_file (-
++
+	$eventBusapp\shared\domain\bus\eventbus"
+ (
+implicit return:G
+ (4;
+$repository,app\albums\domain\repository\albumrepository:7
+ (++
+	$eventBusapp\shared\domain\bus\eventbusB53
+1app\albums\application\usecase\updatealbumusecaseH

@@ -1,0 +1,56 @@
+
+,src\controllers\albumcontroller::__constructo
+e/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/AlbumController.php ("1*“
+1
+AlbumController.phpÄ
+~
+ (
+$listAlbums"__id*]
+
+__unknown_file (A
+?
+$listAlbums0app\albums\application\usecase\listalbumsusecaseÑ
+Å
+ (
+$createAlbum"__id*_
+
+__unknown_file (C
+A
+$createAlbum1app\albums\application\usecase\createalbumusecaseÑ
+Å
+ (
+$updateAlbum"__id*_
+
+__unknown_file (C
+A
+$updateAlbum1app\albums\application\usecase\updatealbumusecaseÑ
+Å
+ (
+$deleteAlbum"__id*_
+
+__unknown_file (C
+A
+$deleteAlbum1app\albums\application\usecase\deletealbumusecase}
+{
+ (
+
+$findAlbum"__id*[
+
+__unknown_file (?
+=
+
+$findAlbum/app\albums\application\usecase\findalbumusecase"
+ (
+implicit return:K
+ (6?
+$listAlbums0app\albums\application\usecase\listalbumsusecase:M
+ (8A
+$createAlbum1app\albums\application\usecase\createalbumusecase:M
+ (8A
+$updateAlbum1app\albums\application\usecase\updatealbumusecase:M
+ (8A
+$deleteAlbum1app\albums\application\usecase\deletealbumusecase:I
+ (4=
+
+$findAlbum/app\albums\application\usecase\findalbumusecaseB#!
+src\controllers\albumcontrollerH

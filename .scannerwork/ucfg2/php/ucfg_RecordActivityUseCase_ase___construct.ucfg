@@ -1,0 +1,17 @@
+
+Eapp\activities\application\usecase\recordactivityusecase::__constructˆ
+~/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Application/UseCase/RecordActivityUseCase.php ("1*¾
+1
+RecordActivityUseCase.php{
+y
+ (
+$repository"__id*X
+
+__unknown_file (<
+:
+$repository+app\activities\domain\activitylogrepository"
+ (
+implicit return:F
+  (R:
+$repository+app\activities\domain\activitylogrepositoryB<:
+8app\activities\application\usecase\recordactivityusecaseH

@@ -1,0 +1,17 @@
+
+=app\heroes\application\usecase\deleteherousecase::__construct€
+v/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/DeleteHeroUseCase.php ("1*Ä
+1
+DeleteHeroUseCase.php„
+
+ (
+$heroRepository"__id*\
+
+__unknown_file (@
+>
+$heroRepository+app\heroes\domain\repository\herorepository"
+ (
+implicit return:J
+  (O>
+$heroRepository+app\heroes\domain\repository\herorepositoryB42
+0app\heroes\application\usecase\deleteherousecaseH
