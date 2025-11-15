@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Dotenv\Dotenv;
+use Throwable;
 
 $rootPath = dirname(__DIR__, 2);
 $vendorAutoload = $rootPath . '/vendor/autoload.php';
 
 // 1) Autoload de Composer (si existe)
 if (is_file($vendorAutoload)) {
-    require $vendorAutoload;
+    require_once $vendorAutoload;
 }
 
 // 2) Cargar .env
@@ -210,38 +213,22 @@ function computeQualityScore(array $metrics): int
 
 function normalizeMetricValue(mixed $value, string $cast): int|float|string|null
 {
-    if ($value === null || $value === '') {
-        return null;
+    $normalized = null;
+
+    if ($value !== null && $value !== '') {
+        $normalized = $cast === 'string'
+            ? normalizeMetricString($value)
+            : normalizeMetricNumber($value, $cast);
     }
 
-    if ($cast === 'string') {
-        return strtoupper((string) $value);
-    }
-
-    if (!is_numeric($value)) {
-        return null;
-    }
-
-    return $cast === 'float'
-        ? round((float) $value, 2)
-        : (int) round((float) $value);
+    return $normalized;
 }
 
 function normalizeDateTime(mixed $rawValue): string
 {
-    if (is_string($rawValue) && trim($rawValue) !== '') {
-        try {
-            $date = new DateTimeImmutable($rawValue);
-            return $date->format(DateTimeInterface::ATOM);
-        } catch (Throwable) {
-            $timestamp = strtotime($rawValue);
-            if ($timestamp !== false) {
-                return gmdate(DateTimeInterface::ATOM, $timestamp);
-            }
-        }
-    }
+    $candidate = extractNormalizedDateTime($rawValue);
 
-    return gmdate(DateTimeInterface::ATOM);
+    return $candidate ?? gmdate(DateTimeInterface::ATOM);
 }
 
 function jsonResponse(int $status, array $payload): void
@@ -256,4 +243,46 @@ function jsonResponse(int $status, array $payload): void
 function jsonErrorResponse(int $status, string $message): void
 {
     jsonResponse($status, ['error' => $message]);
+}
+
+function normalizeMetricString(mixed $value): string
+{
+    return strtoupper((string) $value);
+}
+
+function normalizeMetricNumber(mixed $value, string $cast): int|float|null
+{
+    if (!is_numeric($value)) {
+        return null;
+    }
+
+    $numeric = (float) $value;
+
+    return $cast === 'float'
+        ? round($numeric, 2)
+        : (int) round($numeric);
+}
+
+function extractNormalizedDateTime(mixed $rawValue): ?string
+{
+    if (!is_string($rawValue)) {
+        return null;
+    }
+
+    $trimmed = trim($rawValue);
+    if ($trimmed === '') {
+        return null;
+    }
+
+    try {
+        $date = new DateTimeImmutable($trimmed);
+        return $date->format(DateTimeInterface::ATOM);
+    } catch (Throwable) {
+        $timestamp = strtotime($trimmed);
+        if ($timestamp !== false) {
+            return gmdate(DateTimeInterface::ATOM, $timestamp);
+        }
+    }
+
+    return null;
 }

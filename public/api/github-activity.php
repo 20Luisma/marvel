@@ -1,8 +1,12 @@
 <?php
+declare(strict_types=1);
 // public/api/github-activity.php
 @ini_set('max_execution_time', '650');
 @ini_set('default_socket_timeout', '650');
 @set_time_limit(650);
+
+use App\Services\GithubClient;
+use DateTimeImmutable;
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -17,7 +21,10 @@ if ($requestMethod === 'OPTIONS') {
 }
 
 $rootPath = dirname(__DIR__, 2);
-require_once $rootPath . '/app/Services/GithubClient.php';
+$autoload = $rootPath . '/vendor/autoload.php';
+if (is_file($autoload)) {
+    require_once $autoload;
+}
 
 /**
  * Normaliza una fecha proveniente de la query string a YYYY-MM-DD.
@@ -43,24 +50,16 @@ function normalizeDateParam(string $param, string $default): string
 function normalizeDate(string $value): ?string
 {
     $value = trim($value);
-    if ($value === '') {
-        return null;
-    }
+    $normalized = null;
 
-    $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
-    foreach ($formats as $format) {
-        $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
-        if ($dt instanceof DateTimeImmutable) {
-            return $dt->format('Y-m-d');
+    if ($value !== '') {
+        $normalized = normalizeDateFromFormats($value);
+        if ($normalized === null) {
+            $normalized = normalizeDateFromTimestamp($value);
         }
     }
 
-    $timestamp = strtotime($value);
-    if ($timestamp !== false) {
-        return gmdate('Y-m-d', $timestamp);
-    }
-
-    return null;
+    return $normalized;
 }
 
 function respondInvalidDate(string $param, string $value): void
@@ -76,7 +75,7 @@ function respondInvalidDate(string $param, string $value): void
 $from = normalizeDateParam('from', date('Y-m-d', strtotime('-14 days')));
 $to   = normalizeDateParam('to', date('Y-m-d'));
 
-$client = new \App\Services\GithubClient($rootPath);
+$client = new GithubClient($rootPath);
 $json = $client->fetchActivity($from, $to);
 
 if (isset($json['status']) && is_int($json['status'])) {
@@ -84,3 +83,26 @@ if (isset($json['status']) && is_int($json['status'])) {
 }
 
 echo json_encode($json, JSON_UNESCAPED_UNICODE);
+
+function normalizeDateFromFormats(string $value): ?string
+{
+    $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
+    foreach ($formats as $format) {
+        $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
+        if ($dt instanceof DateTimeImmutable) {
+            return $dt->format('Y-m-d');
+        }
+    }
+
+    return null;
+}
+
+function normalizeDateFromTimestamp(string $value): ?string
+{
+    $timestamp = strtotime($value);
+    if ($timestamp === false) {
+        return null;
+    }
+
+    return gmdate('Y-m-d', $timestamp);
+}
