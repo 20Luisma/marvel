@@ -31,6 +31,12 @@ final class ActivityControllerTest extends TestCase
         http_response_code(200);
     }
 
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['mock_php_input']);
+        parent::tearDown();
+    }
+
     public function testStoreCreatesActivityAndReturns201(): void
     {
         $this->setJsonBody(['action' => 'created', 'title' => 'Nuevo album']);
@@ -61,6 +67,29 @@ final class ActivityControllerTest extends TestCase
         self::assertSame(400, http_response_code());
     }
 
+    public function testStoreReturnsValidationErrorWhenActionIsMissing(): void
+    {
+        $this->setJsonBody(['action' => '   ', 'title' => 'Evento sin acción']);
+
+        $payload = $this->captureJson(fn () => $this->controller->store(ActivityScope::ALBUMS));
+
+        self::assertSame('error', $payload['estado']);
+        self::assertSame('La acción de actividad no puede estar vacía.', $payload['message']);
+        self::assertSame(422, http_response_code());
+    }
+
+    public function testStoreReturnsServerErrorWhenRepositoryFails(): void
+    {
+        $this->repository->failNextAppend();
+        $this->setJsonBody(['action' => 'created', 'title' => 'Nuevo error']);
+
+        $payload = $this->captureJson(fn () => $this->controller->store(ActivityScope::ALBUMS));
+
+        self::assertSame('error', $payload['estado']);
+        self::assertSame(500, http_response_code());
+        self::assertStringStartsWith('No se pudo registrar la actividad:', $payload['message']);
+    }
+
     private function setJsonBody(array $body): void
     {
         $GLOBALS['mock_php_input'] = json_encode($body, JSON_UNESCAPED_UNICODE);
@@ -85,6 +114,7 @@ final class ActivityRepositoryDouble implements ActivityLogRepository
      * @var array<string, list<ActivityEntry>>
      */
     private array $entries = [];
+    private bool $failNextAppend = false;
 
     public function all(string $scope, ?string $contextId = null): array
     {
@@ -93,6 +123,11 @@ final class ActivityRepositoryDouble implements ActivityLogRepository
 
     public function append(ActivityEntry $entry): void
     {
+        if ($this->failNextAppend) {
+            $this->failNextAppend = false;
+            throw new \RuntimeException('Repositorio no disponible');
+        }
+
         $key = $this->key($entry->scope(), $entry->contextId());
         $this->entries[$key] ??= [];
         $this->entries[$key][] = $entry;
@@ -105,6 +140,11 @@ final class ActivityRepositoryDouble implements ActivityLogRepository
         }
 
         unset($this->entries[$this->key($scope, $contextId)]);
+    }
+
+    public function failNextAppend(): void
+    {
+        $this->failNextAppend = true;
     }
 
     private function key(string $scope, ?string $contextId): string

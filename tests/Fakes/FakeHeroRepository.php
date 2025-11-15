@@ -7,34 +7,29 @@ namespace Tests\Fakes;
 use App\Heroes\Domain\Entity\Hero;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Shared\Util\Slugger;
-use DateTimeImmutable;
 use InvalidArgumentException;
 
 final class FakeHeroRepository implements HeroRepository
 {
+    private const FIXED_TIMESTAMP = '2024-01-01T00:00:00+00:00';
+
     /**
      * @var array<string, Hero>
      */
-    private array $heroes = [];
+    private array $storage = [];
 
     private int $autoIncrement = 1;
 
     public function save(array|Hero $hero): void
     {
         if ($hero instanceof Hero) {
-            $this->heroes[$hero->heroId()] = $hero;
-
-            return;
-        }
-
-        if (is_array($hero)) {
+            $this->storage[$hero->heroId()] = $hero;
+        } elseif (is_array($hero)) {
             $entity = $this->hydrateHeroFromArray($hero);
-            $this->heroes[$entity->heroId()] = $entity;
-
-            return;
+            $this->storage[$entity->heroId()] = $entity;
+        } else {
+            throw new InvalidArgumentException('FakeHeroRepository::save expects a Hero entity or an array payload.');
         }
-
-        throw new InvalidArgumentException('FakeHeroRepository::save expects a Hero entity or an array payload.');
     }
 
     /**
@@ -42,10 +37,12 @@ final class FakeHeroRepository implements HeroRepository
      */
     public function byAlbum(string $albumId): array
     {
-        return array_values(array_filter(
-            $this->heroes,
-            static fn (Hero $hero): bool => $hero->albumId() === $albumId
-        ));
+        return array_values(
+            array_filter(
+                $this->storage,
+                static fn (Hero $hero): bool => $hero->albumId() === $albumId
+            )
+        );
     }
 
     /**
@@ -53,24 +50,24 @@ final class FakeHeroRepository implements HeroRepository
      */
     public function all(): array
     {
-        return array_values($this->heroes);
+        return array_values($this->storage);
     }
 
     public function find(string $heroId): ?Hero
     {
-        return $this->heroes[$heroId] ?? null;
+        return $this->storage[$heroId] ?? null;
     }
 
     public function delete(string $heroId): void
     {
-        unset($this->heroes[$heroId]);
+        unset($this->storage[$heroId]);
     }
 
     public function deleteByAlbum(string $albumId): void
     {
-        foreach ($this->heroes as $heroId => $hero) {
+        foreach ($this->storage as $heroId => $hero) {
             if ($hero->albumId() === $albumId) {
-                unset($this->heroes[$heroId]);
+                unset($this->storage[$heroId]);
             }
         }
     }
@@ -82,13 +79,13 @@ final class FakeHeroRepository implements HeroRepository
     {
         return array_map(
             static fn (Hero $hero): array => $hero->toPrimitives(),
-            array_values($this->heroes)
+            array_values($this->storage)
         );
     }
 
     public function clear(): void
     {
-        $this->heroes = [];
+        $this->storage = [];
         $this->autoIncrement = 1;
     }
 
@@ -101,7 +98,7 @@ final class FakeHeroRepository implements HeroRepository
 
         $heroId = (string) ($data['heroId'] ?? $this->generateId());
         $slug = (string) ($data['slug'] ?? Slugger::slugify($nombre));
-        $createdAt = (string) ($data['createdAt'] ?? (new DateTimeImmutable())->format(DATE_ATOM));
+        $createdAt = (string) ($data['createdAt'] ?? self::FIXED_TIMESTAMP);
         $updatedAt = (string) ($data['updatedAt'] ?? $createdAt);
 
         return Hero::fromPrimitives([

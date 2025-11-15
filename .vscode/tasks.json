@@ -88,9 +88,10 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
-    /* ➕ NUEVA TAREA: tests + coverage + sonar-scanner manual */
+
+    /* ➕ NUEVA TAREA: solo tests + coverage (SIN sonar) */
     {
-      "label": "🧪 Tests + Coverage + Sonar (manual)",
+      "label": "🧪 Tests + Coverage",
       "type": "shell",
       "command": "bash",
       "args": [
@@ -102,7 +103,27 @@
       "problemMatcher": []
     },
 
-    /* =========================================================
+    /* ➕ TAREA SEPARADA: solo sonar-scanner */
+    
+{
+  "label": "🔎 Ejecutar SonarScanner",
+  "type": "shell",
+  "command": "sonar-scanner",
+  "args": [],
+  "options": {
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "SONAR_TOKEN": "65578836ceb48c5b7dab0d4a2fb2456611dab472"
+    }
+  },
+  "presentation": {
+    "reveal": "always",
+    "panel": "shared"
+  },
+  "problemMatcher": []
+},
+
+/* =========================================================
        🧩 GIT COMMANDS (todos juntos y ordenados)
        ========================================================= */
 
@@ -155,7 +176,6 @@
       "problemMatcher": []
     },
 
-    /* 🔥🔥🔥 TAREA ARREGLADA AQUÍ 🔥🔥🔥 */
     {
       "label": "Git | fusionar rama actual en main (si salió bien)",
       "type": "shell",
@@ -168,7 +188,6 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
-    /* FIN DE LA TAREA ARREGLADA ✔️ */
 
     {
       "label": "Git | commit rápido (si hay cambios)",
