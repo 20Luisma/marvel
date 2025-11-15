@@ -6,10 +6,10 @@ import {
 } from './main.js';
 
 // ====== Parámetros e init ======
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(globalThis.location.search);
 const albumId = params.get('albumId');
 const albumNameParam = params.get('albumName');
-if (!albumId || !albumNameParam) window.location.href = '/albums';
+if (!albumId || !albumNameParam) globalThis.location.href = '/albums';
 
 const albumNombre = albumNameParam || '';
 document.getElementById('album-meta').textContent = `Álbum: ${albumNombre}`;
@@ -63,8 +63,6 @@ function attachAutoResize(textarea) {
 }
 
 // ====== Utils ======
-
-const COLLAPSED_CONTENT_MAX_HEIGHT = '6rem';
 
 // ====== Event Bus + Activity (persistente por álbum) ======
 const heroesEventBus = new EventTarget();
@@ -246,14 +244,14 @@ function enterHeroFocus(card) {
 
   isHeroFocusMode = true;
   heroFocusCurrentCard = card;
-  heroFocusPreviousScroll = window.scrollY || document.documentElement.scrollTop || 0;
+  heroFocusPreviousScroll = globalThis.scrollY || document.documentElement.scrollTop || 0;
   heroFocusPreviousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-  document.body.setAttribute('data-hero-focus', 'true');
+  document.body.dataset.heroFocus = 'true';
   heroFocusBackdrop?.classList.remove('hidden');
   heroesControlsContainer?.classList.add('hidden');
 
   const cards = heroesGrid.querySelectorAll('.hero-card');
-  cards.forEach((node) => {
+  for (const node of cards) {
     if (node === card) {
       node.classList.add('hero-focus-panel');
       node.classList.remove('cursor-pointer');
@@ -264,15 +262,15 @@ function enterHeroFocus(card) {
       node.classList.add('hidden');
       node.setAttribute('aria-hidden', 'true');
     }
-  });
+  }
 
   requestAnimationFrame(() => {
     const rect = card.getBoundingClientRect();
-    const offset = Math.max(0, window.scrollY + rect.top - 80);
-    window.scrollTo({ top: offset, behavior: 'smooth' });
+    const offset = Math.max(0, globalThis.scrollY + rect.top - 80);
+    globalThis.scrollTo({ top: offset, behavior: 'smooth' });
   });
 
-  window.addEventListener('keydown', handleHeroFocusEscape);
+  globalThis.addEventListener('keydown', handleHeroFocusEscape);
 }
 
 function exitHeroFocus() {
@@ -282,12 +280,12 @@ function exitHeroFocus() {
 
   isHeroFocusMode = false;
   heroFocusCurrentCard = null;
-  document.body.removeAttribute('data-hero-focus');
+  delete document.body.dataset.heroFocus;
   heroFocusBackdrop?.classList.add('hidden');
   heroesControlsContainer?.classList.remove('hidden');
 
   const cards = heroesGrid.querySelectorAll('.hero-card');
-  cards.forEach((node) => {
+  for (const node of cards) {
     node.classList.remove('hero-focus-panel', 'is-editing');
     node.classList.remove('hidden');
     node.setAttribute('aria-hidden', 'false');
@@ -295,16 +293,16 @@ function exitHeroFocus() {
     actions?.classList.remove('hidden');
     const editForm = node.querySelector('.hero-edit-form');
     editForm?.classList.add('hidden');
-  });
+  }
 
-  window.scrollTo({ top: heroFocusPreviousScroll, behavior: 'smooth' });
+  globalThis.scrollTo({ top: heroFocusPreviousScroll, behavior: 'smooth' });
   heroFocusPreviousScroll = 0;
   if (heroFocusPreviousFocus) {
     heroFocusPreviousFocus.focus({ preventScroll: true });
     heroFocusPreviousFocus = null;
   }
 
-  window.removeEventListener('keydown', handleHeroFocusEscape);
+  globalThis.removeEventListener('keydown', handleHeroFocusEscape);
 }
 
 heroFocusBackdrop?.addEventListener('click', () => {
@@ -372,19 +370,19 @@ function buildHeroCard(hero) {
 
   const editNameInput = document.createElement('input');
   editNameInput.className = 'w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white';
-  editNameInput.setAttribute('data-edit-field', 'nombre');
+  editNameInput.dataset.editField = 'nombre';
   editNameInput.required = true;
 
   const editImageInput = document.createElement('input');
   editImageInput.className = 'w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white';
   editImageInput.type = 'url';
-  editImageInput.setAttribute('data-edit-field', 'imagen');
+  editImageInput.dataset.editField = 'imagen';
   editImageInput.required = true;
 
   const editContentTextarea = document.createElement('textarea');
   editContentTextarea.className = 'w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white resize-none min-h-[200px]';
   editContentTextarea.rows = 6;
-  editContentTextarea.setAttribute('data-edit-field', 'contenido');
+  editContentTextarea.dataset.editField = 'contenido';
 
   formFields.append(editNameInput, editImageInput, editContentTextarea);
 
@@ -564,11 +562,11 @@ function renderHeroes(){
   }
 
   heroesGrid.innerHTML = '';
-  heroesFiltered.forEach(hero=>{
+  for (const hero of heroesFiltered) {
     const card = buildHeroCard(hero);
     heroesGrid.appendChild(card);
     setupHeroEditForm(card, hero);
-  });
+  }
 }
 
 // ====== Borrado robusto ======
