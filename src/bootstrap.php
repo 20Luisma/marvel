@@ -52,7 +52,7 @@ return (static function (): array {
 
     $serviceConfigPath = $rootPath . '/config/services.php';
     /** @var array<string, mixed> $serviceConfig */
-    $serviceConfig = is_file($serviceConfigPath) ? require $serviceConfigPath : ['environments' => []];
+    $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
     $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
 
     $albumRepository = new FileAlbumRepository($rootPath . '/storage/albums.json');

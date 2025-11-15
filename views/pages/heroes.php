@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $pageTitle = 'Clean Marvel Album — Héroes';
 $additionalStyles = ['/assets/css/heroes.css'];
-require __DIR__ . '/../layouts/header.php';
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
   <!-- HERO / HEADER -->
@@ -20,7 +20,7 @@ require __DIR__ . '/../layouts/header.php';
       </div>
       <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
         <p id="album-meta" class="app-hero__meta flex-1 min-w-[14rem]"></p>
-        <?php require __DIR__ . '/../partials/top-actions.php'; ?>
+        <?php require_once __DIR__ . '/../partials/top-actions.php'; ?>
       </div>
     </div>
   </header>
@@ -115,4 +115,4 @@ require __DIR__ . '/../layouts/header.php';
 
 <?php
 $scripts = ['/assets/js/heroes.js'];
-require __DIR__ . '/../layouts/footer.php';
+require_once __DIR__ . '/../layouts/footer.php';

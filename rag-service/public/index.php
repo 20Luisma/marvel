@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = require __DIR__ . '/../src/bootstrap.php';
+$container = require_once __DIR__ . '/../src/bootstrap.php';
 
 /**
  * @return array<int, string>

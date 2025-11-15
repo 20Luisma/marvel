@@ -6,7 +6,7 @@ use Src\Shared\Http\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = require __DIR__ . '/../src/bootstrap.php';
+$container = require_once __DIR__ . '/../src/bootstrap.php';
 
 if (!function_exists('route')) {
     /**
