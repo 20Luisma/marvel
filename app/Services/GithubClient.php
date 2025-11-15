@@ -75,11 +75,9 @@ final class GithubClient
         }
 
         $range = $this->buildDateRange($from, $to);
-        $payload = $range === null
+        return $range === null
             ? $this->invalidRangePayload()
             : $this->buildActivityPayload($range[0], $range[1]);
-
-        return $payload;
     }
 
     /**

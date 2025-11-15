@@ -51,38 +51,43 @@ final class OpenAIChatService
     private function requestChatCompletion(array $messages): array
     {
         $apiKey = $this->resolveApiKey();
+        $error = null;
+        $content = null;
+
         if ($apiKey === null) {
-            return $this->failureResult('⚠️ No se ha configurado OPENAI_API_KEY en el entorno.');
+            $error = '⚠️ No se ha configurado OPENAI_API_KEY en el entorno.';
+        } else {
+            $payload = $this->encodePayload($this->resolveModel(), $messages);
+            if ($payload === null) {
+                $error = '⚠️ No se pudo preparar la petición para OpenAI.';
+            } else {
+                $handle = $this->initializeCurlHandle($apiKey, $payload);
+                if ($handle === null) {
+                    $error = '⚠️ No se pudo inicializar la petición a OpenAI.';
+                } else {
+                    $execution = $this->executeCurl($handle);
+                    if ($execution['response'] === null) {
+                        $errorMessage = $execution['error'] !== '' ? $execution['error'] : 'respuesta vacía';
+                        $error = '⚠️ Error al llamar a OpenAI: ' . $errorMessage;
+                    } elseif ($execution['status'] >= 400) {
+                        $error = '⚠️ Error al llamar a OpenAI. Código: ' . $execution['status'];
+                    } else {
+                        $data = $this->decodeResponse($execution['response']);
+                        if ($data === null) {
+                            $error = '⚠️ OpenAI devolvió un formato inválido.';
+                        } else {
+                            $content = $this->extractContent($data);
+                            if ($content === null) {
+                                $error = '⚠️ OpenAI devolvió un formato inesperado.';
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        $payload = $this->encodePayload($this->resolveModel(), $messages);
-        if ($payload === null) {
-            return $this->failureResult('⚠️ No se pudo preparar la petición para OpenAI.');
-        }
-
-        $handle = $this->initializeCurlHandle($apiKey, $payload);
-        if ($handle === null) {
-            return $this->failureResult('⚠️ No se pudo inicializar la petición a OpenAI.');
-        }
-
-        $execution = $this->executeCurl($handle);
-        if ($execution['response'] === null) {
-            $error = $execution['error'] !== '' ? $execution['error'] : 'respuesta vacía';
-            return $this->failureResult('⚠️ Error al llamar a OpenAI: ' . $error);
-        }
-
-        if ($execution['status'] >= 400) {
-            return $this->failureResult('⚠️ Error al llamar a OpenAI. Código: ' . $execution['status']);
-        }
-
-        $data = $this->decodeResponse($execution['response']);
-        if ($data === null) {
-            return $this->failureResult('⚠️ OpenAI devolvió un formato inválido.');
-        }
-
-        $content = $this->extractContent($data);
-        if ($content === null) {
-            return $this->failureResult('⚠️ OpenAI devolvió un formato inesperado.');
+        if ($error !== null) {
+            return $this->failureResult($error);
         }
 
         return [
