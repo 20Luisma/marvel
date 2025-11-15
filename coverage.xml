@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1763217431">
-  <project timestamp="1763217431">
+<coverage generated="1763221878">
+  <project timestamp="1763221878">
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/AI/OpenAIComicGenerator.php">
       <class name="App\AI\OpenAIComicGenerator" namespace="global">
         <metrics complexity="32" methods="5" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="124" coveredstatements="86" elements="129" coveredelements="87"/>
@@ -1936,6 +1936,29 @@
       <line num="55" type="stmt" count="4"/>
       <metrics loc="59" ncloc="56" classes="1" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="19" coveredstatements="16" elements="23" coveredelements="18"/>
     </file>
+    <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Services/SonarMetricsService.php">
+      <class name="App\Services\SonarMetricsService" namespace="global">
+        <metrics complexity="3" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="14" elements="17" coveredelements="15"/>
+      </class>
+      <line num="13" type="method" name="__construct" visibility="public" complexity="2" crap="2.15" count="1"/>
+      <line num="15" type="stmt" count="1"/>
+      <line num="16" type="stmt" count="0"/>
+      <line num="19" type="stmt" count="1"/>
+      <line num="34" type="method" name="getMetrics" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="36" type="stmt" count="1"/>
+      <line num="37" type="stmt" count="1"/>
+      <line num="39" type="stmt" count="1"/>
+      <line num="40" type="stmt" count="1"/>
+      <line num="41" type="stmt" count="1"/>
+      <line num="42" type="stmt" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="44" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="46" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
+      <line num="48" type="stmt" count="1"/>
+      <metrics loc="51" ncloc="39" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="14" elements="17" coveredelements="15"/>
+    </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Domain/Bus/DomainEvent.php">
       <class name="App\Shared\Domain\Bus\DomainEvent" namespace="global">
         <metrics complexity="5" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="5" elements="12" coveredelements="8"/>
@@ -2372,6 +2395,6 @@
       <line num="139" type="stmt" count="1"/>
       <metrics loc="140" ncloc="138" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="78" coveredstatements="76" elements="78" coveredelements="76"/>
     </file>
-    <metrics files="66" loc="4781" ncloc="4584" classes="59" methods="275" coveredmethods="174" conditionals="0" coveredconditionals="0" statements="1721" coveredstatements="1162" elements="1996" coveredelements="1336"/>
+    <metrics files="67" loc="4832" ncloc="4623" classes="60" methods="277" coveredmethods="175" conditionals="0" coveredconditionals="0" statements="1736" coveredstatements="1176" elements="2013" coveredelements="1351"/>
   </project>
 </coverage>
