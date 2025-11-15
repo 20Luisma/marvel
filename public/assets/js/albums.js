@@ -3,7 +3,193 @@ import {
   formatDateTime,
   normalize,
   showMessage
-} from '/assets/js/main.js';
+} from './main.js';
+
+const clearFileInput = (input) => {
+  if (input) {
+    input.value = '';
+  }
+};
+
+function formatNumber(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return '0';
+  return numeric.toLocaleString('es-ES');
+}
+
+function formatSeconds(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return '0.000s';
+  return `${numeric.toFixed(3)}s`;
+}
+
+const getWindowObject = () => (typeof globalThis !== 'undefined' ? globalThis.window ?? undefined : undefined);
+
+const shouldReduceMotion = () => Boolean(
+  getWindowObject()
+    ?.matchMedia?.('(prefers-reduced-motion: reduce)')
+    ?.matches
+);
+
+const COLLAPSED_TESTS_BUTTON_CLASSES = [
+  'bg-slate-800/80',
+  'border-slate-500/40',
+  'text-slate-200',
+  'hover:bg-slate-700/60',
+  'hover:border-slate-400/40',
+];
+
+const EXPANDED_TESTS_BUTTON_CLASSES = [
+  'bg-emerald-400/15',
+  'border-emerald-300/40',
+  'text-emerald-100',
+  'hover:bg-emerald-300/20',
+  'hover:border-emerald-200/40',
+];
+
+const TESTS_PANEL_ANIMATION_DURATION = 320;
+
+const applyToggleAccessibility = (toggle, isCollapsed) => {
+  toggle?.setAttribute('aria-expanded', String(!isCollapsed));
+};
+
+const configureToggleTransitions = (toggle, icon, reduceMotion) => {
+  const toggleClasses = ['transition-colors', 'duration-150'];
+  const iconClasses = ['transition-transform', 'duration-150'];
+
+  if (reduceMotion) {
+    toggle?.classList.remove(...toggleClasses);
+    icon?.classList.remove(...iconClasses);
+    return;
+  }
+
+  toggle?.classList.add(...toggleClasses);
+  icon?.classList.add(...iconClasses);
+};
+
+const updateToggleButtonClasses = (toggle, isCollapsed) => {
+  if (!toggle) {
+    return;
+  }
+
+  if (isCollapsed) {
+    toggle.classList.remove(...EXPANDED_TESTS_BUTTON_CLASSES);
+    toggle.classList.add(...COLLAPSED_TESTS_BUTTON_CLASSES);
+  } else {
+    toggle.classList.remove(...COLLAPSED_TESTS_BUTTON_CLASSES);
+    toggle.classList.add(...EXPANDED_TESTS_BUTTON_CLASSES);
+  }
+};
+
+const updateToggleLabelAndIcon = (labelEl, iconEl, isCollapsed) => {
+  if (labelEl) {
+    labelEl.textContent = isCollapsed ? 'Mostrar tests' : 'Ocultar tests';
+  }
+
+  if (!iconEl) {
+    return;
+  }
+
+  if (isCollapsed) {
+    iconEl.classList.add('rotate-90', 'opacity-70');
+    iconEl.classList.remove('rotate-0', 'opacity-90');
+  } else {
+    iconEl.classList.remove('rotate-90', 'opacity-70');
+    iconEl.classList.add('rotate-0', 'opacity-90');
+  }
+};
+
+const applyImmediateTestsBodyState = (bodyEl, isCollapsed) => {
+  bodyEl.style.transition = '';
+  bodyEl.style.overflow = '';
+
+  if (isCollapsed) {
+    bodyEl.style.display = 'none';
+    bodyEl.style.height = '';
+    bodyEl.style.opacity = '0';
+    return;
+  }
+
+  bodyEl.style.display = 'block';
+  bodyEl.style.height = '';
+  bodyEl.style.opacity = '1';
+};
+
+const collapseTestsBody = (bodyEl) => {
+  const runtimeWindow = getWindowObject();
+  const currentHeight = bodyEl.getBoundingClientRect().height || bodyEl.scrollHeight;
+  bodyEl.style.display = 'block';
+  bodyEl.style.overflow = 'hidden';
+  bodyEl.style.height = `${currentHeight}px`;
+  bodyEl.style.opacity = '1';
+
+  const raf = runtimeWindow?.requestAnimationFrame ?? ((cb) => setTimeout(cb, 16));
+  raf(() => {
+    bodyEl.style.height = '0px';
+    bodyEl.style.opacity = '0';
+  });
+
+  const onCollapseEnd = (event) => {
+    if (event.target !== bodyEl || event.propertyName !== 'height') {
+      return;
+    }
+    bodyEl.removeEventListener('transitionend', onCollapseEnd);
+    bodyEl.style.display = 'none';
+    bodyEl.style.height = '';
+    bodyEl.style.opacity = '0';
+    bodyEl.style.overflow = '';
+    bodyEl.style.transition = '';
+  };
+
+  bodyEl.addEventListener('transitionend', onCollapseEnd);
+};
+
+const expandTestsBody = (bodyEl) => {
+  const runtimeWindow = getWindowObject();
+  bodyEl.style.display = 'block';
+  const targetHeight = bodyEl.scrollHeight;
+  bodyEl.style.overflow = 'hidden';
+  bodyEl.style.height = '0px';
+  bodyEl.style.opacity = '0';
+
+  const raf = runtimeWindow?.requestAnimationFrame ?? ((cb) => setTimeout(cb, 16));
+  raf(() => {
+    bodyEl.style.height = `${targetHeight}px`;
+    bodyEl.style.opacity = '1';
+  });
+
+  const onExpandEnd = (event) => {
+    if (event.target !== bodyEl || event.propertyName !== 'height') {
+      return;
+    }
+    bodyEl.removeEventListener('transitionend', onExpandEnd);
+    bodyEl.style.height = '';
+    bodyEl.style.opacity = '1';
+    bodyEl.style.overflow = '';
+    bodyEl.style.transition = '';
+  };
+
+  bodyEl.addEventListener('transitionend', onExpandEnd);
+};
+
+const handleTestsBodyAnimation = (bodyEl, isCollapsed, animate) => {
+  if (!bodyEl) {
+    return;
+  }
+
+  if (!animate) {
+    applyImmediateTestsBodyState(bodyEl, isCollapsed);
+    return;
+  }
+
+  bodyEl.style.transition = `height ${TESTS_PANEL_ANIMATION_DURATION}ms ease, opacity ${TESTS_PANEL_ANIMATION_DURATION}ms ease`;
+
+  if (isCollapsed) {
+    collapseTestsBody(bodyEl);
+  } else {
+    expandTestsBody(bodyEl);
+  }
+};
 
 const initAlbumsPage = () => {
   // Refs
@@ -106,24 +292,12 @@ const initAlbumsPage = () => {
   const albumEventBus = new EventTarget();
 
   // Utils
-  function clearFileInput(input) { input.value = ''; }
-
-  function formatNumber(value) {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return '0';
-    return numeric.toLocaleString('es-ES');
-  }
-
-  function formatSeconds(value) {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return '0.000s';
-    return `${numeric.toFixed(3)}s`;
-  }
 
   let equalizeAlbumCardsRaf = null;
 
   function equalizeAlbumCardHeights() {
-    if (typeof window === 'undefined') {
+    const runtimeWindow = getWindowObject();
+    if (!runtimeWindow) {
       return;
     }
 
@@ -132,37 +306,38 @@ const initAlbumsPage = () => {
       return;
     }
 
-    cards.forEach((card) => {
+    for (const card of cards) {
       card.style.minHeight = '';
-    });
+    }
 
     let maxHeight = 0;
-    cards.forEach((card) => {
+    for (const card of cards) {
       const height = card.offsetHeight;
       if (height > maxHeight) {
         maxHeight = height;
       }
-    });
+    }
 
     if (maxHeight === 0) {
       return;
     }
 
-    cards.forEach((card) => {
+    for (const card of cards) {
       card.style.minHeight = `${maxHeight}px`;
-    });
+    }
   }
 
   function scheduleAlbumCardEqualization() {
-    if (typeof window === 'undefined') {
+    const runtimeWindow = getWindowObject();
+    if (!runtimeWindow) {
       return;
     }
 
     if (equalizeAlbumCardsRaf !== null) {
-      cancelAnimationFrame(equalizeAlbumCardsRaf);
+      runtimeWindow.cancelAnimationFrame(equalizeAlbumCardsRaf);
     }
 
-    equalizeAlbumCardsRaf = requestAnimationFrame(() => {
+    equalizeAlbumCardsRaf = runtimeWindow.requestAnimationFrame(() => {
       equalizeAlbumCardsRaf = null;
       equalizeAlbumCardHeights();
     });
@@ -244,7 +419,7 @@ const initAlbumsPage = () => {
       { label: 'Duración total', value: formatSeconds(result?.duration ?? summary.time ?? 0), accent: 'text-slate-200' },
     ];
 
-    rows.forEach((row) => {
+    for (const row of rows) {
       const card = document.createElement('div');
       card.className = 'rounded-xl bg-slate-800/50 border border-slate-700/60 px-4 py-3 flex flex-col gap-1';
       const labelEl = document.createElement('span');
@@ -255,7 +430,7 @@ const initAlbumsPage = () => {
       valueEl.textContent = row.value;
       card.append(labelEl, valueEl);
       testSummaryGrid.appendChild(card);
-    });
+    }
 
     renderTestBreakdown(result?.statusCounts ?? {});
     renderTestResults(result?.tests ?? []);
@@ -273,7 +448,8 @@ const initAlbumsPage = () => {
     }
 
     const fragment = document.createDocumentFragment();
-    tests.slice(0, 200).forEach((test) => {
+    const limitedTests = tests.slice(0, 200);
+    for (const test of limitedTests) {
       const status = test.status ?? 'info';
       const style = TEST_STATUS_STYLES[status] ?? TEST_STATUS_STYLES.info;
       const item = document.createElement('article');
@@ -317,7 +493,7 @@ const initAlbumsPage = () => {
       }
 
       fragment.appendChild(item);
-    });
+    }
 
     testsTbody.appendChild(fragment);
   }
@@ -329,120 +505,25 @@ const initAlbumsPage = () => {
 
     testsPanelCollapsed = Boolean(collapsed);
     const targetCollapsed = testsPanelCollapsed;
-    testsToggle.setAttribute('aria-expanded', String(!targetCollapsed));
     const toggleLabel = testsToggle.querySelector('.tests-toggle-label');
     const toggleIcon = testsToggle.querySelector('.tests-toggle-icon');
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (prefersReducedMotion) {
-      testsToggle.classList.remove('transition-colors', 'duration-150');
-      toggleIcon?.classList.remove('transition-transform', 'duration-150');
-    } else {
-      testsToggle.classList.add('transition-colors', 'duration-150');
-      toggleIcon?.classList.add('transition-transform', 'duration-150');
-    }
-
-    const collapsedButtonClasses = ['bg-slate-800/80', 'border-slate-500/40', 'text-slate-200', 'hover:bg-slate-700/60', 'hover:border-slate-400/40'];
-    const expandedButtonClasses = ['bg-emerald-400/15', 'border-emerald-300/40', 'text-emerald-100', 'hover:bg-emerald-300/20', 'hover:border-emerald-200/40'];
-
-    if (targetCollapsed) {
-      testsToggle.classList.remove(...expandedButtonClasses);
-      testsToggle.classList.add(...collapsedButtonClasses);
-    } else {
-      testsToggle.classList.remove(...collapsedButtonClasses);
-      testsToggle.classList.add(...expandedButtonClasses);
-    }
-
-    if (toggleLabel) {
-      toggleLabel.textContent = targetCollapsed ? 'Mostrar tests' : 'Ocultar tests';
-    }
-    if (toggleIcon) {
-      if (targetCollapsed) {
-        toggleIcon.classList.add('rotate-90');
-        toggleIcon.classList.remove('rotate-0');
-        toggleIcon.classList.remove('opacity-90');
-        toggleIcon.classList.add('opacity-70');
-      } else {
-        toggleIcon.classList.remove('rotate-90');
-        toggleIcon.classList.add('rotate-0');
-        toggleIcon.classList.remove('opacity-70');
-        toggleIcon.classList.add('opacity-90');
-      }
-    }
-
-    if (!animate) {
-      testsBody.style.transition = '';
-      testsBody.style.overflow = '';
-      if (targetCollapsed) {
-        testsBody.style.display = 'none';
-        testsBody.style.height = '';
-        testsBody.style.opacity = '0';
-      } else {
-        testsBody.style.display = 'block';
-        testsBody.style.height = '';
-        testsBody.style.opacity = '1';
-      }
-      return;
-    }
-
-    const duration = 320;
-    testsBody.style.transition = `height ${duration}ms ease, opacity ${duration}ms ease`;
-
-    if (targetCollapsed) {
-      const currentHeight = testsBody.getBoundingClientRect().height || testsBody.scrollHeight;
-      testsBody.style.display = 'block';
-      testsBody.style.overflow = 'hidden';
-      testsBody.style.height = `${currentHeight}px`;
-      testsBody.style.opacity = '1';
-      requestAnimationFrame(() => {
-        testsBody.style.height = '0px';
-        testsBody.style.opacity = '0';
-      });
-      const onCollapseEnd = (event) => {
-        if (event.target !== testsBody || event.propertyName !== 'height') {
-          return;
-        }
-        testsBody.removeEventListener('transitionend', onCollapseEnd);
-        testsBody.style.display = 'none';
-        testsBody.style.height = '';
-        testsBody.style.opacity = '0';
-        testsBody.style.overflow = '';
-        testsBody.style.transition = '';
-      };
-      testsBody.addEventListener('transitionend', onCollapseEnd);
-    } else {
-      testsBody.style.display = 'block';
-      const targetHeight = testsBody.scrollHeight;
-      testsBody.style.overflow = 'hidden';
-      testsBody.style.height = '0px';
-      testsBody.style.opacity = '0';
-      requestAnimationFrame(() => {
-        testsBody.style.height = `${targetHeight}px`;
-        testsBody.style.opacity = '1';
-      });
-      const onExpandEnd = (event) => {
-        if (event.target !== testsBody || event.propertyName !== 'height') {
-          return;
-        }
-        testsBody.removeEventListener('transitionend', onExpandEnd);
-        testsBody.style.height = '';
-        testsBody.style.opacity = '1';
-        testsBody.style.overflow = '';
-        testsBody.style.transition = '';
-      };
-      testsBody.addEventListener('transitionend', onExpandEnd);
-    }
+    applyToggleAccessibility(testsToggle, targetCollapsed);
+    configureToggleTransitions(testsToggle, toggleIcon, shouldReduceMotion());
+    updateToggleButtonClasses(testsToggle, targetCollapsed);
+    updateToggleLabelAndIcon(toggleLabel, toggleIcon, targetCollapsed);
+    handleTestsBodyAnimation(testsBody, targetCollapsed, animate);
 
     scheduleAlbumCardEqualization();
     if (animate) {
-      setTimeout(scheduleAlbumCardEqualization, duration + 20);
+      setTimeout(scheduleAlbumCardEqualization, TESTS_PANEL_ANIMATION_DURATION + 20);
     }
   }
 
   function toggleTestsPanel(forceState, { animate = true } = {}) {
     const desiredState = typeof forceState === 'boolean' ? forceState : !testsPanelCollapsed;
     try {
-      window.localStorage?.setItem(TESTS_PANEL_STORAGE_KEY, String(desiredState));
+      getWindowObject()?.localStorage?.setItem(TESTS_PANEL_STORAGE_KEY, String(desiredState));
     } catch (_) {
       // ignore storage issues
     }
@@ -451,7 +532,7 @@ const initAlbumsPage = () => {
 
   let storedTestsPanelState = null;
   try {
-    storedTestsPanelState = window.localStorage?.getItem(TESTS_PANEL_STORAGE_KEY);
+    storedTestsPanelState = getWindowObject()?.localStorage?.getItem(TESTS_PANEL_STORAGE_KEY);
   } catch (_) {
     storedTestsPanelState = null;
   }
@@ -738,7 +819,10 @@ const initAlbumsPage = () => {
         return;
       }
       const params = new URLSearchParams({ albumId, albumName: normalizedAlbum.nombre });
-      window.location.href = `/heroes?${params.toString()}`;
+      const targetLocation = getWindowObject()?.location ?? globalThis.location ?? null;
+      if (targetLocation) {
+        targetLocation.href = `/heroes?${params.toString()}`;
+      }
     }
 
     const card = document.createElement('article');
@@ -871,7 +955,9 @@ const initAlbumsPage = () => {
       isFocusEditMode = true;
       focusEditCurrentCard = card;
       previousFocusElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      focusRestoreScroll = window.scrollY || document.documentElement.scrollTop || 0;
+      const runtimeWindow = getWindowObject();
+      const scrollTop = document?.documentElement?.scrollTop ?? 0;
+      focusRestoreScroll = runtimeWindow?.scrollY ?? scrollTop ?? 0;
       document.body.setAttribute('data-edit-focus', 'true');
       focusBackdrop?.classList.remove('hidden');
       testsBox?.classList.add('hidden');
@@ -892,12 +978,14 @@ const initAlbumsPage = () => {
 
       requestAnimationFrame(() => {
         const rect = card.getBoundingClientRect();
-        const offset = window.scrollY + rect.top - 80;
-        window.scrollTo({ top: offset, behavior: 'smooth' });
+        const runtimeWindow = getWindowObject();
+        const baseScroll = runtimeWindow?.scrollY ?? 0;
+        const offset = baseScroll + rect.top - 80;
+        runtimeWindow?.scrollTo?.({ top: offset, behavior: 'smooth' });
         scheduleAlbumCardEqualization();
       });
 
-      window.addEventListener('keydown', handleFocusEscape);
+      getWindowObject()?.addEventListener?.('keydown', handleFocusEscape);
     }
 
     function exitEditFocusMode() {
@@ -919,7 +1007,7 @@ const initAlbumsPage = () => {
         node.classList.add('cursor-pointer');
       });
 
-      window.scrollTo({ top: focusRestoreScroll, behavior: 'smooth' });
+      getWindowObject()?.scrollTo?.({ top: focusRestoreScroll, behavior: 'smooth' });
       scheduleAlbumCardEqualization();
 
       if (previousFocusElement) {
@@ -927,7 +1015,7 @@ const initAlbumsPage = () => {
         previousFocusElement = null;
       }
 
-      window.removeEventListener('keydown', handleFocusEscape);
+      getWindowObject()?.removeEventListener?.('keydown', handleFocusEscape);
     }
 
     // Listeners del editor
@@ -1229,7 +1317,7 @@ const initAlbumsPage = () => {
   refreshButton?.addEventListener('click', fetchAlbums);
   testRunButton?.addEventListener('click', runPhpUnitSuite);
   testsToggle?.addEventListener('click', () => toggleTestsPanel());
-  window.addEventListener('resize', debounce(scheduleAlbumCardEqualization, 150));
+  getWindowObject()?.addEventListener?.('resize', debounce(scheduleAlbumCardEqualization, 150));
 
   let isFocusEditMode = false;
   let focusEditCurrentCard = null;

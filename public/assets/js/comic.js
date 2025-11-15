@@ -1,4 +1,8 @@
-import { formatDateTime, showMessage } from '/assets/js/main.js';
+import { formatDateTime, showMessage } from './main.js';
+
+const getWindowObject = () => (typeof globalThis !== 'undefined' ? globalThis.window ?? undefined : undefined);
+
+const runtimeWindow = getWindowObject();
 
 const heroGrid = document.getElementById('comic-heroes-grid');
 const heroSearchInput = document.getElementById('comic-hero-search');
@@ -100,8 +104,8 @@ let serviceConfig = initialServiceConfig;
 let serviceLabels = computeUiLabels(initialServiceConfig);
 let serviceConfigPromise = null;
 
-if (typeof window !== 'undefined') {
-  window.__CLEAN_MARVEL_SERVICES__ = {
+if (runtimeWindow) {
+  runtimeWindow.__CLEAN_MARVEL_SERVICES__ = {
     config: serviceConfig,
     labels: serviceLabels
   };
@@ -128,8 +132,8 @@ function sanitizeTtsText(rawText) {
     return '';
   }
   return rawText
-    .replace(/\r?\n+/g, '. ')
-    .replace(/\s+/g, ' ')
+    .replaceAll(/\r?\n+/g, '. ')
+    .replaceAll(/\s+/g, ' ')
     .trim();
 }
 
@@ -322,8 +326,8 @@ function mergeServiceConfig(rawPayload) {
 
   serviceLabels = computeUiLabels(serviceConfig);
 
-  if (typeof window !== 'undefined') {
-    window.__CLEAN_MARVEL_SERVICES__ = {
+  if (runtimeWindow) {
+    runtimeWindow.__CLEAN_MARVEL_SERVICES__ = {
       config: serviceConfig,
       labels: serviceLabels
     };
@@ -414,7 +418,7 @@ function escapeSelector(value) {
   if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
     return CSS.escape(value);
   }
-  return String(value).replace(/([^\w-])/g, '\\$1');
+  return String(value).replaceAll(/([^\w-])/g, '\\$1');
 }
 
 let isGeneratingComic = false;
@@ -498,8 +502,8 @@ function hideRagResultSection() {
   if (heroSelectionSection) {
     heroSelectionSection.classList.remove('hidden');
   }
-  if (typeof window !== 'undefined' && window.RAGMSC) {
-    window.RAGMSC.hidePanel();
+  if (runtimeWindow?.RAGMSC) {
+    runtimeWindow.RAGMSC.hidePanel();
   }
 }
 
@@ -585,7 +589,8 @@ function renderRagResult(answer, contexts, heroIds) {
     const excerpt = document.createElement('p');
     excerpt.className = 'rag-hero-card__excerpt';
     const rawContent = typeof hero.contenido === 'string' ? hero.contenido : '';
-    excerpt.textContent = rawContent !== '' ? rawContent.replace(/\s+/g, ' ').trim().slice(0, 220) + (rawContent.length > 220 ? '…' : '') : 'Sin descripción disponible.';
+    const normalizedContent = rawContent !== '' ? rawContent.replaceAll(/\s+/g, ' ').trim() : '';
+    excerpt.textContent = normalizedContent !== '' ? normalizedContent.slice(0, 220) + (rawContent.length > 220 ? '…' : '') : 'Sin descripción disponible.';
     body.appendChild(excerpt);
 
     card.appendChild(body);
@@ -594,8 +599,8 @@ function renderRagResult(answer, contexts, heroIds) {
 }
 
 function hideCommunicationPanel() {
-  if (window.MSC && typeof window.MSC.hidePanel === 'function') {
-    window.MSC.hidePanel();
+  if (runtimeWindow?.MSC && typeof runtimeWindow.MSC.hidePanel === 'function') {
+    runtimeWindow.MSC.hidePanel();
   }
 }
 
@@ -953,8 +958,8 @@ function updateSelectedHeroesUI() {
   selectedHeroesCount.textContent = entries.length.toString();
   const heroIds = entries.map(([heroId]) => heroId);
   selectedHeroesInput.value = JSON.stringify(heroIds);
-  if (typeof window !== 'undefined') {
-    window.selectedHeroes = heroIds;
+  if (runtimeWindow) {
+    runtimeWindow.selectedHeroes = heroIds;
   }
 }
 
@@ -1048,7 +1053,11 @@ function applyHeroFilter() {
 }
 
 heroSearchInput.addEventListener('input', () => {
-  window.requestAnimationFrame(applyHeroFilter);
+  if (runtimeWindow?.requestAnimationFrame) {
+    runtimeWindow.requestAnimationFrame(applyHeroFilter);
+  } else {
+    applyHeroFilter();
+  }
 });
 
 function resetSelections(options = {}) {
@@ -1090,9 +1099,9 @@ comicForm.addEventListener('submit', async (event) => {
   showHeroSelectionWarning('');
 
   // mostrar HUD desde el inicio
-  if (window.MSC) {
-    window.MSC.showPanel();
-    window.MSC.setStep('process');
+  if (runtimeWindow?.MSC) {
+    runtimeWindow.MSC.showPanel();
+    runtimeWindow.MSC.setStep('process');
   }
 
   setGeneratingState(true);
@@ -1118,9 +1127,9 @@ comicForm.addEventListener('submit', async (event) => {
     }
 
     /* 🔵 3) AQUÍ metemos el delay para que se vean los pasos */
-    if (window.MSC) {
-      window.MSC.setStep('return');
-      setTimeout(() => window.MSC && window.MSC.markSuccess(), 350);
+    if (runtimeWindow?.MSC) {
+      runtimeWindow.MSC.setStep('return');
+      setTimeout(() => runtimeWindow?.MSC?.markSuccess?.(), 350);
     }
 
     renderGeneratedComic(payload.datos);
@@ -1131,10 +1140,7 @@ comicForm.addEventListener('submit', async (event) => {
     showMessage(comicMessage, '¡Cómic generado con éxito!');
   } catch (error) {
     console.error(error);
-    if (window.MSC) {
-      const errorMessage = error instanceof Error ? error.message : undefined;
-      window.MSC.markError(errorMessage);
-    }
+    runtimeWindow?.MSC?.markError?.(error instanceof Error ? error.message : undefined);
     showMessage(comicMessage, error instanceof Error ? error.message : 'No se pudo generar el cómic.', true);
   } finally {
     setGeneratingState(false);
@@ -1167,9 +1173,9 @@ async function compareSelectedHeroesRag() {
   setComparingRagState(true);
   updateRagResult('⏳ Comparando héroes con RAG...');
   showRagStatus('⏳ Comparando héroes con RAG...');
-  if (typeof window !== 'undefined' && window.RAGMSC) {
-    window.RAGMSC.showPanel();
-    window.RAGMSC.setStep('process');
+  if (runtimeWindow?.RAGMSC) {
+    runtimeWindow.RAGMSC.showPanel();
+    runtimeWindow.RAGMSC.setStep('process');
   }
 
   try {
@@ -1186,8 +1192,8 @@ async function compareSelectedHeroesRag() {
       throw new Error('RAG request failed');
     }
 
-    if (typeof window !== 'undefined' && window.RAGMSC) {
-      window.RAGMSC.setStep('relay');
+    if (runtimeWindow?.RAGMSC) {
+      runtimeWindow.RAGMSC.setStep('relay');
     }
 
     const payload = await response.json().catch(() => null);
@@ -1202,9 +1208,9 @@ async function compareSelectedHeroesRag() {
     } else {
       updateRagResult('');
       renderRagResult(cleanRagAnswer(answer), contexts, selectedIds);
-      if (typeof window !== 'undefined' && window.RAGMSC) {
-        window.RAGMSC.setStep('return');
-        setTimeout(() => window.RAGMSC && window.RAGMSC.markSuccess(`✅ Comparación lista desde ${ragHostLabel}.`), 350);
+      if (runtimeWindow?.RAGMSC) {
+        runtimeWindow.RAGMSC.setStep('return');
+        setTimeout(() => runtimeWindow?.RAGMSC?.markSuccess?.(`✅ Comparación lista desde ${ragHostLabel}.`), 350);
       }
     }
   } catch (error) {
@@ -1212,10 +1218,10 @@ async function compareSelectedHeroesRag() {
     updateRagResult('❌ Error al consultar el RAG.');
     showRagStatus('❌ Error al consultar el RAG.');
     hideRagResultSection();
-    if (typeof window !== 'undefined' && window.RAGMSC) {
+    if (runtimeWindow?.RAGMSC) {
       const message = error instanceof Error ? error.message : undefined;
       const defaultMessage = `❌ Error consultando servicio RAG (${ragHostLabel}).`;
-      window.RAGMSC.markError(message || defaultMessage);
+      runtimeWindow.RAGMSC.markError?.(message || defaultMessage);
     }
   } finally {
     setComparingRagState(false);
@@ -1257,8 +1263,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(() => {});
 });
 
-if (typeof window !== 'undefined') {
-  window.selectedHeroes = window.selectedHeroes ?? [];
+if (runtimeWindow) {
+  runtimeWindow.selectedHeroes = runtimeWindow.selectedHeroes ?? [];
 }
 
 if (ragCompareButton) {
@@ -1272,7 +1278,7 @@ if (closeRagResultButton) {
   });
 }
 function cleanRagAnswer(answer) {
-  const normalised = answer.replace(/\r\n/g, '\n');
+  const normalised = answer.replaceAll(/\r\n/g, '\n');
 
   const segments = normalised.split(/\n\s*\n/);
   if (segments.length <= 1) {
