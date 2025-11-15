@@ -147,6 +147,24 @@ a:hover {
   outline-offset: 3px;
 }
 
+.app-hero__cta--github.btn-readme {
+  background: #102040;
+  border-color: #3b82f6;
+  color: #f8fafc;
+  box-shadow: none;
+}
+
+.app-hero__cta--github.btn-readme:hover {
+  background: #1d3a8a;
+  box-shadow: none;
+}
+
+.app-hero__cta--github.btn-readme.is-active,
+.app-hero__cta--github.btn-readme[aria-current="page"] {
+  background: #21429c;
+  box-shadow: none;
+}
+
 .app-hero__cta--flat.is-active,
 .app-hero__cta--flat[aria-current="page"] {
   box-shadow: none;
