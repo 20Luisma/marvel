@@ -69,101 +69,17 @@ final class GithubClient
      */
     public function fetchActivity(string $from, string $to): array
     {
-        if ($this->apiKey === '') {
-            return [
-                'error'  => 'Falta GITHUB_API_KEY en .env',
-                'status' => 500,
-            ];
+        $missingKeyPayload = $this->guardMissingApiKey();
+        if ($missingKeyPayload !== null) {
+            return $missingKeyPayload;
         }
 
         $range = $this->buildDateRange($from, $to);
-        if ($range === null) {
-            return [
-                'error'  => 'Rango de fechas inválido.',
-                'status' => 400,
-            ];
-        }
+        $payload = $range === null
+            ? $this->invalidRangePayload()
+            : $this->buildActivityPayload($range[0], $range[1]);
 
-        [$fromDate, $toDate] = $range;
-
-        $url      = sprintf(self::BASE_URL . self::PULLS_PATH, self::OWNER, self::REPO);
-        $response = $this->requestGithub($url);
-
-        if (!$response['ok'] || !is_array($response['decoded'])) {
-            return $this->errorPayloadFromResponse(
-                $response,
-                'No se pudo obtener la actividad de PRs desde GitHub.'
-            );
-        }
-
-        $entries = [];
-        foreach ($response['decoded'] as $pr) {
-            if (!is_array($pr)) {
-                continue;
-            }
-
-            $createdAtRaw = $pr['created_at'] ?? null;
-            if (!is_string($createdAtRaw)) {
-                continue;
-            }
-
-            try {
-                $createdAt = new DateTimeImmutable($createdAtRaw);
-            } catch (\Throwable $e) {
-                continue;
-            }
-
-            if ($createdAt < $fromDate || $createdAt > $toDate) {
-                continue;
-            }
-
-            $number = (int) ($pr['number'] ?? 0);
-
-            // 🔢 Commits y reviews por PR
-            $commitCount           = $this->countCommitsForPr($number);
-            [$reviewCount, $reviewers] = $this->summarizeReviewsForPr($number);
-
-            $title  = sprintf('#%d — %s', $number, $pr['title'] ?? 'Pull Request');
-            $author = $pr['user']['login'] ?? 'desconocido';
-            $state  = strtoupper((string) ($pr['state'] ?? ''));
-
-            $subtitle = sprintf(
-                'Autor: %s · Estado: %s · Creado: %s',
-                $author,
-                $state !== '' ? $state : 'N/D',
-                $createdAtRaw
-            );
-
-            $metaLine = sprintf(
-                'Commits: %d · Reviews: %d%s',
-                $commitCount,
-                $reviewCount,
-                $reviewCount > 0 && $reviewers !== []
-                    ? ' · Reviewers: ' . implode(', ', $reviewers)
-                    : ''
-            );
-
-            $entries[] = [
-                'title'    => $title,
-                'subtitle' => $subtitle,
-                'meta'     => $metaLine,
-                'details'  => [
-                    'url'          => $pr['html_url'] ?? '',
-                    'created_at'   => $createdAtRaw,
-                    'updated_at'   => $pr['updated_at'] ?? null,
-                    'merged_at'    => $pr['merged_at'] ?? null,
-                    'labels'       => $this->extractLabels($pr),
-                    'commit_count' => $commitCount,
-                    'review_count' => $reviewCount,
-                    'reviewers'    => $reviewers,
-                ],
-            ];
-        }
-
-        return [
-            'status' => 200,
-            'data'   => array_values($entries),
-        ];
+        return $payload;
     }
 
     /**
@@ -202,6 +118,170 @@ final class GithubClient
         }
 
         return $labels;
+    }
+
+    private function guardMissingApiKey(): ?array
+    {
+        if ($this->apiKey !== '') {
+            return null;
+        }
+
+        return [
+            'error'  => 'Falta GITHUB_API_KEY en .env',
+            'status' => 500,
+        ];
+    }
+
+    private function invalidRangePayload(): array
+    {
+        return [
+            'error'  => 'Rango de fechas inválido.',
+            'status' => 400,
+        ];
+    }
+
+    private function buildActivityPayload(DateTimeImmutable $fromDate, DateTimeImmutable $toDate): array
+    {
+        $url      = sprintf(self::BASE_URL . self::PULLS_PATH, self::OWNER, self::REPO);
+        $response = $this->requestGithub($url);
+
+        if (!$this->isSuccessfulListResponse($response)) {
+            return $this->errorPayloadFromResponse(
+                $response,
+                'No se pudo obtener la actividad de PRs desde GitHub.'
+            );
+        }
+
+        $entries = $this->buildEntries($response['decoded'], $fromDate, $toDate);
+
+        return [
+            'status' => 200,
+            'data'   => array_values($entries),
+        ];
+    }
+
+    /**
+     * @param array{ok:bool,status:int,body:string,decoded:mixed,error?:string} $response
+     */
+    private function isSuccessfulListResponse(array $response): bool
+    {
+        return $response['ok'] && is_array($response['decoded']);
+    }
+
+    /**
+     * @param array<int,mixed> $pullRequests
+     * @return array<int,array<string,mixed>>
+     */
+    private function buildEntries(array $pullRequests, DateTimeImmutable $fromDate, DateTimeImmutable $toDate): array
+    {
+        $entries = [];
+        foreach ($pullRequests as $pr) {
+            if (!is_array($pr)) {
+                continue;
+            }
+
+            $entry = $this->createEntryFromPullRequest($pr, $fromDate, $toDate);
+            if ($entry !== null) {
+                $entries[] = $entry;
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * @return array<string,mixed>|null
+     */
+    private function createEntryFromPullRequest(array $pr, DateTimeImmutable $fromDate, DateTimeImmutable $toDate): ?array
+    {
+        $createdAt = $this->parseCreatedAt($pr);
+        if ($createdAt === null || $createdAt['date'] < $fromDate || $createdAt['date'] > $toDate) {
+            return null;
+        }
+
+        $number = (int) ($pr['number'] ?? 0);
+        $commitCount = $this->countCommitsForPr($number);
+        [$reviewCount, $reviewers] = $this->summarizeReviewsForPr($number);
+
+        $title  = sprintf('#%d — %s', $number, $pr['title'] ?? 'Pull Request');
+        $author = $pr['user']['login'] ?? 'desconocido';
+        $state  = strtoupper((string) ($pr['state'] ?? ''));
+
+        $subtitle = sprintf(
+            'Autor: %s · Estado: %s · Creado: %s',
+            $author,
+            $state !== '' ? $state : 'N/D',
+            $createdAt['raw']
+        );
+
+        return [
+            'title'    => $title,
+            'subtitle' => $subtitle,
+            'meta'     => $this->buildMetaLine($commitCount, $reviewCount, $reviewers),
+            'details'  => $this->buildDetails($pr, $createdAt['raw'], $commitCount, $reviewCount, $reviewers),
+        ];
+    }
+
+    /**
+     * @return array{raw:string,date:DateTimeImmutable}|null
+     */
+    private function parseCreatedAt(array $pr): ?array
+    {
+        $createdAtRaw = $pr['created_at'] ?? null;
+        if (!is_string($createdAtRaw)) {
+            return null;
+        }
+
+        try {
+            $createdAt = new DateTimeImmutable($createdAtRaw);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        return [
+            'raw'  => $createdAtRaw,
+            'date' => $createdAt,
+        ];
+    }
+
+    /**
+     * @param array<int,string> $reviewers
+     */
+    private function buildMetaLine(int $commitCount, int $reviewCount, array $reviewers): string
+    {
+        $metaParts = [
+            'Commits: ' . $commitCount,
+            'Reviews: ' . $reviewCount,
+        ];
+
+        if ($reviewCount > 0 && $reviewers !== []) {
+            $metaParts[] = 'Reviewers: ' . implode(', ', $reviewers);
+        }
+
+        return implode(' · ', $metaParts);
+    }
+
+    /**
+     * @param array<int,string> $reviewers
+     * @return array<string,mixed>
+     */
+    private function buildDetails(
+        array $pr,
+        string $createdAtRaw,
+        int $commitCount,
+        int $reviewCount,
+        array $reviewers
+    ): array {
+        return [
+            'url'          => $pr['html_url'] ?? '',
+            'created_at'   => $createdAtRaw,
+            'updated_at'   => $pr['updated_at'] ?? null,
+            'merged_at'    => $pr['merged_at'] ?? null,
+            'labels'       => $this->extractLabels($pr),
+            'commit_count' => $commitCount,
+            'review_count' => $reviewCount,
+            'reviewers'    => $reviewers,
+        ];
     }
 
     /**
