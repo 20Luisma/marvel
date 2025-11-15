@@ -11,7 +11,7 @@
       </p>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <?php require __DIR__ . '/../partials/top-actions.php'; ?>
+      <?php require_once __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>
 </header>

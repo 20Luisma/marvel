@@ -3,9 +3,9 @@
     <div id="focus-edit-backdrop" class="focus-edit-backdrop hidden"></div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <aside class="lg:col-span-1 self-start space-y-6">
-        <?php require __DIR__ . '/../partials/create-album-form.php'; ?>
-        <?php require __DIR__ . '/../partials/activity-box.php'; ?>
-        <?php require __DIR__ . '/../partials/tests-box.php'; ?>
+        <?php require_once __DIR__ . '/../partials/create-album-form.php'; ?>
+        <?php require_once __DIR__ . '/../partials/activity-box.php'; ?>
+        <?php require_once __DIR__ . '/../partials/tests-box.php'; ?>
       </aside>
 
       <section class="lg:col-span-2 space-y-8">
@@ -42,5 +42,5 @@
     </div>
   </div>
 
-  <?php require __DIR__ . '/../partials/readme-modal.php'; ?>
+  <?php require_once __DIR__ . '/../partials/readme-modal.php'; ?>
 </main>

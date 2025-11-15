@@ -6,7 +6,7 @@ $pageTitle = 'Clean Marvel Album — Oficial Marvel';
 $additionalStyles = [];
 $activeTopAction = 'official';
 
-require __DIR__ . '/../layouts/header.php';
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
 <!-- HERO / HEADER -->
@@ -24,7 +24,7 @@ require __DIR__ . '/../layouts/header.php';
       </div>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <?php require __DIR__ . '/../partials/top-actions.php'; ?>
+      <?php require_once __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>
 </header>
@@ -49,4 +49,4 @@ require __DIR__ . '/../layouts/header.php';
 
 <?php
 $scripts = [];
-require __DIR__ . '/../layouts/footer.php';
+require_once __DIR__ . '/../layouts/footer.php';

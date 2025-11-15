@@ -44,7 +44,7 @@ final class PageController
         http_response_code(404);
         $pageTitle = '404 — Recurso no encontrado';
         $additionalStyles = [];
-        require $this->viewPath('layouts/header');
+        require_once $this->viewPath('layouts/header');
         ?>
         <main class="site-main">
           <div class="max-w-3xl mx-auto py-16 px-4 text-center space-y-6">
@@ -55,7 +55,7 @@ final class PageController
         </main>
         <?php
         $scripts = [];
-        require $this->viewPath('layouts/footer');
+        require_once $this->viewPath('layouts/footer');
     }
 
     private function render(string $view): void
@@ -67,7 +67,7 @@ final class PageController
             return;
         }
 
-        require $viewFile;
+        require_once $viewFile;
     }
 
     private function viewPath(string $view): string

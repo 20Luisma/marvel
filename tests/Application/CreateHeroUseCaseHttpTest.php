@@ -35,7 +35,7 @@ class CreateHeroUseCaseHttpTest extends TestCase
 
         require_once dirname(__DIR__, 2) . '/public/index.php';
 
-        $this->container = require dirname(__DIR__, 2) . '/src/bootstrap.php';
+        $this->container = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
         $logPath = dirname(__DIR__, 2) . '/storage/test_notifications.log';
         if (is_file($logPath)) {
             unlink($logPath);

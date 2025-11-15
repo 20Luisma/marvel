@@ -103,7 +103,7 @@ $hasError = !is_array($data) || isset($data['error']);
 $repoOwner = \App\Services\GithubClient::OWNER;
 $repoName = \App\Services\GithubClient::REPO;
 
-require __DIR__ . '/../layouts/header.php';
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
 <header class="app-hero panel-github__hero">
@@ -120,7 +120,7 @@ require __DIR__ . '/../layouts/header.php';
       </div>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <?php require __DIR__ . '/../partials/top-actions.php'; ?>
+      <?php require_once __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>
 </header>
@@ -241,4 +241,4 @@ require __DIR__ . '/../layouts/header.php';
 
 <?php
 $scripts = ['/assets/js/panel-github.js'];
-require __DIR__ . '/../layouts/footer.php';
+require_once __DIR__ . '/../layouts/footer.php';
