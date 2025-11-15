@@ -7,8 +7,8 @@
   height: 2.6rem;
   padding: 0.6rem 1.15rem;
   border-radius: 0.75rem;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.45);
+  background: #102040;
+  border: 1px solid #3b82f6;
   color: #f9fafb;
   box-shadow: none;
   text-transform: uppercase;
@@ -20,12 +20,12 @@
 }
 
 .btn-readme:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: #1d3a8a;
   box-shadow: none;
 }
 
 .btn-readme:focus-visible {
-  outline: 2px solid rgba(59, 130, 246, 0.65);
+  outline: 2px solid #60a5fa;
   outline-offset: 3px;
 }
 
