@@ -28,4 +28,20 @@ final class ListHeroesUseCaseTest extends TestCase
         $names = array_column($result, 'nombre');
         self::assertSame(['Iron Man', 'Captain America'], $names);
     }
+
+    public function testItListsAllHeroesWhenAlbumIdNotProvided(): void
+    {
+        $repository = new InMemoryHeroRepository();
+        $heroA = Hero::create('hero-1', 'album-1', 'Iron Man', 'Genius', 'https://example.com/iron.jpg');
+        $heroB = Hero::create('hero-2', 'album-2', 'Thor', 'Thunder', 'https://example.com/thor.jpg');
+        $repository->seed($heroB, $heroA);
+
+        $useCase = new ListHeroesUseCase($repository);
+        $resultWithNull = $useCase->execute();
+        $resultWithEmptyString = $useCase->execute('');
+
+        self::assertCount(2, $resultWithNull);
+        self::assertSame($resultWithNull, $resultWithEmptyString, 'Empty albumId should behave like null.');
+        self::assertSame(['Iron Man', 'Thor'], array_column($resultWithNull, 'nombre'));
+    }
 }
