@@ -386,7 +386,7 @@ function toDisplayLabels() {
 
 // aplica los textos al HUD de microservicios y al HUD de RAG
 function applyMicroserviceLabels(labels) {
-  const display = toDisplayLabels(labels);
+  const display = toDisplayLabels();
   const titleText = 'Canal Microservicios';
   const ragTitleText = 'Sistema RAG';
   const subtitleText = 'Web principal ↔ Microservicios Open IA';
@@ -1165,7 +1165,7 @@ async function compareSelectedHeroesRag() {
   showHeroSelectionWarning('');
 
   await ensureServiceConfig();
-  const displayLabels = toDisplayLabels(serviceLabels);
+  const displayLabels = toDisplayLabels();
   const ragHostLabel = displayLabels.rag;
   const appHostLabel = displayLabels.app;
   const targetEndpoint = getRagEndpoint();
