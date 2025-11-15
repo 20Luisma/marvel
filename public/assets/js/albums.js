@@ -387,15 +387,17 @@ const initAlbumsPage = () => {
     testStatusBreakdown.replaceChildren();
     const order = ['passed', 'failed', 'error', 'skipped'];
     let hasAny = false;
-    order.forEach((status) => {
+    for (const status of order) {
       const count = Number(statusCounts?.[status] ?? 0);
-      if (!count) return;
+      if (!count) {
+        continue;
+      }
       hasAny = true;
       const badge = document.createElement('span');
       badge.className = `inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold ${TEST_STATUS_STYLES[status]?.badge ?? TEST_STATUS_STYLES.info.badge}`;
       badge.textContent = `${TEST_STATUS_ICONS[status] ?? ''} ${TEST_STATUS_LABELS[status] ?? status}: ${formatNumber(count)}`.trim();
       testStatusBreakdown.appendChild(badge);
-    });
+    }
     if (hasAny) {
       testStatusBreakdown.classList.remove('hidden');
     } else {
@@ -779,12 +781,32 @@ const initAlbumsPage = () => {
       if (ord === 'recent') {
         const ka = a.updatedAt ?? a.createdAt ?? a.albumId ?? 0;
         const kb = b.updatedAt ?? b.createdAt ?? b.albumId ?? 0;
-        return (kb > ka) ? 1 : (kb < ka) ? -1 : 0;
+        if (kb > ka) {
+          return 1;
+        }
+        if (kb < ka) {
+          return -1;
+        }
+        return 0;
       }
       const an = (a.nombre||'').toLowerCase();
       const bn = (b.nombre||'').toLowerCase();
-      if (ord === 'za') return an < bn ? 1 : an > bn ? -1 : 0;
-      return an > bn ? 1 : an < bn ? -1 : 0;
+      if (ord === 'za') {
+        if (an < bn) {
+          return 1;
+        }
+        if (an > bn) {
+          return -1;
+        }
+        return 0;
+      }
+      if (an > bn) {
+        return 1;
+      }
+      if (an < bn) {
+        return -1;
+      }
+      return 0;
     });
 
     renderAlbums(albumsFiltered);
@@ -802,9 +824,9 @@ const initAlbumsPage = () => {
       return;
     }
     albumsGrid.innerHTML = '';
-    albums.forEach((album) => {
+    for (const album of albums) {
       albumsGrid.appendChild(buildAlbumCard(album));
-    });
+    }
     scheduleAlbumCardEqualization();
   }
 
@@ -958,23 +980,22 @@ const initAlbumsPage = () => {
       const runtimeWindow = getWindowObject();
       const scrollTop = document?.documentElement?.scrollTop ?? 0;
       focusRestoreScroll = runtimeWindow?.scrollY ?? scrollTop ?? 0;
-      document.body.setAttribute('data-edit-focus', 'true');
+      document.body.dataset.editFocus = 'true';
       focusBackdrop?.classList.remove('hidden');
       testsBox?.classList.add('hidden');
 
       const cards = albumsGrid.querySelectorAll('.album-card');
-      cards.forEach((node) => {
+      for (const node of cards) {
         if (node === card) {
           node.classList.add('focus-edit-panel');
-          node.classList.remove('hidden');
+          node.classList.remove('hidden', 'cursor-pointer');
           node.setAttribute('aria-hidden', 'false');
-          node.classList.remove('cursor-pointer');
           node.classList.add('cursor-default');
         } else {
           node.classList.add('hidden');
           node.setAttribute('aria-hidden', 'true');
         }
-      });
+      }
 
       requestAnimationFrame(() => {
         const rect = card.getBoundingClientRect();
@@ -994,18 +1015,16 @@ const initAlbumsPage = () => {
       }
       isFocusEditMode = false;
       focusEditCurrentCard = null;
-      document.body.setAttribute('data-edit-focus', 'false');
+      document.body.dataset.editFocus = 'false';
       focusBackdrop?.classList.add('hidden');
       testsBox?.classList.remove('hidden');
 
       const cards = albumsGrid.querySelectorAll('.album-card');
-      cards.forEach((node) => {
-        node.classList.remove('focus-edit-panel');
-        node.classList.remove('hidden');
+      for (const node of cards) {
+        node.classList.remove('focus-edit-panel', 'hidden', 'cursor-default');
         node.setAttribute('aria-hidden', 'false');
-        node.classList.remove('cursor-default');
         node.classList.add('cursor-pointer');
-      });
+      }
 
       getWindowObject()?.scrollTo?.({ top: focusRestoreScroll, behavior: 'smooth' });
       scheduleAlbumCardEqualization();
@@ -1335,25 +1354,22 @@ const initAlbumsPage = () => {
         return;
       }
     }
-    document.body.setAttribute('data-edit-focus', 'false');
+    document.body.dataset.editFocus = 'false';
     focusBackdrop?.classList.add('hidden');
     testsBox?.classList.remove('hidden');
     isFocusEditMode = false;
     focusEditCurrentCard = null;
     const cards = albumsGrid.querySelectorAll('.album-card');
-    cards.forEach((node) => {
-      node.classList.remove('focus-edit-panel');
-      node.classList.remove('hidden');
+    for (const node of cards) {
+      node.classList.remove('focus-edit-panel', 'hidden', 'is-editing', 'cursor-default');
       node.setAttribute('aria-hidden', 'false');
-      node.classList.remove('is-editing');
-      node.classList.remove('cursor-default');
       node.classList.add('cursor-pointer');
       const actionsNode = node.querySelector('[data-album-actions="true"]');
       actionsNode?.classList.remove('hidden');
       const editPanel = node.querySelector('[data-album-edit-panel="true"]');
       editPanel?.classList.add('hidden');
       node.querySelector('.focus-edit-header')?.remove();
-    });
+    }
     scheduleAlbumCardEqualization();
   }
 
