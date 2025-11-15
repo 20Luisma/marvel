@@ -1,6 +1,6 @@
 .sonar-panel {
   background: linear-gradient(135deg, rgba(13, 20, 40, 0.95), rgba(9, 13, 26, 0.85));
-  border: 1px solid rgba(237, 29, 36, 0.4);
+  border: 1px solid #ed1d24;
   border-radius: 2rem;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
   padding: 2.5rem;
@@ -28,24 +28,24 @@
   gap: .5rem;
   padding: .5rem 1.25rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #475569;
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: .08em;
 }
 .sonar-status-pill[data-level="excellent"] {
-  background: rgba(22, 163, 74, 0.2);
-  border-color: rgba(34, 197, 94, 0.9);
+  background: #14532d;
+  border-color: #22c55e;
   color: #bbf7d0;
 }
 .sonar-status-pill[data-level="acceptable"] {
-  background: rgba(250, 204, 21, 0.16);
-  border-color: rgba(251, 191, 36, 0.8);
+  background: #713f12;
+  border-color: #fbbf24;
   color: #fef3c7;
 }
 .sonar-status-pill[data-level="alert"] {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(248, 113, 113, 0.85);
+  background: #641515;
+  border-color: #f87171;
   color: #fecaca;
 }
 .sonar-grid {
@@ -69,18 +69,18 @@
   }
 }
 .sonar-card {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #101a2d; /* fix contraste SonarCloud */
+  border: 1px solid #1f2f46;
   border-radius: 1.5rem;
   padding: 1.5rem;
   backdrop-filter: blur(6px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 0 0 1px #1f2f46;
 }
 .sonar-card h4 {
   font-size: .85rem;
   text-transform: uppercase;
   letter-spacing: .28em;
-  color: #94a3b8;
+  color: #cbd5f5;
   margin-bottom: .6rem;
 }
 .sonar-card-value {
@@ -89,7 +89,7 @@
 }
 .sonar-card-sub {
   font-size: .85rem;
-  color: #94a3b8;
+  color: #d1d5db;
 }
 .sonar-graph {
   display: flex;
@@ -102,15 +102,15 @@
 }
 .sonar-alert {
   border-radius: 1.25rem;
-  border: 1px solid rgba(248, 113, 113, 0.6);
-  background: rgba(239, 68, 68, 0.18);
-  color: #fecaca;
+  border: 1px solid #f87171;
+  background: #5f1d22;
+  color: #ffe4e6;
   padding: 1rem 1.25rem;
   display: none;
 }
 .sonar-loader {
   display: none;
-  color: #cbd5f5;
+  color: #e2e8f0;
   font-size: .95rem;
   letter-spacing: .15em;
 }
