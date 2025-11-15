@@ -88,6 +88,19 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+    /* ➕ NUEVA TAREA: tests + coverage + sonar-scanner manual */
+    {
+      "label": "🧪 Tests + Coverage + Sonar (manual)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "composer test:coverage"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
     /* =========================================================
        🧩 GIT COMMANDS (todos juntos y ordenados)
