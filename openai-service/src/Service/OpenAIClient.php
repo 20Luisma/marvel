@@ -6,7 +6,6 @@ namespace Creawebes\OpenAI\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use RuntimeException;
 
 class OpenAIClient
 {
@@ -18,7 +17,7 @@ class OpenAIClient
     {
         $apiKey = $_ENV['OPENAI_API_KEY'] ?? getenv('OPENAI_API_KEY');
         if (!$apiKey) {
-            throw new RuntimeException('OPENAI_API_KEY no configurada');
+            throw new OpenAIClientException('OPENAI_API_KEY no configurada');
         }
         $this->apiKey = $apiKey;
 
@@ -49,14 +48,14 @@ class OpenAIClient
                 ],
             ]);
         } catch (GuzzleException $exception) {
-            throw new RuntimeException('Error al comunicarse con OpenAI', 0, $exception);
+            throw new OpenAIClientException('Error al comunicarse con OpenAI', 0, $exception);
         }
 
         $body = (string) $response->getBody();
         $decoded = json_decode($body, true);
 
         if (!is_array($decoded)) {
-            throw new RuntimeException('Respuesta inválida desde OpenAI');
+            throw new OpenAIClientException('Respuesta inválida desde OpenAI');
         }
 
         return $decoded;

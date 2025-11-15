@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Creawebes\OpenAI\Service;
 
+use CurlHandle;
+
 final class OpenAIChatService
 {
     /**
@@ -11,64 +13,11 @@ final class OpenAIChatService
      */
     public function generateStory(array $messages): string
     {
-        $apiKey = getenv('OPENAI_API_KEY');
-        if (!is_string($apiKey) || trim($apiKey) === '') {
-            return $this->buildFallbackStory('⚠️ No se ha configurado OPENAI_API_KEY en el entorno.');
-        }
+        $result = $this->requestChatCompletion($messages);
 
-        $model = getenv('OPENAI_MODEL');
-        if (!is_string($model) || trim($model) === '') {
-            $model = 'gpt-4o-mini';
-        }
-
-        $body = [
-            'model' => $model,
-            'messages' => $messages,
-            'temperature' => 0.8,
-        ];
-
-        $payload = json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($payload === false) {
-            return $this->buildFallbackStory('⚠️ No se pudo preparar la petición para OpenAI.');
-        }
-
-        $ch = curl_init('https://api.openai.com/v1/chat/completions');
-        if ($ch === false) {
-            return $this->buildFallbackStory('⚠️ No se pudo inicializar la petición a OpenAI.');
-        }
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $apiKey,
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($ch);
-        curl_close($ch);
-
-        if ($response === false) {
-            return $this->buildFallbackStory('⚠️ Error al llamar a OpenAI: ' . ($curlError !== '' ? $curlError : 'respuesta vacía'));
-        }
-
-        if ($httpCode >= 400) {
-            return $this->buildFallbackStory('⚠️ Error al llamar a OpenAI. Código: ' . $httpCode);
-        }
-
-        $data = json_decode($response, true);
-        if (!is_array($data)) {
-            return $this->buildFallbackStory('⚠️ OpenAI devolvió un formato inválido.');
-        }
-
-        $content = $data['choices'][0]['message']['content'] ?? null;
-        if (!is_string($content) || trim($content) === '') {
-            return $this->buildFallbackStory('⚠️ OpenAI devolvió un formato inesperado.');
-        }
-
-        return $this->stripCodeFence($content);
+        return $result['success']
+            ? $this->stripCodeFence($result['content'])
+            : $this->buildFallbackStory($result['error']);
     }
 
     private function buildFallbackStory(string $message): string
@@ -93,5 +42,166 @@ final class OpenAIChatService
         }
 
         return $trimmed;
+    }
+
+    /**
+     * @param array<int, array<string, string>> $messages
+     * @return array{success:bool,content?:string,error?:string}
+     */
+    private function requestChatCompletion(array $messages): array
+    {
+        $apiKey = $this->resolveApiKey();
+        if ($apiKey === null) {
+            return $this->failureResult('⚠️ No se ha configurado OPENAI_API_KEY en el entorno.');
+        }
+
+        $payload = $this->encodePayload($this->resolveModel(), $messages);
+        if ($payload === null) {
+            return $this->failureResult('⚠️ No se pudo preparar la petición para OpenAI.');
+        }
+
+        $handle = $this->initializeCurlHandle($apiKey, $payload);
+        if ($handle === null) {
+            return $this->failureResult('⚠️ No se pudo inicializar la petición a OpenAI.');
+        }
+
+        $execution = $this->executeCurl($handle);
+        if ($execution['response'] === null) {
+            $error = $execution['error'] !== '' ? $execution['error'] : 'respuesta vacía';
+            return $this->failureResult('⚠️ Error al llamar a OpenAI: ' . $error);
+        }
+
+        if ($execution['status'] >= 400) {
+            return $this->failureResult('⚠️ Error al llamar a OpenAI. Código: ' . $execution['status']);
+        }
+
+        $data = $this->decodeResponse($execution['response']);
+        if ($data === null) {
+            return $this->failureResult('⚠️ OpenAI devolvió un formato inválido.');
+        }
+
+        $content = $this->extractContent($data);
+        if ($content === null) {
+            return $this->failureResult('⚠️ OpenAI devolvió un formato inesperado.');
+        }
+
+        return [
+            'success' => true,
+            'content' => $content,
+        ];
+    }
+
+    private function resolveApiKey(): ?string
+    {
+        $apiKey = getenv('OPENAI_API_KEY');
+        if (!is_string($apiKey)) {
+            return null;
+        }
+
+        $trimmed = trim($apiKey);
+
+        return $trimmed === '' ? null : $trimmed;
+    }
+
+    private function resolveModel(): string
+    {
+        $model = getenv('OPENAI_MODEL');
+        if (!is_string($model) || trim($model) === '') {
+            return 'gpt-4o-mini';
+        }
+
+        return trim($model);
+    }
+
+    /**
+     * @param array<int, array<string, string>> $messages
+     */
+    private function encodePayload(string $model, array $messages): ?string
+    {
+        $body = [
+            'model' => $model,
+            'messages' => $messages,
+            'temperature' => 0.8,
+        ];
+
+        $payload = json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return $payload === false ? null : $payload;
+    }
+
+    /**
+     * @return CurlHandle|false
+     */
+    private function initializeCurlHandle(string $apiKey, string $payload)
+    {
+        $handle = curl_init('https://api.openai.com/v1/chat/completions');
+        if ($handle === false) {
+            return false;
+        }
+
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_POST, true);
+        curl_setopt($handle, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiKey,
+        ]);
+        curl_setopt($handle, CURLOPT_POSTFIELDS, $payload);
+
+        return $handle;
+    }
+
+    /**
+     * @param CurlHandle $handle
+     * @return array{response:?string,status:int,error:string}
+     */
+    private function executeCurl($handle): array
+    {
+        $response = curl_exec($handle);
+        $httpCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($handle);
+        curl_close($handle);
+
+        return [
+            'response' => $response === false ? null : $response,
+            'status' => $httpCode,
+            'error' => $curlError,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function decodeResponse(string $response): ?array
+    {
+        $decoded = json_decode($response, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function extractContent(array $data): ?string
+    {
+        $content = $data['choices'][0]['message']['content'] ?? null;
+
+        if (!is_string($content)) {
+            return null;
+        }
+
+        $trimmed = trim($content);
+
+        return $trimmed === '' ? null : $trimmed;
+    }
+
+    /**
+     * @return array{success:false,error:string}
+     */
+    private function failureResult(string $message): array
+    {
+        return [
+            'success' => false,
+            'error' => $message,
+        ];
     }
 }
