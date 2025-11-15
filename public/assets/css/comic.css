@@ -1,7 +1,7 @@
 .hero-card {
   border-radius: 1.25rem;
-  border: 1px solid rgba(71, 85, 105, 0.65);
-  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid #475569;
+  background: #101a2d; /* fix contraste SonarCloud */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -15,7 +15,7 @@
 }
 
 .hero-card.is-selected {
-  border-color: rgba(237, 29, 36, 0.65);
+  border-color: #ed1d24;
   box-shadow: 0 0 0 2px rgba(237, 29, 36, 0.35), 0 18px 36px rgba(237, 29, 36, 0.28);
 }
 
@@ -41,7 +41,7 @@
 
 .hero-card-meta {
   font-size: 0.9rem;
-  color: rgba(226, 232, 240, 0.85);
+  color: #e2e8f0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -58,8 +58,8 @@
   height: 1.35rem;
   width: 1.35rem;
   border-radius: 0.45rem;
-  border: 2px solid rgba(248, 250, 252, 0.8);
-  background: rgba(15, 23, 42, 0.9);
+  border: 2px solid #f8fafc;
+  background: #0f172a;
   cursor: pointer;
   accent-color: var(--marvel);
 }
@@ -75,8 +75,8 @@
   gap: 0.4rem;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.15);
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #1f2a40;
+  border: 1px solid #94a3b8;
   font-size: 0.8rem;
   color: #e2e8f0;
   letter-spacing: 0.03em;
@@ -94,16 +94,16 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 9999px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: #0f172a;
+  border: 1px solid #94a3b8;
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .selected-hero-remove:hover {
-  background: rgba(237, 29, 36, 0.25);
-  border-color: rgba(237, 29, 36, 0.5);
+  background: #5f1d22;
+  border-color: #ed1d24;
   color: #fff;
 }
 
