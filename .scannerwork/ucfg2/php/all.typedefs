@@ -491,7 +491,12 @@ coverImagestring*
 actionstring*
 	contextIdstring*
 scopestring*
-titlestringù
+titlestring¶
+ app\services\sonarmetricsservice<
+__construct-app\services\sonarmetricsservice::__construct:
+
+getmetrics,app\services\sonarmetricsservice::getmetrics"client*
+clientobjectù
 app\dev\seed\seedheroesservice:
 __construct+app\dev\seed\seedheroesservice::__construct,
 seed$app\dev\seed\seedheroesservice::seed6
