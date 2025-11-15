@@ -17,10 +17,12 @@ require __DIR__ . '/../layouts/header.php';
         <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl">
           Documentación viva y guías técnicas del proyecto.
         </p>
+        <p class="app-hero__meta text-base text-slate-300">
+          Consulta el README completo con arquitectura, comandos y flujos.
+        </p>
       </div>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <p class="app-hero__meta flex-1 min-w-[14rem]">Consulta el README completo con arquitectura, comandos y flujos.</p>
       <?php require __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>
@@ -104,6 +106,19 @@ require __DIR__ . '/../layouts/header.php';
             <li>Voz y modelo por defecto: <strong>Charlie</strong> (<code>EXAVITQu4vr4xnSDxMaL</code>) usando <code>eleven_multilingual_v2</code>.</li>
             <li>Configura las variables <code>ELEVENLABS_VOICE_ID</code>, <code>ELEVENLABS_MODEL_ID</code>, <code>ELEVENLABS_VOICE_STABILITY</code> y <code>ELEVENLABS_VOICE_SIMILARITY</code> en el <code>.env</code> para personalizar la narración.</li>
             <li>En hosting asegúrate de copiar el <code>.env</code>, habilitar cURL y permitir tráfico saliente HTTPS; el endpoint sólo acepta solicitudes <code>POST</code>.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🐙 Panel GitHub en vivo</h3>
+          <p>
+            La nueva vista <code>/panel-github.php</code> consume la clase <code>App\Services\GithubClient</code> para consultar la API oficial de GitHub y mostrar Pull Requests del repo
+            <code>20Luisma/marvel</code>. Puedes filtrar por rango de fechas y revisar cuántos commits, reviews y reviewers únicos tuvo cada PR, junto con sus labels.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>Configura <code>GITHUB_API_KEY</code> en el <code>.env</code> con un token personal que tenga permisos de lectura.</li>
+            <li>El dashboard normaliza fechas (YYYY-MM-DD), muestra errores claros cuando falta el token y enlaza cada PR directo en GitHub.</li>
+            <li>Los estilos (<code>public/assets/css/panel-github.css</code>) y el top action dedicado mantienen el mismo look & feel del resto del proyecto.</li>
           </ul>
         </section>
 

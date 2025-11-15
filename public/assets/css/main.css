@@ -251,6 +251,42 @@ a:hover {
   text-decoration: underline;
 }
 
+.btn-sonarcloud {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11rem;
+  height: 2.6rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 0.75rem;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  color: #f9fafb;
+  box-shadow: none;
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-sonarcloud.is-active,
+.btn-sonarcloud[aria-current="page"] {
+  background: rgba(59, 130, 246, 0.18);
+  box-shadow: none;
+}
+
+.btn-sonarcloud:hover {
+  background: rgba(59, 130, 246, 0.2);
+  box-shadow: none;
+}
+
+.btn-sonarcloud:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.65);
+  outline-offset: 3px;
+}
+
 .card {
   background-color: rgba(30, 41, 59, 0.9);
   border: 1px solid #334155;
