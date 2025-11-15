@@ -1,0 +1,106 @@
+
+0app\heroes\domain\event\herocreated::__constructs
+i/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Domain/Event/HeroCreated.php ("1*7
+2
+HeroCreated.php"
+ (
+implicit return*ø
+1 (AX
+V
+ (
+$aggregateId"__id*4
+
+__unknown_file (
+
+$aggregateIdstringP
+N
+ (
+
+$albumId"__id*0
+
+__unknown_file (
+
+$albumIdstringT
+R
+ (
+
+$albumName"__id*2
+
+__unknown_file (
+
+
+$albumNamestringJ
+H
+ (
+$name"__id*-
+
+__unknown_file (
+
+$namestringJ
+H
+ (
+$slug"__id*-
+
+__unknown_file (
+
+$slugstringL
+J
+ (
+$image"__id*.
+
+__unknown_file (
+
+$imagestringP
+N
+ (
+
+$eventId"__id*0
+
+__unknown_file (
+
+$eventIdstringa
+_
+ (
+$occurredOn"__id*>
+
+__unknown_file ("
+ 
+$occurredOndatetimeimmutableç
+ä
+ (@
+%1".app\shared\domain\bus\domainevent::__construct*C
+
+__unknown_file ('%
+#app\heroes\domain\event\herocreated*,
+
+__unknown_file (
+
+$aggregateId*(
+
+__unknown_file (
+
+
+$eventId*+
+
+__unknown_file (
+
+$occurredOn*
+2:"
+ (
+$aggregateIdstring:
+ ((
+$albumIdstring: 
+ (*
+
+$albumNamestring:
+ (%
+$namestring:
+ (%
+$slugstring:
+ (&
+$imagestring:
+ (
+$eventIdstring:,
+ (- 
+$occurredOndatetimeimmutableB'%
+#app\heroes\domain\event\herocreatedH

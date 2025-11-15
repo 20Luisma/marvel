@@ -1,0 +1,65 @@
+
+7app\heroes\application\usecase\findherousecase::execute~
+t/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/FindHeroUseCase.php ("1*›
+3 (8¶
+³
+ (,
+%3"1app\heroes\application\dto\heroresponse::fromhero*G
+
+__unknown_file (+")
+'app\heroes\application\dto\heroresponse*%
+
+__unknown_file (	
+
+$hero?=
+ (7
+%4*"
+
+__unknown_file (
+
+%32toarray"
+ (8
+
+%4*;
+4
+FindHeroUseCase.php"
+ (
+implicit return*‡
+1 (1N
+L
+ (	
+$heroId"__id*/
+
+__unknown_file (
+
+$heroIdstringx
+v
+ (!
+%1"__id*^
+
+__unknown_file (B*@0
+.app\heroes\application\usecase\findherousecase"
+
+repositoryec
+ (0
+%2*"
+
+__unknown_file (
+
+%1*'
+
+__unknown_file (
+	
+$heroId2find?
+=
+ (0
+$hero"__id*"
+
+__unknown_file (
+
+%2*
+3
+4:
+ (*
+$heroIdstringB20
+.app\heroes\application\usecase\findherousecaseH

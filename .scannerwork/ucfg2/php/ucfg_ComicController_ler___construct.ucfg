@@ -1,0 +1,29 @@
+
+,src\controllers\comiccontroller::__constructo
+e/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ComicController.php ("1*¢
+1
+ComicController.phpi
+g
+ (
+
+$generator"__id*G
+
+__unknown_file (+
+)
+
+$generatorapp\ai\openaicomicgeneratorz
+x
+ (
+	$findHero"__id*Y
+
+__unknown_file (=
+;
+	$findHero.app\heroes\application\usecase\findherousecase"
+ (
+implicit return:5
+ (8)
+
+$generatorapp\ai\openaicomicgenerator:G
+ (2;
+	$findHero.app\heroes\application\usecase\findherousecaseB#!
+src\controllers\comiccontrollerH

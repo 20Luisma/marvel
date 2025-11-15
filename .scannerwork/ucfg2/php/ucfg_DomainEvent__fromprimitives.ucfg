@@ -1,0 +1,47 @@
+
+1app\shared\domain\bus\domainevent::fromprimitivesq
+g/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Domain/Bus/DomainEvent.php2 2()"1*7
+2
+DomainEvent.php"
+9 9(
+implicit return*ì
+18 8(^X
+V
+2 2()
+$aggregateId"__id*4
+
+__unknown_file (
+
+$aggregateIdstringI
+G
+2 2()
+$body"__id*,
+
+__unknown_file (
+
+$bodyarrayP
+N
+2 2()
+
+$eventId"__id*0
+
+__unknown_file (
+
+$eventIdstringa
+_
+2 2()
+$occurredOn"__id*>
+
+__unknown_file ("
+ 
+$occurredOndatetimeimmutable*
+2:"
+3 3(
+$aggregateIdstring:
+4 4(
+$bodyarray:
+5 5(
+$eventIdstring:,
+6 6(& 
+$occurredOndatetimeimmutableB%#
+!app\shared\domain\bus\domaineventH

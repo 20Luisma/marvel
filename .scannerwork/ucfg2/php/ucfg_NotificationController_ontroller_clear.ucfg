@@ -1,0 +1,62 @@
+
+-src\controllers\notificationcontroller::clearv
+l/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/NotificationController.php ("1*ú
+2   (Så
+â
+   (R
+%6"#app\shared\http\jsonresponse::error*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*J
+
+__unknown_file (.,
+*No se pudieron limpiar las notificaciones.*!
+
+__unknown_file (2ô*
+4*B
+4
+NotificationController.php"
+" "(
+implicit return*²
+1 (1x
+v
+ (%
+%1"__id*^
+
+__unknown_file (B*@(
+&src\controllers\notificationcontroller"
+clearNotifications?=
+ (0
+%2*"
+
+__unknown_file (
+
+%12execute
+" (K
+%3"$Array¤
+¡
+" (K
+%4"__mapSet*"
+
+__unknown_file (
+
+%3*'
+
+__unknown_file (	
+message*8
+
+__unknown_file (
+Notificaciones limpiadasœ
+™
+ (L
+%5"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%3*
+2
+4B*(
+&src\controllers\notificationcontrollerH

@@ -1,0 +1,70 @@
+
+%app\heroes\domain\entity\hero::renameo
+c/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Domain/Entity/Hero.phpõ õ("1*2
+2
+
+Hero.php"!
+
+° °(
+implicit return*Ø
+1
+ù ù(!L
+J
+
+õ õ(
+$name"__id*-
+
+__unknown_file (
+
+$namestringáÑ
+
+ù ù( 
+%1*=
+
+__unknown_file (!
+app\heroes\domain\entity\hero*%
+
+__unknown_file (	
+
+$name2
+assertnamef
+d
+
+û û()
+app\heroes\domain\entity\hero"
+name"__id*%
+
+__unknown_file (	
+
+$nameó
+î
+
+ü ü(-
+%2" app\shared\util\slugger::slugify*7
+
+__unknown_file ("
+app\shared\util\slugger*%
+
+__unknown_file (	
+
+$namec
+a
+
+ü ü(-)
+app\heroes\domain\entity\hero"
+slug"__id*"
+
+__unknown_file (
+
+%2ZX
+
+† †(
+%3*=
+
+__unknown_file (!
+app\heroes\domain\entity\hero2touch*
+2:
+
+õ õ('
+$namestringB!
+app\heroes\domain\entity\heroH

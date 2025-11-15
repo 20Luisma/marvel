@@ -1,0 +1,151 @@
+
+Aapp\activities\application\usecase\recordactivityusecase::executeˆ
+~/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Application/UseCase/RecordActivityUseCase.php ("1*™
+1 (=~
+|
+ (
+
+$request"__id*^
+
+__unknown_file (B
+@
+$request4app\activities\application\dto\recordactivityrequestM
+K
+, (;
+%1"__id*3
+
+__unknown_file (*
+
+
+$request"
+scope®
+«
+ (<
+%2"0app\activities\domain\activityscope::assertvalid*C
+
+__unknown_file ('"%
+#app\activities\domain\activityscope*"
+
+__unknown_file (
+
+%1@
+>
+ (<
+$scope"__id*"
+
+__unknown_file (
+
+%2Q
+O
+= (P
+%3"__id*7
+
+__unknown_file (*
+
+
+$request"
+	contextIdÛ
+Ø
+ (Q
+%4"5app\activities\domain\activityscope::normalizecontext*C
+
+__unknown_file ('"%
+#app\activities\domain\activityscope*&
+
+__unknown_file (
+
+
+$scope*"
+
+__unknown_file (
+
+%3D
+B
+ (Q
+
+$contextId"__id*"
+
+__unknown_file (
+
+%4N
+L
+; (K
+%5"__id*4
+
+__unknown_file (*
+
+
+$request"
+actionM
+K
+M (\
+%6"__id*3
+
+__unknown_file (*
+
+
+$request"
+title¡
+ž
+ (]
+%7"+app\activities\domain\activityentry::create*C
+
+__unknown_file ('"%
+#app\activities\domain\activityentry*&
+
+__unknown_file (
+
+
+$scope**
+
+__unknown_file (
+
+
+$contextId*"
+
+__unknown_file (
+
+%5*"
+
+__unknown_file (
+
+%6@
+>
+ (]
+$entry"__id*"
+
+__unknown_file (
+
+%7ƒ
+€
+ (
+%8"__id*h
+
+__unknown_file (L*J:
+8app\activities\application\usecase\recordactivityusecase"
+
+repositoryfd
+ ()
+%9*"
+
+__unknown_file (
+
+%8*&
+
+__unknown_file (
+
+
+$entry2appendIG
+ (%
+%10*&
+
+__unknown_file (
+
+
+$entry2toprimitives"
+ (&
+
+%10:L
+ (:@
+$request4app\activities\application\dto\recordactivityrequestB<:
+8app\activities\application\usecase\recordactivityusecaseH
