@@ -55,18 +55,48 @@
             <h2 class="sonar-hero-title text-4xl text-white">Sentry Error Board</h2>
             <p class="text-slate-300 text-sm">Monitoriza issues, niveles y últimas apariciones sin salir de Clean Marvel.</p>
           </div>
-          <div class="flex flex-col items-center gap-4 text-center">
-            <span id="sentry-source-pill" class="sentry-badge" data-source="empty">Esperando datos</span>
+          <div class="flex flex-col items-center gap-3 text-center">
             <div class="flex flex-wrap justify-center gap-3">
-              <button id="sentry-refresh-button" class="btn btn-primary inline-flex items-center gap-2 mx-auto">
+              <button id="sentry-refresh-button" class="btn btn-primary inline-flex items-center gap-2 mx-auto sentry-refresh-btn">
                 <span>Actualizar</span>
               </button>
             </div>
-            <p id="sentry-loader" class="sentry-loader uppercase tracking-[0.4em]">Sincronizando con Sentry…</p>
+            <div id="sentry-sync-dots" class="sentry-sync-dots">
+              <span class="sentry-dot"></span>
+              <span class="sentry-dot"></span>
+              <span class="sentry-dot"></span>
+            </div>
           </div>
         </div>
 
         <div id="sentry-warning" class="sentry-alert"></div>
+
+        <article class="sonar-card space-y-4">
+          <header class="space-y-1">
+            <p class="uppercase tracking-[0.3em] text-sm text-slate-400">Modo prueba Sentry</p>
+            <h3 class="text-2xl text-white">Ejecuta errores de demo</h3>
+            <p class="text-slate-300 text-sm">Lanza errores falsos para probar el flujo Sentry → API → Panel.</p>
+          </header>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="flex flex-col items-center gap-3">
+              <button class="sentry-demo-btn sentry-demo-btn--red w-full text-center" onclick="sentryTest('500')">Error 500</button>
+              <button class="sentry-demo-btn sentry-demo-btn--red w-full text-center" onclick="sentryTest('zero')">División por cero</button>
+            </div>
+            <div class="flex flex-col items-center gap-3">
+              <button class="sentry-demo-btn sentry-demo-btn--amber w-full text-center" onclick="sentryTest('404')">Error 404</button>
+              <button class="sentry-demo-btn sentry-demo-btn--amber w-full text-center" onclick="sentryTest('method')">Método inexistente</button>
+            </div>
+            <div class="flex flex-col items-center gap-3">
+              <button class="sentry-demo-btn sentry-demo-btn--purple w-full text-center" onclick="sentryTest('db')">DB Error</button>
+              <button class="sentry-demo-btn sentry-demo-btn--purple w-full text-center" onclick="sentryTest('file')">Archivo no encontrado</button>
+            </div>
+            <div class="flex flex-col items-center gap-3">
+              <button class="sentry-demo-btn sentry-demo-btn--blue w-full text-center" onclick="sentryTest('timeout')">Timeout</button>
+              <button class="sentry-demo-btn sentry-demo-btn--blue w-full text-center" onclick="sentryTest('external')">Servicio externo 503</button>
+            </div>
+          </div>
+          <p id="sentry-test-status" class="text-sm text-slate-200"></p>
+        </article>
 
         <div class="sonar-grid metrics">
           <article class="sonar-card">
@@ -112,7 +142,200 @@
     <small>© creawebes 2025 · Clean Marvel Album</small>
   </footer>
 
-  <script src="/assets/js/sentry.js" defer></script>
+  <script>
+    // Render y llamadas de métricas Sentry (similar a SonarCloud, con cache y estados)
+    (function () {
+      const totalEl = document.getElementById('sentry-total');
+      const updatedEl = document.getElementById('sentry-updated-at');
+      const statusEl = document.getElementById('sentry-status');
+      const syncDots = document.querySelectorAll('.sentry-dot');
+      let syncState = 'idle';
+      const sourceBadgeEl = document.getElementById('sentry-source-badge');
+      const issuesList = document.getElementById('sentry-issues-list');
+      const emptyState = document.getElementById('sentry-empty');
+      const refreshButton = document.getElementById('sentry-refresh-button');
+      const loader = document.getElementById('sentry-loader');
+      const alertBox = document.getElementById('sentry-warning');
+      const inlineWarning = document.getElementById('sentry-issues-warning');
+      const issuesCount = document.getElementById('sentry-issues-count');
+
+      const setLoader = (visible) => {
+        if (visible) {
+          syncState = 'syncing';
+        } else if (syncState !== 'synced') {
+          syncState = 'idle';
+        }
+        updateDots();
+        if (loader) {
+          loader.style.display = 'none';
+        }
+      };
+
+      const setWarning = (element, message) => {
+        if (!element) return;
+        if (message) {
+          element.textContent = message;
+          element.classList.remove('hidden');
+          element.style.display = element === alertBox ? 'block' : 'flex';
+        } else {
+          element.textContent = '';
+          element.classList.add('hidden');
+          element.style.display = 'none';
+        }
+      };
+
+      const formatDate = (value) => {
+        if (!value) return '—';
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('es-ES');
+      };
+
+      const updateDots = () => {
+        if (!syncDots || syncDots.length === 0) return;
+        syncDots.forEach((dot, idx) => {
+          dot.style.animationDelay = `${idx * 0.18}s`;
+          dot.classList.remove('animating', 'is-green');
+          if (syncState === 'syncing') {
+            dot.classList.add('animating');
+          } else if (syncState === 'synced') {
+            dot.classList.add('is-green');
+          }
+        });
+      };
+
+      const renderIssues = (issues) => {
+        if (!issuesList || !emptyState || !issuesCount) return;
+
+        issuesList.innerHTML = '';
+
+        if (!issues || issues.length === 0) {
+          emptyState.classList.remove('hidden');
+          issuesList.classList.add('hidden');
+          issuesCount.textContent = '0 issues';
+          updateDeleteSelectedVisibility();
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+        issuesList.classList.remove('hidden');
+        issuesCount.textContent = `${issues.length} issues`;
+
+        issues.forEach((issue) => {
+          const level = String(issue.level ?? 'info').toLowerCase();
+          const title = issue.title ?? 'Sin título';
+          const lastSeen = formatDate(issue.last_seen ?? issue.lastSeen ?? null);
+          const permalink = issue.url ?? '#';
+          const shortId = issue.short_id ?? '';
+          const issueId = issue.id ?? '';
+
+          const item = document.createElement('div');
+          item.className = `sentry-issue level-${level} sentry-issue-card`;
+          item.setAttribute('data-issue-id', issueId);
+
+          const titleEl = document.createElement('p');
+          titleEl.className = 'sentry-issue__title';
+          titleEl.textContent = title + (shortId ? ` (${shortId})` : '');
+
+          const meta = document.createElement('div');
+          meta.className = 'sentry-issue__meta';
+
+          const levelPill = document.createElement('span');
+          levelPill.className = 'sentry-issue__level';
+          levelPill.textContent = level.toUpperCase();
+
+          const lastSeenEl = document.createElement('span');
+          lastSeenEl.textContent = `Último: ${lastSeen}`;
+
+          meta.append(levelPill, lastSeenEl);
+          item.append(titleEl, meta);
+          issuesList.appendChild(item);
+        });
+
+        // No acciones de borrado ni selección
+      };
+
+      const renderPayload = (payload) => {
+        const source = payload?.source ?? 'empty';
+        const errors = Number.isFinite(payload?.errors) ? payload.errors : 0;
+        const lastUpdate = payload?.last_update ?? null;
+        const issues = Array.isArray(payload?.issues) ? payload.issues : [];
+        const statusText = payload?.status ?? 'EMPTY';
+
+        if (totalEl) totalEl.textContent = errors;
+        if (updatedEl) updatedEl.textContent = formatDate(lastUpdate);
+        if (statusEl) statusEl.textContent = statusText;
+        if (sourceBadgeEl) {
+          const normalized = source === 'live' ? 'live' : (source === 'cache' ? 'cache' : 'empty');
+          sourceBadgeEl.dataset.source = normalized;
+          sourceBadgeEl.textContent = normalized.toUpperCase();
+        }
+
+        renderIssues(issues);
+        syncState = source === 'live' ? 'synced' : 'idle';
+        updateDots();
+      };
+
+      const loadSentryMetrics = async () => {
+        setLoader(true);
+        setWarning(alertBox, '');
+        setWarning(inlineWarning, '');
+
+        try {
+          const response = await fetch('/api/sentry-metrics.php', { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const payload = await response.json();
+          renderPayload(payload);
+
+          if (payload?.message) {
+            setWarning(alertBox, payload.message);
+          }
+        } catch (error) {
+          renderPayload({ source: 'empty', errors: 0, issues: [] });
+          setWarning(alertBox, 'No se pudo cargar Sentry en este momento.');
+          console.error(error);
+          syncState = 'idle';
+          updateDots();
+        } finally {
+          setLoader(false);
+        }
+      };
+
+      if (refreshButton) {
+        refreshButton.addEventListener('click', loadSentryMetrics);
+      }
+
+      updateDots();
+      loadSentryMetrics();
+
+      function bindSentryIssueActions() {
+      }
+
+      function updateDeleteSelectedVisibility() {}
+    })();
+
+    // Disparador de errores demo hacia Sentry (modo prueba)
+    async function sentryTest(type) {
+      const status = document.getElementById('sentry-test-status');
+      if (status) {
+        status.textContent = 'Enviando error de prueba (' + type + ')...';
+      }
+      try {
+        const res = await fetch('/api/sentry-test.php?type=' + encodeURIComponent(type));
+        const json = await res.json();
+        if (json.ok) {
+          status.textContent = '✔ Error demo enviado a Sentry. Ahora pulsa ACTUALIZAR para verlo en el panel.';
+        } else {
+          status.textContent = '⚠ Hubo un problema enviando el error.';
+        }
+      } catch (e) {
+        if (status) {
+          status.textContent = '❌ Error en la solicitud.';
+        }
+      }
+    }
+  </script>
 </body>
 
 </html>

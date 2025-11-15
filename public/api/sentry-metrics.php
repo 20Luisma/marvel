@@ -2,80 +2,126 @@
 
 declare(strict_types=1);
 
-use Dotenv\Dotenv;
 use RuntimeException;
-use Throwable;
 
 $rootPath = dirname(__DIR__, 2);
-$vendorAutoload = $rootPath . '/vendor/autoload.php';
-
-if (is_file($vendorAutoload)) {
-    require_once $vendorAutoload;
-}
-
-// Carga de .env (compatible con Dotenv o fallback manual)
-if (class_exists(Dotenv::class)) {
-    Dotenv::createImmutable($rootPath)->safeLoad();
-} else {
-    $envFile = $rootPath . '/.env';
-    if (is_file($envFile)) {
-        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if ($lines !== false) {
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
-                    continue;
-                }
-                [$name, $value] = explode('=', $line, 2);
-                $name = trim($name);
-                $value = trim($value, " \t\n\r\0\x0B\"'");
-                if ($name !== '') {
-                    $_ENV[$name] = $value;
-                    $_SERVER[$name] = $value;
-                    putenv($name . '=' . $value);
-                }
-            }
-        }
-    }
-}
+require_once $rootPath . '/vendor/autoload.php';
+require_once $rootPath . '/src/bootstrap.php';
 
 header('Content-Type: application/json');
 header('Cache-Control: no-store, max-age=0');
 
-if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
-    jsonErrorResponse(405, 'Método no permitido. Usa GET para consultar el panel de Sentry.');
-}
+$token = envValue('SENTRY_API_TOKEN');
+$org = envValue('SENTRY_ORG_SLUG');
+$project = envValue('SENTRY_PROJECT_SLUG');
+$cacheFile = $rootPath . '/storage/sentry-metrics.json';
 
-$org = envValue('SENTRY_ORG');
-$project = envValue('SENTRY_PROJECT');
-$token = envValue('SENTRY_TOKEN');
-$ttl = (int) envValue('SENTRY_CACHE_TTL', '600');
-$ttl = $ttl > 0 ? $ttl : 600;
-
-if ($org === '' || $project === '' || $token === '') {
-    jsonErrorResponse(
-        500,
-        'Configura SENTRY_ORG, SENTRY_PROJECT y SENTRY_TOKEN en tu entorno para consultar Sentry.'
+if ($token === '' || $org === '' || $project === '') {
+    respondWithCacheOrEmpty(
+        $cacheFile,
+        'Falta SENTRY_API_TOKEN, SENTRY_ORG_SLUG o SENTRY_PROJECT_SLUG para consultar Sentry.'
     );
 }
 
-$cacheFile = $rootPath . '/storage/sentry-cache.json';
-$cachePayload = readCache($cacheFile);
-
-if ($cachePayload !== null && !cacheExpired($cachePayload, $cacheFile, $ttl)) {
-    jsonResponse(200, [
-        'source' => 'cache',
-        'data' => $cachePayload,
-    ]);
-}
+$endpoint = sprintf(
+    'https://sentry.io/api/0/projects/%s/%s/issues/?statsPeriod=24h&per_page=5',
+    rawurlencode($org),
+    rawurlencode($project)
+);
 
 try {
-    $endpoint = sprintf(
-        'https://sentry.io/api/0/projects/%s/%s/issues/',
-        rawurlencode($org),
-        rawurlencode($project)
+    $response = callSentry($endpoint, $token);
+    $issues = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
+    if (!is_array($issues)) {
+        throw new RuntimeException('La respuesta de Sentry no tiene el formato esperado.');
+    }
+
+    $normalized = normalizeIssues($issues, $org, $project);
+    $status = computeStatus($normalized['errors']);
+
+    $payload = [
+        'ok' => true,
+        'source' => 'live',
+        'errors' => $normalized['errors'],
+        'last_update' => date('c'),
+        'status' => $status,
+        'issues' => $normalized['issues'],
+    ];
+
+    // Guardamos caché ya normalizada
+    @file_put_contents(
+        $cacheFile,
+        json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
     );
 
+    echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    exit;
+} catch (Throwable $exception) {
+    respondWithCacheOrEmpty($cacheFile, 'No se pudo contactar con Sentry: ' . $exception->getMessage());
+}
+
+/**
+ * @return array{errors:int,issues:array<int,array<string,string|null>>}
+ */
+function normalizeIssues(array $issues, string $org, string $project): array
+{
+    $normalized = [];
+
+    foreach ($issues as $issue) {
+        if (!is_array($issue)) {
+            continue;
+        }
+
+        $id = (string) ($issue['id'] ?? '');
+        $shortId = (string) ($issue['shortId'] ?? ($issue['short_id'] ?? ''));
+        $title = (string) ($issue['title'] ?? 'Sin título');
+        $level = (string) ($issue['level'] ?? 'info');
+        $lastSeen = (string) ($issue['lastSeen'] ?? ($issue['last_seen'] ?? ''));
+        $firstSeen = (string) ($issue['firstSeen'] ?? ($issue['first_seen'] ?? ''));
+        $permalink = (string) ($issue['permalink'] ?? '');
+
+        if ($permalink === '' && $id !== '') {
+            $permalink = sprintf(
+                'https://sentry.io/organizations/%s/issues/%s/?project=%s',
+                rawurlencode($org),
+                rawurlencode($id),
+                rawurlencode($project)
+            );
+        }
+
+        $normalized[] = [
+            'id' => $id,
+            'short_id' => $shortId !== '' ? $shortId : null,
+            'title' => $title,
+            'level' => strtolower($level),
+            'first_seen' => $firstSeen !== '' ? $firstSeen : null,
+            'last_seen' => $lastSeen !== '' ? $lastSeen : null,
+            'url' => $permalink !== '' ? $permalink : null,
+        ];
+    }
+
+    return [
+        'errors' => count($normalized),
+        'issues' => $normalized,
+    ];
+}
+
+function computeStatus(int $count): string
+{
+    if ($count === 0) {
+        return 'EMPTY';
+    }
+
+    if ($count <= 5) {
+        return 'OK';
+    }
+
+    return 'ERROR';
+}
+
+function callSentry(string $endpoint, string $token): string
+{
     $handle = curl_init($endpoint);
     if ($handle === false) {
         throw new RuntimeException('No se pudo iniciar la solicitud a Sentry.');
@@ -104,90 +150,34 @@ try {
         throw new RuntimeException('Sentry devolvió un error (HTTP ' . $statusCode . ').');
     }
 
-    $issues = json_decode($response, true);
-    if (!is_array($issues)) {
-        throw new RuntimeException('La respuesta de Sentry no tiene el formato esperado.');
-    }
-
-    $data = [
-        'cached_at' => date('c'),
-        'count' => count($issues),
-        'issues' => $issues,
-    ];
-
-    @file_put_contents(
-        $cacheFile,
-        json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-    );
-
-    jsonResponse(200, [
-        'source' => 'live',
-        'data' => $data,
-    ]);
-} catch (Throwable $exception) {
-    if ($cachePayload !== null) {
-        jsonResponse(200, [
-            'source' => 'cache-fallback',
-            'warning' => 'Error consultando Sentry. Usando últimos datos guardados.',
-            'data' => $cachePayload,
-        ]);
-    }
-
-    jsonResponse(200, [
-        'source' => 'empty',
-        'warning' => 'No se pudo consultar Sentry y no existe cache previo.',
-        'data' => [],
-    ]);
+    return $response;
 }
 
-/**
- * @return array<string, mixed>|null
- */
-function readCache(string $cacheFile): ?array
+function respondWithCacheOrEmpty(string $cacheFile, string $message): void
 {
-    if (!is_file($cacheFile)) {
-        return null;
+    if (is_file($cacheFile)) {
+        $cached = json_decode((string) file_get_contents($cacheFile), true);
+        if (is_array($cached)) {
+            $cached['source'] = 'cache';
+            $cached['ok'] = true;
+            echo json_encode($cached, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            exit;
+        }
     }
 
-    $contents = file_get_contents($cacheFile);
-    if ($contents === false || $contents === '') {
-        return null;
-    }
-
-    $decoded = json_decode($contents, true);
-    return is_array($decoded) ? $decoded : null;
-}
-
-function cacheExpired(array $cache, string $cacheFile, int $ttl): bool
-{
-    $cachedAt = strtolower((string) ($cache['cached_at'] ?? ''));
-    $cachedTimestamp = is_string($cachedAt) ? strtotime($cachedAt) : false;
-
-    if ($cachedTimestamp === false) {
-        $cachedTimestamp = filemtime($cacheFile) ?: 0;
-    }
-
-    return ($cachedTimestamp + $ttl) < time();
-}
-
-function envValue(string $key, string $default = ''): string
-{
-    return trim((string) (getenv($key) ?: ($_ENV[$key] ?? $default)));
-}
-
-/**
- * @param array<string, mixed> $payload
- */
-function jsonResponse(int $status, array $payload): void
-{
-    http_response_code($status);
-    echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    http_response_code(200);
+    echo json_encode([
+        'ok' => false,
+        'source' => 'none',
+        'errors' => 0,
+        'status' => 'EMPTY',
+        'issues' => [],
+        'message' => $message,
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
-function jsonErrorResponse(int $status, string $message): void
+function envValue(string $key): string
 {
-    jsonResponse($status, [
-        'error' => $message,
-    ]);
+    return trim((string) (getenv($key) ?: ($_ENV[$key] ?? '')));
 }

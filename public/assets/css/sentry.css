@@ -51,6 +51,9 @@
   color: #e2e8f0;
   font-size: .95rem;
   letter-spacing: .15em;
+  width: 150px;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .sentry-alert {
@@ -157,4 +160,110 @@
 
 .hidden {
   display: none !important;
+}
+
+/* Demo buttons (Sentry test) */
+.sentry-demo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.sentry-demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.sentry-demo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  min-height: 40px;
+  border-radius: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #e2e8f0;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.sentry-demo-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.sentry-demo-btn--red {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border-color: #f87171;
+}
+.sentry-demo-btn--amber {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  border-color: #fbbf24;
+}
+.sentry-demo-btn--purple {
+  background: linear-gradient(135deg, #a855f7, #6d28d9);
+  border-color: #c084fc;
+}
+.sentry-demo-btn--blue {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  border-color: #7dd3fc;
+}
+.sentry-demo-btn--dark {
+  background: #0f172a;
+  border-color: #1f2f46;
+}
+
+.sentry-sync-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  height: 18px;
+}
+
+.sentry-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ef4444;
+  opacity: 0.9;
+}
+
+.sentry-dot.animating {
+  animation: sentryDotPulse 1.2s ease-in-out infinite;
+}
+
+.sentry-dot.is-green {
+  background: #22c55e;
+}
+
+@keyframes sentryDotPulse {
+  0% { background: #ef4444; transform: translateY(0); }
+  33% { background: #f59e0b; transform: translateY(-2px); }
+  66% { background: #22c55e; transform: translateY(0); }
+  100% { background: #ef4444; transform: translateY(0); }
+}
+
+.sentry-refresh-btn {
+  min-width: 150px;
+}
+
+/* Metrics sizing tweaks */
+#sentry-total {
+  font-size: 1.15rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+#sentry-updated-at {
+  font-size: 1.1rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+#sentry-status {
+  font-size: 1.05rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.sonar-card-sub {
+  font-size: 0.9rem;
 }
