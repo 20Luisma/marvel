@@ -18,10 +18,12 @@ require __DIR__ . '/../layouts/header.php';
         <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl hero-text-nowrap">
           Curamos contenidos oficiales de Marvel y los integramos al flujo limpio de la app.
         </p>
+        <p class="app-hero__meta text-base text-slate-300">
+          Esta sección recibe datos dinámicos desde n8n + pipelines de scraping.
+        </p>
       </div>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <p class="app-hero__meta flex-1 min-w-[14rem]">Esta sección recibe datos dinámicos desde n8n + pipelines de scraping.</p>
       <?php require __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>

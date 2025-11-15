@@ -1,0 +1,229 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Iniciar servidor PHP (8080)",
+      "type": "shell",
+      "command": "php",
+      "args": [
+        "-S",
+        "localhost:8080",
+        "-t",
+        "public"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Ejecutar Tests PHPUnit",
+      "type": "shell",
+      "command": "vendor/bin/phpunit",
+      "args": [
+        "--colors=always",
+        "--testdox"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 Analizar código (PHPStan)",
+      "type": "shell",
+      "command": "vendor/bin/phpstan",
+      "args": [
+        "analyse",
+        "--memory-limit=512M"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⚙️ Validar composer",
+      "type": "shell",
+      "command": "composer",
+      "args": [
+        "validate"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 QA completo (tests + phpstan + composer)",
+      "dependsOn": [
+        "🧪 Ejecutar Tests PHPUnit",
+        "🔍 Analizar código (PHPStan)",
+        "⚙️ Validar composer"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⬆️ Git: add + commit + push (actualiza ambos README)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "cp -f clean-marvel/README.md README.md; git add -A; git commit -m \"update clean-marvel + sync README root\" || true; git push"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/.."
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧹 Git: limpiar archivos eliminados (repo raíz)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git add -u; git commit -m \"remove deleted files\" || true; git push"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/.."
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🤖 Run OpenAI Service (8081)",
+      "type": "shell",
+      "command": "php",
+      "args": [
+        "-S",
+        "localhost:8081",
+        "-t",
+        "public"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/openai-service"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧬 Run RAG Service (8082)",
+      "type": "shell",
+      "command": "php",
+      "args": [
+        "-S",
+        "localhost:8082",
+        "-t",
+        "public"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/rag-service"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "▶️ Run Both (8080 + 8081)",
+      "dependsOn": [
+        "🚀 Iniciar servidor PHP (8080)",
+        "🤖 Run OpenAI Service (8081)"
+      ],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🚀 Run All Services (8080 + 8081 + 8082)",
+      "dependsOn": [
+        "🚀 Iniciar servidor PHP (8080)",
+        "🤖 Run OpenAI Service (8081)",
+        "🧬 Run RAG Service (8082)"
+      ],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🧨 Git: sobrescribir remoto con mi local (FORCE)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git add -A && git commit -m \"force sync from local\" || true && git push origin main --force"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/.."
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📸 Git: crear punto de guardado (commit vacío)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git commit --allow-empty -m \"Checkpoint general del proyecto\" && git push origin main"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

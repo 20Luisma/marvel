@@ -15,6 +15,7 @@
 - `storage/` con persistencias JSON y bitácoras (`albums.json`, `heroes.json`, `actividad/`, `notifications.log`).  
 - `views/` (layouts, páginas y parciales) usados por `Src\Controllers\PageController`.  
 - `.vscode/tasks.json` para servidores, QA y comandos git automatizados.  
+- `app/Services/GithubClient.php`, `views/panel-github.php` y `public/assets/css/panel-github.css` para integrar la actividad de Pull Requests del repo Marvel vía API oficial de GitHub.  
 - `docs/` con arquitectura, requerimientos, API reference, roadmap y diagramas UML (`docs/uml`).  
 - `docker-compose.yml` mínimo para levantar la app principal en PHP CLI 8.2 dentro de contenedor.
 
@@ -65,6 +66,14 @@ clean-marvel/
 ├── phpunit.xml.dist / phpstan.neon
 └── .env                          # APP_ENV + override de OPENAI_SERVICE_URL
 ```
+
+## 🐙 Panel GitHub integrado
+
+- `views/panel-github.php` renderiza un tablero que consulta `App\Services\GithubClient` para listar Pull Requests abiertos, cerrados y mergeados del repositorio `20Luisma/marvel` (ajustable mediante las constantes `OWNER`/`REPO`).  
+- El cliente hace *fan-out* contra `https://api.github.com/repos/{owner}/{repo}/pulls`, `/pulls/{number}/commits` y `/pulls/{number}/reviews` para obtener métricas de commits, reviewers únicos, labels y timestamps, devolviendo un payload homogéneo para la vista.  
+- Requiere definir `GITHUB_API_KEY` en `.env` con un token personal que tenga permisos de lectura sobre el repo (scope `repo` o `public_repo`). El servicio lee el `.env` manualmente, arma los headers (`Authorization`, `User-Agent`) y maneja errores/códigos HTTP devolviendo mensajes claros en la UI.  
+- El panel soporta filtros `from`/`to` (YYYY-MM-DD) y fallback inteligente: normaliza fechas, muestra advertencias cuando el token falta y conserva enlaces directos a cada PR.  
+- Los estilos viven en `public/assets/css/panel-github.css` y mantienen coherencia visual con el resto del dashboard; el panel se agrega como acción superior junto a cómics, héroes y documentación.
 
 ## 🧩 Microservicios
 

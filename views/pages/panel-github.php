@@ -11,7 +11,7 @@ $additionalStyles = ['/assets/css/panel-github.css'];
 $activeTopAction = 'github';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-github-page';
 
-$root = dirname(__DIR__, 1);
+$root = dirname(__DIR__, 2);
 require_once $root . '/app/Services/GithubClient.php';
 
 /**
@@ -103,22 +103,24 @@ $hasError = !is_array($data) || isset($data['error']);
 $repoOwner = \App\Services\GithubClient::OWNER;
 $repoName = \App\Services\GithubClient::REPO;
 
-require __DIR__ . '/layouts/header.php';
+require __DIR__ . '/../layouts/header.php';
 ?>
 
 <header class="app-hero panel-github__hero">
   <div class="app-hero__inner">
     <div class="space-y-3 max-w-3xl">
-      <h1 class="app-hero__title">Clean Architecture with Marvel</h1>
-      <p class="text-lg text-gray-300 leading-snug max-w-2xl sm:text-xl">
-        Visualiza la actividad reciente de Pull Requests del repositorio marvel.
-      </p>
+      <div class="space-y-3">
+        <h1 class="app-hero__title">Clean Architecture with Marvel</h1>
+        <p class="text-lg text-gray-300 leading-snug max-w-2xl sm:text-xl">
+          Visualiza la actividad reciente de Pull Requests del repositorio marvel.
+        </p>
+        <p class="app-hero__meta text-base text-slate-300">
+          GitHub integrado para ver actividad de cada PR.
+        </p>
+      </div>
     </div>
     <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-      <p class="app-hero__meta flex-1 min-w-[14rem]">
-        GitHub integrado para ver actividad de cada PR.
-      </p>
-      <?php require __DIR__ . '/partials/top-actions.php'; ?>
+      <?php require __DIR__ . '/../partials/top-actions.php'; ?>
     </div>
   </div>
 </header>
@@ -238,5 +240,5 @@ require __DIR__ . '/layouts/header.php';
 </main>
 
 <?php
-$scripts = [];
-require __DIR__ . '/layouts/footer.php';
+$scripts = ['/assets/js/panel-github.js'];
+require __DIR__ . '/../layouts/footer.php';

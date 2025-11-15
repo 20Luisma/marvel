@@ -15,7 +15,8 @@ final class PageController
         '/comic' => 'pages/comic',
         '/oficial-marvel' => 'pages/oficial-marvel',
         '/readme' => 'pages/readme',
-        '/panel-github' => 'panel-github',
+        '/sonar' => 'pages/sonar',
+        '/panel-github' => 'pages/panel-github',
     ];
 
     public function renderIfHtmlRoute(string $method, string $path): bool
