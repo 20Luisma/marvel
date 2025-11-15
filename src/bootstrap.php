@@ -30,6 +30,9 @@ use App\Notifications\Application\ListNotificationsUseCase;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
+use Sentry\ClientBuilder;
+use Sentry\SentrySdk;
+use Sentry\State\Hub;
 use Src\Shared\Http\ReadmeController;
 
 return (static function (): array {
@@ -50,11 +53,49 @@ return (static function (): array {
         }
     }
 
+    // --- Sentry ----------------------------------------------------------------
+    $sentryDsn = $_ENV['SENTRY_DSN'] ?? getenv('SENTRY_DSN') ?: null;
+
+    if ($sentryDsn) {
+        try {
+            $client = ClientBuilder::create([
+                'dsn' => $sentryDsn,
+                'environment' => $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?? 'local',
+                'traces_sample_rate' => 0.2,
+            ])->getClient();
+
+            $hub = new Hub($client);
+            SentrySdk::setCurrentHub($hub);
+
+            set_error_handler(static function ($severity, $message, $file, $fileLine) {
+                if (!(error_reporting() & $severity)) {
+                    return false;
+                }
+                \Sentry\captureMessage(sprintf('%s in %s:%d', $message, $file, $fileLine));
+                return false;
+            });
+
+            set_exception_handler(static function (Throwable $exception): void {
+                \Sentry\captureException($exception);
+                throw $exception;
+            });
+        } catch (Throwable $e) {
+            error_log('Error inicializando Sentry: ' . $e->getMessage());
+        }
+    }
+    // ---------------------------------------------------------------------------
+
     $serviceConfigPath = $rootPath . '/config/services.php';
     /** @var array<string, mixed> $serviceConfig */
     $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
     $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
-    $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
+
+    // ServiceUrlProvider puede no existir cuando no está cargado el autoloader
+    // (por ejemplo en scripts internos como test-sentry.php)
+    $serviceUrlProvider = null;
+    if (class_exists(ServiceUrlProvider::class)) {
+        $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
+    }
 
     $albumRepository = new FileAlbumRepository($rootPath . '/storage/albums.json');
     $heroRepository = new FileHeroRepository($rootPath . '/storage/heroes.json');
@@ -113,7 +154,12 @@ return (static function (): array {
 
     $openAiServiceUrl = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
     if (!is_string($openAiServiceUrl) || trim($openAiServiceUrl) === '') {
-        $openAiServiceUrl = $serviceUrlProvider->getOpenAiChatUrl();
+        if ($serviceUrlProvider instanceof ServiceUrlProvider) {
+            $openAiServiceUrl = $serviceUrlProvider->getOpenAiChatUrl();
+        } else {
+            // En scripts internos (test-sentry.php) podemos vivir sin esta URL
+            $openAiServiceUrl = null;
+        }
     }
 
     $container['ai'] = [
@@ -131,7 +177,7 @@ return (static function (): array {
         error_log('Hero seeding failed: ' . $e->getMessage());
     }
 
-    $container['readme.show'] = static fn (): ReadmeController => new ReadmeController($rootPath);
+    $container['readme.show'] = static fn(): ReadmeController => new ReadmeController($rootPath);
 
     $GLOBALS['__clean_marvel_container'] = $container;
 
