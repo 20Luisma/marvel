@@ -35,6 +35,7 @@
           <a href="/comic" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--flat">Crear Cómic</a>
           <a href="/oficial-marvel" class="btn app-hero__cta app-hero__cta-equal">Oficial Marvel</a>
           <a href="/sonar" class="btn app-hero__cta app-hero__cta-equal is-active app-hero__cta--github app-hero__cta--flat" aria-current="page">SonarCloud</a>
+          <a href="/sentry" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--github">Sentry</a>
           <a href="/panel-github" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--github">GitHub PRs</a>
           <a id="btn-readme" href="/readme" class="btn app-hero__cta app-hero__cta-equal btn-readme app-hero__cta--github">
             <span>README</span>

@@ -16,6 +16,7 @@ final class PageController
         '/oficial-marvel' => 'pages/oficial-marvel',
         '/readme' => 'pages/readme',
         '/sonar' => 'pages/sonar',
+        '/sentry' => 'pages/sentry',
         '/panel-github' => 'pages/panel-github',
     ];
 

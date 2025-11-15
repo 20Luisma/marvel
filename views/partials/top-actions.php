@@ -15,6 +15,7 @@ $aria = static fn (string $action): string => $activeTopAction === $action ? ' a
   <a href="/comic" class="<?= $ctaBaseClasses('comic') ?> app-hero__cta--flat"<?= $aria('comic') ?>>Crear Cómic</a>
   <a href="/oficial-marvel" class="<?= $ctaBaseClasses('official') ?>"<?= $aria('official') ?>>Oficial Marvel</a>
   <a href="/sonar" class="<?= $ctaBaseClasses('sonar') ?> app-hero__cta--github"<?= $aria('sonar') ?>>SonarCloud</a>
+  <a href="/sentry" class="<?= $ctaBaseClasses('sentry') ?> app-hero__cta--github"<?= $aria('sentry') ?>>Sentry</a>
   <a href="/panel-github" class="<?= $ctaBaseClasses('github') ?> app-hero__cta--github"<?= $aria('github') ?>>GitHub PRs</a>
   <a id="btn-readme" href="/readme" class="<?= $ctaBaseClasses('readme') ?> btn-readme app-hero__cta--github"<?= $aria('readme') ?>>
     <span>README</span>

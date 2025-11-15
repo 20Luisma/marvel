@@ -97,6 +97,19 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section class="space-y-3">
+          <h3 class="text-2xl text-white">📈 SonarCloud y tipos de tests</h3>
+          <p>
+            La página de SonarCloud muestra el estado de calidad del código consumiendo el reporte de cobertura generado por PHPUnit.
+            El pipeline lee <code>coverage.xml</code> para sincronizarse con <code>sonar-project.properties</code> sin exponer secretos.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>Suites unitarias para entidades y servicios puros, más pruebas de aplicación con repositorios en memoria (sin tocar disco ni HTTP).</li>
+            <li>Dobles de prueba en <code>tests/Fakes</code> y <code>tests/Doubles</code> evitan dependencias reales y mantienen determinismo.</li>
+            <li>Ejecuta <code>composer test</code> o <code>composer test:cov</code> para generar <code>build/coverage.xml</code> que luego consume SonarCloud.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
           <h3 class="text-2xl text-white">🔊 Narración con ElevenLabs</h3>
           <p>
             Los resultados de texto (cómic y comparación RAG) incluyen botones para escuchar la historia usando el endpoint <code>/api/tts-elevenlabs.php</code>.
