@@ -4,7 +4,7 @@
       <h2 class="text-3xl text-white">🧪 Tests</h2>
       <span id="test-status-chip" class="hidden inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.7rem] font-black uppercase tracking-[0.18em] leading-none border border-slate-500/40 bg-slate-800/80 text-slate-200 shadow-sm transition-colors duration-150">—</span>
     </div>
-    <button id="tests-toggle" type="button" role="button" class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.7rem] font-black uppercase tracking-[0.18em] leading-none border border-slate-500/40 bg-slate-800/80 text-slate-200 shadow-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-emerald-300/30" aria-expanded="true" aria-controls="tests-box">
+    <button id="tests-toggle" type="button" class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.7rem] font-black uppercase tracking-[0.18em] leading-none border border-slate-500/40 bg-slate-800/80 text-slate-200 shadow-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-emerald-300/30" aria-expanded="true" aria-controls="tests-box" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
       <span class="tests-toggle-label">Ocultar tests</span>
       <svg class="tests-toggle-icon h-3.5 w-3.5 opacity-90 transition-transform duration-150 transform rotate-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.061l-4.24 4.243a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>

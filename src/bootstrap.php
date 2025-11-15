@@ -53,6 +53,7 @@ return (static function (): array {
     $serviceConfigPath = $rootPath . '/config/services.php';
     /** @var array<string, mixed> $serviceConfig */
     $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
+    $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
     $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
 
     $albumRepository = new FileAlbumRepository($rootPath . '/storage/albums.json');
@@ -131,6 +132,8 @@ return (static function (): array {
     }
 
     $container['readme.show'] = static fn (): ReadmeController => new ReadmeController($rootPath);
+
+    $GLOBALS['__clean_marvel_container'] = $container;
 
     return $container;
 })();

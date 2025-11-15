@@ -611,7 +611,7 @@ function clearGeneratedComic() {
   if (comicStorySection) comicStorySection.classList.add('hidden');
   if (heroSelectionSection) heroSelectionSection.classList.remove('hidden');
 
-  if (generatedComicTitle) generatedComicTitle.textContent = '';
+  if (generatedComicTitle) generatedComicTitle.textContent = 'Cómic generado con IA';
   if (slideshowContainer) slideshowContainer.innerHTML = '';
 
   if (comicOutputStorySummary) {
@@ -1008,7 +1008,7 @@ function buildHeroCard(hero) {
     <img src="${hero.imagen || ''}" alt="${hero.nombre || 'Héroe Marvel'}" class="hero-card-image">
     <div class="flex flex-col gap-2 p-5">
       <h3 class="hero-card-title">${hero.nombre || 'Héroe sin nombre'}</h3>
-      <p class="hero-card-meta">${hero.contenido ? hero.contenido.replace(/\n/g, ' ') : 'Sin descripción disponible.'}</p>
+      <p class="hero-card-meta">${hero.contenido ? String(hero.contenido).replaceAll('\n', ' ') : 'Sin descripción disponible.'}</p>
     </div>
   `;
 
@@ -1278,7 +1278,8 @@ if (closeRagResultButton) {
   });
 }
 function cleanRagAnswer(answer) {
-  const normalised = answer.replaceAll(/\r\n/g, '\n');
+  const safeAnswer = typeof answer === 'string' ? answer : '';
+  const normalised = safeAnswer.replaceAll('\r\n', '\n');
 
   const segments = normalised.split(/\n\s*\n/);
   if (segments.length <= 1) {
@@ -1288,7 +1289,7 @@ function cleanRagAnswer(answer) {
   const filtered = segments.filter((segment) => {
     const trimmed = segment.trim();
     if (trimmed === '') return false;
-    const isTableLine = /^[\|\-:\s\*☆★]+$/.test(trimmed.replace(/[A-Za-zÁÉÍÓÚÜÑ0-9().,+/]/g, ''));
+    const isTableLine = /^[\|\-:\s\*☆★]+$/.test(trimmed.replaceAll(/[A-Za-zÁÉÍÓÚÜÑ0-9().,+/]/g, ''));
     const startsWithHeader = /^\|?[\s\-_:|]+\|?$/i.test(trimmed);
     return !(trimmed.includes('|') || isTableLine || startsWithHeader);
   });

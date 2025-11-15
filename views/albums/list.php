@@ -19,12 +19,12 @@
             </div>
             <div class="flex flex-col sm:flex-row sm:items-end sm:gap-3 w-full sm:w-auto sm:ml-auto">
               <div class="sm:w-72">
-                <label class="block text-xs text-gray-400 mb-1">Buscar (por nombre)</label>
+                <label class="block text-xs text-gray-400 mb-1" for="filter-q">Buscar (por nombre)</label>
                 <input id="filter-q" type="search" placeholder="Ej: vengadores, 2025…"
                   class="w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white"/>
               </div>
               <div class="sm:w-52">
-                <label class="block text-xs text-gray-400 mb-1">Ordenar</label>
+                <label class="block text-xs text-gray-400 mb-1" for="filter-order">Ordenar</label>
                 <select id="filter-order"
                   class="w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white">
                   <option value="recent">Recientes</option>

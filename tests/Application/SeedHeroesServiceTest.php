@@ -24,7 +24,12 @@ class SeedHeroesServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->container = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
+        $bootstrapContainer = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
+        /** @var array<string, mixed> $resolvedContainer */
+        $resolvedContainer = is_array($bootstrapContainer)
+            ? $bootstrapContainer
+            : ($GLOBALS['__clean_marvel_container'] ?? []);
+        $this->container = $resolvedContainer;
 
         $this->albumRepository = new InMemoryAlbumRepository();
         $this->heroRepository = new InMemoryHeroRepository();

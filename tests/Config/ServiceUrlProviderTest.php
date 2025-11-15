@@ -16,7 +16,12 @@ final class ServiceUrlProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->config = require_once dirname(__DIR__, 2) . '/config/services.php';
+        $config = require_once dirname(__DIR__, 2) . '/config/services.php';
+        /** @var array<string, mixed> $resolvedConfig */
+        $resolvedConfig = is_array($config)
+            ? $config
+            : ($GLOBALS['__clean_marvel_service_config'] ?? []);
+        $this->config = $resolvedConfig;
         unset($_ENV['APP_ENV']);
     }
 

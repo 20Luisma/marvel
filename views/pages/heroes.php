@@ -90,12 +90,12 @@ require_once __DIR__ . '/../layouts/header.php';
             </div>
             <div id="heroes-controls" class="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
               <div class="sm:col-span-2">
-                <label class="block text-xs text-gray-400 mb-1">Buscar (nombre o biografía)</label>
+                <label class="block text-xs text-gray-400 mb-1" for="filter-q">Buscar (nombre o biografía)</label>
                 <input id="filter-q" type="search" placeholder="Ej: spider, wakanda, mutante..."
                   class="w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" />
               </div>
               <div>
-                <label class="block text-xs text-gray-400 mb-1">Ordenar</label>
+                <label class="block text-xs text-gray-400 mb-1" for="filter-order">Ordenar</label>
                 <select id="filter-order"
                   class="w-full px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white">
                   <option value="az">A → Z</option>
