@@ -1,0 +1,85 @@
+
+'src\controllers\herocontroller::destroyn
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.phpN N("1*ž
+2T T(?JH
+T  T(8
+%6**
+
+__unknown_file (
+
+
+$exception2
+getmessage½
+º
+T T(>
+%7"#app\shared\http\jsonresponse::error*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%6*!
+
+__unknown_file (2”*
+4*:
+4
+HeroController.php"
+V V(
+implicit return*”
+1Q Q(0N
+L
+N N(	
+$heroId"__id*/
+
+__unknown_file (
+
+$heroIdstringh
+f
+Q Q(
+%1"__id*N
+
+__unknown_file (2*0 
+src\controllers\herocontroller"
+
+deleteHerohf
+Q Q(/
+%2*"
+
+__unknown_file (
+
+%1*'
+
+__unknown_file (
+	
+$heroId2execute
+R" R(C
+%3"$Array
+š
+R" R(C
+%4"__mapSet*"
+
+__unknown_file (
+
+%3*'
+
+__unknown_file (	
+message*1
+
+__unknown_file (
+HÃ©roe eliminado.œ
+™
+R R(D
+%5"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%3*
+2
+4:
+N N(*
+$heroIdstringB" 
+src\controllers\herocontrollerH

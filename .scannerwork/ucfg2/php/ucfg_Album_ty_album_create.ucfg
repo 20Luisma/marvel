@@ -1,0 +1,85 @@
+
+&app\albums\domain\entity\album::createn
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Domain/Entity/Album.php (!"1*­
+1 ('P
+N
+ (!
+
+$albumId"__id*0
+
+__unknown_file (
+
+$albumIdstringN
+L
+ (!	
+$nombre"__id*/
+
+__unknown_file (
+
+$nombrestringV
+T
+ (!
+$coverImage"__id*3
+
+__unknown_file (
+
+$coverImagestring'%
+ (&
+$now"datetimeimmutableX
+V
+ (&
+%1"datetimeimmutable::__construct*$
+
+__unknown_file (
+
+$now°
+­
++ (L
+%3".app\albums\domain\entity\album::normalizecover*>
+
+__unknown_file ("" 
+app\albums\domain\entity\album*+
+
+__unknown_file (
+
+$coverImage1/
+ (Y
+%2"app\albums\domain\entity\self¦
+£
+ (Y
+%4"*app\albums\domain\entity\self::__construct*"
+
+__unknown_file (
+
+%2*(
+
+__unknown_file (
+
+
+$albumId*'
+
+__unknown_file (
+	
+$nombre*"
+
+__unknown_file (
+
+%3*$
+
+__unknown_file (
+
+$now*$
+
+__unknown_file (
+
+$now"
+ (Z
+
+%2:
+" (1
+$albumIdstring:
+3 (A
+$nombrestring:!
+C (]
+$coverImagestringB" 
+app\albums\domain\entity\albumH

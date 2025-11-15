@@ -1,0 +1,66 @@
+
+1app\albums\domain\event\albumcreated::__constructt
+j/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Domain/Event/AlbumCreated.php ("1*8
+2
+AlbumCreated.php"
+ (
+implicit return*þ
+1 (AX
+V
+ (
+$aggregateId"__id*4
+
+__unknown_file (
+
+$aggregateIdstringJ
+H
+ (
+$name"__id*-
+
+__unknown_file (
+
+$namestringP
+N
+ (
+
+$eventId"__id*0
+
+__unknown_file (
+
+$eventIdstringa
+_
+ (
+$occurredOn"__id*>
+
+__unknown_file ("
+ 
+$occurredOndatetimeimmutableŽ
+‹
+ (@
+%1".app\shared\domain\bus\domainevent::__construct*D
+
+__unknown_file ((&
+$app\albums\domain\event\albumcreated*,
+
+__unknown_file (
+
+$aggregateId*(
+
+__unknown_file (
+
+
+$eventId*+
+
+__unknown_file (
+
+$occurredOn*
+2:"
+ (
+$aggregateIdstring:
+ (%
+$namestring:
+ (
+$eventIdstring:,
+ (. 
+$occurredOndatetimeimmutableB(&
+$app\albums\domain\event\albumcreatedH

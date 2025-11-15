@@ -1,0 +1,49 @@
+
+Aapp\activities\application\dto\recordactivityrequest::__construct„
+z/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Application/DTO/RecordActivityRequest.php	 	("1*ƒ
+1
+RecordActivityRequest.phpL
+J
+	 	(
+$scope"__id*.
+
+__unknown_file (
+
+$scopestringT
+R
+	 	(
+
+$contextId"__id*2
+
+__unknown_file (
+
+
+$contextIdstringN
+L
+	 	(	
+$action"__id*/
+
+__unknown_file (
+
+$actionstringL
+J
+	 	(
+$title"__id*.
+
+__unknown_file (
+
+$titlestring"
+ (
+implicit return:
+
+ 
+(%
+$scopestring: 
+ (*
+
+$contextIdstring:
+ (&
+$actionstring:
+ (%
+$titlestringB86
+4app\activities\application\dto\recordactivityrequestH

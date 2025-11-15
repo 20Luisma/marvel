@@ -1,0 +1,86 @@
+
+(src\controllers\albumcontroller::destroyo
+e/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/AlbumController.php; ;("1*û
+2A A(?JH
+A  A(8
+%6**
+
+__unknown_file (
+
+
+$exception2
+getmessageΩ
+∫
+A A(>
+%7"#app\shared\http\jsonresponse::error*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%6*!
+
+__unknown_file (2î*
+4*;
+4
+AlbumController.php"
+C C(
+implicit return*ô
+1> >(2P
+N
+; ;(
+
+$albumId"__id*0
+
+__unknown_file (
+
+$albumIdstringj
+h
+> >(
+%1"__id*P
+
+__unknown_file (4*2!
+src\controllers\albumcontroller"
+deleteAlbumig
+> >(1
+%2*"
+
+__unknown_file (
+
+%1*(
+
+__unknown_file (
+
+
+$albumId2execute
+?" ?(C
+%3"$Arrayù
+ö
+?" ?(C
+%4"__mapSet*"
+
+__unknown_file (
+
+%3*'
+
+__unknown_file (	
+message*1
+
+__unknown_file (
+√Ålbum eliminado.ú
+ô
+? ?(D
+%5"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%3*
+2
+4:
+; ;(+
+$albumIdstringB#!
+src\controllers\albumcontrollerH
