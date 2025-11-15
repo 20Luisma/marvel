@@ -1,0 +1,43 @@
+
+/app\albums\domain\entity\album::actualizarcovern
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Domain/Entity/Album.phpD D(#"1*1
+2
+	Album.php"
+H H(
+implicit return*â
+1F F(>V
+T
+D D(#
+$coverImage"__id*3
+
+__unknown_file (
+
+$coverImagestring°
+­
+F F(=
+%1".app\albums\domain\entity\album::normalizecover*>
+
+__unknown_file ("" 
+app\albums\domain\entity\album*+
+
+__unknown_file (
+
+$coverImageh
+f
+F F(=0 
+app\albums\domain\entity\album"
+
+coverImage"__id*"
+
+__unknown_file (
+
+%1YW
+G G(
+%2*>
+
+__unknown_file (" 
+app\albums\domain\entity\album2touch*
+2:!
+D$ D(7
+$coverImagestringB" 
+app\albums\domain\entity\albumH

@@ -1,0 +1,77 @@
+
+$src\controllers\herocontroller::shown
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php9 9("1*ž
+2? ?(?JH
+?  ?(8
+%4**
+
+__unknown_file (
+
+
+$exception2
+getmessage½
+º
+? ?(>
+%5"#app\shared\http\jsonresponse::error*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%4*!
+
+__unknown_file (2”*
+4*:
+4
+HeroController.php"
+A A(
+implicit return*š
+1< <(6N
+L
+9 9(	
+$heroId"__id*/
+
+__unknown_file (
+
+$heroIdstringf
+d
+< <(#
+%1"__id*L
+
+__unknown_file (0*. 
+src\controllers\herocontroller"
+
+findHerohf
+< <(5
+%2*"
+
+__unknown_file (
+
+%1*'
+
+__unknown_file (
+	
+$heroId2execute?
+=
+< <(5
+$data"__id*"
+
+__unknown_file (
+
+%2Ÿ
+œ
+= =((
+%3"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*%
+
+__unknown_file (	
+
+$data*
+2
+4:
+9 9('
+$heroIdstringB" 
+src\controllers\herocontrollerH

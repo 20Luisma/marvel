@@ -1,0 +1,41 @@
+
+%src\controllers\herocontroller::indexn
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php ("1*:
+2
+HeroController.php"
+! !(
+implicit return* 
+1 (-h
+f
+ (!
+%1"__id*N
+
+__unknown_file (2*0 
+src\controllers\herocontroller"
+
+listHeroes?=
+ (,
+%2*"
+
+__unknown_file (
+
+%12execute?
+=
+ (,
+$data"__id*"
+
+__unknown_file (
+
+%2Ÿ
+œ
+   ($
+%3"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*%
+
+__unknown_file (	
+
+$data*
+2B" 
+src\controllers\herocontrollerH

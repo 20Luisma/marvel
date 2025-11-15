@@ -1,0 +1,90 @@
+
+4app\heroes\application\dto\heroresponse::__constructw
+m/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/DTO/HeroResponse.php ("1*È
+1
+HeroResponse.phpN
+L
+ (	
+$heroId"__id*/
+
+__unknown_file (
+
+$heroIdstringP
+N
+ (
+
+$albumId"__id*0
+
+__unknown_file (
+
+$albumIdstringN
+L
+ (	
+$nombre"__id*/
+
+__unknown_file (
+
+$nombrestringJ
+H
+ (
+$slug"__id*-
+
+__unknown_file (
+
+$slugstringT
+R
+ (
+
+$contenido"__id*2
+
+__unknown_file (
+
+
+$contenidostringN
+L
+ (	
+$imagen"__id*/
+
+__unknown_file (
+
+$imagenstringT
+R
+ (
+
+$createdAt"__id*2
+
+__unknown_file (
+
+
+$createdAtstringT
+R
+ (
+
+$updatedAt"__id*2
+
+__unknown_file (
+
+
+$updatedAtstring"
+ (
+implicit return:
+ ('
+$heroIdstring:
+ ((
+$albumIdstring:
+ ('
+$nombrestring:
+ (%
+$slugstring: 
+ (*
+
+$contenidostring:
+ ('
+$imagenstring: 
+ (*
+
+$createdAtstring: 
+ (*
+
+$updatedAtstringB+)
+'app\heroes\application\dto\heroresponseH

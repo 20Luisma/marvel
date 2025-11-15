@@ -1,0 +1,53 @@
+
++src\controllers\herocontroller::__constructn
+d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php ("1*Â
+1
+HeroController.php€
+~
+ (
+$listHeroes"__id*]
+
+__unknown_file (A
+?
+$listHeroes0app\heroes\application\usecase\listheroesusecase€
+~
+ (
+$createHero"__id*]
+
+__unknown_file (A
+?
+$createHero0app\heroes\application\usecase\createherousecase€
+~
+ (
+$updateHero"__id*]
+
+__unknown_file (A
+?
+$updateHero0app\heroes\application\usecase\updateherousecase€
+~
+ (
+$deleteHero"__id*]
+
+__unknown_file (A
+?
+$deleteHero0app\heroes\application\usecase\deleteherousecasez
+x
+ (
+	$findHero"__id*Y
+
+__unknown_file (=
+;
+	$findHero.app\heroes\application\usecase\findherousecase"
+ (
+implicit return:K
+ (6?
+$listHeroes0app\heroes\application\usecase\listheroesusecase:K
+ (6?
+$createHero0app\heroes\application\usecase\createherousecase:K
+ (6?
+$updateHero0app\heroes\application\usecase\updateherousecase:K
+ (6?
+$deleteHero0app\heroes\application\usecase\deleteherousecase:G
+ (2;
+	$findHero.app\heroes\application\usecase\findherousecaseB" 
+src\controllers\herocontrollerH

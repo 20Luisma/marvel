@@ -1,0 +1,102 @@
+
+)src\controllers\activitycontroller::clearr
+h/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ActivityController.php5 5("1*û
+2; ;(?JH
+;  ;(8
+%6**
+
+__unknown_file (
+
+
+$exception2
+getmessageΩ
+∫
+; ;(>
+%7"#app\shared\http\jsonresponse::error*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%6*!
+
+__unknown_file (2ê*
+4*>
+4
+ActivityController.php"
+= =(
+implicit return*ü
+18 8(>L
+J
+5 5(
+$scope"__id*.
+
+__unknown_file (
+
+$scopestringT
+R
+5 5(
+
+$contextId"__id*2
+
+__unknown_file (
+
+
+$contextIdstringo
+m
+8 8( 
+%1"__id*U
+
+__unknown_file (9*7$
+"src\controllers\activitycontroller"
+clearActivityîë
+8 8(=
+%2*"
+
+__unknown_file (
+
+%1*&
+
+__unknown_file (
+
+
+$scope**
+
+__unknown_file (
+
+
+$contextId2execute
+9" 9(G
+%3"$Array†
+ù
+9" 9(G
+%4"__mapSet*"
+
+__unknown_file (
+
+%3*'
+
+__unknown_file (	
+message*4
+
+__unknown_file (
+Actividad eliminada.ú
+ô
+9 9(H
+%5"%app\shared\http\jsonresponse::success*<
+
+__unknown_file ( "
+app\shared\http\jsonresponse*"
+
+__unknown_file (
+
+%3*
+2
+4:
+5 5('
+$scopestring: 
+5) 5(B
+
+$contextIdstringB&$
+"src\controllers\activitycontrollerH

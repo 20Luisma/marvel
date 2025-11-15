@@ -1,0 +1,1398 @@
+
+h__sonar_lambda_/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/bootstrap.php_35_15]
+S/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/bootstrap.php# #("1*€c
+137k 7(k·
+´
+8 8(-
+%21"__mapSet*(
+
+__unknown_file ("
+
+$GLOBALS*=
+
+__unknown_file (!
+__clean_marvel_service_config*.
+
+__unknown_file (
+
+$serviceConfigB@
+9 9(@
+$serviceUrlProvider"app\config\serviceurlprovider¥
+¢
+9 9(@
+%22"*app\config\serviceurlprovider::__construct*3
+
+__unknown_file (
+
+$serviceUrlProvider*.
+
+__unknown_file (
+
+$serviceConfig^
+\
+;/ ;(Q
+%23"__concat*
+;/ ;(8
+
+	$rootPath*$
+;; ;(Q
+/storage/albums.json[Y
+; ;(R
+$albumRepository"9app\albums\infrastructure\persistence\filealbumrepository³
+°
+; ;(R
+%24"Fapp\albums\infrastructure\persistence\filealbumrepository::__construct*0
+
+__unknown_file (
+
+$albumRepository*#
+
+__unknown_file (
+
+%23^
+\
+<- <(O
+%25"__concat*
+<- <(6
+
+	$rootPath*$
+<9 <(O
+/storage/heroes.jsonYW
+< <(P
+$heroRepository"8app\heroes\infrastructure\persistence\fileherorepository±
+®
+< <(P
+%26"Eapp\heroes\infrastructure\persistence\fileherorepository::__construct*/
+
+__unknown_file (
+
+$heroRepository*#
+
+__unknown_file (
+
+%25\
+Z
+=8 =(X
+%27"__concat*
+=8 =(A
+
+	$rootPath*"
+=D =(X
+/storage/actividadhf
+= =(Y
+$activityRepository"Capp\activities\infrastructure\persistence\fileactivitylogrepositoryÀ
+½
+= =(Y
+%28"Papp\activities\infrastructure\persistence\fileactivitylogrepository::__construct*3
+
+__unknown_file (
+
+$activityRepository*#
+
+__unknown_file (
+
+%27IG
+? ?(&
+	$eventBus".app\shared\infrastructure\bus\inmemoryeventbus{
+y
+? ?(&
+%29";app\shared\infrastructure\bus\inmemoryeventbus::__construct*)
+
+__unknown_file (
+
+	$eventBusd
+b
+A5 A(]
+%30"__concat*
+A5 A(>
+
+	$rootPath**
+AA A(]
+/storage/notifications.log\Z
+A A(^
+$notificationSender"7app\notifications\infrastructure\filenotificationsender´
+±
+A A(^
+%31"Dapp\notifications\infrastructure\filenotificationsender::__construct*3
+
+__unknown_file (
+
+$notificationSender*#
+
+__unknown_file (
+
+%30d
+b
+B9 B(a
+%32"__concat*
+B9 B(B
+
+	$rootPath**
+BE B(a
+/storage/notifications.log`^
+B B(b
+$notificationRepository"7app\notifications\infrastructure\notificationrepository¸
+µ
+B B(b
+%33"Dapp\notifications\infrastructure\notificationrepository::__construct*7
+
+__unknown_file (
+
+$notificationRepository*#
+
+__unknown_file (
+
+%32b`
+D D(R
+$notificationHandler"<app\notifications\application\herocreatednotificationhandlerÊ
+Ç
+D D(R
+%34"Iapp\notifications\application\herocreatednotificationhandler::__construct*4
+
+__unknown_file (
+
+$notificationHandler*3
+
+__unknown_file (
+
+$notificationSenderca
+E E(S
+$albumUpdatedHandler"=app\notifications\application\albumupdatednotificationhandlerË
+È
+E E(S
+%35"Japp\notifications\application\albumupdatednotificationhandler::__construct*4
+
+__unknown_file (
+
+$albumUpdatedHandler*3
+
+__unknown_file (
+
+$notificationSender}
+G G(.
+%36*)
+
+__unknown_file (
+
+	$eventBus*4
+
+__unknown_file (
+
+$notificationHandler2	subscribe}
+H H(.
+%37*)
+
+__unknown_file (
+
+	$eventBus*4
+
+__unknown_file (
+
+$albumUpdatedHandler2	subscribeTR
+J J(\
+$createHeroUseCase"0app\heroes\application\usecase\createherousecase•
+’
+J J(\
+%38"=app\heroes\application\usecase\createherousecase::__construct*2
+
+__unknown_file (
+
+$createHeroUseCase*/
+
+__unknown_file (
+
+$heroRepository*0
+
+__unknown_file (
+
+$albumRepository*)
+
+__unknown_file (
+
+	$eventBus
+L j(
+%39"$Array¦
+£
+L j(
+%40"__mapSet*#
+
+__unknown_file (
+
+%39*/
+
+__unknown_file (
+albumRepository*0
+
+__unknown_file (
+
+$albumRepository¤
+¡
+L j(
+%41"__mapSet*#
+
+__unknown_file (
+
+%39*.
+
+__unknown_file (
+heroRepository*/
+
+__unknown_file (
+
+$heroRepository˜
+•
+L j(
+%42"__mapSet*#
+
+__unknown_file (
+
+%39*(
+
+__unknown_file (
+
+eventBus*)
+
+__unknown_file (
+
+	$eventBus´
+±
+L j(
+%43"__mapSet*#
+
+__unknown_file (
+
+%39*6
+
+__unknown_file (
+notificationRepository*7
+
+__unknown_file (
+
+$notificationRepository¬
+©
+L j(
+%44"__mapSet*#
+
+__unknown_file (
+
+%39*2
+
+__unknown_file (
+activityRepository*3
+
+__unknown_file (
+
+$activityRepository
+R T(	
+%45"$Array
+š
+R T(	
+%46"__mapSet*#
+
+__unknown_file (
+
+%45*(
+
+__unknown_file (
+
+services*.
+
+__unknown_file (
+
+$serviceConfig
+
+L j(
+%47"__mapSet*#
+
+__unknown_file (
+
+%39*&
+
+__unknown_file (
+
+config*#
+
+__unknown_file (
+
+%45
+U W(	
+%48"$Array¥
+¢
+U W(	
+%49"__mapSet*#
+
+__unknown_file (
+
+%48*+
+
+__unknown_file (
+urlProvider*3
+
+__unknown_file (
+
+$serviceUrlProvider’
+
+L j(
+%50"__mapSet*#
+
+__unknown_file (
+
+%39*(
+
+__unknown_file (
+
+services*#
+
+__unknown_file (
+
+%48
+X i(	
+%51"$ArrayFD
+Y Y(E
+%52"1app\albums\application\usecase\createalbumusecase«
+¨
+Y Y(E
+%53">app\albums\application\usecase\createalbumusecase::__construct*#
+
+__unknown_file (
+
+%52*0
+
+__unknown_file (
+
+$albumRepository•
+’
+X i(	
+%54"__mapSet*#
+
+__unknown_file (
+
+%51*+
+
+__unknown_file (
+createAlbum*#
+
+__unknown_file (
+
+%52JH
+Z! Z(i
+%55"5app\heroes\application\usecase\seedalbumheroesusecase‹
+ˆ
+Z! Z(i
+%56"Bapp\heroes\application\usecase\seedalbumheroesusecase::__construct*#
+
+__unknown_file (
+
+%55*0
+
+__unknown_file (
+
+$albumRepository*/
+
+__unknown_file (
+
+$heroRepository*)
+
+__unknown_file (
+
+	$eventBus™
+–
+X i(	
+%57"__mapSet*#
+
+__unknown_file (
+
+%51*/
+
+__unknown_file (
+seedAlbumHeroes*#
+
+__unknown_file (
+
+%55FD
+[ [(P
+%58"1app\albums\application\usecase\updatealbumusecaseÖ
+Ó
+[ [(P
+%59">app\albums\application\usecase\updatealbumusecase::__construct*#
+
+__unknown_file (
+
+%58*0
+
+__unknown_file (
+
+$albumRepository*)
+
+__unknown_file (
+
+	$eventBus•
+’
+X i(	
+%60"__mapSet*#
+
+__unknown_file (
+
+%51*+
+
+__unknown_file (
+updateAlbum*#
+
+__unknown_file (
+
+%58EC
+\ \(C
+%61"0app\albums\application\usecase\listalbumsusecaseª
+§
+\ \(C
+%62"=app\albums\application\usecase\listalbumsusecase::__construct*#
+
+__unknown_file (
+
+%61*0
+
+__unknown_file (
+
+$albumRepository”
+‘
+X i(	
+%63"__mapSet*#
+
+__unknown_file (
+
+%51**
+
+__unknown_file (
+
+listAlbums*#
+
+__unknown_file (
+
+%61FD
+] ](V
+%64"1app\albums\application\usecase\deletealbumusecaseÜ
+Ù
+] ](V
+%65">app\albums\application\usecase\deletealbumusecase::__construct*#
+
+__unknown_file (
+
+%64*0
+
+__unknown_file (
+
+$albumRepository*/
+
+__unknown_file (
+
+$heroRepository•
+’
+X i(	
+%66"__mapSet*#
+
+__unknown_file (
+
+%51*+
+
+__unknown_file (
+deleteAlbum*#
+
+__unknown_file (
+
+%64DB
+^ ^(A
+%67"/app\albums\application\usecase\findalbumusecase©
+¦
+^ ^(A
+%68"<app\albums\application\usecase\findalbumusecase::__construct*#
+
+__unknown_file (
+
+%67*0
+
+__unknown_file (
+
+$albumRepository“
+
+X i(	
+%69"__mapSet*#
+
+__unknown_file (
+
+%51*)
+
+__unknown_file (
+	findAlbum*#
+
+__unknown_file (
+
+%67£
+ 
+X i(	
+%70"__mapSet*#
+
+__unknown_file (
+
+%51**
+
+__unknown_file (
+
+createHero*2
+
+__unknown_file (
+
+$createHeroUseCaseEC
+` `(B
+%71"0app\heroes\application\usecase\listheroesusecase©
+¦
+` `(B
+%72"=app\heroes\application\usecase\listheroesusecase::__construct*#
+
+__unknown_file (
+
+%71*/
+
+__unknown_file (
+
+$heroRepository”
+‘
+X i(	
+%73"__mapSet*#
+
+__unknown_file (
+
+%51**
+
+__unknown_file (
+
+listHeroes*#
+
+__unknown_file (
+
+%71CA
+a a(>
+%74".app\heroes\application\usecase\findherousecase§
+¤
+a a(>
+%75";app\heroes\application\usecase\findherousecase::__construct*#
+
+__unknown_file (
+
+%74*/
+
+__unknown_file (
+
+$heroRepository’
+
+X i(	
+%76"__mapSet*#
+
+__unknown_file (
+
+%51*(
+
+__unknown_file (
+
+findHero*#
+
+__unknown_file (
+
+%74EC
+b b(B
+%77"0app\heroes\application\usecase\deleteherousecase©
+¦
+b b(B
+%78"=app\heroes\application\usecase\deleteherousecase::__construct*#
+
+__unknown_file (
+
+%77*/
+
+__unknown_file (
+
+$heroRepository”
+‘
+X i(	
+%79"__mapSet*#
+
+__unknown_file (
+
+%51**
+
+__unknown_file (
+
+deleteHero*#
+
+__unknown_file (
+
+%77EC
+c c(B
+%80"0app\heroes\application\usecase\updateherousecase©
+¦
+c c(B
+%81"=app\heroes\application\usecase\updateherousecase::__construct*#
+
+__unknown_file (
+
+%80*/
+
+__unknown_file (
+
+$heroRepository”
+‘
+X i(	
+%82"__mapSet*#
+
+__unknown_file (
+
+%51**
+
+__unknown_file (
+
+updateHero*#
+
+__unknown_file (
+
+%80LJ
+d$ d(Z
+%83"7app\notifications\application\clearnotificationsusecase¸
+µ
+d$ d(Z
+%84"Dapp\notifications\application\clearnotificationsusecase::__construct*#
+
+__unknown_file (
+
+%83*7
+
+__unknown_file (
+
+$notificationRepositoryœ
+™
+X i(	
+%85"__mapSet*#
+
+__unknown_file (
+
+%51*2
+
+__unknown_file (
+clearNotifications*#
+
+__unknown_file (
+
+%83KI
+e# e(X
+%86"6app\notifications\application\listnotificationsusecase·
+´
+e# e(X
+%87"Capp\notifications\application\listnotificationsusecase::__construct*#
+
+__unknown_file (
+
+%86*7
+
+__unknown_file (
+
+$notificationRepository›
+˜
+X i(	
+%88"__mapSet*#
+
+__unknown_file (
+
+%51*1
+
+__unknown_file (
+listNotifications*#
+
+__unknown_file (
+
+%86MK
+f  f(N
+%89"8app\activities\application\usecase\recordactivityusecaseµ
+²
+f  f(N
+%90"Eapp\activities\application\usecase\recordactivityusecase::__construct*#
+
+__unknown_file (
+
+%89*3
+
+__unknown_file (
+
+$activityRepository˜
+•
+X i(	
+%91"__mapSet*#
+
+__unknown_file (
+
+%51*.
+
+__unknown_file (
+recordActivity*#
+
+__unknown_file (
+
+%89NL
+g g(M
+%92"9app\activities\application\usecase\listactivitylogusecase¶
+³
+g g(M
+%93"Fapp\activities\application\usecase\listactivitylogusecase::__construct*#
+
+__unknown_file (
+
+%92*3
+
+__unknown_file (
+
+$activityRepository–
+“
+X i(	
+%94"__mapSet*#
+
+__unknown_file (
+
+%51*,
+
+__unknown_file (
+listActivity*#
+
+__unknown_file (
+
+%92OM
+h h(O
+%95":app\activities\application\usecase\clearactivitylogusecase·
+´
+h h(O
+%96"Gapp\activities\application\usecase\clearactivitylogusecase::__construct*#
+
+__unknown_file (
+
+%95*3
+
+__unknown_file (
+
+$activityRepository—
+”
+X i(	
+%97"__mapSet*#
+
+__unknown_file (
+
+%51*-
+
+__unknown_file (
+clearActivity*#
+
+__unknown_file (
+
+%95’
+
+L j(
+%98"__mapSet*#
+
+__unknown_file (
+
+%39*(
+
+__unknown_file (
+
+useCases*#
+
+__unknown_file (
+
+%51E
+C
+L j(
+
+$container"__id*#
+
+__unknown_file (
+
+%3931
+l& p(
+%99"app\dev\seed\seedheroesserviceþ
+û
+l& p(
+%100"+app\dev\seed\seedheroesservice::__construct*#
+
+__unknown_file (
+
+%99*0
+
+__unknown_file (
+
+$albumRepository*/
+
+__unknown_file (
+
+$heroRepository*2
+
+__unknown_file (
+
+$createHeroUseCase£
+ 
+l l(#
+%101"__mapSet**
+
+__unknown_file (
+
+
+$container*1
+
+__unknown_file (
+seedHeroesService*#
+
+__unknown_file (
+
+%99y
+w
+r r(3
+%103"__mapGet*%
+
+__unknown_file (	
+
+$_ENV*2
+
+__unknown_file (
+OPENAI_SERVICE_URL@
+>
+r r(S
+%102"__id*$
+
+__unknown_file (
+
+%103*
+14
+16
+17*Ì
+14r7 r(Sp
+n
+r7 r(S
+%104"getenv*
+
+__unknown_file ( *2
+
+__unknown_file (
+OPENAI_SERVICE_URL@
+>
+r r(S
+%102"__id*$
+
+__unknown_file (
+
+%104*
+16
+17*6
+25
+bootstrap.php"
+‹ ‹(
+implicit return*c
+16rU r(VM
+K
+r r([
+$openAiServiceUrl"__id*$
+
+__unknown_file (
+
+%102*
+18*]
+17rW r([G
+E
+r r([
+$openAiServiceUrl"__id*
+
+__unknown_file ( *
+18*Œ
+18r[ r([r
+p
+s	 s(%
+%105"	is_string*
+
+__unknown_file ( *1
+
+__unknown_file (
+
+$openAiServiceUrl*
+19
+20*‡
+19s) s(Gm
+k
+s) s(@
+%106"trim*
+
+__unknown_file ( *1
+
+__unknown_file (
+
+$openAiServiceUrl*
+20
+21*Â
+1$ $(![
+Y
+$ $( 
+%1"dirname*
+
+__unknown_file ( *
+
+__unknown_file ( C
+A
+$ $( 
+	$rootPath"__id*"
+
+__unknown_file (
+
+%1]
+[
+% %(7
+%2"__concat*
+% %(
+
+	$rootPath*
+% %(. *
+%1 %(7
+.envB
+@
+% %(7
+
+$envPath"__id*"
+
+__unknown_file (
+
+%2e
+c
+' '(
+%3"is_file*
+
+__unknown_file ( *(
+
+__unknown_file (
+
+
+$envPath*
+2
+10*†
+2( ((Tƒ
+€
+( ((N
+%4"file*
+
+__unknown_file ( *(
+
+__unknown_file (
+
+
+$envPath*
+
+__unknown_file ( e
+c
+(X ((]
+$line"
+__arrayGet*"
+
+__unknown_file (
+
+%5*
+
+__unknown_file ( *
+
+4
+6
+10*p
+4(R ((T
+(R ((T
+%6"$Array<
+:
+( ((T
+%5"__id*"
+
+__unknown_file (
+
+%6*
+6
+10*¦
+6) )(+Ž
+‹
+) )(+
+%7"str_starts_with*
+
+__unknown_file ( *%
+
+__unknown_file (	
+
+$line*!
+
+__unknown_file (
+#*
+2
+8*¿
+8- -(S¨
+¥
+-/ -(E
+%8"explode*
+
+__unknown_file ( *!
+
+__unknown_file (
+=*%
+
+__unknown_file (	
+
+$line* 
+
+__unknown_file (2
+-H -(Q
+%9"$Array†
+ƒ
+-H -(Q
+%10"
+__arraySet*"
+
+__unknown_file (
+
+%9* 
+
+__unknown_file (2*
+
+__unknown_file ( …
+‚
+- -(R
+%11"	array_map*
+
+__unknown_file ( *$
+
+__unknown_file (
+trim*
+
+__unknown_file ( e
+c
+- -(
+$key"
+__arrayGet*#
+
+__unknown_file (
+
+%11*
+
+__unknown_file (2 i
+g
+- -(
+$value"
+__arrayGet*#
+
+__unknown_file (
+
+%11* 
+
+__unknown_file (2*
+2
+9*ê
+9/ /(%“
+
+/ /(
+%12"__mapSet*%
+
+__unknown_file (	
+
+$_ENV*$
+
+__unknown_file (
+
+$key*&
+
+__unknown_file (
+
+
+$value^
+\
+0 0(*
+%13"__concat*
+0 0(
+
+$key*
+0 0(!
+=*
+0$ 0(*
+
+
+$value`
+^
+0 0(+
+%14"putenv*
+
+__unknown_file ( *#
+
+__unknown_file (
+
+%13*
+2*À
+20t t(D[Y
+t t(C
+%107*3
+
+__unknown_file (
+
+$serviceUrlProvider2getopenaichaturlM
+K
+t t(C
+$openAiServiceUrl"__id*$
+
+__unknown_file (
+
+%107*
+21*”
+
+21w y(
+w y(
+%108"$Array1/
+x x(G
+%109"app\ai\openaicomicgenerator˜
+•
+x x(G
+%110"(app\ai\openaicomicgenerator::__construct*$
+
+__unknown_file (
+
+%109*1
+
+__unknown_file (
+
+$openAiServiceUrl›
+˜
+w y(
+%111"__mapSet*$
+
+__unknown_file (
+
+%108*.
+
+__unknown_file (
+comicGenerator*$
+
+__unknown_file (
+
+%109•
+’
+w w(
+%112"__mapSet**
+
+__unknown_file (
+
+
+$container*"
+
+__unknown_file (
+ai*$
+
+__unknown_file (
+
+%108
+{ }(
+%113"$Array±
+®
+| |(E
+%114"/app\dev\test\phpunittestrunner::fromenvironment*>
+
+__unknown_file ("" 
+app\dev\test\phpunittestrunner*)
+
+__unknown_file (
+
+	$rootPath—
+”
+{ }(
+%115"__mapSet*$
+
+__unknown_file (
+
+%113**
+
+__unknown_file (
+
+testRunner*$
+
+__unknown_file (
+
+%114›
+˜
+{ {(
+%116"__mapSet**
+
+__unknown_file (
+
+
+$container*(
+
+__unknown_file (
+
+devTools*$
+
+__unknown_file (
+
+%113
+}
+
+€ €('
+%117"__mapGet**
+
+__unknown_file (
+
+
+$container*1
+
+__unknown_file (
+seedHeroesServiceIG
+
+€ €(6
+%118*$
+
+__unknown_file (
+
+%1172seedifempty*
+25
+22
+23*¹
+105 5(<^
+\
+5 5(;
+%15"__concat*
+5 5("
+
+	$rootPath*$
+5% 5(;
+/config/services.phpM
+K
+5 5(;
+$serviceConfigPath"__id*#
+
+__unknown_file (
+
+%15p
+n
+7 7(0
+%16"is_file*
+
+__unknown_file ( *2
+
+__unknown_file (
+
+$serviceConfigPath*
+11
+12*®
+22
+ƒ ƒ(>FD
+
+ƒ, ƒ(<
+%119*"
+
+__unknown_file (
+
+$e2
+getmessagea
+_
+
+ƒ ƒ(<
+%120"__concat*'
+
+ƒ ƒ()
+Hero seeding failed: *
+
+ƒ, ƒ(<
+
+%119g
+e
+
+ƒ ƒ(=
+%121"	error_log*
+
+__unknown_file ( *$
+
+__unknown_file (
+
+%120*
+25
+23*Ö
+1173 7(Ru
+s
+73 7(R
+%17"require_once*
+
+__unknown_file ( *2
+
+__unknown_file (
+
+$serviceConfigPathI
+G
+7 7(k
+$serviceConfig"__id*#
+
+__unknown_file (
+
+%17*
+13*²
+127U 7(k
+7U 7(k
+%18"$Array
+7h 7(j
+%19"$Array–
+“
+7U 7(k
+%20"__mapSet*#
+
+__unknown_file (
+
+%18*,
+
+__unknown_file (
+environments*#
+
+__unknown_file (
+
+%19I
+G
+7 7(k
+$serviceConfig"__id*#
+
+__unknown_file (
+
+%18*
+13*ÿ
+23
+† †(bš
+—
+
+† †(
+%122"__mapSet**
+
+__unknown_file (
+
+
+$container*+
+
+__unknown_file (
+readme.show*
+
+__unknown_file ( ±
+®
+
+ˆ ˆ((
+%123"__mapSet*(
+
+__unknown_file ("
+
+$GLOBALS*8
+
+__unknown_file (
+__clean_marvel_container**
+
+__unknown_file (
+
+
+$container"
+
+Š Š(
+
+
+$containerB H
