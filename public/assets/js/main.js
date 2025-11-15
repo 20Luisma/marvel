@@ -29,7 +29,7 @@ export const normalize = (value) => {
     .toString()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '');
+    .replaceAll(/\p{Diacritic}/gu, '');
 };
 
 export const persistToStorage = (key, value) => {

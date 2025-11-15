@@ -154,7 +154,7 @@ require_once __DIR__ . '/../layouts/header.php';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
-          <h2 id="generated-comic-title" class="text-4xl text-white text-center"></h2>
+          <h2 id="generated-comic-title" class="text-4xl text-white text-center">Cómic generado con IA</h2>
           <div id="hero-slideshow" class="relative w-full max-w-2xl mx-auto">
             <div id="slideshow-container" class="relative h-80 overflow-hidden rounded-lg">
             </div>

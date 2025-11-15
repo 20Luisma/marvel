@@ -3,7 +3,7 @@ import {
   formatDateTime,
   normalize,
   showMessage
-} from '/assets/js/main.js';
+} from './main.js';
 
 // ====== Parámetros e init ======
 const params = new URLSearchParams(window.location.search);

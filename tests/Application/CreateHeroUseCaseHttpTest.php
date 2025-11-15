@@ -35,7 +35,12 @@ class CreateHeroUseCaseHttpTest extends TestCase
 
         require_once dirname(__DIR__, 2) . '/public/index.php';
 
-        $this->container = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
+        $bootstrapContainer = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
+        /** @var array<string, mixed> $resolvedContainer */
+        $resolvedContainer = is_array($bootstrapContainer)
+            ? $bootstrapContainer
+            : ($GLOBALS['__clean_marvel_container'] ?? []);
+        $this->container = $resolvedContainer;
         $logPath = dirname(__DIR__, 2) . '/storage/test_notifications.log';
         if (is_file($logPath)) {
             unlink($logPath);
