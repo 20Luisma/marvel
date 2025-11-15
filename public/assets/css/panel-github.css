@@ -18,8 +18,8 @@
 }
 
 .panel-github__card {
-  background: rgba(10, 16, 26, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: #0b1221; /* fix contraste SonarCloud */
+  border: 1px solid #1f2a40;
   border-radius: 22px;
   padding: 1.8rem;
   box-shadow: 0 24px 45px rgba(4, 7, 13, 0.65);
@@ -35,7 +35,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(148, 163, 184, 0.8);
+  color: #cbd5f5;
 }
 
 .panel-github__filters {
@@ -45,9 +45,9 @@
   align-items: flex-end;
   margin-top: 1.5rem;
   padding: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid #2b3650;
   border-radius: 18px;
-  background: rgba(15, 23, 42, 0.55);
+  background: #111a2f;
 }
 
 .panel-github__filters .btn-primary {
@@ -57,7 +57,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   background: var(--marvel);
-  border: 1px solid rgba(237, 29, 36, 0.55);
+  border: 1px solid #ed1d24;
   box-shadow: none;
 }
 
@@ -70,12 +70,12 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.85rem;
-  color: rgba(226, 232, 240, 0.85);
+  color: #e2e8f0;
 }
 
 .panel-github__filters input[type="date"] {
-  background: rgba(71, 85, 105, 0.45);
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #1f2937;
+  border: 1px solid #94a3b8;
   border-radius: 12px;
   padding: 0.55rem 0.8rem;
   min-width: 190px;
@@ -84,8 +84,8 @@
 
 .panel-github__filters input[type="date"]:focus {
   outline: none;
-  border-color: rgba(230, 36, 41, 0.7);
-  box-shadow: 0 0 0 1px rgba(230, 36, 41, 0.7);
+  border-color: #ed1d24;
+  box-shadow: 0 0 0 1px #ed1d24;
 }
 
 .panel-github__message {
@@ -95,15 +95,15 @@
 }
 
 .panel-github__message--error {
-  background: rgba(230, 36, 41, 0.13);
-  border: 1px solid rgba(230, 36, 41, 0.5);
+  background: #3d0f12;
+  border: 1px solid #ed1d24;
   color: #ffe0e0;
 }
 
 .panel-github__message--empty {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  color: rgba(226, 232, 240, 0.8);
+  background: #111a2f;
+  border: 1px solid #1f2f46;
+  color: #e2e8f0;
   text-align: center;
 }
 
@@ -114,8 +114,8 @@
 }
 
 .panel-github__pr {
-  background: rgba(13, 20, 33, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: #0f192b;
+  border: 1px solid #2c3a52;
   border-radius: 18px;
   padding: 1.25rem 1.4rem;
   box-shadow: 0 14px 32px rgba(4, 9, 18, 0.5);
@@ -127,14 +127,14 @@
 }
 
 .panel-github__subtitle {
-  color: rgba(226, 232, 240, 0.8);
+  color: #e2e8f0;
   font-size: 0.9rem;
 }
 
 .panel-github__meta {
   margin-top: 0.75rem;
   font-size: 0.9rem;
-  color: #b8c1d9;
+  color: #e5e7eb;
 }
 
 .panel-github__actions {
@@ -144,13 +144,13 @@
   flex-wrap: wrap;
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: rgba(226, 232, 240, 0.85);
+  color: #e2e8f0;
 }
 
 .panel-github__link {
-  background: rgba(124, 179, 255, 0.12);
-  border: 1px solid rgba(124, 179, 255, 0.35);
-  color: #90c2ff;
+  background: #1e3a8a;
+  border: 1px solid #3b82f6;
+  color: #dbeafe;
   padding: 0.45rem 0.9rem;
   border-radius: 10px;
   font-size: 0.85rem;
@@ -170,14 +170,14 @@
   border-radius: 999px;
   padding: 0.25rem 0.9rem;
   font-size: 0.78rem;
-  background: rgba(249, 115, 22, 0.16);
-  border: 1px solid rgba(249, 115, 22, 0.45);
-  color: #fcbf49;
+  background: #7c2d12;
+  border: 1px solid #f97316;
+  color: #ffedd5;
 }
 
 .panel-github__footnote {
   margin-top: 1.5rem;
-  color: rgba(148, 163, 184, 0.85);
+  color: #cbd5f5;
   font-size: 0.85rem;
 }
 
