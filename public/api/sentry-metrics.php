@@ -24,20 +24,21 @@ if ($token === '' || $org === '' || $project === '') {
 }
 
 $endpoint = sprintf(
-    'https://sentry.io/api/0/projects/%s/%s/issues/?statsPeriod=24h&per_page=5',
+    // Llamada a Sentry: pedimos eventos (no issues) para listar cada aparición, aunque pertenezca al mismo issue.
+    'https://sentry.io/api/0/projects/%s/%s/events/?statsPeriod=24h&per_page=20&expand=issue',
     rawurlencode($org),
     rawurlencode($project)
 );
 
 try {
     $response = callSentry($endpoint, $token);
-    $issues = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+    $events = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
 
-    if (!is_array($issues)) {
+    if (!is_array($events)) {
         throw new RuntimeException('La respuesta de Sentry no tiene el formato esperado.');
     }
 
-    $normalized = normalizeIssues($issues, $org, $project);
+    $normalized = normalizeEvents($events, $org, $project);
     $status = computeStatus($normalized['errors']);
 
     $payload = [
@@ -46,7 +47,9 @@ try {
         'errors' => $normalized['errors'],
         'last_update' => date('c'),
         'status' => $status,
-        'issues' => $normalized['issues'],
+        'events' => $normalized['events'],
+        // Alias legacy para el JS antiguo mientras migramos la UI
+        'issues' => $normalized['events'],
     ];
 
     // Guardamos caché ya normalizada
@@ -62,48 +65,51 @@ try {
 }
 
 /**
- * @return array{errors:int,issues:array<int,array<string,string|null>>}
+ * Normaliza los eventos recientes para mostrarlos como tarjetas repetidas cuando ocurre el mismo issue.
+ *
+ * @return array{errors:int,events:array<int,array<string,string|null>>}
  */
-function normalizeIssues(array $issues, string $org, string $project): array
+function normalizeEvents(array $events, string $org, string $project): array
 {
     $normalized = [];
 
-    foreach ($issues as $issue) {
-        if (!is_array($issue)) {
+    foreach ($events as $event) {
+        if (!is_array($event)) {
             continue;
         }
 
-        $id = (string) ($issue['id'] ?? '');
-        $shortId = (string) ($issue['shortId'] ?? ($issue['short_id'] ?? ''));
-        $title = (string) ($issue['title'] ?? 'Sin título');
-        $level = (string) ($issue['level'] ?? 'info');
-        $lastSeen = (string) ($issue['lastSeen'] ?? ($issue['last_seen'] ?? ''));
-        $firstSeen = (string) ($issue['firstSeen'] ?? ($issue['first_seen'] ?? ''));
-        $permalink = (string) ($issue['permalink'] ?? '');
+        $eventId = (string) ($event['eventID'] ?? ($event['id'] ?? ''));
+        $groupId = (string) ($event['groupID'] ?? ($event['issue']['id'] ?? ''));
+        $shortId = (string) ($event['issue']['shortId'] ?? ($event['issue']['short_id'] ?? ''));
+        $title = (string) ($event['title'] ?? ($event['message'] ?? 'Evento de Sentry'));
+        $level = (string) ($event['level'] ?? '');
+        $datetime = (string) ($event['dateCreated'] ?? ($event['timestamp'] ?? ($event['received'] ?? '')));
 
-        if ($permalink === '' && $id !== '') {
-            $permalink = sprintf(
-                'https://sentry.io/organizations/%s/issues/%s/?project=%s',
-                rawurlencode($org),
-                rawurlencode($id),
-                rawurlencode($project)
-            );
+        if ($level === '' && isset($event['tags']) && is_array($event['tags'])) {
+            foreach ($event['tags'] as $tag) {
+                if (($tag['key'] ?? '') === 'level' && isset($tag['value'])) {
+                    $level = (string) $tag['value'];
+                    break;
+                }
+            }
         }
 
+        $permalink = buildEventUrl($org, $project, $groupId, $eventId);
+
         $normalized[] = [
-            'id' => $id,
+            'id' => $eventId,
+            'issue_id' => $groupId !== '' ? $groupId : null,
             'short_id' => $shortId !== '' ? $shortId : null,
             'title' => $title,
-            'level' => strtolower($level),
-            'first_seen' => $firstSeen !== '' ? $firstSeen : null,
-            'last_seen' => $lastSeen !== '' ? $lastSeen : null,
+            'level' => strtolower($level !== '' ? $level : 'info'),
+            'last_seen' => $datetime !== '' ? $datetime : null,
             'url' => $permalink !== '' ? $permalink : null,
         ];
     }
 
     return [
         'errors' => count($normalized),
-        'issues' => $normalized,
+        'events' => $normalized,
     ];
 }
 
@@ -153,11 +159,38 @@ function callSentry(string $endpoint, string $token): string
     return $response;
 }
 
+function buildEventUrl(string $org, string $project, string $groupId, string $eventId): string
+{
+    if ($groupId !== '' && $eventId !== '') {
+        return sprintf(
+            'https://sentry.io/organizations/%s/issues/%s/events/%s/?project=%s',
+            rawurlencode($org),
+            rawurlencode($groupId),
+            rawurlencode($eventId),
+            rawurlencode($project)
+        );
+    }
+
+    if ($groupId !== '') {
+        return sprintf(
+            'https://sentry.io/organizations/%s/issues/%s/?project=%s',
+            rawurlencode($org),
+            rawurlencode($groupId),
+            rawurlencode($project)
+        );
+    }
+
+    return '';
+}
+
 function respondWithCacheOrEmpty(string $cacheFile, string $message): void
 {
     if (is_file($cacheFile)) {
         $cached = json_decode((string) file_get_contents($cacheFile), true);
         if (is_array($cached)) {
+            if (!isset($cached['events']) && isset($cached['issues']) && is_array($cached['issues'])) {
+                $cached['events'] = $cached['issues'];
+            }
             $cached['source'] = 'cache';
             $cached['ok'] = true;
             echo json_encode($cached, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
@@ -171,6 +204,7 @@ function respondWithCacheOrEmpty(string $cacheFile, string $message): void
         'source' => 'none',
         'errors' => 0,
         'status' => 'EMPTY',
+        'events' => [],
         'issues' => [],
         'message' => $message,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

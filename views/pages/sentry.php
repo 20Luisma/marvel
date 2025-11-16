@@ -125,7 +125,7 @@
               <p class="uppercase tracking-[0.3em] text-sm text-slate-400">Sentry</p>
               <h3 class="text-2xl text-white">Top errores recientes</h3>
             </div>
-            <p id="sentry-issues-count" class="text-slate-300 text-sm">— issues</p>
+            <p id="sentry-issues-count" class="text-slate-300 text-sm">— eventos</p>
           </header>
 
           <div id="sentry-issues-warning" class="sentry-inline-warning hidden"></div>
@@ -159,6 +159,7 @@
       const inlineWarning = document.getElementById('sentry-issues-warning');
       const issuesCount = document.getElementById('sentry-issues-count');
 
+      // Render y cacheo: toda la llamada a la API de Sentry se hace vía /api/sentry-metrics.php
       const setLoader = (visible) => {
         if (visible) {
           syncState = 'syncing';
@@ -211,15 +212,16 @@
         if (!issues || issues.length === 0) {
           emptyState.classList.remove('hidden');
           issuesList.classList.add('hidden');
-          issuesCount.textContent = '0 issues';
+          issuesCount.textContent = '0 eventos';
           updateDeleteSelectedVisibility();
           return;
         }
 
         emptyState.classList.add('hidden');
         issuesList.classList.remove('hidden');
-        issuesCount.textContent = `${issues.length} issues`;
+        issuesCount.textContent = `${issues.length} eventos`;
 
+        // Render de tarjetas: pintamos cada evento reciente aunque pertenezca al mismo issue agrupado en Sentry.
         issues.forEach((issue) => {
           const level = String(issue.level ?? 'info').toLowerCase();
           const title = issue.title ?? 'Sin título';
@@ -256,9 +258,12 @@
 
       const renderPayload = (payload) => {
         const source = payload?.source ?? 'empty';
-        const errors = Number.isFinite(payload?.errors) ? payload.errors : 0;
+        // Transformación: priorizamos payload.events (eventos individuales) y dejamos issues como alias legacy.
+        const events = Array.isArray(payload?.events)
+          ? payload.events
+          : (Array.isArray(payload?.issues) ? payload.issues : []);
+        const errors = Number.isFinite(payload?.errors) ? payload.errors : events.length;
         const lastUpdate = payload?.last_update ?? null;
-        const issues = Array.isArray(payload?.issues) ? payload.issues : [];
         const statusText = payload?.status ?? 'EMPTY';
 
         if (totalEl) totalEl.textContent = errors;
@@ -270,7 +275,7 @@
           sourceBadgeEl.textContent = normalized.toUpperCase();
         }
 
-        renderIssues(issues);
+        renderIssues(events);
         syncState = source === 'live' ? 'synced' : 'idle';
         updateDots();
       };
