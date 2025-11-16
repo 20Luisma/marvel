@@ -69,14 +69,15 @@
     if (!issues || issues.length === 0) {
       emptyState.classList.remove('hidden');
       issuesList.classList.add('hidden');
-      issuesCount.textContent = '0 issues';
+      issuesCount.textContent = '0 eventos';
       return;
     }
 
     emptyState.classList.add('hidden');
     issuesList.classList.remove('hidden');
-    issuesCount.textContent = `${issues.length} issues`;
+    issuesCount.textContent = `${issues.length} eventos`;
 
+    // Render de tarjetas: cada evento aparece aunque Sentry lo agrupe bajo el mismo issue.
     issues.slice(0, 15).forEach((issue) => {
       const level = String(issue.level ?? 'info').toLowerCase();
       const title = issue.title ?? 'Sin título';
@@ -111,10 +112,15 @@
 
   const renderPayload = (payload) => {
     const source = payload?.source ?? 'empty';
-    const data = payload?.data ?? {};
+    // Transformación: preferimos payload.events y degradamos a issues si llega el formato anterior.
+    const data = payload?.data ?? payload ?? {};
 
-    const issues = Array.isArray(data.issues) ? data.issues : [];
-    const count = Number.isFinite(data.count) ? data.count : issues.length;
+    const issues = Array.isArray(data.events)
+      ? data.events
+      : (Array.isArray(data.issues) ? data.issues : []);
+    const count = Number.isFinite(data.count)
+      ? data.count
+      : (Number.isFinite(data.errors) ? data.errors : issues.length);
 
     if (totalEl) totalEl.textContent = count || '0';
     if (updatedEl) updatedEl.textContent = formatDate(data.cached_at ?? null);

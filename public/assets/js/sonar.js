@@ -3,7 +3,7 @@
 (function () {
   const endpoint = '/api/sonar-metrics.php';
   const refreshButton = document.getElementById('sonar-refresh-button');
-  const loader = document.getElementById('sonar-loader');
+  const syncDots = document.querySelectorAll('.sonar-sync-dot');
   const errorBox = document.getElementById('sonar-error');
   const projectNameEl = document.getElementById('sonar-project-name');
   const projectKeyEl = document.getElementById('sonar-project-key');
@@ -24,6 +24,9 @@
   let scoreChart;
   let alertsChart;
   let coverageChart;
+  let syncInterval = null;
+  let isSyncing = false;
+  let isSynced = false;
 
   const formatNumber = (value) => {
     if (value === null || value === undefined) return '—';
@@ -144,10 +147,62 @@
     });
   };
 
+  // Indicador de sincronización: reutilizamos la lógica de Sentry con estados isSyncing/isSynced y pintamos 3 bolitas.
+  const paintDots = (colors) => {
+    syncDots.forEach((dot, idx) => {
+      dot.style.backgroundColor = colors[idx] ?? '#f43f5e';
+      dot.style.opacity = '0.9';
+      dot.style.transform = 'scale(1)';
+    });
+  };
+
+  const stopSyncAnimation = () => {
+    if (syncInterval) {
+      clearInterval(syncInterval);
+      syncInterval = null;
+    }
+  };
+
+  const setSyncState = (state) => {
+    if (!syncDots || syncDots.length === 0) return;
+
+    if (state === 'syncing') {
+      isSyncing = true;
+      isSynced = false;
+      let step = 0;
+      stopSyncAnimation();
+      syncInterval = setInterval(() => {
+        const palette = [
+          ['#f43f5e', '#f59e0b', '#22c55e'],
+          ['#f59e0b', '#22c55e', '#f43f5e'],
+          ['#22c55e', '#f43f5e', '#f59e0b'],
+        ];
+        paintDots(palette[step % palette.length]);
+        step += 1;
+      }, 280);
+      return;
+    }
+
+    stopSyncAnimation();
+
+    if (state === 'synced') {
+      isSynced = true;
+      isSyncing = false;
+      paintDots(['#22c55e', '#22c55e', '#22c55e']);
+      return;
+    }
+
+    // idle
+    isSyncing = false;
+    isSynced = false;
+    paintDots(['#f43f5e', '#f43f5e', '#f43f5e']);
+  };
+
   const fetchMetrics = async () => {
     errorBox.style.display = 'none';
-    loader.style.display = 'block';
+    setSyncState('syncing');
     refreshButton.disabled = true;
+    let succeeded = false;
     try {
       const response = await fetch(endpoint, { cache: 'no-store' });
       const payload = await response.json();
@@ -156,15 +211,19 @@
       }
       renderMetrics(payload);
       renderCharts(payload);
+      succeeded = true;
     } catch (error) {
       errorBox.textContent = `No se pudieron obtener las métricas de SonarCloud: ${error instanceof Error ? error.message : error}`;
       errorBox.style.display = 'block';
     } finally {
       refreshButton.disabled = false;
-      loader.style.display = 'none';
+      setSyncState(succeeded ? 'synced' : 'idle');
     }
   };
 
   refreshButton.addEventListener('click', fetchMetrics);
-  document.addEventListener('DOMContentLoaded', fetchMetrics);
+  document.addEventListener('DOMContentLoaded', () => {
+    setSyncState('idle');
+    fetchMetrics().catch(() => setSyncState('idle'));
+  });
 })();

@@ -62,7 +62,12 @@
                 <span>Actualizar análisis</span>
               </button>
             </div>
-            <p id="sonar-loader" class="sonar-loader uppercase tracking-[0.4em]">Sincronizando con SonarCloud…</p>
+            <!-- Indicador de sincronización: reemplaza el texto por 3 bolitas centradas y fijas bajo el botón -->
+            <div class="h-6 flex items-center justify-center gap-3" aria-hidden="true">
+              <span class="sonar-sync-dot w-2.5 h-2.5 rounded-full transition-all duration-200"></span>
+              <span class="sonar-sync-dot w-2.5 h-2.5 rounded-full transition-all duration-200"></span>
+              <span class="sonar-sync-dot w-2.5 h-2.5 rounded-full transition-all duration-200"></span>
+            </div>
           </div>
         </div>
 
