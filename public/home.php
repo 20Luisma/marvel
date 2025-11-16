@@ -29,9 +29,39 @@ if (!defined('SKIP_HTTP_BOOT')) {
         define('ALBUM_COVER_MAX_BYTES', 5 * 1024 * 1024);
     }
 
-    header('Access-Control-Allow-Origin: *');
+    $allowedOrigin = trim((string) ($_ENV['APP_ORIGIN'] ?? $_ENV['APP_URL'] ?? ''));
+    $requestOrigin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+
+    $csp = [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com",
+        "font-src 'self' https://fonts.gstatic.com https://r2cdn.perplexity.ai data:",
+        "img-src 'self' data: blob: https:",
+        "media-src 'self' data: blob: https:",
+        "connect-src 'self' https: https://sentry.io http://localhost:8080 http://localhost:8081 http://localhost:8082",
+        "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+        "frame-ancestors 'self'",
+    ];
+
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Content-Type-Options: nosniff');
+    header('Referrer-Policy: same-origin');
+    header('Permissions-Policy: microphone=(), camera=(), geolocation=()');
+    header('Content-Security-Policy: ' . implode('; ', $csp));
+
+    if ($allowedOrigin !== '' && $requestOrigin !== '') {
+        if ($allowedOrigin === $requestOrigin) {
+            header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+            header('Vary: Origin');
+        } else {
+            http_response_code(403);
+            exit;
+        }
+    }
+
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     if ($method === 'OPTIONS') {

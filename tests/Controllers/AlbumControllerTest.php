@@ -154,13 +154,15 @@ final class AlbumControllerTest extends TestCase
     {
         $this->seedAlbum();
         $tmpFile = tempnam(sys_get_temp_dir(), 'upload-') ?: sys_get_temp_dir() . '/upload-' . uniqid('', true);
-        file_put_contents($tmpFile, 'binary-image');
+        // PNG 1x1 minimal para que finfo detecte image/png
+        $pngMinimal = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=', true);
+        file_put_contents($tmpFile, $pngMinimal === false ? 'binary-image' : $pngMinimal);
         $GLOBALS['__album_controller_uploaded_files__'][] = $tmpFile;
 
         $_FILES['file'] = [
             'name' => 'cover.png',
             'error' => UPLOAD_ERR_OK,
-            'size' => 512,
+            'size' => filesize($tmpFile) ?: 512,
             'tmp_name' => $tmpFile,
         ];
 

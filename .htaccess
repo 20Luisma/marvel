@@ -1,0 +1,7 @@
+<Files ".env">
+    Require all denied
+</Files>
+
+<FilesMatch "\.(env|ini|log|sql|sqlite|yml|yaml)$">
+    Require all denied
+</FilesMatch>

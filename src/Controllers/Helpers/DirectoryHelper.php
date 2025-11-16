@@ -14,7 +14,11 @@ final class DirectoryHelper
             return;
         }
 
-        if (!mkdir($path, 0777, true) && !is_dir($path)) {
+        if (is_file($path)) {
+            throw new RuntimeException(sprintf('No se pudo crear el directorio: %s', $path));
+        }
+
+        if (!@mkdir($path, 0777, true) && !is_dir($path)) {
             throw new RuntimeException(sprintf('No se pudo crear el directorio: %s', $path));
         }
     }

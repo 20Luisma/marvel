@@ -113,6 +113,19 @@ final class AlbumController
             return;
         }
 
+        // Validamos MIME real para evitar archivos no imagen con extensión permitida.
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = $finfo ? (string) finfo_file($finfo, $tmpPath) : '';
+        if ($finfo) {
+            finfo_close($finfo);
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if ($mime === '' || !in_array($mime, $allowedMimes, true)) {
+            JsonResponse::error('El archivo subido no es una imagen permitida.', 400);
+            return;
+        }
+
         $uploadDir = $this->albumUploadDir();
 
         try {
