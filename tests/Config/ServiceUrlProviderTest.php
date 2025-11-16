@@ -13,15 +13,23 @@ final class ServiceUrlProviderTest extends TestCase
      * @var array<string, mixed>
      */
     private array $config;
+    /**
+     * @var array<string, mixed>
+     */
+    private static array $cachedConfig = [];
 
     protected function setUp(): void
     {
-        $config = require dirname(__DIR__, 2) . '/config/services.php';
-        /** @var array<string, mixed> $resolvedConfig */
-        $resolvedConfig = is_array($config)
-            ? $config
-            : ($GLOBALS['__clean_marvel_service_config'] ?? []);
-        $this->config = $resolvedConfig;
+        if (self::$cachedConfig === []) {
+            $config = require_once dirname(__DIR__, 2) . '/config/services.php';
+            /** @var array<string, mixed> $resolvedConfig */
+            $resolvedConfig = is_array($config)
+                ? $config
+                : ($GLOBALS['__clean_marvel_service_config'] ?? []);
+            self::$cachedConfig = $resolvedConfig;
+        }
+
+        $this->config = self::$cachedConfig;
         unset($_ENV['APP_ENV']);
     }
 

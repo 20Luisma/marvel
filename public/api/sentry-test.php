@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use RuntimeException;
 
-require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../../src/bootstrap.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
 
 $type = (string) ($_GET['type'] ?? 'generic');
 $description = '';
@@ -42,7 +42,8 @@ try {
             break;
         case 'file':
             $description = 'Demo: Archivo no encontrado';
-            new SplFileObject('/tmp/sentry-demo-' . uniqid() . '.txt');
+            $file = new SplFileObject('/tmp/sentry-demo-' . uniqid() . '.txt');
+            $file->fread(1);
             break;
         case 'external':
             $description = 'Demo API: Servicio externo 503';

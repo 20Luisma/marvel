@@ -13,7 +13,7 @@ final class ConfigControllerTest extends TestCase
     public function testServicesReturnsConfigurationForHost(): void
     {
         $_SERVER['HTTP_HOST'] = 'localhost:8080';
-        $config = require dirname(__DIR__, 2) . '/config/services.php';
+        $config = require_once dirname(__DIR__, 2) . '/config/services.php';
         $controller = new ConfigController(new ServiceUrlProvider($config));
 
         $payload = $this->captureJson(fn () => $controller->services());
