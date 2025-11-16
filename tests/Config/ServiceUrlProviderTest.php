@@ -16,7 +16,7 @@ final class ServiceUrlProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $config = require_once dirname(__DIR__, 2) . '/config/services.php';
+        $config = require dirname(__DIR__, 2) . '/config/services.php';
         /** @var array<string, mixed> $resolvedConfig */
         $resolvedConfig = is_array($config)
             ? $config

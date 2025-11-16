@@ -328,7 +328,7 @@ repository,app\albums\domain\repository\albumrepositoryæ
 assertvalid0app\activities\domain\activityscope::assertvalid9
 filename-app\activities\domain\activityscope::filenameI
 normalizecontext5app\activities\domain\activityscope::normalizecontextG
-requirescontext4app\activities\domain\activityscope::requirescontext¡	
+requirescontext4app\activities\domain\activityscope::requirescontextú	
 app\config\serviceurlprovider9
 __construct*app\config\serviceurlprovider::__construct7
 
@@ -349,7 +349,8 @@ getraghost)app\config\serviceurlprovider::getraghostS
 hostsmatch)app\config\serviceurlprovider::hostsmatch=
 normalizehost,app\config\serviceurlprovider::normalizehostQ
 readenvironmentvariable6app\config\serviceurlprovider::readenvironmentvariableG
-resolveenvironment1app\config\serviceurlprovider::resolveenvironmentG
+resolveenvironment1app\config\serviceurlprovider::resolveenvironmentW
+resolveenvironmentfromhost9app\config\serviceurlprovider::resolveenvironmentfromhostG
 toarrayforfrontend1app\config\serviceurlprovider::toarrayforfrontend"config*
 configarray©
 +app\heroes\domain\repository\herorepository7
