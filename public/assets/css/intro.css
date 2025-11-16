@@ -13,9 +13,9 @@
 body {
     margin: 0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+    padding: 0;
     perspective: 1200px;
     background:
         radial-gradient(circle at 20% 20%, rgba(230, 36, 41, 0.18), transparent 25%),
@@ -26,15 +26,16 @@ body {
     overflow: hidden;
 }
 
-.intro-shell {
-    text-align: center;
-    padding: 32px 32px 110px;
-    position: relative;
+.intro-shell,
+.login-shell {
+    grid-area: 1 / 1;
     display: flex;
     flex-direction: column;
-    gap: 22px;
     align-items: center;
     justify-content: center;
+    gap: 16px;
+    padding: 10px;
+    text-align: center;
 }
 
 .logo-frame {
@@ -76,7 +77,6 @@ body {
 .logo-frame img {
     position: relative;
     z-index: 1;
-    /* GIF central un poco más grande manteniendo la secuencia */
     max-width: min(520px, 82vw);
     width: 100%;
     border-radius: 14px;
@@ -92,34 +92,43 @@ body {
 .login-shell {
     display: none;
     opacity: 0;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    width: 100%;
+    max-width: 960px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 36px 18px 44px;
     color: #e8ebf7;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    justify-items: center;
+    align-content: space-between;
+    row-gap: 18px;
 }
 
 .login-shell.visible {
-    display: flex;
+    display: grid;
     animation: fadeIn 0.7s ease forwards;
 }
 
-/* --- FRASE MARVEL --- */
+/* --- FRASE MARVEL SUPERIOR --- */
 .marvel-motto {
-    margin: -4cm 0 32px;
-    /* Subida aprox. 4cm */
+    margin: 36px auto 0;
+    padding-top: 0;
     color: #f5f7ff;
-    font-size: 2.4rem;
-    /* Más grande */
+    font-size: clamp(1.8rem, 3vw + 0.8rem, 2.8rem);
     font-family: 'Bangers', 'Impact', 'Bebas Neue', 'Anton', 'Oswald', system-ui, sans-serif;
     letter-spacing: 0.14em;
     text-transform: uppercase;
+    text-align: center;
+    max-width: 100%;
+    white-space: nowrap;
     text-shadow:
         0 0 12px rgba(46, 102, 255, 0.35),
         0 0 10px rgba(0, 0, 0, 0.65);
+    transform: none;
 }
 
+/* --- BOX LOGIN --- */
 .login-card {
     background: linear-gradient(135deg, rgba(5, 6, 10, 0.94), rgba(10, 16, 40, 0.94));
     border: 1px solid rgba(232, 235, 247, 0.14);
@@ -128,43 +137,22 @@ body {
         0 0 24px rgba(46, 102, 255, 0.25),
         0 0 20px rgba(230, 36, 41, 0.25);
     border-radius: 16px;
-    padding: 28px 26px 24px;
-    min-width: min(460px, 90vw);
+    padding: 30px 28px 26px;
+    width: min(520px, 100%);
+    max-width: 520px;
     position: relative;
     overflow: hidden;
-    /* Bajamos un poco más el formulario respecto a la frase */
-    margin-top: 52px;
-}
-
-.login-card::before {
-    content: '';
-    position: absolute;
-    inset: -40% -40% auto auto;
-    height: 120px;
-    width: 120px;
-    background: radial-gradient(circle, rgba(230, 36, 41, 0.18), transparent 55%);
-    filter: blur(4px);
-    pointer-events: none;
-}
-
-.login-card::after {
-    content: '';
-    position: absolute;
-    inset: auto auto -40% -10%;
-    height: 140px;
-    width: 140px;
-    background: radial-gradient(circle, rgba(46, 102, 255, 0.16), transparent 55%);
-    filter: blur(4px);
-    pointer-events: none;
+    margin: 0 auto;
 }
 
 .login-card h2 {
     margin: 0 0 10px;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     letter-spacing: 0.04em;
     color: #fff;
 }
 
+/* --- CAMPOS --- */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -212,6 +200,7 @@ input:focus {
     pointer-events: none;
 }
 
+/* --- BOTÓN --- */
 .login-button {
     cursor: pointer;
     border: none;
@@ -241,26 +230,14 @@ input:focus {
         0 0 15px var(--marvel-blue-glow);
 }
 
-.login-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.hint {
-    color: #9fb2e7;
-    font-size: 0.9rem;
-}
-
+/* --- ERROR --- */
 .error {
     color: #ff8a8a;
     font-size: 0.9rem;
     min-height: 18px;
 }
 
-.hidden {
-    display: none !important;
-}
-
+/* --- STARS BACKGROUND --- */
 .stars {
     position: absolute;
     inset: 0;
@@ -275,77 +252,62 @@ input:focus {
     animation: drift 18s ease-in-out infinite;
 }
 
+/* --- FRASE INFERIOR (AJUSTADA) --- */
+.master-note-big {
+    margin: 0 auto 4px;
+    font-family: 'Bangers', 'Impact', 'Bebas Neue', 'Anton', 'Oswald', system-ui, sans-serif;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    text-align: center;
+    color: #f5f7ff;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    opacity: 0.92;
+    white-space: normal;
+    max-width: 90vw;
+    text-shadow:
+        0 0 8px rgba(46, 102, 255, 0.35),
+        0 0 6px rgba(0, 0, 0, 0.55);
+}
+
+.master-note-small {
+    margin: 0 auto 8px;
+    font-family: 'Bangers', 'Impact', 'Bebas Neue', 'Anton', 'Oswald', system-ui, sans-serif;
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    text-align: center;
+    color: #e8ebf7;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    white-space: normal;
+    max-width: 90vw;
+    text-shadow:
+        0 0 6px rgba(46, 102, 255, 0.25),
+        0 0 4px rgba(0, 0, 0, 0.45);
+}
+
+/* --- ANIMACIONES --- */
 @keyframes borderGlow {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 @keyframes drift {
-
-    0%,
-    100% {
-        transform: translate3d(0, 0, 0);
-    }
-
-    50% {
-        transform: translate3d(8px, -10px, 0);
-    }
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(8px, -10px, 0); }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes growIntro {
-    0% {
-        transform: scale(1) rotate(0deg) translateZ(0);
-        opacity: 1;
-    }
-
-    25% {
-        transform: scale(1.05) rotate(0deg) translateZ(0);
-        opacity: 1;
-    }
-
-    55% {
-        transform: scale(1.12) rotate(0deg) translateZ(0);
-        opacity: 1;
-    }
-
-    75% {
-        transform: scale(1.16) rotate(0deg) translateZ(0);
-        opacity: 1;
-    }
-
-    85% {
-        transform: scale(1.2) rotate(0deg) translateZ(0);
-        opacity: 1;
-    }
-
-    92% {
-        transform: scale(0.95) rotate(-220deg) translateZ(-180px);
-        opacity: 0.6;
-    }
-
-    100% {
-        transform: scale(0.2) rotate(-540deg) translateZ(-420px);
-        opacity: 0;
-    }
+    0%   { transform: scale(1) rotate(0deg); opacity: 1; }
+    25%  { transform: scale(1.05); opacity: 1; }
+    55%  { transform: scale(1.12); opacity: 1; }
+    75%  { transform: scale(1.16); opacity: 1; }
+    85%  { transform: scale(1.20); opacity: 1; }
+    92%  { transform: scale(0.95) rotate(-220deg); opacity: 0.6; }
+    100% { transform: scale(0.20) rotate(-540deg); opacity: 0; }
 }
