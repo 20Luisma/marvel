@@ -111,12 +111,18 @@ final class ServiceUrlProvider
      */
     public function toArrayForFrontend(?string $host = null): array
     {
-        $environment = $this->resolveEnvironment($host);
+        $normalizedHost = $this->normalizeHost($host ?? ($_SERVER['HTTP_HOST'] ?? ''));
+        $environment = $this->resolveEnvironment($normalizedHost);
+
+        $hostEnvironment = $this->resolveEnvironmentFromHost($normalizedHost);
+        if ($hostEnvironment !== null) {
+            $environment = $hostEnvironment;
+        }
 
         return [
             'environment' => [
                 'mode' => $environment,
-                'host' => $this->normalizeHost($host ?? ($_SERVER['HTTP_HOST'] ?? '')),
+                'host' => $normalizedHost,
             ],
             'services' => [
                 'app' => [
@@ -178,6 +184,22 @@ final class ServiceUrlProvider
                 if (strcasecmp((string) $environmentKey, $trimmed) === 0) {
                     return (string) $environmentKey;
                 }
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveEnvironmentFromHost(?string $host): ?string
+    {
+        $normalizedHost = $this->normalizeHost($host);
+        if ($normalizedHost === '') {
+            return null;
+        }
+
+        foreach ($this->config['environments'] ?? [] as $environment => $settings) {
+            if ($this->hostBelongsToEnvironment($normalizedHost, (array) $settings)) {
+                return (string) $environment;
             }
         }
 

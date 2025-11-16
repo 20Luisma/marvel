@@ -55,12 +55,16 @@ return (static function (): array {
 
     // --- Sentry ----------------------------------------------------------------
     $sentryDsn = $_ENV['SENTRY_DSN'] ?? getenv('SENTRY_DSN') ?: null;
+    $appEnvironment = $_ENV['APP_ENV'] ?? (getenv('APP_ENV') ?: null);
+    if ($appEnvironment === '' || $appEnvironment === null) {
+        $appEnvironment = 'local';
+    }
 
     if ($sentryDsn) {
         try {
             $client = ClientBuilder::create([
                 'dsn' => $sentryDsn,
-                'environment' => $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?? 'local',
+                'environment' => $appEnvironment,
                 'traces_sample_rate' => 0.2,
             ])->getClient();
 
