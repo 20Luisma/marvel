@@ -2,6 +2,20 @@
 
 declare(strict_types=1);
 
+use Src\Shared\Http\Router;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+if (!function_exists('route')) {
+    /**
+     * @param array<string, mixed> $container
+     */
+    function route(string $method, string $path, array $container): void
+    {
+        (new Router($container))->handle($method, $path);
+    }
+}
+
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
 if ($requestPath !== '/' && $requestPath !== '/index.php') {
