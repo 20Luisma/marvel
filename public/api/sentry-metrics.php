@@ -115,15 +115,7 @@ function normalizeEvents(array $events, string $org, string $project): array
 
 function computeStatus(int $count): string
 {
-    if ($count === 0) {
-        return 'EMPTY';
-    }
-
-    if ($count <= 5) {
-        return 'OK';
-    }
-
-    return 'ERROR';
+    return $count === 0 ? 'EMPTY' : 'OK';
 }
 
 function callSentry(string $endpoint, string $token): string
