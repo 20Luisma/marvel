@@ -85,7 +85,7 @@ require_once __DIR__ . '/../layouts/header.php';
           <h3 class="text-2xl text-white">🔐 Seguridad aplicada</h3>
           <ul class="list-disc list-inside space-y-2 text-gray-200">
             <li>CORS restringido con <code>APP_ORIGIN</code>/<code>APP_URL</code>; los orígenes no autorizados reciben 403.</li>
-            <li>Tokens opcionales/obligatorios: <code>TTS_INTERNAL_TOKEN</code> (TTS ElevenLabs) y <code>MARVEL_UPDATE_TOKEN</code> (webhook n8n) por cabecera <code>Authorization: Bearer ...</code>.</li>
+            <li>Tokens opcionales/obligatorios: <code>TTS_INTERNAL_TOKEN</code> (TTS ElevenLabs) y <code>MARVEL_UPDATE_TOKEN</code> (webhook n8n). Se envían por cabecera <code>Authorization: Bearer ...</code> únicamente cuando la variable está configurada; si se deja vacía, n8n puede actualizar el video sin token, pero se recomienda fijarlo en entornos públicos.</li>
             <li>Cabeceras globales: X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy same-origin, Permissions-Policy mínima y CSP permitiendo sólo CDNs necesarios, YouTube y hosts de desarrollo.</li>
             <li>Logs/artefactos sensibles fuera de <code>public/</code>: n8n escribe en <code>storage/marvel/</code> con rotación; lectura con fallback al JSON legacy.</li>
             <li>Uploads endurecidos: extensión + MIME real (finfo) y límite 5MB para portadas. <code>.htaccess</code> bloquea <code>.env</code> y extensiones sensibles.</li>

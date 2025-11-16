@@ -196,7 +196,7 @@ php -S localhost:8082 -t public
 
 | Archivo | Variables | Comentario |
 |---------|-----------|------------|
-| `.env` (raíz) | `APP_ENV=auto`, `APP_ORIGIN`/`APP_URL`, `OPENAI_SERVICE_URL=`, `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL_ID`, `ELEVENLABS_VOICE_STABILITY`, `ELEVENLABS_VOICE_SIMILARITY`, `TTS_INTERNAL_TOKEN`, `MARVEL_UPDATE_TOKEN` | `APP_ORIGIN` limita CORS, `TTS_INTERNAL_TOKEN` protege el TTS, `MARVEL_UPDATE_TOKEN` protege el webhook n8n; `ELEVENLABS_*` habilitan el audio. |
+| `.env` (raíz) | `APP_ENV=auto`, `APP_ORIGIN`/`APP_URL`, `OPENAI_SERVICE_URL=`, `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL_ID`, `ELEVENLABS_VOICE_STABILITY`, `ELEVENLABS_VOICE_SIMILARITY`, `TTS_INTERNAL_TOKEN`, `MARVEL_UPDATE_TOKEN` | `APP_ORIGIN` limita CORS, `TTS_INTERNAL_TOKEN` protege el TTS y `MARVEL_UPDATE_TOKEN` protege el webhook n8n cuando se define; si se deja vacío el endpoint acepta actualizaciones sin token, pero en despliegues públicos se recomienda enviar `Authorization: Bearer <token>`. |
 | `openai-service/.env` | `APP_ENV`, `OPENAI_API_KEY`, `OPENAI_API_BASE`, `OPENAI_MODEL`, `ALLOWED_ORIGINS` | **Obligatorio** definir `OPENAI_API_KEY`. `ALLOWED_ORIGINS` sincroniza CORS con app y hosting. |
 | `rag-service/.env` | `ALLOWED_ORIGINS`, `APP_ENV`, `OPENAI_SERVICE_URL` | Permite que el RAG apunte al OpenAI service apropiado y limite orígenes. |
 
@@ -205,7 +205,7 @@ Todos los `.env` son cargados manualmente con `file()` + `putenv()` para evitar 
 ### 🔐 Seguridad aplicada
 
 - **CORS restringido** con `APP_ORIGIN`/`APP_URL`; peticiones con origen distinto devuelven 403 en endpoints críticos.  
-- **Tokens de protección**: `TTS_INTERNAL_TOKEN` (TTS ElevenLabs) y `MARVEL_UPDATE_TOKEN` (webhook n8n) se exigen vía `Authorization: Bearer ...` cuando están configurados.  
+- **Tokens de protección**: `TTS_INTERNAL_TOKEN` (TTS ElevenLabs) y `MARVEL_UPDATE_TOKEN` (webhook n8n) se exigen vía `Authorization: Bearer ...` siempre que se definan; dejando el token vacío el webhook acepta peticiones sin autenticación, pero en entornos públicos se recomienda establecer uno y enviarlo desde n8n.  
 - **Cabeceras**: X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy same-origin, Permissions-Policy mínima y CSP que permite sólo self + CDNs necesarios (Tailwind/jsdelivr/Google Fonts), YouTube para iframes y hosts de desarrollo (localhost).  
 - **Logs/artefactos fuera de `public/`**: n8n escribe en `storage/marvel/` con rotación; `/api/ultimo-video-marvel.php` lee desde ahí (con fallback al JSON legacy si existe).  
 - **Uploads endurecidos**: validación por extensión + MIME real (finfo) y límite 5MB para portadas.  
