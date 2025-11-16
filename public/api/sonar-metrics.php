@@ -101,38 +101,7 @@ $endpoint = sprintf(
     rawurlencode(implode(',', $sonarMetricKeys))
 );
 
-$handle = curl_init($endpoint);
-
-if ($handle === false) {
-    jsonErrorResponse(502, 'No se pudo iniciar la solicitud hacia SonarCloud.');
-}
-
-// Configuración de cURL usando autenticación Bearer (token de usuario)
-curl_setopt_array($handle, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $token,
-        'Accept: application/json',
-    ],
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_CONNECTTIMEOUT => 10,
-]);
-
-$response = curl_exec($handle);
-$statusCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
-$curlError = curl_error($handle);
-curl_close($handle);
-
-if ($response === false) {
-    jsonErrorResponse(502, 'No se pudo contactar SonarCloud: ' . ($curlError ?: 'Error desconocido.'));
-}
-
-if ($statusCode < 200 || $statusCode >= 300) {
-    jsonErrorResponse(
-        $statusCode ?: 502,
-        'SonarCloud devolvió un error inesperado al consultar las métrricas (HTTP ' . $statusCode . ').'
-    );
-}
+$response = sonarRequestWithRetry($endpoint, $token, 2);
 
 // Parseamos respuesta
 $payload = json_decode($response, true);
@@ -274,6 +243,54 @@ function jsonResponse(int $status, array $payload): void
 function jsonErrorResponse(int $status, string $message): void
 {
     jsonResponse($status, ['error' => $message]);
+}
+
+/**
+ * Ejecuta la llamada a SonarCloud con un pequeño reintento si falla.
+ */
+function sonarRequestWithRetry(string $endpoint, string $token, int $maxAttempts = 2): string
+{
+    $attempt = 0;
+    $lastError = null;
+
+    while ($attempt < $maxAttempts) {
+        $handle = curl_init($endpoint);
+
+        if ($handle === false) {
+            $lastError = 'No se pudo iniciar la solicitud hacia SonarCloud.';
+            $attempt++;
+            usleep(150_000);
+            continue;
+        }
+
+        curl_setopt_array($handle, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $token,
+                'Accept: application/json',
+            ],
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+
+        $response = curl_exec($handle);
+        $statusCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($handle);
+        curl_close($handle);
+
+        if ($response !== false && $statusCode >= 200 && $statusCode < 300) {
+            return $response;
+        }
+
+        $lastError = $response === false
+            ? 'No se pudo contactar SonarCloud: ' . ($curlError ?: 'Error desconocido.')
+            : 'SonarCloud devolvió un error inesperado (HTTP ' . $statusCode . ').';
+
+        $attempt++;
+        usleep(150_000); // backoff breve antes de reintentar
+    }
+
+    jsonErrorResponse(502, $lastError ?? 'No se pudo contactar SonarCloud.');
 }
 
 function normalizeMetricString(mixed $value): string

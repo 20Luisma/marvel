@@ -17,7 +17,7 @@
 <body class="text-gray-200 min-h-screen bg-[#0b0d17]">
 
   <!-- HERO / HEADER -->
-  <header class="app-hero">
+  <header class="app-hero app-hero--tech">
     <div class="app-hero__inner">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="space-y-3 max-w-3xl">
@@ -48,7 +48,7 @@
 
   <main class="site-main">
     <div class="max-w-6xl mx-auto py-10 px-4">
-      <section class="sonar-panel sentry-panel space-y-8" aria-live="polite">
+      <section class="sonar-panel sentry-panel section-lined space-y-8" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div class="space-y-1">
             <h2 class="sonar-hero-title text-4xl text-white leading-none">Ejecuta errores de demo</h2>
@@ -274,17 +274,32 @@
         updateDots();
       };
 
+      const fetchSentryWithRetry = async (maxAttempts = 2) => {
+        let attempt = 0;
+        while (attempt < maxAttempts) {
+          try {
+            const response = await fetch('/api/sentry-metrics.php', { cache: 'no-store' });
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return await response.json();
+          } catch (error) {
+            attempt++;
+            if (attempt >= maxAttempts) {
+              throw error;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 200));
+          }
+        }
+      };
+
       const loadSentryMetrics = async () => {
         setLoader(true);
         setWarning(alertBox, '');
         setWarning(inlineWarning, '');
 
         try {
-          const response = await fetch('/api/sentry-metrics.php', { cache: 'no-store' });
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          const payload = await response.json();
+          const payload = await fetchSentryWithRetry(3);
           renderPayload(payload);
 
           if (payload?.message) {

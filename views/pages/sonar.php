@@ -16,7 +16,7 @@
 <body class="text-gray-200 min-h-screen bg-[#0b0d17]">
 
   <!-- HERO / HEADER -->
-  <header class="app-hero">
+  <header class="app-hero app-hero--tech">
     <div class="app-hero__inner">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="space-y-3 max-w-3xl">
@@ -47,7 +47,7 @@
 
   <main class="site-main">
     <div class="max-w-6xl mx-auto py-10 px-4">
-      <section class="sonar-panel space-y-10" aria-live="polite">
+      <section class="sonar-panel section-lined space-y-10" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div class="space-y-2">
             <p class="uppercase tracking-[0.3em] text-sm text-slate-400">SonarCloud</p>

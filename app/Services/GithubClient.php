@@ -355,8 +355,6 @@ final class GithubClient
      */
     private function requestGithub(string $url): array
     {
-        $ch = curl_init($url);
-
         $headers = [
             'accept: application/vnd.github+json',
             'user-agent: clean-marvel-app',
@@ -375,32 +373,54 @@ final class GithubClient
             CURLOPT_HTTPHEADER     => $headers,
         ];
 
-        curl_setopt_array($ch, $options);
+        $attempt = 0;
+        $maxAttempts = 2;
+        $lastError = null;
+        $lastStatus = 0;
+        $lastBody = '';
 
-        $body   = curl_exec($ch);
-        $error  = curl_error($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 0;
+        while ($attempt < $maxAttempts) {
+            $ch = curl_init($url);
+            if ($ch === false) {
+                $lastError = 'No se pudo iniciar cURL.';
+                $attempt++;
+                usleep(150_000);
+                continue;
+            }
 
-        curl_close($ch);
+            curl_setopt_array($ch, $options);
 
-        if ($body === false) {
-            return [
-                'ok'      => false,
-                'status'  => 0,
-                'body'    => '',
-                'decoded' => null,
-                'error'   => $error,
-            ];
+            $body   = curl_exec($ch);
+            $error  = curl_error($ch);
+            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 0;
+
+            curl_close($ch);
+
+            if ($body !== false && $status >= 200 && $status < 300) {
+                $decoded = json_decode($body, true);
+
+                return [
+                    'ok'      => true,
+                    'status'  => $status,
+                    'body'    => $body,
+                    'decoded' => $decoded,
+                    'error'   => $error ?: null,
+                ];
+            }
+
+            $lastError = $error ?: ($status ? 'HTTP ' . $status : 'Error desconocido');
+            $lastStatus = $status;
+            $lastBody = $body === false ? '' : (string) $body;
+            $attempt++;
+            usleep(150_000);
         }
 
-        $decoded = json_decode($body, true);
-
         return [
-            'ok'      => $status >= 200 && $status < 300,
-            'status'  => $status,
-            'body'    => $body,
-            'decoded' => $decoded,
-            'error'   => $error ?: null,
+            'ok'      => false,
+            'status'  => $lastStatus,
+            'body'    => $lastBody,
+            'decoded' => null,
+            'error'   => $lastError,
         ];
     }
 

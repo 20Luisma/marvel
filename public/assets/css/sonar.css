@@ -1,8 +1,8 @@
 .sonar-panel {
   background: linear-gradient(135deg, rgba(13, 20, 40, 0.95), rgba(9, 13, 26, 0.85));
-  border: 1px solid #ed1d24;
+  border: 2px solid #2563eb;
   border-radius: 2rem;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 22px 52px rgba(37, 99, 235, 0.18), 0 0 22px rgba(37, 99, 235, 0.28);
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
@@ -17,6 +17,9 @@
 .sonar-panel > * {
   position: relative;
   z-index: 1;
+}
+.sonar-panel.section-lined {
+  border-top: var(--line-w) solid #2563eb;
 }
 .sonar-hero-title {
   font-family: 'Bangers', cursive;

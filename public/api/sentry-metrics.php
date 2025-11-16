@@ -128,35 +128,45 @@ function computeStatus(int $count): string
 
 function callSentry(string $endpoint, string $token): string
 {
-    $handle = curl_init($endpoint);
-    if ($handle === false) {
-        throw new RuntimeException('No se pudo iniciar la solicitud a Sentry.');
+    $attempts = 0;
+    $lastError = null;
+
+    while ($attempts < 3) {
+        $handle = curl_init($endpoint);
+        if ($handle === false) {
+            $lastError = 'No se pudo iniciar la solicitud a Sentry.';
+            $attempts++;
+            continue;
+        }
+
+        curl_setopt_array($handle, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $token,
+                'Accept: application/json',
+            ],
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+
+        $response = curl_exec($handle);
+        $statusCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($handle);
+        curl_close($handle);
+
+        if ($response !== false && $statusCode >= 200 && $statusCode < 300) {
+            return $response;
+        }
+
+        $lastError = $response === false
+            ? ($curlError ?: 'Error desconocido.')
+            : 'HTTP ' . $statusCode;
+
+        $attempts++;
+        usleep(200_000); // pequeño backoff
     }
 
-    curl_setopt_array($handle, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $token,
-            'Accept: application/json',
-        ],
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_CONNECTTIMEOUT => 10,
-    ]);
-
-    $response = curl_exec($handle);
-    $statusCode = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($handle);
-    curl_close($handle);
-
-    if ($response === false) {
-        throw new RuntimeException('No se pudo contactar Sentry: ' . ($curlError ?: 'Error desconocido.'));
-    }
-
-    if ($statusCode < 200 || $statusCode >= 300) {
-        throw new RuntimeException('Sentry devolvió un error (HTTP ' . $statusCode . ').');
-    }
-
-    return $response;
+    throw new RuntimeException('No se pudo contactar Sentry: ' . ($lastError ?? 'Error desconocido.'));
 }
 
 function buildEventUrl(string $org, string $project, string $groupId, string $eventId): string

@@ -106,7 +106,7 @@ $repoName = \App\Services\GithubClient::REPO;
 require_once __DIR__ . '/../layouts/header.php';
 ?>
 
-<header class="app-hero panel-github__hero">
+<header class="app-hero app-hero--tech panel-github__hero">
   <div class="app-hero__inner">
     <div class="space-y-3 max-w-3xl">
       <div class="space-y-3">
@@ -127,7 +127,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
 <main class="site-main panel-github">
   <div class="panel-github__wrap">
-    <section class="panel-github__card section-lined space-y-4">
+    <section class="panel-github__card section-lined space-y-4 tech-panel">
       <header class="space-y-1">
         <p class="panel-github__tag">GitHub Activity</p>
         <h2>Reporte de Pull Requests</h2>
