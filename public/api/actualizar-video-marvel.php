@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $authHeader = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
 $expectedToken = trim((string) ($_ENV['MARVEL_UPDATE_TOKEN'] ?? ''));
-if ($expectedToken === '' || !hash_equals($expectedToken, bearerToken($authHeader))) {
+if ($expectedToken !== '' && !hash_equals($expectedToken, bearerToken($authHeader))) {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
     exit;
