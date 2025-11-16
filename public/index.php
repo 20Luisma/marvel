@@ -2,44 +2,74 @@
 
 declare(strict_types=1);
 
-use Src\Shared\Http\Router;
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-$container = require_once __DIR__ . '/../src/bootstrap.php';
-
-if (!function_exists('route')) {
-    /**
-     * @param array<string, mixed> $container
-     */
-    function route(string $method, string $path, array $container): void
-    {
-        (new Router($container))->handle($method, $path);
-    }
+if ($requestPath !== '/' && $requestPath !== '/index.php') {
+    require __DIR__ . '/home.php';
+    exit;
 }
 
-if (!defined('SKIP_HTTP_BOOT')) {
-    if (!defined('ALBUM_UPLOAD_DIR')) {
-        define('ALBUM_UPLOAD_DIR', __DIR__ . '/uploads/albums');
-    }
-    if (!defined('ALBUM_UPLOAD_URL_PREFIX')) {
-        define('ALBUM_UPLOAD_URL_PREFIX', '/uploads/albums/');
-    }
-    if (!defined('ALBUM_COVER_MAX_BYTES')) {
-        define('ALBUM_COVER_MAX_BYTES', 5 * 1024 * 1024);
-    }
+?>
+<!DOCTYPE html>
+<html lang="es">
 
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Marvel Album | Intro</title>
+    <!-- Fuente estilo Marvel -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/intro.css">
+</head>
 
-    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    if ($method === 'OPTIONS') {
-        http_response_code(204);
-        exit;
-    }
+<body>
+    <div class="stars"></div>
+    <main class="intro-shell" id="intro">
+        <div class="logo-frame">
+            <img src="./assets/images/intromarvel.gif" alt="Intro Marvel Clean Album">
+        </div>
+    </main>
 
-    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    <section class="login-shell" id="login-shell" aria-live="polite">
+        <!-- Frase Marvel FUERA del box del formulario -->
+        <p class="marvel-motto">"Un gran poder conlleva una gran responsabilidad"</p>
 
-    (new Router($container))->handle($method, $path);
-}
+        <div class="login-card">
+            <h2>Inicia sesión de prueba</h2>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-3.33 0-7 1.67-7 3.5V20h14v-2.5C19 15.67 15.33 14 12 14Z" />
+                        </svg>
+                        <input id="username" name="username" type="email" autocomplete="username"
+                            placeholder="marvel@gmail.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9Zm-8-2a3 3 0 0 1 6 0v2H9Zm8 4v8H7v-8Z" />
+                        </svg>
+                        <input id="password" name="password" type="password" autocomplete="current-password"
+                            placeholder="marvel2025" required>
+                    </div>
+                </div>
+                <div class="error" id="login-error"></div>
+                <button type="submit" class="login-button">Entrar</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="./assets/js/intro.js" defer></script>
+    <noscript>
+        <div style="position: absolute; bottom: 16px; width: 100%; text-align: center; color: #e8ebf7;">
+            <a href="./home.php" style="color: #e8ebf7; text-decoration: underline;">Continuar al álbum</a>
+        </div>
+    </noscript>
+</body>
+
+</html>
