@@ -108,7 +108,11 @@ return (static function (): array {
     }
 
     // --- JSON vs DB ----------------------------------------------------------
-    // En local siempre JSON; en hosting intentamos BD.
+    // Persistencia adaptativa:
+    // - En local (APP_ENV=local) siempre usamos los repositorios JSON en storage/.
+    // - En hosting intentamos abrir PDO (MySQL) y usar Db*Repository.
+    // - Si PDO falla (credenciales/servicio caído), registramos el error y
+    //   volvemos a JSON para no romper el arranque.
     $useDatabase = ($appEnvironment === 'hosting');
 
     $pdo = null;

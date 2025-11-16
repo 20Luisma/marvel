@@ -44,6 +44,26 @@ External Services (openai-service 8081, rag-service 8082, OpenAI API)
 
 `src/bootstrap.php` centraliza DI: carga `.env`, resuelve URLs desde `config/services.php`, registra repositorios de archivos, EventBus y casos de uso. `ServiceUrlProvider` detecta el entorno (local/hosting) según host o `APP_ENV` para apuntar automáticamente a los endpoints correctos.
 
+## 💾 Persistencia de datos: JSON en local, MySQL en hosting
+
+- En **local (`APP_ENV=local`)** se usan repositorios de archivos:  
+  - `FileAlbumRepository` → `storage/albums.json`  
+  - `FileHeroRepository` → `storage/heroes.json`  
+  - `FileActivityLogRepository` → `storage/actividad/`
+- En **hosting (`APP_ENV=hosting`)** `src/bootstrap.php` intenta abrir PDO vía `PdoConnectionFactory::fromEnvironment()` con los datos de `.env`. Si la conexión es exitosa se emplean:  
+  - `DbAlbumRepository`  
+  - `DbHeroRepository`  
+  - `DbActivityLogRepository`
+- Si PDO lanza excepción (credenciales erróneas o MySQL caído), se registra con `error_log` y se vuelve automáticamente a los repositorios JSON para no romper el arranque. Resultado: en hosting siempre se **intenta** MySQL, pero la app sigue funcionando en modo JSON como paracaídas.
+- **Migración** (`bin/migrar-json-a-db.php`):  
+  - Lee álbumes, héroes y actividad desde los JSON.  
+  - Inserta en las tablas correspondientes, evitando duplicados en `activity_logs` comprobando existencia antes de insertar.  
+  - Uso una vez creada la BD y con `.env` correcto:  
+    ```bash
+    php bin/migrar-json-a-db.php
+    ```
+  - Pensado para desarrollo sencillo en local con JSON y despliegue robusto en hosting con MySQL + fallback.
+
 ## 🗂️ Estructura del proyecto
 
 ```text
@@ -74,6 +94,18 @@ clean-marvel/
 - Requiere definir `GITHUB_API_KEY` en `.env` con un token personal que tenga permisos de lectura sobre el repo (scope `repo` o `public_repo`). El servicio lee el `.env` manualmente, arma los headers (`Authorization`, `User-Agent`) y maneja errores/códigos HTTP devolviendo mensajes claros en la UI.  
 - El panel soporta filtros `from`/`to` (YYYY-MM-DD) y fallback inteligente: normaliza fechas, muestra advertencias cuando el token falta y conserva enlaces directos a cada PR.  
 - Los estilos viven en `public/assets/css/panel-github.css` y mantienen coherencia visual con el resto del dashboard; el panel se agrega como acción superior junto a cómics, héroes y documentación.
+
+## 🔭 Observabilidad: SonarCloud + Sentry
+
+- **SonarCloud**  
+  - Endpoint PHP: `public/api/sonar-metrics.php` consulta la API oficial (`/api/measures/component`) con `SONARCLOUD_TOKEN` y `SONARCLOUD_PROJECT_KEY`. Incluye reintentos y mensajes claros si la llamada falla.  
+  - Vista: `views/pages/sonar.php` muestra métricas clave (bugs, code smells, cobertura, duplicación, complejidad, rating) y gráficos para tener una foto rápida de la calidad sin salir del proyecto.  
+  - Uso: basta con configurar las variables en `.env`; el panel consume el endpoint interno `/api/sonar-metrics.php`.
+- **Sentry**  
+  - Inicialización: en `src/bootstrap.php` se registra Sentry con `SENTRY_DSN` y el `APP_ENV`; captura errores y excepciones globales.  
+  - Endpoint PHP: `public/api/sentry-metrics.php` consulta eventos recientes del proyecto Sentry usando `SENTRY_API_TOKEN`, `SENTRY_ORG_SLUG` y `SENTRY_PROJECT_SLUG`, con cache/fallback y reintentos.  
+  - Vista: `views/pages/sentry.php` lista eventos recientes (niveles, shortId, enlaces) y permite lanzar errores de prueba desde la UI para verificar el flujo.  
+- Ambos paneles se integran en la navegación superior y complementan la observabilidad: **SonarCloud** para calidad estática y **Sentry** para errores en tiempo de ejecución/operación.
 
 ## 🧩 Microservicios
 

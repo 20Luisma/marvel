@@ -70,6 +70,18 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section class="space-y-3">
+          <h3 class="text-2xl text-white">💾 Persistencia de datos</h3>
+          <p>En local (<code>APP_ENV=local</code>) todo se almacena en JSON: álbumes y héroes en <code>storage/albums.json</code> y <code>storage/heroes.json</code>, y actividad en <code>storage/actividad/</code>. En hosting (<code>APP_ENV=hosting</code>) se intenta abrir PDO con las credenciales de <code>.env</code> para usar MySQL (repositorios <code>Db*</code>); si la conexión falla se registra el error y la app sigue con JSON como fallback.</p>
+          <p>Para llevar los datos de JSON a la BD hay un script CLI: <code>php bin/migrar-json-a-db.php</code> que inserta álbumes, héroes y actividad evitando duplicados.</p>
+        </section>
+
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🔭 Observabilidad</h3>
+          <p><strong>SonarCloud:</strong> el endpoint interno <code>/api/sonar-metrics.php</code> consulta la API oficial con token y project key configurados en el <code>.env</code>. La página <code>/sonar</code> (vista <code>views/pages/sonar.php</code>) muestra bugs, code smells, cobertura y duplicación en tiempo real.</p>
+          <p><strong>Sentry:</strong> <code>src/bootstrap.php</code> inicializa Sentry con <code>SENTRY_DSN</code> y el entorno activo para capturar errores. El endpoint <code>/api/sentry-metrics.php</code> lista eventos recientes y la vista <code>/sentry</code> permite verlos y lanzar errores de prueba desde la UI.</p>
+        </section>
+
+        <section class="space-y-3">
           <h3 class="text-2xl text-white">🏗️ Arquitectura resumida</h3>
           <p>La estructura del proyecto sigue el principio de independencia entre capas:</p>
           <ul class="list-disc list-inside space-y-2 text-gray-200">

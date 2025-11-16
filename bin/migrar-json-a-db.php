@@ -14,56 +14,100 @@ use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
 use PDO;
 use Throwable;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
-
 $rootPath = dirname(__DIR__);
 
+// === Autoload ===
+require $rootPath . '/vendor/autoload.php';
+
+// === Cargar .env manualmente (por si no lo hace bootstrap) ===
 loadEnv($rootPath . '/.env');
+
+$isCli = (PHP_SAPI === 'cli');
+
+// Mostrar errores en hosting mientras migramos
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+if (!$isCli) {
+    header('Content-Type: text/plain; charset=utf-8');
+}
+
+// Helper para escribir salida según contexto
+function out(string $message, bool $isCli = false): void
+{
+    $message = rtrim($message, "\n") . "\n";
+
+    if ($isCli) {
+        echo $message;
+    } else {
+        echo $message;
+    }
+}
 
 try {
     $pdo = PdoConnectionFactory::fromEnvironment();
 } catch (Throwable $e) {
-    fwrite(STDERR, "❌ No se pudo conectar a la base de datos: {$e->getMessage()}\n");
+    out('❌ No se pudo conectar a la base de datos: ' . $e->getMessage(), $isCli);
     exit(1);
 }
 
-$fileAlbumRepo = new FileAlbumRepository($rootPath . '/storage/albums.json');
-$fileHeroRepo = new FileHeroRepository($rootPath . '/storage/heroes.json');
+// Repositorios FILE (JSON)
+$fileAlbumRepo    = new FileAlbumRepository($rootPath . '/storage/albums.json');
+$fileHeroRepo     = new FileHeroRepository($rootPath . '/storage/heroes.json');
 $fileActivityRepo = new FileActivityLogRepository($rootPath . '/storage/actividad');
 
-$dbAlbumRepo = new DbAlbumRepository($pdo);
-$dbHeroRepo = new DbHeroRepository($pdo);
+// Repositorios DB
+$dbAlbumRepo    = new DbAlbumRepository($pdo);
+$dbHeroRepo     = new DbHeroRepository($pdo);
 $dbActivityRepo = new DbActivityLogRepository($pdo);
 
 $counters = [
-    'albums' => 0,
-    'heroes' => 0,
+    'albums'     => 0,
+    'heroes'     => 0,
     'activities' => 0,
 ];
 
+// === Migrar álbumes ===
 foreach ($fileAlbumRepo->all() as $album) {
     $dbAlbumRepo->save($album);
     $counters['albums']++;
 }
 
+// === Migrar héroes ===
 foreach ($fileHeroRepo->all() as $hero) {
     $dbHeroRepo->save($hero);
     $counters['heroes']++;
 }
 
-$contextIds = array_map(static fn ($hero) => $hero->heroId(), $fileHeroRepo->all());
+// Para actividad de héroes necesitamos todos los IDs de héroes
+$contextIds = array_map(
+    static fn($hero) => $hero->heroId(),
+    $fileHeroRepo->all()
+);
 
+// === Migrar actividad (álbumes, cómic, héroes) ===
 migrateActivityScope(ActivityScope::ALBUMS, null, $fileActivityRepo, $dbActivityRepo, $pdo, $counters);
-migrateActivityScope(ActivityScope::COMIC, null, $fileActivityRepo, $dbActivityRepo, $pdo, $counters);
+migrateActivityScope(ActivityScope::COMIC,  null, $fileActivityRepo, $dbActivityRepo, $pdo, $counters);
+
 foreach ($contextIds as $contextId) {
     migrateActivityScope(ActivityScope::HEROES, $contextId, $fileActivityRepo, $dbActivityRepo, $pdo, $counters);
 }
 
-echo "✅ Migración completada:\n";
-echo "  - Álbumes: {$counters['albums']}\n";
-echo "  - Héroes: {$counters['heroes']}\n";
-echo "  - Actividades: {$counters['activities']}\n";
+// === Resumen ===
+out("✅ Migración completada:", $isCli);
+out("  - Álbumes:    {$counters['albums']}", $isCli);
+out("  - Héroes:     {$counters['heroes']}", $isCli);
+out("  - Actividad:  {$counters['activities']}", $isCli);
 
+if (!$isCli) {
+    out("\nYa puedes recargar la página /albums en el hosting. 😉", $isCli);
+}
+
+/**
+ * @param string $scope
+ * @param string|null $contextId
+ */
 function migrateActivityScope(
     string $scope,
     ?string $contextId,
@@ -75,7 +119,14 @@ function migrateActivityScope(
     $entries = $fileRepo->all($scope, $contextId);
 
     foreach ($entries as $entry) {
-        if (!activityExists($pdo, $scope, $contextId, $entry->action(), $entry->title(), $entry->occurredAt()->format('Y-m-d H:i:s.u'))) {
+        if (!activityExists(
+            $pdo,
+            $scope,
+            $contextId,
+            $entry->action(),
+            $entry->title(),
+            $entry->occurredAt()->format('Y-m-d H:i:s.u')
+        )) {
             $dbRepo->append($entry);
             $counters['activities']++;
         }
@@ -90,11 +141,16 @@ function activityExists(
     string $title,
     string $occurredAt
 ): bool {
-    $sql = 'SELECT 1 FROM activity_logs WHERE scope = :scope AND action = :action AND title = :title AND occurred_at = :occurred_at';
+    $sql = 'SELECT 1 FROM activity_logs 
+            WHERE scope = :scope 
+              AND action = :action 
+              AND title = :title 
+              AND occurred_at = :occurred_at';
+
     $params = [
-        'scope' => $scope,
-        'action' => $action,
-        'title' => $title,
+        'scope'       => $scope,
+        'action'      => $action,
+        'title'       => $title,
         'occurred_at' => $occurredAt,
     ];
 
@@ -112,7 +168,7 @@ function activityExists(
 }
 
 /**
- * @param string $envPath
+ * Carga un .env plano KEY=VALUE a $_ENV y getenv()
  */
 function loadEnv(string $envPath): void
 {
@@ -120,12 +176,15 @@ function loadEnv(string $envPath): void
         return;
     }
 
-    foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
-        if (str_starts_with($line, '#')) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+
+    foreach ($lines as $line) {
+        if (str_starts_with(trim($line), '#')) {
             continue;
         }
 
         [$key, $value] = array_map('trim', explode('=', $line, 2) + [1 => '']);
+
         if ($key !== '') {
             $_ENV[$key] = $value;
             putenv($key . '=' . $value);
