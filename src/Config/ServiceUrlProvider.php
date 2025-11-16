@@ -167,7 +167,6 @@ final class ServiceUrlProvider
     {
         $candidates = [
             $_ENV['APP_ENV'] ?? null,
-            getenv('APP_ENV') ?: null,
         ];
 
         foreach ($candidates as $candidate) {
