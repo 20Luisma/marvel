@@ -8,7 +8,18 @@ declare(strict_types=1);
 use App\Services\GithubClient;
 use DateTimeImmutable;
 
-header('Access-Control-Allow-Origin: *');
+$allowedOrigin = trim((string) ($_ENV['APP_ORIGIN'] ?? $_ENV['APP_URL'] ?? ''));
+$originHeader = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+if ($allowedOrigin !== '' && $originHeader !== '') {
+    if ($originHeader === $allowedOrigin) {
+        header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+        header('Vary: Origin');
+    } else {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Origen no permitido'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+}
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 header('Content-Type: application/json; charset=utf-8');

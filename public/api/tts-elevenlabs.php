@@ -17,21 +17,32 @@ if (is_file($envPath)) {
     }
 }
 
-$origin = '*';
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    $candidateOrigin = (string) $_SERVER['HTTP_ORIGIN'];
-    if ($candidateOrigin !== '' && !str_contains($candidateOrigin, "\n") && !str_contains($candidateOrigin, "\r")) {
-        $origin = $candidateOrigin;
+$allowedOrigin = trim((string) ($_ENV['APP_ORIGIN'] ?? $_ENV['APP_URL'] ?? ''));
+$requestOrigin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+
+if ($allowedOrigin !== '' && $requestOrigin !== '') {
+    if ($requestOrigin === $allowedOrigin) {
+        header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+        header('Vary: Origin');
+    } else {
+        jsonResponse(403, 'Origen no permitido para este recurso.');
     }
 }
-header('Access-Control-Allow-Origin: ' . $origin);
+
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     http_response_code(204);
     exit;
+}
+
+$authHeader = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+$token = trim((string) ($_ENV['TTS_INTERNAL_TOKEN'] ?? ''));
+// Si no hay token configurado en entorno, mantenemos compatibilidad y permitimos la petición.
+if ($token !== '' && !hash_equals($token, parseBearer($authHeader))) {
+    jsonResponse(403, 'No autorizado para solicitar TTS.');
 }
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
@@ -49,14 +60,14 @@ if ($text === '') {
     jsonResponse(422, 'Debes enviar el texto que deseas convertir a audio.');
 }
 
-$maxLength = 5000;
+$maxLength = 4800; // alineado con MAX_TTS_CHARACTERS del frontend
 if (function_exists('mb_strlen')) {
     $textLength = mb_strlen($text);
     if ($textLength > $maxLength) {
-        $text = mb_substr($text, 0, $maxLength);
+        jsonResponse(422, 'El texto no puede superar ' . $maxLength . ' caracteres.');
     }
 } elseif (strlen($text) > $maxLength) {
-    $text = substr($text, 0, $maxLength);
+    jsonResponse(422, 'El texto no puede superar ' . $maxLength . ' caracteres.');
 }
 
 $apiKey = getenv('ELEVENLABS_API_KEY') ?: ($_ENV['ELEVENLABS_API_KEY'] ?? '');
@@ -157,4 +168,15 @@ function jsonResponse(int $statusCode, string $message): void
         'message' => $message,
     ], JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+/**
+ * Extrae el valor Bearer de la cabecera Authorization.
+ */
+function parseBearer(string $authorizationHeader): string
+{
+    if (stripos($authorizationHeader, 'Bearer ') === 0) {
+        return trim(substr($authorizationHeader, 7));
+    }
+    return '';
 }

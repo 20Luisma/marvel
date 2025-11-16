@@ -82,6 +82,18 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section class="space-y-3">
+          <h3 class="text-2xl text-white">🔐 Seguridad aplicada</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>CORS restringido con <code>APP_ORIGIN</code>/<code>APP_URL</code>; los orígenes no autorizados reciben 403.</li>
+            <li>Tokens opcionales/obligatorios: <code>TTS_INTERNAL_TOKEN</code> (TTS ElevenLabs) y <code>MARVEL_UPDATE_TOKEN</code> (webhook n8n) por cabecera <code>Authorization: Bearer ...</code>.</li>
+            <li>Cabeceras globales: X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy same-origin, Permissions-Policy mínima y CSP permitiendo sólo CDNs necesarios, YouTube y hosts de desarrollo.</li>
+            <li>Logs/artefactos sensibles fuera de <code>public/</code>: n8n escribe en <code>storage/marvel/</code> con rotación; lectura con fallback al JSON legacy.</li>
+            <li>Uploads endurecidos: extensión + MIME real (finfo) y límite 5MB para portadas. <code>.htaccess</code> bloquea <code>.env</code> y extensiones sensibles.</li>
+            <li>Pendiente para nivel “alto”: tokens CSRF en formularios/POST y CSP sin <code>'unsafe-inline'</code> usando nonces/hash.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
           <h3 class="text-2xl text-white">🏗️ Arquitectura resumida</h3>
           <p>La estructura del proyecto sigue el principio de independencia entre capas:</p>
           <ul class="list-disc list-inside space-y-2 text-gray-200">

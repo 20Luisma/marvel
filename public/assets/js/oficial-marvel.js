@@ -58,7 +58,7 @@
 
   const loadVideo = async () => {
     try {
-      const response = await fetch(`/api/ultimo-video-marvel.json?${Date.now()}`, {
+      const response = await fetch(`/api/ultimo-video-marvel.php?${Date.now()}`, {
         headers: { Accept: 'application/json' },
       });
 
