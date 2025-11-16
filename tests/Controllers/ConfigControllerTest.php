@@ -14,7 +14,8 @@ final class ConfigControllerTest extends TestCase
     {
         $_SERVER['HTTP_HOST'] = 'localhost:8080';
         $config = require_once dirname(__DIR__, 2) . '/config/services.php';
-        $controller = new ConfigController(new ServiceUrlProvider($config));
+        $resolvedConfig = is_array($config) ? $config : ($GLOBALS['__clean_marvel_service_config'] ?? []);
+        $controller = new ConfigController(new ServiceUrlProvider($resolvedConfig));
 
         $payload = $this->captureJson(fn () => $controller->services());
 

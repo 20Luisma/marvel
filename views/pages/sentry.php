@@ -49,11 +49,10 @@
   <main class="site-main">
     <div class="max-w-6xl mx-auto py-10 px-4">
       <section class="sonar-panel sentry-panel space-y-8" aria-live="polite">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div class="space-y-2">
-            <p class="uppercase tracking-[0.3em] text-sm text-slate-400">Sentry</p>
-            <h2 class="sonar-hero-title text-4xl text-white">Sentry Error Board</h2>
-            <p class="text-slate-300 text-sm">Monitoriza issues, niveles y últimas apariciones sin salir de Clean Marvel.</p>
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div class="space-y-1">
+            <h2 class="sonar-hero-title text-4xl text-white leading-none">Ejecuta errores de demo</h2>
+            <p class="text-slate-300 text-sm">Lanza errores falsos para probar el flujo Sentry → API → Panel.</p>
           </div>
           <div class="flex flex-col items-center gap-3 text-center">
             <div class="flex flex-wrap justify-center gap-3">
@@ -72,11 +71,6 @@
         <div id="sentry-warning" class="sentry-alert"></div>
 
         <article class="sonar-card space-y-4">
-          <header class="space-y-1">
-            <p class="uppercase tracking-[0.3em] text-sm text-slate-400">Modo prueba Sentry</p>
-            <h3 class="text-2xl text-white">Ejecuta errores de demo</h3>
-            <p class="text-slate-300 text-sm">Lanza errores falsos para probar el flujo Sentry → API → Panel.</p>
-          </header>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="flex flex-col items-center gap-3">
               <button class="sentry-demo-btn sentry-demo-btn--red w-full text-center" onclick="sentryTest('500')">Error 500</button>
@@ -323,20 +317,32 @@
     // Disparador de errores demo hacia Sentry (modo prueba)
     async function sentryTest(type) {
       const status = document.getElementById('sentry-test-status');
+      const errorInfo = {
+        '500': { label: 'Error 500', description: 'Falla interna simulada' },
+        zero: { label: 'División por cero', description: 'Excepción aritmética' },
+        '404': { label: 'Error 404', description: 'Recurso no encontrado' },
+        method: { label: 'Método inexistente', description: 'Llamada a función ausente' },
+        db: { label: 'DB Error', description: 'Fallo de base de datos simulado' },
+        file: { label: 'Archivo no encontrado', description: 'Acceso a fichero inexistente' },
+        timeout: { label: 'Timeout', description: 'Solicitud que expira' },
+        external: { label: 'Servicio externo 503', description: 'Dependencia externa caída' },
+      };
+      const details = errorInfo[type] ?? { label: `Error ${type}`, description: 'Evento demo' };
+
       if (status) {
-        status.textContent = 'Enviando error de prueba (' + type + ')...';
+        status.textContent = `Enviando ${details.label} (${details.description})...`;
       }
       try {
         const res = await fetch('/api/sentry-test.php?type=' + encodeURIComponent(type));
         const json = await res.json();
         if (json.ok) {
-          status.textContent = '✔ Error demo enviado a Sentry. Ahora pulsa ACTUALIZAR para verlo en el panel.';
+          status.textContent = `✔ ${details.label} enviado (${details.description}). Pulsa ACTUALIZAR para verlo en el panel.`;
         } else {
-          status.textContent = '⚠ Hubo un problema enviando el error.';
+          status.textContent = `⚠ Hubo un problema enviando ${details.label}.`;
         }
       } catch (e) {
         if (status) {
-          status.textContent = '❌ Error en la solicitud.';
+          status.textContent = `❌ Error en la solicitud al enviar ${details.label}.`;
         }
       }
     }
