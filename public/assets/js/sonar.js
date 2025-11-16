@@ -198,17 +198,36 @@
     paintDots(['#f43f5e', '#f43f5e', '#f43f5e']);
   };
 
+  const fetchMetricsWithRetry = async (maxAttempts = 3) => {
+    let attempt = 0;
+    let lastError = 'Respuesta no válida.';
+    while (attempt < maxAttempts) {
+      try {
+        const response = await fetch(endpoint, { cache: 'no-store' });
+        const payload = await response.json();
+        if (!response.ok || payload.error) {
+          throw new Error(payload?.error || `HTTP ${response.status}`);
+        }
+        return payload;
+      } catch (err) {
+        attempt += 1;
+        lastError = err instanceof Error ? err.message : 'Respuesta no válida.';
+        if (attempt >= maxAttempts) {
+          throw new Error(lastError);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
+    throw new Error(lastError);
+  };
+
   const fetchMetrics = async () => {
     errorBox.style.display = 'none';
     setSyncState('syncing');
     refreshButton.disabled = true;
     let succeeded = false;
     try {
-      const response = await fetch(endpoint, { cache: 'no-store' });
-      const payload = await response.json();
-      if (!response.ok || payload.error) {
-        throw new Error(payload?.error || 'Respuesta no válida.');
-      }
+      const payload = await fetchMetricsWithRetry(3);
       renderMetrics(payload);
       renderCharts(payload);
       succeeded = true;

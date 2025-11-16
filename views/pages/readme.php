@@ -9,7 +9,7 @@ require_once __DIR__ . '/../layouts/header.php';
 ?>
 
 <!-- HERO / HEADER -->
-<header class="app-hero">
+<header class="app-hero app-hero--tech">
   <div class="app-hero__inner">
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div class="space-y-3 max-w-3xl">
@@ -30,7 +30,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
 <main class="site-main">
   <div class="max-w-5xl mx-auto py-8 px-4 space-y-8">
-    <section class="card section-lined rounded-2xl p-6 shadow-xl">
+    <section class="card section-lined rounded-2xl p-6 shadow-xl tech-panel">
       <header class="space-y-2 mb-6">
         <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Documentación</p>
         <h2 class="text-3xl text-white">README del proyecto</h2>

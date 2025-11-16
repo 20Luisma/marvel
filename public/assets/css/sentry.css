@@ -1,6 +1,9 @@
 .sentry-panel {
-  border-color: #2563eb;
-  box-shadow: 0 30px 70px rgba(37, 99, 235, 0.25);
+  border: 2px solid #2563eb;
+  box-shadow: 0 22px 52px rgba(37, 99, 235, 0.18), 0 0 22px rgba(37, 99, 235, 0.28);
+}
+.sentry-panel.section-lined {
+  border-top: var(--line-w) solid #2563eb;
 }
 
 .sentry-badge,

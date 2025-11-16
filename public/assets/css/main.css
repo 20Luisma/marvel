@@ -57,6 +57,10 @@ a:hover {
   border-bottom: var(--line-w) solid var(--marvel);
   border-top: var(--line-w) solid var(--marvel);
 }
+.app-hero--tech {
+  border-top: var(--line-w) solid #2563eb;
+  border-bottom: var(--line-w) solid #2563eb;
+}
 
 .app-hero__inner {
   max-width: 80rem;
@@ -74,11 +78,18 @@ a:hover {
   text-shadow: 0 0 12px rgba(237, 29, 36, 0.25), 0 0 6px rgba(237, 29, 36, 0.35);
   transition: text-shadow 0.3s ease, transform 0.3s ease;
 }
+.app-hero--tech .app-hero__title {
+  text-shadow: 0 0 12px rgba(37, 99, 235, 0.3), 0 0 6px rgba(37, 99, 235, 0.45);
+}
 
 .app-hero__title:hover {
   text-shadow: 0 0 18px rgba(237, 29, 36, 0.65), 0 0 28px rgba(237, 29, 36, 0.5),
     0 0 42px rgba(237, 29, 36, 0.4);
   transform: translateY(-2px);
+}
+.app-hero--tech .app-hero__title:hover {
+  text-shadow: 0 0 18px rgba(37, 99, 235, 0.65), 0 0 28px rgba(37, 99, 235, 0.45),
+    0 0 42px rgba(37, 99, 235, 0.4);
 }
 
 .app-hero__meta {

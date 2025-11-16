@@ -8,6 +8,7 @@ use App\Activities\Application\UseCase\ClearActivityLogUseCase;
 use App\Activities\Application\UseCase\ListActivityLogUseCase;
 use App\Activities\Application\UseCase\RecordActivityUseCase;
 use App\Activities\Infrastructure\Persistence\FileActivityLogRepository;
+use App\Activities\Infrastructure\Persistence\DbActivityLogRepository;
 use App\Albums\Application\UseCase\CreateAlbumUseCase;
 use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
@@ -15,6 +16,7 @@ use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
 use App\Heroes\Application\UseCase\SeedAlbumHeroesUseCase;
 use App\Albums\Infrastructure\Persistence\FileAlbumRepository;
+use App\Albums\Infrastructure\Persistence\DbAlbumRepository;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Heroes\Application\UseCase\CreateHeroUseCase;
@@ -23,13 +25,15 @@ use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Heroes\Application\UseCase\ListHeroesUseCase;
 use App\Heroes\Application\UseCase\UpdateHeroUseCase;
 use App\Heroes\Infrastructure\Persistence\FileHeroRepository;
+use App\Heroes\Infrastructure\Persistence\DbHeroRepository;
 use App\Notifications\Application\AlbumUpdatedNotificationHandler;
 use App\Notifications\Application\ClearNotificationsUseCase;
-use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Application\ListNotificationsUseCase;
+use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
+use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
 use Sentry\ClientBuilder;
 use Sentry\SentrySdk;
 use Sentry\State\Hub;
@@ -46,6 +50,7 @@ return (static function (): array {
             }
 
             [$key, $value] = array_map('trim', explode('=', $line, 2) + [1 => '']);
+
             if ($key !== '') {
                 $_ENV[$key] = $value;
                 putenv($key . '=' . $value);
@@ -53,9 +58,10 @@ return (static function (): array {
         }
     }
 
-    // --- Sentry ----------------------------------------------------------------
+    // --- Sentry ---------------------------------------------------------------
     $sentryDsn = $_ENV['SENTRY_DSN'] ?? getenv('SENTRY_DSN') ?: null;
     $appEnvironment = $_ENV['APP_ENV'] ?? (getenv('APP_ENV') ?: null);
+
     if ($appEnvironment === '' || $appEnvironment === null) {
         $appEnvironment = 'local';
     }
@@ -75,35 +81,57 @@ return (static function (): array {
                 if (!(error_reporting() & $severity)) {
                     return false;
                 }
+
                 \Sentry\captureMessage(sprintf('%s in %s:%d', $message, $file, $fileLine));
                 return false;
             });
 
-            set_exception_handler(static function (Throwable $exception): void {
+            set_exception_handler(static function (\Throwable $exception): void {
                 \Sentry\captureException($exception);
                 throw $exception;
             });
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             error_log('Error inicializando Sentry: ' . $e->getMessage());
         }
     }
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     $serviceConfigPath = $rootPath . '/config/services.php';
     /** @var array<string, mixed> $serviceConfig */
-    $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
+    $serviceConfig = is_file($serviceConfigPath) ? require $serviceConfigPath : ['environments' => []];
+
     $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
 
-    // ServiceUrlProvider puede no existir cuando no está cargado el autoloader
-    // (por ejemplo en scripts internos como test-sentry.php)
     $serviceUrlProvider = null;
     if (class_exists(ServiceUrlProvider::class)) {
         $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
     }
 
-    $albumRepository = new FileAlbumRepository($rootPath . '/storage/albums.json');
-    $heroRepository = new FileHeroRepository($rootPath . '/storage/heroes.json');
-    $activityRepository = new FileActivityLogRepository($rootPath . '/storage/actividad');
+    // --- JSON vs DB ----------------------------------------------------------
+    // En local siempre JSON; en hosting intentamos BD.
+    $useDatabase = ($appEnvironment === 'hosting');
+
+    $pdo = null;
+
+    if ($useDatabase) {
+        try {
+            $pdo = PdoConnectionFactory::fromEnvironment();
+        } catch (Throwable $e) {
+            error_log('Fallo al abrir conexión PDO, se usará JSON: ' . $e->getMessage());
+            $useDatabase = false;
+        }
+    }
+
+    if ($useDatabase && $pdo !== null) {
+        $albumRepository    = new DbAlbumRepository($pdo);
+        $heroRepository     = new DbHeroRepository($pdo);
+        $activityRepository = new DbActivityLogRepository($pdo);
+    } else {
+        $albumRepository    = new FileAlbumRepository($rootPath . '/storage/albums.json');
+        $heroRepository     = new FileHeroRepository($rootPath . '/storage/heroes.json');
+        $activityRepository = new FileActivityLogRepository($rootPath . '/storage/actividad');
+    }
+    // -------------------------------------------------------------------------
 
     $eventBus = new InMemoryEventBus();
 
@@ -119,11 +147,11 @@ return (static function (): array {
     $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus);
 
     $container = [
-        'albumRepository' => $albumRepository,
-        'heroRepository' => $heroRepository,
-        'eventBus' => $eventBus,
+        'albumRepository'      => $albumRepository,
+        'heroRepository'       => $heroRepository,
+        'eventBus'             => $eventBus,
         'notificationRepository' => $notificationRepository,
-        'activityRepository' => $activityRepository,
+        'activityRepository'   => $activityRepository,
         'config' => [
             'services' => $serviceConfig,
         ],
@@ -131,22 +159,22 @@ return (static function (): array {
             'urlProvider' => $serviceUrlProvider,
         ],
         'useCases' => [
-            'createAlbum' => new CreateAlbumUseCase($albumRepository),
+            'createAlbum'    => new CreateAlbumUseCase($albumRepository),
             'seedAlbumHeroes' => new SeedAlbumHeroesUseCase($albumRepository, $heroRepository, $eventBus),
-            'updateAlbum' => new UpdateAlbumUseCase($albumRepository, $eventBus),
-            'listAlbums' => new ListAlbumsUseCase($albumRepository),
-            'deleteAlbum' => new DeleteAlbumUseCase($albumRepository, $heroRepository),
-            'findAlbum' => new FindAlbumUseCase($albumRepository),
-            'createHero' => $createHeroUseCase,
-            'listHeroes' => new ListHeroesUseCase($heroRepository),
-            'findHero' => new FindHeroUseCase($heroRepository),
-            'deleteHero' => new DeleteHeroUseCase($heroRepository),
-            'updateHero' => new UpdateHeroUseCase($heroRepository),
+            'updateAlbum'    => new UpdateAlbumUseCase($albumRepository, $eventBus),
+            'listAlbums'     => new ListAlbumsUseCase($albumRepository),
+            'deleteAlbum'    => new DeleteAlbumUseCase($albumRepository, $heroRepository),
+            'findAlbum'      => new FindAlbumUseCase($albumRepository),
+            'createHero'     => $createHeroUseCase,
+            'listHeroes'     => new ListHeroesUseCase($heroRepository),
+            'findHero'       => new FindHeroUseCase($heroRepository),
+            'deleteHero'     => new DeleteHeroUseCase($heroRepository),
+            'updateHero'     => new UpdateHeroUseCase($heroRepository),
             'clearNotifications' => new ClearNotificationsUseCase($notificationRepository),
-            'listNotifications' => new ListNotificationsUseCase($notificationRepository),
-            'recordActivity' => new RecordActivityUseCase($activityRepository),
-            'listActivity' => new ListActivityLogUseCase($activityRepository),
-            'clearActivity' => new ClearActivityLogUseCase($activityRepository),
+            'listNotifications'  => new ListNotificationsUseCase($notificationRepository),
+            'recordActivity'     => new RecordActivityUseCase($activityRepository),
+            'listActivity'       => new ListActivityLogUseCase($activityRepository),
+            'clearActivity'      => new ClearActivityLogUseCase($activityRepository),
         ],
     ];
 
@@ -157,11 +185,11 @@ return (static function (): array {
     );
 
     $openAiServiceUrl = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
+
     if (!is_string($openAiServiceUrl) || trim($openAiServiceUrl) === '') {
         if ($serviceUrlProvider instanceof ServiceUrlProvider) {
             $openAiServiceUrl = $serviceUrlProvider->getOpenAiChatUrl();
         } else {
-            // En scripts internos (test-sentry.php) podemos vivir sin esta URL
             $openAiServiceUrl = null;
         }
     }
@@ -177,7 +205,6 @@ return (static function (): array {
     try {
         $container['seedHeroesService']->seedIfEmpty();
     } catch (Throwable $e) {
-        // Do not break the app on boot if seeding fails
         error_log('Hero seeding failed: ' . $e->getMessage());
     }
 

@@ -1,0 +1,39 @@
+# Entorno de la app principal.
+# Usa "auto" para detectar según el host (recomendado).
+APP_ENV=local
+
+# URL del microservicio OpenAI.
+# Déjalo vacío para usar la configuración automática.
+OPENAI_SERVICE_URL=
+
+# ElevenLabs TTS (audio en los resultados del cómic y RAG)
+# Añade tu API Key real para habilitarlo; deja vacío para desactivar los botones.
+ELEVENLABS_API_KEY=sk_f76706059d02ba6a494582cb060a06a1d0ec59c33c3a4d26
+ELEVENLABS_VOICE_ID=IKne3meq5aSn9XLyUdCD
+ELEVENLABS_MODEL_ID=eleven_multilingual_v2
+ELEVENLABS_VOICE_STABILITY=0.55
+ELEVENLABS_VOICE_SIMILARITY=0.75
+
+# GitHub API
+GITHUB_API_KEY=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
+
+# SonarCloud
+SONARCLOUD_TOKEN=d9437b77d88636014a0e61e9028c61c7e4ade459
+SONARCLOUD_PROJECT_KEY=20Luisma_marvel
+
+# Sentry
+SENTRY_DSN=https://131c805f8d8f83c5bdb3018e5f5a5bf9@o4510370740240384.ingest.de.sentry.io/4510370742861904
+SENTRY_API_TOKEN=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
+SENTRY_ORG_SLUG=creawebes
+SENTRY_PROJECT_SLUG=php
+
+APP_ENV=hosting
+
+DB_DRIVER=mysql
+DB_HOST=auth-db1943.hstgr.io
+DB_PORT=3306
+DB_NAME=u968396048_marvel
+DB_USER=u968396048_crea_marvel
+DB_PASSWORD=Azul1234@@
+DB_TABLE_PREFIX=marvel_
+
