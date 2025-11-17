@@ -1,19 +1,14 @@
-# 🗂️ Documentación técnica — Clean Marvel Album
+# Documentación técnica de Clean Marvel Album
 
-Bienvenido a la documentación técnica del proyecto.
+Este repositorio combina un monolito PHP con microservicios de inteligencia artificial. La documentación unificada respeta las buenas prácticas del máster: cada capa tiene su carpeta, la API está descrita con OpenAPI y las decisiones relevantes se rastrean en ADRs con contexto y consecuencias claras.
 
-## Archivos disponibles
+## Estructura de la documentación
 
-1. [Requerimientos](./REQUIREMENTS.md)
-2. [Arquitectura Clean](./ARCHITECTURE.md)
-3. [Casos de uso](./USE_CASES.md)
-4. [API Reference](./API_REFERENCE.md)
-5. [Automatización de Tasks](./TASKS_AUTOMATION.md)
-6. [Roadmap técnico](./ROADMAP.md)
-7. [Changelog](./CHANGELOG.md)
-8. [Contributing](./CONTRIBUTING.md)
+1. **API** (`docs/api/`): referencia OpenAPI (`openapi.yaml`) con los endpoints públicos de la app (álbumes, héroes, actividad, cómics).
+2. **Componentes** (`docs/components/`): mapa de componentes y dependencias, incluyendo microservicios `openai-service` y `rag-service` y cómo se conectan.
+3. **Guías** (`docs/guides/`): instrucciones prácticas para iniciar el entorno, autenticar con tokens, ejecutar pruebas y mantener la calidad.
+4. **Arquitectura & ADRs** (`docs/architecture/`): repositorio de Architectural Decision Records numerados para justificar decisiones como clean architecture, persistencia dual y observabilidad; incluye una sección “Supersede ADR” para futuras revisiones.
 
----
+## Supersede ADR
 
-**Autores:**  
-Luis Martín Palllante & Alfred – Asistente copiloto IA
+Cuando una decisión ya documentada necesite reemplazarse, crea un nuevo ADR que cite el número anterior en “Supersede” y explique por qué la nueva decisión se impone. Mantén el estado en “Accepted” y registra los impactos en la carpeta `docs/architecture/`.

@@ -1,0 +1,347 @@
+openapi: "3.1.0"
+info:
+  title: "Clean Marvel Album API"
+  version: "1.0.0"
+  description: >
+    Endpoints REST que orquestan álbumes, héroes, actividades y generación de cómics
+    en el backend PHP. Están protegidos por el enrutador de `Src\Shared\Http\Router` y
+    permiten trabajar exclusivamente vía peticiones AJAX desde el frontend.
+servers:
+  - url: "http://localhost:8080"
+    description: Entorno local en desarrollo
+  - url: "https://iamasterbigschool.contenido.creawebes.com"
+    description: Hosting público
+paths:
+  /albums:
+    get:
+      summary: Lista todos los álbumes
+      responses:
+        "200":
+          description: Lista de álbumes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumListResponse"
+    post:
+      summary: Crea un nuevo álbum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlbumRequest"
+      responses:
+        "201":
+          description: Álbum creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumResponse"
+  /albums/{albumId}:
+    parameters:
+      - name: albumId
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      summary: Actualiza un álbum existente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAlbumRequest"
+      responses:
+        "200":
+          description: Álbum actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumResponse"
+    delete:
+      summary: Elimina un álbum por ID
+      responses:
+        "200":
+          description: Eliminación completada
+  /albums/{albumId}/heroes:
+    parameters:
+      - $ref: "#/components/parameters/AlbumIdParam"
+    get:
+      summary: Lista héroes de un álbum
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroListResponse"
+    post:
+      summary: Crea un héroe en un álbum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateHeroRequest"
+      responses:
+        "201":
+          description: Héroe creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroResponse"
+  /heroes:
+    get:
+      summary: Lista todos los héroes
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroListResponse"
+  /heroes/{heroId}:
+    parameters:
+      - name: heroId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtiene un héroe por ID
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroResponse"
+    put:
+      summary: Actualiza un héroe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHeroRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeroResponse"
+    delete:
+      summary: Elimina un héroe
+      responses:
+        "200":
+          description: Héroe eliminado
+  /activity/albums:
+    get:
+      summary: Listado de actividad de álbumes
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivityListResponse"
+    post:
+      summary: Registra una actividad de álbumes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActivityEntry"
+      responses:
+        "200":
+          description: Actividad registrada
+    delete:
+      summary: Limpia el log de actividad de álbumes
+      responses:
+        "204":
+          description: Log borrado
+  /comics/generate:
+    post:
+      summary: Genera un cómic con IA
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                heroIds:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - heroIds
+      responses:
+        "200":
+          description: Cómic generado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComicStoryResponse"
+  /config/services:
+    get:
+      summary: Lista las URLs configuradas de los microservicios
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  parameters:
+    AlbumIdParam:
+      name: albumId
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    AlbumSummary:
+      type: object
+      properties:
+        albumId:
+          type: string
+        nombre:
+          type: string
+        coverImage:
+          type: string
+          format: uri
+    AlbumListResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlbumSummary"
+        message:
+          type: string
+    AlbumResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          $ref: "#/components/schemas/AlbumSummary"
+    CreateAlbumRequest:
+      type: object
+      required:
+        - nombre
+      properties:
+        nombre:
+          type: string
+        coverImage:
+          type: string
+          format: uri
+    UpdateAlbumRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        coverImage:
+          type: string
+          format: uri
+    HeroSummary:
+      type: object
+      properties:
+        heroId:
+          type: string
+        nombre:
+          type: string
+        contenido:
+          type: string
+        imagen:
+          type: string
+    HeroListResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeroSummary"
+    HeroResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          $ref: "#/components/schemas/HeroSummary"
+    CreateHeroRequest:
+      type: object
+      required:
+        - nombre
+        - imagen
+      properties:
+        nombre:
+          type: string
+        contenido:
+          type: string
+        imagen:
+          type: string
+          format: uri
+    UpdateHeroRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        contenido:
+          type: string
+        imagen:
+          type: string
+          format: uri
+    ActivityEntry:
+      type: object
+      properties:
+        heroId:
+          type: string
+        albumId:
+          type: string
+        tag:
+          type: string
+        detail:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    ActivityListResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityEntry"
+    ComicStoryResponse:
+      type: object
+      properties:
+        estado:
+          type: string
+        datos:
+          type: object
+          properties:
+            story:
+              type: object
+              properties:
+                title:
+                  type: string
+                summary:
+                  type: string
+                panels:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      caption:
+                        type: string
