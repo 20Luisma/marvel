@@ -31,166 +31,6 @@ const shouldReduceMotion = () => Boolean(
     ?.matches
 );
 
-const COLLAPSED_TESTS_BUTTON_CLASSES = [
-  'bg-slate-800/80',
-  'border-slate-500/40',
-  'text-slate-200',
-  'hover:bg-slate-700/60',
-  'hover:border-slate-400/40',
-];
-
-const EXPANDED_TESTS_BUTTON_CLASSES = [
-  'bg-emerald-400/15',
-  'border-emerald-300/40',
-  'text-emerald-100',
-  'hover:bg-emerald-300/20',
-  'hover:border-emerald-200/40',
-];
-
-const TESTS_PANEL_ANIMATION_DURATION = 320;
-
-const applyToggleAccessibility = (toggle, isCollapsed) => {
-  toggle?.setAttribute('aria-expanded', String(!isCollapsed));
-};
-
-const configureToggleTransitions = (toggle, icon, reduceMotion) => {
-  const toggleClasses = ['transition-colors', 'duration-150'];
-  const iconClasses = ['transition-transform', 'duration-150'];
-
-  if (reduceMotion) {
-    toggle?.classList.remove(...toggleClasses);
-    icon?.classList.remove(...iconClasses);
-    return;
-  }
-
-  toggle?.classList.add(...toggleClasses);
-  icon?.classList.add(...iconClasses);
-};
-
-const updateToggleButtonClasses = (toggle, isCollapsed) => {
-  if (!toggle) {
-    return;
-  }
-
-  if (isCollapsed) {
-    toggle.classList.remove(...EXPANDED_TESTS_BUTTON_CLASSES);
-    toggle.classList.add(...COLLAPSED_TESTS_BUTTON_CLASSES);
-  } else {
-    toggle.classList.remove(...COLLAPSED_TESTS_BUTTON_CLASSES);
-    toggle.classList.add(...EXPANDED_TESTS_BUTTON_CLASSES);
-  }
-};
-
-const updateToggleLabelAndIcon = (labelEl, iconEl, isCollapsed) => {
-  if (labelEl) {
-    labelEl.textContent = isCollapsed ? 'Mostrar tests' : 'Ocultar tests';
-  }
-
-  if (!iconEl) {
-    return;
-  }
-
-  if (isCollapsed) {
-    iconEl.classList.add('rotate-90', 'opacity-70');
-    iconEl.classList.remove('rotate-0', 'opacity-90');
-  } else {
-    iconEl.classList.remove('rotate-90', 'opacity-70');
-    iconEl.classList.add('rotate-0', 'opacity-90');
-  }
-};
-
-const applyImmediateTestsBodyState = (bodyEl, isCollapsed) => {
-  bodyEl.style.transition = '';
-  bodyEl.style.overflow = '';
-
-  if (isCollapsed) {
-    bodyEl.style.display = 'none';
-    bodyEl.style.height = '';
-    bodyEl.style.opacity = '0';
-    return;
-  }
-
-  bodyEl.style.display = 'block';
-  bodyEl.style.height = '';
-  bodyEl.style.opacity = '1';
-};
-
-const collapseTestsBody = (bodyEl) => {
-  const runtimeWindow = getWindowObject();
-  const currentHeight = bodyEl.getBoundingClientRect().height || bodyEl.scrollHeight;
-  bodyEl.style.display = 'block';
-  bodyEl.style.overflow = 'hidden';
-  bodyEl.style.height = `${currentHeight}px`;
-  bodyEl.style.opacity = '1';
-
-  const raf = runtimeWindow?.requestAnimationFrame ?? ((cb) => setTimeout(cb, 16));
-  raf(() => {
-    bodyEl.style.height = '0px';
-    bodyEl.style.opacity = '0';
-  });
-
-  const onCollapseEnd = (event) => {
-    if (event.target !== bodyEl || event.propertyName !== 'height') {
-      return;
-    }
-    bodyEl.removeEventListener('transitionend', onCollapseEnd);
-    bodyEl.style.display = 'none';
-    bodyEl.style.height = '';
-    bodyEl.style.opacity = '0';
-    bodyEl.style.overflow = '';
-    bodyEl.style.transition = '';
-  };
-
-  bodyEl.addEventListener('transitionend', onCollapseEnd);
-};
-
-const expandTestsBody = (bodyEl) => {
-  const runtimeWindow = getWindowObject();
-  bodyEl.style.display = 'block';
-  const targetHeight = bodyEl.scrollHeight;
-  bodyEl.style.overflow = 'hidden';
-  bodyEl.style.height = '0px';
-  bodyEl.style.opacity = '0';
-
-  const raf = runtimeWindow?.requestAnimationFrame ?? ((cb) => setTimeout(cb, 16));
-  raf(() => {
-    bodyEl.style.height = `${targetHeight}px`;
-    bodyEl.style.opacity = '1';
-  });
-
-  const onExpandEnd = (event) => {
-    if (event.target !== bodyEl || event.propertyName !== 'height') {
-      return;
-    }
-    bodyEl.removeEventListener('transitionend', onExpandEnd);
-    bodyEl.style.height = '';
-    bodyEl.style.opacity = '1';
-    bodyEl.style.overflow = '';
-    bodyEl.style.transition = '';
-  };
-
-  bodyEl.addEventListener('transitionend', onExpandEnd);
-};
-
-const handleTestsBodyAnimation = (bodyEl, isCollapsed, animate) => {
-  if (!bodyEl) {
-    return;
-  }
-
-  if (!animate) {
-    applyImmediateTestsBodyState(bodyEl, isCollapsed);
-    return;
-  }
-
-  bodyEl.style.transition = `height ${TESTS_PANEL_ANIMATION_DURATION}ms ease, opacity ${TESTS_PANEL_ANIMATION_DURATION}ms ease`;
-
-  if (isCollapsed) {
-    collapseTestsBody(bodyEl);
-  } else {
-    expandTestsBody(bodyEl);
-  }
-};
-
 const initAlbumsPage = () => {
   // Refs
   const albumForm = document.getElementById('album-form');
@@ -216,22 +56,13 @@ const initAlbumsPage = () => {
   const dateEl  = document.getElementById('album-activity-date');
   const countEl = document.getElementById('album-activity-counter');
   const titleEl = document.getElementById('album-activity-title');
-  const testsBox = document.getElementById('tests-box');
-  const testsBody = document.getElementById('tests-body');
-  const testsToggle = document.getElementById('tests-toggle');
-  const testRunButton = document.getElementById('run-tests-btn');
-  const testRunnerMessage = document.getElementById('test-runner-message');
-  const testsSummary = document.getElementById('tests-summary');
-  const testSummaryGrid = document.getElementById('test-summary-grid');
-  const testStatusBreakdown = document.getElementById('test-status-breakdown');
-  const testsTbody = document.getElementById('tests-tbody');
-  const testStatusChip = document.getElementById('test-status-chip');
 
   // Estado
   let albumsAll = [];
   let albumsFiltered = [];
   let activityLog = [];
   let activityIndex = 0; // 0 = más reciente
+  let coverUploadIdCounter = 0;
 
   const ALBUM_PLACEHOLDER_CLASSES = 'cover-ph text-white text-2xl font-bold px-4 text-center';
   const ACTIVITY_ENDPOINT = '/activity/albums';
@@ -239,55 +70,6 @@ const initAlbumsPage = () => {
     CREADO: 'text-emerald-400 border-emerald-500/40',
     EDITADO: 'text-sky-400 border-sky-500/40',
     ELIMINADO: 'text-rose-400 border-rose-500/40'
-  };
-  const TESTS_PANEL_STORAGE_KEY = 'clean-marvel:albums:testsPanelCollapsed';
-  const TEST_STATUS_LABELS = {
-    passed: 'OK',
-    failed: 'Falló',
-    error: 'Error',
-    skipped: 'Omitido',
-    running: 'En progreso',
-    info: 'Info'
-  };
-  const TEST_STATUS_ICONS = {
-    passed: '✅',
-    failed: '⚠️',
-    error: '⛔',
-    skipped: '⏭️',
-    running: '⏳',
-    info: 'ℹ️'
-  };
-  const TEST_STATUS_STYLES = {
-    passed: {
-      chip: 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300',
-      message: 'text-emerald-300',
-      badge: 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
-    },
-    failed: {
-      chip: 'bg-amber-500/10 border-amber-500/40 text-amber-200',
-      message: 'text-amber-300',
-      badge: 'border border-amber-500/40 bg-amber-500/10 text-amber-200'
-    },
-    error: {
-      chip: 'bg-rose-500/10 border-rose-500/40 text-rose-200',
-      message: 'text-rose-300',
-      badge: 'border border-rose-500/40 bg-rose-500/10 text-rose-200'
-    },
-    skipped: {
-      chip: 'bg-slate-500/10 border-slate-500/40 text-slate-200',
-      message: 'text-slate-300',
-      badge: 'border border-slate-500/40 bg-slate-500/10 text-slate-200'
-    },
-    running: {
-      chip: 'bg-sky-500/10 border-sky-500/40 text-sky-200',
-      message: 'text-sky-300',
-      badge: 'border border-sky-500/40 bg-sky-500/10 text-sky-200'
-    },
-    info: {
-      chip: 'bg-slate-500/10 border-slate-500/40 text-slate-200',
-      message: 'text-slate-300',
-      badge: 'border border-slate-500/40 bg-slate-500/10 text-slate-200'
-    }
   };
   const albumEventBus = new EventTarget();
 
@@ -341,250 +123,6 @@ const initAlbumsPage = () => {
       equalizeAlbumCardsRaf = null;
       equalizeAlbumCardHeights();
     });
-  }
-
-  let coverUploadIdCounter = 0;
-
-  function resetTestResults() {
-    testsSummary?.classList.add('hidden');
-    testSummaryGrid?.replaceChildren();
-    testStatusBreakdown?.replaceChildren();
-    testsTbody?.replaceChildren();
-    if (testStatusBreakdown) {
-      testStatusBreakdown.classList.add('hidden');
-    }
-    if (testStatusChip) {
-      testStatusChip.classList.add('hidden');
-    }
-  }
-
-  function renderTestMessage(text, status = 'info') {
-    if (!testRunnerMessage) return;
-    if (!text) {
-      testRunnerMessage.classList.add('hidden');
-      return;
-    }
-    const style = TEST_STATUS_STYLES[status] ?? TEST_STATUS_STYLES.info;
-    testRunnerMessage.textContent = text;
-    testRunnerMessage.className = `text-sm font-semibold leading-tight ${style.message}`;
-    testRunnerMessage.classList.remove('hidden');
-  }
-
-  function setTestStatusChip(status, totalTests) {
-    if (!testStatusChip) return;
-    const style = TEST_STATUS_STYLES[status] ?? TEST_STATUS_STYLES.info;
-    const baseClasses = 'inline-flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-[0.18em] px-3 py-1 rounded-full border';
-    testStatusChip.className = `${baseClasses} ${style.chip}`;
-    const label = TEST_STATUS_LABELS[status] ?? status.toUpperCase();
-    const suffix = Number.isFinite(totalTests) ? ` · ${totalTests} tests` : '';
-    const icon = TEST_STATUS_ICONS[status] ?? '';
-    testStatusChip.textContent = icon ? `${icon} ${label}${suffix}` : `${label}${suffix}`;
-    testStatusChip.classList.remove('hidden');
-  }
-
-  function renderTestBreakdown(statusCounts) {
-    if (!testStatusBreakdown) return;
-    testStatusBreakdown.replaceChildren();
-    const order = ['passed', 'failed', 'error', 'skipped'];
-    let hasAny = false;
-    for (const status of order) {
-      const count = Number(statusCounts?.[status] ?? 0);
-      if (!count) {
-        continue;
-      }
-      hasAny = true;
-      const badge = document.createElement('span');
-      badge.className = `inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold ${TEST_STATUS_STYLES[status]?.badge ?? TEST_STATUS_STYLES.info.badge}`;
-      badge.textContent = `${TEST_STATUS_ICONS[status] ?? ''} ${TEST_STATUS_LABELS[status] ?? status}: ${formatNumber(count)}`.trim();
-      testStatusBreakdown.appendChild(badge);
-    }
-    if (hasAny) {
-      testStatusBreakdown.classList.remove('hidden');
-    } else {
-      testStatusBreakdown.classList.add('hidden');
-    }
-  }
-
-  function renderTestSummarySection(result) {
-    if (!testsSummary || !testSummaryGrid) return;
-    testsSummary.classList.remove('hidden');
-    testSummaryGrid.replaceChildren();
-
-    const summary = result?.summary ?? {};
-    const rows = [
-      { label: 'Tests', value: formatNumber(summary.tests ?? 0), accent: 'text-slate-100' },
-      { label: 'Asserts', value: formatNumber(summary.assertions ?? 0), accent: 'text-slate-200' },
-      { label: 'Fallos', value: formatNumber(summary.failures ?? 0), accent: (summary.failures ?? 0) ? 'text-amber-300' : 'text-slate-400' },
-      { label: 'Errores', value: formatNumber(summary.errors ?? 0), accent: (summary.errors ?? 0) ? 'text-rose-300' : 'text-slate-400' },
-      { label: 'Omitidos', value: formatNumber(summary.skipped ?? 0), accent: (summary.skipped ?? 0) ? 'text-sky-300' : 'text-slate-400' },
-      { label: 'Tiempo reportado', value: formatSeconds(summary.time ?? 0), accent: 'text-slate-200' },
-      { label: 'Duración total', value: formatSeconds(result?.duration ?? summary.time ?? 0), accent: 'text-slate-200' },
-    ];
-
-    for (const row of rows) {
-      const card = document.createElement('div');
-      card.className = 'rounded-xl bg-slate-800/50 border border-slate-700/60 px-4 py-3 flex flex-col gap-1';
-      const labelEl = document.createElement('span');
-      labelEl.className = 'text-[0.7rem] uppercase tracking-[0.22em] text-slate-400';
-      labelEl.textContent = row.label;
-      const valueEl = document.createElement('span');
-      valueEl.className = `text-xl font-semibold ${row.accent}`;
-      valueEl.textContent = row.value;
-      card.append(labelEl, valueEl);
-      testSummaryGrid.appendChild(card);
-    }
-
-    renderTestBreakdown(result?.statusCounts ?? {});
-    renderTestResults(result?.tests ?? []);
-  }
-
-  function renderTestResults(tests) {
-    if (!testsTbody) return;
-    testsTbody.replaceChildren();
-    if (!Array.isArray(tests) || tests.length === 0) {
-      const empty = document.createElement('p');
-      empty.className = 'text-xs italic text-slate-400';
-      empty.textContent = 'No se registraron ejecuciones.';
-      testsTbody.appendChild(empty);
-      return;
-    }
-
-    const fragment = document.createDocumentFragment();
-    const limitedTests = tests.slice(0, 200);
-    for (const test of limitedTests) {
-      const status = test.status ?? 'info';
-      const style = TEST_STATUS_STYLES[status] ?? TEST_STATUS_STYLES.info;
-      const item = document.createElement('article');
-      item.className = 'rounded-xl border border-slate-700/60 bg-slate-800/40 sm:px-4 px-3 sm:py-4 py-3 flex flex-col justify-between gap-3 first:mt-0 last:mb-0 scroll-mt-4 sm:min-h-[88px] min-h-[72px]';
-
-      const header = document.createElement('div');
-      header.className = 'flex items-start gap-3';
-      const title = document.createElement('p');
-      title.className = 'test-item-title text-sm sm:text-base font-semibold text-slate-100 leading-tight';
-      title.textContent = test.name ?? 'Test';
-      const badgeClass = `inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[0.65rem] font-bold uppercase tracking-[0.18em] ${style.badge}`;
-      const badgeText = `${TEST_STATUS_ICONS[status] ?? ''} ${TEST_STATUS_LABELS[status] ?? status}`.trim();
-      header.append(title);
-
-      const classLine = document.createElement('p');
-      classLine.className = 'test-item-path text-xs text-slate-400 font-mono';
-      classLine.style.overflowWrap = 'anywhere';
-      classLine.textContent = test.class ?? '';
-
-      const meta = document.createElement('div');
-      meta.className = 'text-xs text-slate-500 flex items-center justify-between gap-3 pr-1 sm:pr-2';
-      const time = Number(test.time ?? 0);
-      const timeEl = document.createElement('span');
-      timeEl.textContent = `⏱️ ${formatSeconds(time)}`;
-      const statusEl = document.createElement('span');
-      statusEl.className = badgeClass;
-      statusEl.textContent = badgeText;
-      statusEl.setAttribute('aria-hidden', 'true');
-      meta.append(timeEl, statusEl);
-
-      item.append(header);
-      if (classLine.textContent) item.append(classLine);
-      item.append(meta);
-
-      const message = (test.message ?? '').toString().trim();
-      if (message) {
-        const messageEl = document.createElement('p');
-        messageEl.className = 'text-xs text-slate-300 border-l border-slate-700/70 pl-3 whitespace-pre-wrap break-words';
-        messageEl.textContent = message;
-        item.append(messageEl);
-      }
-
-      fragment.appendChild(item);
-    }
-
-    testsTbody.appendChild(fragment);
-  }
-
-  let testsPanelCollapsed = false;
-
-  function applyTestsPanelState(collapsed, { animate = true } = {}) {
-    if (!testsBody || !testsToggle) return;
-
-    testsPanelCollapsed = Boolean(collapsed);
-    const targetCollapsed = testsPanelCollapsed;
-    const toggleLabel = testsToggle.querySelector('.tests-toggle-label');
-    const toggleIcon = testsToggle.querySelector('.tests-toggle-icon');
-
-    applyToggleAccessibility(testsToggle, targetCollapsed);
-    configureToggleTransitions(testsToggle, toggleIcon, shouldReduceMotion());
-    updateToggleButtonClasses(testsToggle, targetCollapsed);
-    updateToggleLabelAndIcon(toggleLabel, toggleIcon, targetCollapsed);
-    handleTestsBodyAnimation(testsBody, targetCollapsed, animate);
-
-    scheduleAlbumCardEqualization();
-    if (animate) {
-      setTimeout(scheduleAlbumCardEqualization, TESTS_PANEL_ANIMATION_DURATION + 20);
-    }
-  }
-
-  function toggleTestsPanel(forceState, { animate = true } = {}) {
-    const desiredState = typeof forceState === 'boolean' ? forceState : !testsPanelCollapsed;
-    try {
-      getWindowObject()?.localStorage?.setItem(TESTS_PANEL_STORAGE_KEY, String(desiredState));
-    } catch (_) {
-      // ignore storage issues
-    }
-    applyTestsPanelState(desiredState, { animate });
-  }
-
-  let storedTestsPanelState = null;
-  try {
-    storedTestsPanelState = getWindowObject()?.localStorage?.getItem(TESTS_PANEL_STORAGE_KEY);
-  } catch (_) {
-    storedTestsPanelState = null;
-  }
-  applyTestsPanelState(storedTestsPanelState === 'true', { animate: false });
-
-  async function runPhpUnitSuite() {
-    if (!testRunButton) return;
-    const originalLabel = testRunButton.textContent;
-    testRunButton.disabled = true;
-    testRunButton.textContent = '⏳ Ejecutando...';
-    renderTestMessage('Ejecutando suite de tests, esto puede tardar unos segundos…', 'running');
-    resetTestResults();
-    if (testsPanelCollapsed) {
-      toggleTestsPanel(false, { animate: true });
-    }
-    setTestStatusChip('running');
-
-    try {
-      const response = await fetch('/dev/tests/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
-      });
-
-      const payload = await response.json().catch(() => null);
-      if (!response.ok || !payload) {
-        const message = payload?.message ?? 'No se pudo ejecutar la suite de tests.';
-        renderTestMessage(message, 'error');
-        resetTestResults();
-        return;
-      }
-
-      if (payload.estado !== 'éxito') {
-        renderTestMessage(payload.message ?? 'La suite devolvió un estado inesperado.', 'error');
-        resetTestResults();
-        return;
-      }
-
-      const result = payload.datos ?? {};
-      const status = result.status ?? 'info';
-      renderTestMessage(result.message ?? '', status);
-      setTestStatusChip(status, Number(result.summary?.tests ?? 0));
-      renderTestSummarySection(result);
-    } catch (error) {
-      renderTestMessage(error.message ?? 'Error desconocido al ejecutar los tests.', 'error');
-      resetTestResults();
-    } finally {
-      testRunButton.disabled = false;
-      testRunButton.textContent = originalLabel;
-    }
   }
 
   function getAlbumId(raw){
@@ -982,7 +520,6 @@ const initAlbumsPage = () => {
       focusRestoreScroll = runtimeWindow?.scrollY ?? scrollTop ?? 0;
       document.body.dataset.editFocus = 'true';
       focusBackdrop?.classList.remove('hidden');
-      testsBox?.classList.add('hidden');
 
       const cards = albumsGrid.querySelectorAll('.album-card');
       for (const node of cards) {
@@ -1017,7 +554,6 @@ const initAlbumsPage = () => {
       focusEditCurrentCard = null;
       document.body.dataset.editFocus = 'false';
       focusBackdrop?.classList.add('hidden');
-      testsBox?.classList.remove('hidden');
 
       const cards = albumsGrid.querySelectorAll('.album-card');
       for (const node of cards) {
@@ -1334,8 +870,6 @@ const initAlbumsPage = () => {
   filterInput?.addEventListener('input', debounce(applyFilters, 200));
   orderSelect?.addEventListener('change', applyFilters);
   refreshButton?.addEventListener('click', fetchAlbums);
-  testRunButton?.addEventListener('click', runPhpUnitSuite);
-  testsToggle?.addEventListener('click', () => toggleTestsPanel());
   getWindowObject()?.addEventListener?.('resize', debounce(scheduleAlbumCardEqualization, 150));
 
   let isFocusEditMode = false;
@@ -1356,7 +890,6 @@ const initAlbumsPage = () => {
     }
     document.body.dataset.editFocus = 'false';
     focusBackdrop?.classList.add('hidden');
-    testsBox?.classList.remove('hidden');
     isFocusEditMode = false;
     focusEditCurrentCard = null;
     const cards = albumsGrid.querySelectorAll('.album-card');

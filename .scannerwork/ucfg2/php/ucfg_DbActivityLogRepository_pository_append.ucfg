@@ -1,0 +1,208 @@
+
+Iapp\activities\infrastructure\persistence\dbactivitylogrepository::appendí
+á/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Infrastructure/Persistence/DbActivityLogRepository.php; ;("1*C
+2
+DbActivityLogRepository.php"
+I I(
+implicit return*ˆ
+1= ?(
+i
+g
+; ;(
+$entry"__id*K
+
+__unknown_file (/
+-
+$entry#app\activities\domain\activityentryÖ
+Ç
+= =(
+%1"__id*j
+
+__unknown_file (N*LC
+Aapp\activities\infrastructure\persistence\dbactivitylogrepository"
+pdoÑÅ
+= ?(	
+%2*"
+
+__unknown_file (
+
+%1*¡
+
+__unknown_file (§°
+ûINSERT INTO activity_logs (scope, context_id, action, title, occurred_at, created_at) VALUES (:scope, :context_id, :action, :title, :occurred_at, :created_at)2prepare?
+=
+= ?(	
+$stmt"__id*"
+
+__unknown_file (
+
+%2
+A H(	
+%3"$ArrayA?
+B B(&
+%4*&
+
+__unknown_file (
+
+
+$entry2scopeå
+â
+A H(	
+%5"__mapSet*"
+
+__unknown_file (
+
+%3*%
+
+__unknown_file (	
+scope*"
+
+__unknown_file (
+
+%4EC
+C C(/
+%6*&
+
+__unknown_file (
+
+
+$entry2	contextidë
+é
+A H(	
+%7"__mapSet*"
+
+__unknown_file (
+
+%3**
+
+__unknown_file (
+
+context_id*"
+
+__unknown_file (
+
+%6B@
+D D((
+%8*&
+
+__unknown_file (
+
+
+$entry2actionç
+ä
+A H(	
+%9"__mapSet*"
+
+__unknown_file (
+
+%3*&
+
+__unknown_file (
+
+action*"
+
+__unknown_file (
+
+%8B@
+E E(&
+%10*&
+
+__unknown_file (
+
+
+$entry2titleé
+ã
+A H(	
+%11"__mapSet*"
+
+__unknown_file (
+
+%3*%
+
+__unknown_file (	
+title*#
+
+__unknown_file (
+
+%10GE
+F/ F(C
+%12*&
+
+__unknown_file (
+
+
+$entry2
+occurredat®•
+F F(D
+%13*a
+
+__unknown_file (EC
+Aapp\activities\infrastructure\persistence\dbactivitylogrepository*#
+
+__unknown_file (
+
+%122
+formatdateî
+ë
+A H(	
+%14"__mapSet*"
+
+__unknown_file (
+
+%3*+
+
+__unknown_file (
+occurred_at*#
+
+__unknown_file (
+
+%13&$
+G. G(E
+%15"datetimeimmutableX
+V
+G. G(E
+%16"datetimeimmutable::__construct*#
+
+__unknown_file (
+
+%15®•
+G G(F
+%17*a
+
+__unknown_file (EC
+Aapp\activities\infrastructure\persistence\dbactivitylogrepository*#
+
+__unknown_file (
+
+%152
+formatdateì
+ê
+A H(	
+%18"__mapSet*"
+
+__unknown_file (
+
+%3**
+
+__unknown_file (
+
+created_at*#
+
+__unknown_file (
+
+%17ge
+A H(
+
+%19*%
+
+__unknown_file (	
+
+$stmt*"
+
+__unknown_file (
+
+%32execute*
+2:9
+; ;(/-
+$entry#app\activities\domain\activityentryBEC
+Aapp\activities\infrastructure\persistence\dbactivitylogrepositoryH

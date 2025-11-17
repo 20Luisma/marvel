@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1763326410">
-  <project timestamp="1763326410">
+<coverage generated="1763402151">
+  <project timestamp="1763402151">
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/AI/OpenAIComicGenerator.php">
       <class name="App\AI\OpenAIComicGenerator" namespace="global">
         <metrics complexity="32" methods="5" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="124" coveredstatements="86" elements="129" coveredelements="87"/>
@@ -1154,14 +1154,16 @@
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/Helpers/DirectoryHelper.php">
       <class name="Src\Controllers\Helpers\DirectoryHelper" namespace="global">
-        <metrics complexity="4" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+        <metrics complexity="5" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="5" elements="7" coveredelements="5"/>
       </class>
-      <line num="11" type="method" name="ensure" visibility="public" complexity="4" crap="4" count="3"/>
+      <line num="11" type="method" name="ensure" visibility="public" complexity="5" crap="5.12" count="3"/>
       <line num="13" type="stmt" count="3"/>
       <line num="14" type="stmt" count="1"/>
       <line num="17" type="stmt" count="2"/>
       <line num="18" type="stmt" count="1"/>
-      <metrics loc="22" ncloc="22" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+      <line num="21" type="stmt" count="1"/>
+      <line num="22" type="stmt" count="0"/>
+      <metrics loc="26" ncloc="26" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="5" elements="7" coveredelements="5"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php">
       <class name="Src\Controllers\HeroController" namespace="global">
@@ -2631,6 +2633,6 @@
       <line num="220" type="stmt" count="1"/>
       <metrics loc="221" ncloc="211" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="117" coveredstatements="102" elements="117" coveredelements="102"/>
     </file>
-    <metrics files="71" loc="5289" ncloc="5053" classes="64" methods="301" coveredmethods="202" conditionals="0" coveredconditionals="0" statements="1924" coveredstatements="1435" elements="2225" coveredelements="1637"/>
+    <metrics files="71" loc="5293" ncloc="5057" classes="64" methods="301" coveredmethods="201" conditionals="0" coveredconditionals="0" statements="1926" coveredstatements="1436" elements="2227" coveredelements="1637"/>
   </project>
 </coverage>
