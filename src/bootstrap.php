@@ -107,6 +107,9 @@ return (static function (): array {
         $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
     }
 
+    $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
+    // TODO: usar TMDB_API_KEY en el endpoint de películas Marvel
+
     // --- JSON vs DB ----------------------------------------------------------
     // Persistencia adaptativa:
     // - En local (APP_ENV=local) siempre usamos los repositorios JSON en storage/.
@@ -158,6 +161,7 @@ return (static function (): array {
         'activityRepository'   => $activityRepository,
         'config' => [
             'services' => $serviceConfig,
+            'tmdbApiKey' => $tmdbApiKey,
         ],
         'services' => [
             'urlProvider' => $serviceUrlProvider,
