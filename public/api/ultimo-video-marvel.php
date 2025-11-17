@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
+    header('Location: /oficial-marvel');
+    exit;
+}
+
 $rootPath = dirname(__DIR__, 2);
 $storageDir = $rootPath . '/storage/marvel';
 $dataFile = $storageDir . '/ultimo-video-marvel.json';

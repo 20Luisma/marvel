@@ -60,7 +60,7 @@ final class HeroRagService
     {
         $heroSummaries = array_map(
             static fn (array $context): string => sprintf(
-                "- %s (ID: %s)\n  Contexto: %s",
+                "- %s (ID: %s): %s",
                 $context['nombre'] !== '' ? $context['nombre'] : 'Héroe sin nombre',
                 $context['heroId'],
                 $context['contenido'] !== '' ? $context['contenido'] : 'Sin descripción disponible'
@@ -72,19 +72,14 @@ final class HeroRagService
 
         return sprintf(
             <<<PROMPT
-Usa los siguientes contextos de héroes para responder la pregunta: "%s".
-
+Tienes la siguiente información detallada de héroes. Usa esos contextos para responder a la pregunta: "%s".
 %s
 
-Requisitos de formato:
-- Cada contexto incluye líneas con el formato `Atributo\tValoración`. Extrae solo esos atributos para hacer una tabla en Markdown con encabezado `Atributo | {nombre héroe A} | {nombre héroe B}`.
-- Mantén exactamente el nombre del atributo y la valoración (estrellas, texto, paréntesis) tal como aparecen en el contexto. No inventes filas ni modifiques puntuaciones.
-- Incluye al menos 5 atributos si existen en el contexto; si hay más, prioriza los más relevantes para combate, defensa, habilidades especiales e inteligencia táctica.
-- Después de la tabla, escribe una sección llamada `Conclusión narrativa` compuesta por **dos párrafos** de 3 a 4 frases cada uno, con tono épico y descriptivo.
-  - En el primer párrafo, señala atributo por atributo quién lidera comparando directamente las valoraciones (ejemplo: "Hulk domina en Poder de ataque ★★★★★ frente a Iron Man ★★★★☆").
-  - En el segundo párrafo, explica cómo se complementan en combate citando al menos **dos atributos** por héroe y remata con un emoji.
-- Todo debe basarse exclusivamente en los datos del contexto; no inventes nuevos atributos ni cambies las valoraciones originales.
-- Usa vocabulario colorido del universo Marvel, evitando frases genéricas o repetidas literalmente del contexto.
+Instrucciones:
+- Mantén un tono narrativo claro, directo y apto para audio. No utilices tablas, íconos, estrellas ni emojis.
+- Explica primero las diferencias entre ambos héroes mencionando atributos o capacidades relevantes que aparecen en el contexto.
+- En un segundo párrafo describe cómo se complementan en combate o misión, usando al menos dos criterios por cada héroe según los datos disponibles.
+- Apóyate exclusivamente en los contextos proporcionados y no inventes nuevos atributos ni cambies valoraciones.
 PROMPT,
             $question,
             $joined
@@ -101,7 +96,7 @@ PROMPT,
         $messages = [
             [
                 'role' => 'system',
-                'content' => 'Eres un analista experto en cómics de Marvel. Comparas héroes en español neutral latino con rigor y creatividad.',
+                'content' => 'Eres un narrador profesional que describe comparaciones entre héroes. Mantienes un estilo directo, claro y apto para audio, sin emojis, sin símbolos y sin acentos épicos.',
             ],
             [
                 'role' => 'user',
