@@ -84,19 +84,19 @@ class OpenAIComicGenerator
         $messages = [
             [
                 'role' => 'system',
-                'content' => 'Eres un escritor y director creativo de cómics de Marvel. Generas historias épicas en español latino neutro.',
+                'content' => 'Eres un narrador profesional que trabaja con cómics. Hablas español neutro latino y describes escenas de forma directa, clara y apta para audio, sin emojis, sin símbolos decorativos ni onomatopeyas.',
             ],
             [
                 'role' => 'user',
                 'content' => sprintf(
                     <<<PROMPT
-Genera una sinopsis y viñetas para un cómic corto protagonizado por los siguientes héroes:
+Genera una sinopsis y tres viñetas para un cómic corto protagonizado por los siguientes héroes:
 %s
 
 Instrucciones:
-- La historia debe tener un tono heroico y energético.
-- Devuelve exactamente 3 viñetas numeradas, cada una con título breve, descripción narrativa y un caption corto con la línea de diálogo principal o onomatopeya.
-- Toda la respuesta debe ser un objeto JSON que cumpla con el siguiente esquema:
+- Describe cada viñeta con un título breve, una descripción fluida y un caption que represente una línea de diálogo o una acción clara. Evita signos visuales innecesarios, símbolos o caracteres fuera del alfabeto estándar.
+- Mantén un tono narrativo profesional, sin épica exagerada, sin estrellas ni emojis.
+- Devuelve exactamente un objeto JSON válido con esta estructura:
 {
   "title": "string",
   "summary": "string",

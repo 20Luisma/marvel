@@ -1,6 +1,11 @@
 <?php
 // public/api/actualizar-video-marvel.php
 
+if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
+    header('Location: /oficial-marvel');
+    exit;
+}
+
 $rootPath = dirname(__DIR__, 2);
 $envPath = $rootPath . '/.env';
 if (is_file($envPath)) {

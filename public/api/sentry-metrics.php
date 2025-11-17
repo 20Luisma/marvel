@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 use RuntimeException;
 
+if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
+    header('Location: /sentry');
+    exit;
+}
+
 $rootPath = dirname(__DIR__, 2);
 require_once $rootPath . '/vendor/autoload.php';
 require_once $rootPath . '/src/bootstrap.php';

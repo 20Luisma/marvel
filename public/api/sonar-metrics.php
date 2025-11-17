@@ -7,6 +7,11 @@ use DateTimeInterface;
 use Dotenv\Dotenv;
 use Throwable;
 
+if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
+    header('Location: /sonar');
+    exit;
+}
+
 $rootPath = dirname(__DIR__, 2);
 $vendorAutoload = $rootPath . '/vendor/autoload.php';
 

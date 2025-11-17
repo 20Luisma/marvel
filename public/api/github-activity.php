@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+
+if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
+    header('Location: /panel-github');
+    exit;
+}
 // public/api/github-activity.php
 @ini_set('max_execution_time', '650');
 @ini_set('default_socket_timeout', '650');
