@@ -44,6 +44,14 @@ External Services (openai-service 8081, rag-service 8082, OpenAI API)
 
 `src/bootstrap.php` centraliza DI: carga `.env`, resuelve URLs desde `config/services.php`, registra repositorios de archivos, EventBus y casos de uso. `ServiceUrlProvider` detecta el entorno (local/hosting) según host o `APP_ENV` para apuntar automáticamente a los endpoints correctos.
 
+## 🧭 Documentación unificada
+
+- `docs/README.md`: índice maestro para toda la documentación (API, Componentes, Guías, Arquitectura).  
+- `docs/api/openapi.yaml`: especificación OpenAPI que describe los endpoints principales (`/albums`, `/heroes`, `/activity/*`, `/comics/generate`).  
+- `docs/components/README.md`: panorama de componentes clave, dependencias externas (OpenAI/RAG) y responsabilidades.  
+- `docs/guides/`: guías accionables (`getting-started`, `authentication`, `testing`) para agilizar onboarding.  
+- `docs/architecture/`: ADRs (001 a 005) con sección "Supersede ADR" para registrar decisiones futuras y cómo continuarlas.
+
 ## 💾 Persistencia de datos: JSON en local, MySQL en hosting
 
 - En **local (`APP_ENV=local`)** se usan repositorios de archivos:  
