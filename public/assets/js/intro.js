@@ -50,7 +50,7 @@
         audio.muted = true;
         audio.currentTime = 0;
         const playPromise = audio.play();
-        if (playPromise && typeof playPromise.then === 'function') {
+        if (playPromise !== null && typeof playPromise === 'object' && typeof playPromise.then === 'function') {
             playPromise.then(() => {
                 window.setTimeout(() => {
                     audio.muted = false;

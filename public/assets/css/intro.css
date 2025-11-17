@@ -98,7 +98,6 @@ body {
     margin: 0 auto;
     padding: 36px 18px 44px;
     color: #e8ebf7;
-    display: grid;
     grid-template-rows: auto 1fr auto auto;
     justify-items: center;
     align-content: space-between;

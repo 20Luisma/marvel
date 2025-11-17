@@ -18,6 +18,7 @@ final class PageController
         '/sonar' => 'pages/sonar',
         '/sentry' => 'pages/sentry',
         '/panel-github' => 'pages/panel-github',
+        '/seccion' => 'pages/seccion',
     ];
 
     public function renderIfHtmlRoute(string $method, string $path): bool

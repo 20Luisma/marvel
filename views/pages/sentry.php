@@ -1,3 +1,7 @@
+<?php
+declare(strict_types=1);
+$activeTopAction = 'sentry';
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -31,17 +35,7 @@
         </div>
       </div>
       <div class="flex w-full flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
-        <div class="flex items-center gap-3 ml-auto">
-          <a href="/albums" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--flat">Inicio</a>
-          <a href="/comic" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--flat">Crear Cómic</a>
-          <a href="/oficial-marvel" class="btn app-hero__cta app-hero__cta-equal">Oficial Marvel</a>
-          <a href="/sonar" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--github app-hero__cta--flat">SonarCloud</a>
-          <a href="/sentry" class="btn app-hero__cta app-hero__cta-equal is-active app-hero__cta--github" aria-current="page">Sentry</a>
-          <a href="/panel-github" class="btn app-hero__cta app-hero__cta-equal app-hero__cta--github">GitHub PRs</a>
-          <a id="btn-readme" href="/readme" class="btn app-hero__cta app-hero__cta-equal btn-readme app-hero__cta--github">
-            <span>README</span>
-          </a>
-        </div>
+        <?php require_once __DIR__ . '/../partials/top-actions.php'; ?>
       </div>
     </div>
   </header>

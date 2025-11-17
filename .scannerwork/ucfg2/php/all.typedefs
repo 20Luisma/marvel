@@ -1,9 +1,4 @@
-è
-<app\notifications\application\herocreatednotificationhandlerX
-__constructIapp\notifications\application\herocreatednotificationhandler::__constructR
-__invokeFapp\notifications\application\herocreatednotificationhandler::__invokeZ
-subscribedtoJapp\notifications\application\herocreatednotificationhandler::subscribedto"sender*=
-sender3app\notifications\domain\service\notificationsenderÌ
+Ì
 0app\heroes\application\usecase\createherousecaseL
 __construct=app\heroes\application\usecase\createherousecase::__constructD
 execute9app\heroes\application\usecase\createherousecase::executeN
@@ -28,39 +23,7 @@ maxEntriesint´
 executeCapp\activities\application\usecase\clearactivitylogusecase::execute"
 repository*9
 
-repository+app\activities\domain\activitylogrepository™
-app\shared\http\jsonresponse,
-error#app\shared\http\jsonresponse::error*
-send"app\shared\http\jsonresponse::send0
-success%app\shared\http\jsonresponse::success‚
-1app\albums\application\usecase\createalbumusecaseM
-__construct>app\albums\application\usecase\createalbumusecase::__constructE
-execute:app\albums\application\usecase\createalbumusecase::executeO
-generateuuid?app\albums\application\usecase\createalbumusecase::generateuuid"
-repository*:
-
-repository,app\albums\domain\repository\albumrepositoryÏ
-app\dev\test\phpunittestrunner:
-__construct+app\dev\test\phpunittestrunner::__constructP
-detectlocalenvironment6app\dev\test\phpunittestrunner::detectlocalenvironment>
-formatinstant-app\dev\test\phpunittestrunner::formatinstantB
-fromenvironment/app\dev\test\phpunittestrunner::fromenvironmentD
-parsejunitreport0app\dev\test\phpunittestrunner::parsejunitreport*
-run#app\dev\test\phpunittestrunner::run"projectRoot"testsAllowed*
-projectRootstring*
-testsAllowedboolä
-8app\heroes\infrastructure\persistence\fileherorepositoryT
-__constructEapp\heroes\infrastructure\persistence\fileherorepository::__constructD
-all=app\heroes\infrastructure\persistence\fileherorepository::allL
-byalbumAapp\heroes\infrastructure\persistence\fileherorepository::byalbumJ
-delete@app\heroes\infrastructure\persistence\fileherorepository::deleteX
-deletebyalbumGapp\heroes\infrastructure\persistence\fileherorepository::deletebyalbumX
-ensurestorageGapp\heroes\infrastructure\persistence\fileherorepository::ensurestorageF
-find>app\heroes\infrastructure\persistence\fileherorepository::findT
-loadrecordsEapp\heroes\infrastructure\persistence\fileherorepository::loadrecordsZ
-persistrecordsHapp\heroes\infrastructure\persistence\fileherorepository::persistrecordsF
-save>app\heroes\infrastructure\persistence\fileherorepository::save"storagePath*
-storagePathstringã
+repository+app\activities\domain\activitylogrepositoryã
 /app\albums\application\usecase\findalbumusecaseK
 __construct<app\albums\application\usecase\findalbumusecase::__constructC
 execute8app\albums\application\usecase\findalbumusecase::execute"
@@ -84,35 +47,7 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 store)src\controllers\activitycontroller::store"clearActivity"listActivity"recordActivity*K
 clearActivity:app\activities\application\usecase\clearactivitylogusecase*I
 listActivity9app\activities\application\usecase\listactivitylogusecase*J
-recordActivity8app\activities\application\usecase\recordactivityusecaseÇ
-src\controllers\herocontroller:
-__construct+src\controllers\herocontroller::__construct2
-destroy'src\controllers\herocontroller::destroy.
-index%src\controllers\herocontroller::index:
-listbyalbum+src\controllers\herocontroller::listbyalbum,
-show$src\controllers\herocontroller::show.
-store%src\controllers\herocontroller::store0
-update&src\controllers\herocontroller::update"
-createHero"
-deleteHero"findHero"
-listHeroes"
-updateHero*>
-
-createHero0app\heroes\application\usecase\createherousecase*>
-
-deleteHero0app\heroes\application\usecase\deleteherousecase*:
-findHero.app\heroes\application\usecase\findherousecase*>
-
-listHeroes0app\heroes\application\usecase\listheroesusecase*>
-
-updateHero0app\heroes\application\usecase\updateherousecaseå
-app\shared\domain\bus\eventbus2
-publish'app\shared\domain\bus\eventbus::publish6
-	subscribe)app\shared\domain\bus\eventbus::subscribeï
-0app\heroes\application\usecase\updateherousecaseL
-__construct=app\heroes\application\usecase\updateherousecase::__constructD
-execute9app\heroes\application\usecase\updateherousecase::execute"heroRepository*=
-heroRepository+app\heroes\domain\repository\herorepositoryê
+recordActivity8app\activities\application\usecase\recordactivityusecaseê
 src\controllers\comiccontroller;
 __construct,src\controllers\comiccontroller::__construct5
 generate)src\controllers\comiccontroller::generate"findHero"	generator*:
@@ -122,107 +57,15 @@ updateHero0app\heroes\application\usecase\updateherousecaseå
 all1app\albums\domain\repository\albumrepository::all>
 delete4app\albums\domain\repository\albumrepository::delete:
 find2app\albums\domain\repository\albumrepository::find:
-save2app\albums\domain\repository\albumrepository::saveŸ
-.app\shared\infrastructure\bus\inmemoryeventbusB
-publish7app\shared\infrastructure\bus\inmemoryeventbus::publishF
-	subscribe9app\shared\infrastructure\bus\inmemoryeventbus::subscribe"handlers*
-handlersarray´
+save2app\albums\domain\repository\albumrepository::save´
 6app\notifications\application\listnotificationsusecaseR
 __constructCapp\notifications\application\listnotificationsusecase::__constructJ
 execute?app\notifications\application\listnotificationsusecase::execute"
 repository*E
 
-repository7app\notifications\infrastructure\notificationrepositoryÍ
-
-app\heroes\domain\entity\hero9
-__construct*app\heroes\domain\entity\hero::__construct1
-albumid&app\heroes\domain\entity\hero::albumid9
-assertimage*app\heroes\domain\entity\hero::assertimage7
-
-assertname)app\heroes\domain\entity\hero::assertname9
-changeimage*app\heroes\domain\entity\hero::changeimage5
-	contenido(app\heroes\domain\entity\hero::contenido1
-content&app\heroes\domain\entity\hero::content/
-create%app\heroes\domain\entity\hero::create5
-	createdat(app\heroes\domain\entity\hero::createdat?
-fromprimitives-app\heroes\domain\entity\hero::fromprimitives/
-heroid%app\heroes\domain\entity\hero::heroid-
-image$app\heroes\domain\entity\hero::image/
-imagen%app\heroes\domain\entity\hero::imagen+
-name#app\heroes\domain\entity\hero::name/
-nombre%app\heroes\domain\entity\hero::nombre/
-rename%app\heroes\domain\entity\hero::rename+
-slug#app\heroes\domain\entity\hero::slug;
-toprimitives+app\heroes\domain\entity\hero::toprimitives-
-touch$app\heroes\domain\entity\hero::touch=
-updatecontent,app\heroes\domain\entity\hero::updatecontent5
-	updatedat(app\heroes\domain\entity\hero::updatedat"albumId"content"	createdAt"heroId"image"name"slug"	updatedAt*
-albumIdstring*
-contentstring*
-	createdAtdatetimeimmutable*
-heroIdstring*
-imagestring*
-namestring*
-slugstring*
-	updatedAtdatetimeimmutable·
- src\controllers\configcontroller<
-__construct-src\controllers\configcontroller::__construct6
-services*src\controllers\configcontroller::services"serviceUrlProvider*3
-serviceUrlProviderapp\config\serviceurlproviderF
+repository7app\notifications\infrastructure\notificationrepositoryF
 app\shared\util\slugger+
-slugify app\shared\util\slugger::slugifyì
-=app\notifications\application\albumupdatednotificationhandlerY
-__constructJapp\notifications\application\albumupdatednotificationhandler::__constructS
-__invokeGapp\notifications\application\albumupdatednotificationhandler::__invoke[
-subscribedtoKapp\notifications\application\albumupdatednotificationhandler::subscribedto"sender*=
-sender3app\notifications\domain\service\notificationsender€
-src\controllers\admincontroller;
-__construct,src\controllers\admincontroller::__construct3
-seedall(src\controllers\admincontroller::seedall"seedHeroesService*3
-seedHeroesServiceapp\dev\seed\seedheroesservice¿
--app\albums\application\dto\createalbumrequestI
-__construct:app\albums\application\dto\createalbumrequest::__constructG
-
-coverimage9app\albums\application\dto\createalbumrequest::coverimage?
-nombre5app\albums\application\dto\createalbumrequest::nombre"
-coverImage"nombre*
-
-coverImagestring*
-nombrestring‚
-+app\activities\domain\activitylogrepository7
-all0app\activities\domain\activitylogrepository::all=
-append3app\activities\domain\activitylogrepository::append;
-clear2app\activities\domain\activitylogrepository::clear 
-'app\heroes\application\dto\heroresponseC
-__construct4app\heroes\application\dto\heroresponse::__construct=
-fromhero1app\heroes\application\dto\heroresponse::fromhero;
-toarray0app\heroes\application\dto\heroresponse::toarray"albumId"	contenido"	createdAt"heroId"imagen"nombre"slug"	updatedAt*
-albumIdstring*
-	contenidostring*
-	createdAtstring*
-heroIdstring*
-imagenstring*
-nombrestring*
-slugstring*
-	updatedAtstring√
-!app\shared\domain\bus\domainevent=
-__construct.app\shared\domain\bus\domainevent::__construct=
-aggregateid.app\shared\domain\bus\domainevent::aggregateid5
-eventid*app\shared\domain\bus\domainevent::eventid9
-	eventname,app\shared\domain\bus\domainevent::eventnameC
-fromprimitives1app\shared\domain\bus\domainevent::fromprimitives;
-
-occurredon-app\shared\domain\bus\domainevent::occurredon?
-toprimitives/app\shared\domain\bus\domainevent::toprimitives"aggregateId"eventId"
-occurredOn*
-aggregateIdstring*
-eventIdstring*
-
-occurredOndatetimeimmutableº
- src\shared\http\readmecontroller<
-__construct-src\shared\http\readmecontroller::__construct6
-__invoke*src\shared\http\readmecontroller::__invoke"projectRoot*
-projectRootstringÈ
+slugify app\shared\util\slugger::slugifyÈ
 src\shared\http\router2
 __construct#src\shared\http\router::__construct@
 activitycontroller*src\shared\http\router::activitycontroller:
@@ -272,7 +115,313 @@ serviceUrlstringx
 clear>app\notifications\infrastructure\notificationrepository::clearW
 ensurestorageFapp\notifications\infrastructure\notificationrepository::ensurestorage_
 lastnotificationsJapp\notifications\infrastructure\notificationrepository::lastnotifications"filePath*
-filePathstringí
+filePathstringé
+0app\albums\application\usecase\listalbumsusecaseL
+__construct=app\albums\application\usecase\listalbumsusecase::__constructD
+execute9app\albums\application\usecase\listalbumsusecase::execute"
+repository*:
+
+repository,app\albums\domain\repository\albumrepositoryÊ
+#app\activities\domain\activityscope/
+all(app\activities\domain\activityscope::all?
+assertvalid0app\activities\domain\activityscope::assertvalid9
+filename-app\activities\domain\activityscope::filenameI
+normalizecontext5app\activities\domain\activityscope::normalizecontextG
+requirescontext4app\activities\domain\activityscope::requirescontext©
++app\heroes\domain\repository\herorepository7
+all0app\heroes\domain\repository\herorepository::all?
+byalbum4app\heroes\domain\repository\herorepository::byalbum=
+delete3app\heroes\domain\repository\herorepository::deleteK
+deletebyalbum:app\heroes\domain\repository\herorepository::deletebyalbum9
+find1app\heroes\domain\repository\herorepository::find9
+save1app\heroes\domain\repository\herorepository::saveö
+#app\heroes\domain\event\herocreated!app\shared\domain\bus\domainevent?
+__construct0app\heroes\domain\event\herocreated::__construct7
+albumid,app\heroes\domain\event\herocreated::albumid;
+	albumname.app\heroes\domain\event\herocreated::albumname;
+	eventname.app\heroes\domain\event\herocreated::eventname7
+forhero,app\heroes\domain\event\herocreated::forheroE
+fromprimitives3app\heroes\domain\event\herocreated::fromprimitives3
+image*app\heroes\domain\event\herocreated::image1
+name)app\heroes\domain\event\herocreated::name1
+slug)app\heroes\domain\event\herocreated::slugA
+toprimitives1app\heroes\domain\event\herocreated::toprimitives"albumId"	albumName"image"name"slug*
+albumIdstring*
+	albumNamestring*
+imagestring*
+namestring*
+slugstring€
+$app\albums\domain\event\albumcreated!app\shared\domain\bus\domainevent@
+__construct1app\albums\domain\event\albumcreated::__construct<
+	eventname/app\albums\domain\event\albumcreated::eventname:
+foralbum.app\albums\domain\event\albumcreated::foralbumF
+fromprimitives4app\albums\domain\event\albumcreated::fromprimitives2
+name*app\albums\domain\event\albumcreated::nameB
+toprimitives2app\albums\domain\event\albumcreated::toprimitives"name*
+namestring˘
+6app\heroes\infrastructure\persistence\dbherorepositoryR
+__constructCapp\heroes\infrastructure\persistence\dbherorepository::__constructB
+all;app\heroes\infrastructure\persistence\dbherorepository::allJ
+byalbum?app\heroes\infrastructure\persistence\dbherorepository::byalbumH
+delete>app\heroes\infrastructure\persistence\dbherorepository::deleteV
+deletebyalbumEapp\heroes\infrastructure\persistence\dbherorepository::deletebyalbumD
+find<app\heroes\infrastructure\persistence\dbherorepository::findP
+
+formatdateBapp\heroes\infrastructure\persistence\dbherorepository::formatdateJ
+hydrate?app\heroes\infrastructure\persistence\dbherorepository::hydrateD
+save<app\heroes\infrastructure\persistence\dbherorepository::save"pdo*
+
+pdopdo®
+9app\activities\application\usecase\listactivitylogusecaseU
+__constructFapp\activities\application\usecase\listactivitylogusecase::__constructM
+executeBapp\activities\application\usecase\listactivitylogusecase::execute"
+repository*9
+
+repository+app\activities\domain\activitylogrepository^
+$src\shared\markdown\markdownrenderer6
+render,src\shared\markdown\markdownrenderer::renderƒ
+src\controllers\albumcontroller;
+__construct,src\controllers\albumcontroller::__constructI
+albumcovermaxbytes3src\controllers\albumcontroller::albumcovermaxbytesA
+albumuploaddir/src\controllers\albumcontroller::albumuploaddirM
+albumuploadurlprefix5src\controllers\albumcontroller::albumuploadurlprefix3
+destroy(src\controllers\albumcontroller::destroy/
+index&src\controllers\albumcontroller::index/
+store&src\controllers\albumcontroller::store1
+update'src\controllers\albumcontroller::update;
+uploadcover,src\controllers\albumcontroller::uploadcover"createAlbum"deleteAlbum"	findAlbum"
+listAlbums"updateAlbum*@
+createAlbum1app\albums\application\usecase\createalbumusecase*@
+deleteAlbum1app\albums\application\usecase\deletealbumusecase*<
+	findAlbum/app\albums\application\usecase\findalbumusecase*>
+
+listAlbums0app\albums\application\usecase\listalbumsusecase*@
+updateAlbum1app\albums\application\usecase\updatealbumusecase•
+8app\activities\application\usecase\recordactivityusecaseT
+__constructEapp\activities\application\usecase\recordactivityusecase::__constructL
+executeAapp\activities\application\usecase\recordactivityusecase::execute"
+repository*9
+
+repository+app\activities\domain\activitylogrepositoryî
+-app\albums\application\dto\updatealbumrequestI
+__construct:app\albums\application\dto\updatealbumrequest::__constructA
+albumid6app\albums\application\dto\updatealbumrequest::albumidG
+
+coverimage9app\albums\application\dto\updatealbumrequest::coverimageM
+hascoverimage<app\albums\application\dto\updatealbumrequest::hascoverimage?
+nombre5app\albums\application\dto\updatealbumrequest::nombre"albumId"
+coverImage"coverProvided"nombre*
+albumIdstring*
+
+coverImagestring*
+coverProvidedbool*
+nombrestringÚ
+4app\activities\application\dto\recordactivityrequestP
+__constructAapp\activities\application\dto\recordactivityrequest::__construct"action"	contextId"scope"title*
+actionstring*
+	contextIdstring*
+scopestring*
+titlestring∏
+*app\shared\domain\event\domaineventhandler@
+__invoke4app\shared\domain\event\domaineventhandler::__invokeH
+subscribedto8app\shared\domain\event\domaineventhandler::subscribedto«
+1app\albums\application\usecase\updatealbumusecaseM
+__construct>app\albums\application\usecase\updatealbumusecase::__constructE
+execute:app\albums\application\usecase\updatealbumusecase::execute"eventBus"
+repository**
+eventBusapp\shared\domain\bus\eventbus*:
+
+repository,app\albums\domain\repository\albumrepository¯
+app\albums\domain\entity\album:
+__construct+app\albums\domain\entity\album::__constructB
+actualizarcover/app\albums\domain\entity\album::actualizarcover2
+albumid'app\albums\domain\entity\album::albumid<
+assertnombre,app\albums\domain\entity\album::assertnombre8
+
+coverimage*app\albums\domain\entity\album::coverimage0
+create&app\albums\domain\entity\album::create6
+	createdat)app\albums\domain\entity\album::createdat@
+fromprimitives.app\albums\domain\entity\album::fromprimitives0
+nombre&app\albums\domain\entity\album::nombre@
+normalizecover.app\albums\domain\entity\album::normalizecover6
+	renombrar)app\albums\domain\entity\album::renombrar<
+toprimitives,app\albums\domain\entity\album::toprimitives.
+touch%app\albums\domain\entity\album::touch6
+	updatedat)app\albums\domain\entity\album::updatedat"albumId"
+coverImage"	createdAt"nombre"	updatedAt*
+albumIdstring*
+
+coverImagestring*
+	createdAtdatetimeimmutable*
+nombrestring*
+	updatedAtdatetimeimmutableÅ
+5app\heroes\application\usecase\seedalbumheroesusecaseQ
+__constructBapp\heroes\application\usecase\seedalbumheroesusecase::__constructI
+execute>app\heroes\application\usecase\seedalbumheroesusecase::executeS
+generateuuidCapp\heroes\application\usecase\seedalbumheroesusecase::generateuuid"albumRepository"eventBus"heroRepository*?
+albumRepository,app\albums\domain\repository\albumrepository**
+eventBusapp\shared\domain\bus\eventbus*=
+heroRepository+app\heroes\domain\repository\herorepositoryè
+<app\notifications\application\herocreatednotificationhandlerX
+__constructIapp\notifications\application\herocreatednotificationhandler::__constructR
+__invokeFapp\notifications\application\herocreatednotificationhandler::__invokeZ
+subscribedtoJapp\notifications\application\herocreatednotificationhandler::subscribedto"sender*=
+sender3app\notifications\domain\service\notificationsender™
+app\shared\http\jsonresponse,
+error#app\shared\http\jsonresponse::error*
+send"app\shared\http\jsonresponse::send0
+success%app\shared\http\jsonresponse::success‚
+1app\albums\application\usecase\createalbumusecaseM
+__construct>app\albums\application\usecase\createalbumusecase::__constructE
+execute:app\albums\application\usecase\createalbumusecase::executeO
+generateuuid?app\albums\application\usecase\createalbumusecase::generateuuid"
+repository*:
+
+repository,app\albums\domain\repository\albumrepositoryÏ
+app\dev\test\phpunittestrunner:
+__construct+app\dev\test\phpunittestrunner::__constructP
+detectlocalenvironment6app\dev\test\phpunittestrunner::detectlocalenvironment>
+formatinstant-app\dev\test\phpunittestrunner::formatinstantB
+fromenvironment/app\dev\test\phpunittestrunner::fromenvironmentD
+parsejunitreport0app\dev\test\phpunittestrunner::parsejunitreport*
+run#app\dev\test\phpunittestrunner::run"projectRoot"testsAllowed*
+projectRootstring*
+testsAllowedboolä
+8app\heroes\infrastructure\persistence\fileherorepositoryT
+__constructEapp\heroes\infrastructure\persistence\fileherorepository::__constructD
+all=app\heroes\infrastructure\persistence\fileherorepository::allL
+byalbumAapp\heroes\infrastructure\persistence\fileherorepository::byalbumJ
+delete@app\heroes\infrastructure\persistence\fileherorepository::deleteX
+deletebyalbumGapp\heroes\infrastructure\persistence\fileherorepository::deletebyalbumX
+ensurestorageGapp\heroes\infrastructure\persistence\fileherorepository::ensurestorageF
+find>app\heroes\infrastructure\persistence\fileherorepository::findT
+loadrecordsEapp\heroes\infrastructure\persistence\fileherorepository::loadrecordsZ
+persistrecordsHapp\heroes\infrastructure\persistence\fileherorepository::persistrecordsF
+save>app\heroes\infrastructure\persistence\fileherorepository::save"storagePath*
+storagePathstringÇ
+src\controllers\herocontroller:
+__construct+src\controllers\herocontroller::__construct2
+destroy'src\controllers\herocontroller::destroy.
+index%src\controllers\herocontroller::index:
+listbyalbum+src\controllers\herocontroller::listbyalbum,
+show$src\controllers\herocontroller::show.
+store%src\controllers\herocontroller::store0
+update&src\controllers\herocontroller::update"
+createHero"
+deleteHero"findHero"
+listHeroes"
+updateHero*>
+
+createHero0app\heroes\application\usecase\createherousecase*>
+
+deleteHero0app\heroes\application\usecase\deleteherousecase*:
+findHero.app\heroes\application\usecase\findherousecase*>
+
+listHeroes0app\heroes\application\usecase\listheroesusecase*>
+
+updateHero0app\heroes\application\usecase\updateherousecaseå
+app\shared\domain\bus\eventbus2
+publish'app\shared\domain\bus\eventbus::publish6
+	subscribe)app\shared\domain\bus\eventbus::subscribeï
+0app\heroes\application\usecase\updateherousecaseL
+__construct=app\heroes\application\usecase\updateherousecase::__constructD
+execute9app\heroes\application\usecase\updateherousecase::execute"heroRepository*=
+heroRepository+app\heroes\domain\repository\herorepositoryŸ
+.app\shared\infrastructure\bus\inmemoryeventbusB
+publish7app\shared\infrastructure\bus\inmemoryeventbus::publishF
+	subscribe9app\shared\infrastructure\bus\inmemoryeventbus::subscribe"handlers*
+handlersarrayÍ
+
+app\heroes\domain\entity\hero9
+__construct*app\heroes\domain\entity\hero::__construct1
+albumid&app\heroes\domain\entity\hero::albumid9
+assertimage*app\heroes\domain\entity\hero::assertimage7
+
+assertname)app\heroes\domain\entity\hero::assertname9
+changeimage*app\heroes\domain\entity\hero::changeimage5
+	contenido(app\heroes\domain\entity\hero::contenido1
+content&app\heroes\domain\entity\hero::content/
+create%app\heroes\domain\entity\hero::create5
+	createdat(app\heroes\domain\entity\hero::createdat?
+fromprimitives-app\heroes\domain\entity\hero::fromprimitives/
+heroid%app\heroes\domain\entity\hero::heroid-
+image$app\heroes\domain\entity\hero::image/
+imagen%app\heroes\domain\entity\hero::imagen+
+name#app\heroes\domain\entity\hero::name/
+nombre%app\heroes\domain\entity\hero::nombre/
+rename%app\heroes\domain\entity\hero::rename+
+slug#app\heroes\domain\entity\hero::slug;
+toprimitives+app\heroes\domain\entity\hero::toprimitives-
+touch$app\heroes\domain\entity\hero::touch=
+updatecontent,app\heroes\domain\entity\hero::updatecontent5
+	updatedat(app\heroes\domain\entity\hero::updatedat"albumId"content"	createdAt"heroId"image"name"slug"	updatedAt*
+albumIdstring*
+contentstring*
+	createdAtdatetimeimmutable*
+heroIdstring*
+imagestring*
+namestring*
+slugstring*
+	updatedAtdatetimeimmutable·
+ src\controllers\configcontroller<
+__construct-src\controllers\configcontroller::__construct6
+services*src\controllers\configcontroller::services"serviceUrlProvider*3
+serviceUrlProviderapp\config\serviceurlproviderì
+=app\notifications\application\albumupdatednotificationhandlerY
+__constructJapp\notifications\application\albumupdatednotificationhandler::__constructS
+__invokeGapp\notifications\application\albumupdatednotificationhandler::__invoke[
+subscribedtoKapp\notifications\application\albumupdatednotificationhandler::subscribedto"sender*=
+sender3app\notifications\domain\service\notificationsender€
+src\controllers\admincontroller;
+__construct,src\controllers\admincontroller::__construct3
+seedall(src\controllers\admincontroller::seedall"seedHeroesService*3
+seedHeroesServiceapp\dev\seed\seedheroesservice¿
+-app\albums\application\dto\createalbumrequestI
+__construct:app\albums\application\dto\createalbumrequest::__constructG
+
+coverimage9app\albums\application\dto\createalbumrequest::coverimage?
+nombre5app\albums\application\dto\createalbumrequest::nombre"
+coverImage"nombre*
+
+coverImagestring*
+nombrestring‚
++app\activities\domain\activitylogrepository7
+all0app\activities\domain\activitylogrepository::all=
+append3app\activities\domain\activitylogrepository::append;
+clear2app\activities\domain\activitylogrepository::clear‰
+:app\shared\infrastructure\persistence\pdoconnectionfactoryF
+env?app\shared\infrastructure\persistence\pdoconnectionfactory::env^
+fromenvironmentKapp\shared\infrastructure\persistence\pdoconnectionfactory::fromenvironment 
+'app\heroes\application\dto\heroresponseC
+__construct4app\heroes\application\dto\heroresponse::__construct=
+fromhero1app\heroes\application\dto\heroresponse::fromhero;
+toarray0app\heroes\application\dto\heroresponse::toarray"albumId"	contenido"	createdAt"heroId"imagen"nombre"slug"	updatedAt*
+albumIdstring*
+	contenidostring*
+	createdAtstring*
+heroIdstring*
+imagenstring*
+nombrestring*
+slugstring*
+	updatedAtstring√
+!app\shared\domain\bus\domainevent=
+__construct.app\shared\domain\bus\domainevent::__construct=
+aggregateid.app\shared\domain\bus\domainevent::aggregateid5
+eventid*app\shared\domain\bus\domainevent::eventid9
+	eventname,app\shared\domain\bus\domainevent::eventnameC
+fromprimitives1app\shared\domain\bus\domainevent::fromprimitives;
+
+occurredon-app\shared\domain\bus\domainevent::occurredon?
+toprimitives/app\shared\domain\bus\domainevent::toprimitives"aggregateId"eventId"
+occurredOn*
+aggregateIdstring*
+eventIdstring*
+
+occurredOndatetimeimmutableº
+ src\shared\http\readmecontroller<
+__construct-src\shared\http\readmecontroller::__construct6
+__invoke*src\shared\http\readmecontroller::__invoke"projectRoot*
+projectRootstringí
 src\controllers\pagecontroller0
 render&src\controllers\pagecontroller::renderF
 renderifhtmlroute1src\controllers\pagecontroller::renderifhtmlroute@
@@ -297,7 +446,19 @@ occurredAt"scope"title*
 
 occurredAtdatetimeimmutable*
 scopestring*
-titlestring«
+titlestring¶
+Aapp\activities\infrastructure\persistence\dbactivitylogrepository]
+__constructNapp\activities\infrastructure\persistence\dbactivitylogrepository::__constructM
+allFapp\activities\infrastructure\persistence\dbactivitylogrepository::allS
+appendIapp\activities\infrastructure\persistence\dbactivitylogrepository::appendQ
+clearHapp\activities\infrastructure\persistence\dbactivitylogrepository::clear[
+
+formatdateMapp\activities\infrastructure\persistence\dbactivitylogrepository::formatdate"
+maxEntries"pdo*
+
+maxEntriesint*
+
+pdopdo«
 $app\albums\domain\event\albumupdated!app\shared\domain\bus\domainevent@
 __construct1app\albums\domain\event\albumupdated::__construct>
 
@@ -316,19 +477,7 @@ coverImagestring*
 runtests'src\controllers\devcontroller::runtests"
 testRunner*,
 
-testRunnerapp\dev\test\phpunittestrunneré
-0app\albums\application\usecase\listalbumsusecaseL
-__construct=app\albums\application\usecase\listalbumsusecase::__constructD
-execute9app\albums\application\usecase\listalbumsusecase::execute"
-repository*:
-
-repository,app\albums\domain\repository\albumrepositoryÊ
-#app\activities\domain\activityscope/
-all(app\activities\domain\activityscope::all?
-assertvalid0app\activities\domain\activityscope::assertvalid9
-filename-app\activities\domain\activityscope::filenameI
-normalizecontext5app\activities\domain\activityscope::normalizecontextG
-requirescontext4app\activities\domain\activityscope::requirescontext˙	
+testRunnerapp\dev\test\phpunittestrunner˙	
 app\config\serviceurlprovider9
 __construct*app\config\serviceurlprovider::__construct7
 
@@ -352,14 +501,7 @@ hostsmatch)app\config\serviceurlprovider::hostsmatch=
 resolveenvironment1app\config\serviceurlprovider::resolveenvironmentW
 resolveenvironmentfromhost9app\config\serviceurlprovider::resolveenvironmentfromhostG
 toarrayforfrontend1app\config\serviceurlprovider::toarrayforfrontend"config*
-configarray©
-+app\heroes\domain\repository\herorepository7
-all0app\heroes\domain\repository\herorepository::all?
-byalbum4app\heroes\domain\repository\herorepository::byalbum=
-delete3app\heroes\domain\repository\herorepository::deleteK
-deletebyalbum:app\heroes\domain\repository\herorepository::deletebyalbum9
-find1app\heroes\domain\repository\herorepository::find9
-save1app\heroes\domain\repository\herorepository::saveà
+configarrayà
 (app\albums\application\dto\albumresponseD
 __construct5app\albums\application\dto\albumresponse::__construct@
 	fromalbum3app\albums\application\dto\albumresponse::fromalbum<
@@ -408,91 +550,28 @@ repository+app\heroes\domain\repository\herorepository
 execute@app\notifications\application\clearnotificationsusecase::execute"
 repository*E
 
-repository7app\notifications\infrastructure\notificationrepositoryö
-#app\heroes\domain\event\herocreated!app\shared\domain\bus\domainevent?
-__construct0app\heroes\domain\event\herocreated::__construct7
-albumid,app\heroes\domain\event\herocreated::albumid;
-	albumname.app\heroes\domain\event\herocreated::albumname;
-	eventname.app\heroes\domain\event\herocreated::eventname7
-forhero,app\heroes\domain\event\herocreated::forheroE
-fromprimitives3app\heroes\domain\event\herocreated::fromprimitives3
-image*app\heroes\domain\event\herocreated::image1
-name)app\heroes\domain\event\herocreated::name1
-slug)app\heroes\domain\event\herocreated::slugA
-toprimitives1app\heroes\domain\event\herocreated::toprimitives"albumId"	albumName"image"name"slug*
-albumIdstring*
-	albumNamestring*
-imagestring*
-namestring*
-slugstring€
-$app\albums\domain\event\albumcreated!app\shared\domain\bus\domainevent@
-__construct1app\albums\domain\event\albumcreated::__construct<
-	eventname/app\albums\domain\event\albumcreated::eventname:
-foralbum.app\albums\domain\event\albumcreated::foralbumF
-fromprimitives4app\albums\domain\event\albumcreated::fromprimitives2
-name*app\albums\domain\event\albumcreated::nameB
-toprimitives2app\albums\domain\event\albumcreated::toprimitives"name*
-namestring®
-9app\activities\application\usecase\listactivitylogusecaseU
-__constructFapp\activities\application\usecase\listactivitylogusecase::__constructM
-executeBapp\activities\application\usecase\listactivitylogusecase::execute"
-repository*9
-
-repository+app\activities\domain\activitylogrepositoryÍ
+repository7app\notifications\infrastructure\notificationrepositoryÍ
 1app\albums\application\usecase\deletealbumusecaseM
 __construct>app\albums\application\usecase\deletealbumusecase::__constructE
 execute:app\albums\application\usecase\deletealbumusecase::execute"albumRepository"heroRepository*?
 albumRepository,app\albums\domain\repository\albumrepository*=
-heroRepository+app\heroes\domain\repository\herorepository^
-$src\shared\markdown\markdownrenderer6
-render,src\shared\markdown\markdownrenderer::renderÃ
+heroRepository+app\heroes\domain\repository\herorepositoryÃ
 7app\notifications\infrastructure\filenotificationsenderS
 __constructDapp\notifications\infrastructure\filenotificationsender::__constructW
 ensurestorageFapp\notifications\infrastructure\filenotificationsender::ensurestorageE
 send=app\notifications\infrastructure\filenotificationsender::send"filePath*
-filePathstringƒ
-src\controllers\albumcontroller;
-__construct,src\controllers\albumcontroller::__constructI
-albumcovermaxbytes3src\controllers\albumcontroller::albumcovermaxbytesA
-albumuploaddir/src\controllers\albumcontroller::albumuploaddirM
-albumuploadurlprefix5src\controllers\albumcontroller::albumuploadurlprefix3
-destroy(src\controllers\albumcontroller::destroy/
-index&src\controllers\albumcontroller::index/
-store&src\controllers\albumcontroller::store1
-update'src\controllers\albumcontroller::update;
-uploadcover,src\controllers\albumcontroller::uploadcover"createAlbum"deleteAlbum"	findAlbum"
-listAlbums"updateAlbum*@
-createAlbum1app\albums\application\usecase\createalbumusecase*@
-deleteAlbum1app\albums\application\usecase\deletealbumusecase*<
-	findAlbum/app\albums\application\usecase\findalbumusecase*>
+filePathstring›
+7app\albums\infrastructure\persistence\dbalbumrepositoryS
+__constructDapp\albums\infrastructure\persistence\dbalbumrepository::__constructC
+all<app\albums\infrastructure\persistence\dbalbumrepository::allI
+delete?app\albums\infrastructure\persistence\dbalbumrepository::deleteE
+find=app\albums\infrastructure\persistence\dbalbumrepository::findQ
 
-listAlbums0app\albums\application\usecase\listalbumsusecase*@
-updateAlbum1app\albums\application\usecase\updatealbumusecase•
-8app\activities\application\usecase\recordactivityusecaseT
-__constructEapp\activities\application\usecase\recordactivityusecase::__constructL
-executeAapp\activities\application\usecase\recordactivityusecase::execute"
-repository*9
+formatdateCapp\albums\infrastructure\persistence\dbalbumrepository::formatdateK
+hydrate@app\albums\infrastructure\persistence\dbalbumrepository::hydrateE
+save=app\albums\infrastructure\persistence\dbalbumrepository::save"pdo*
 
-repository+app\activities\domain\activitylogrepositoryî
--app\albums\application\dto\updatealbumrequestI
-__construct:app\albums\application\dto\updatealbumrequest::__constructA
-albumid6app\albums\application\dto\updatealbumrequest::albumidG
-
-coverimage9app\albums\application\dto\updatealbumrequest::coverimageM
-hascoverimage<app\albums\application\dto\updatealbumrequest::hascoverimage?
-nombre5app\albums\application\dto\updatealbumrequest::nombre"albumId"
-coverImage"coverProvided"nombre*
-albumIdstring*
-
-coverImagestring*
-coverProvidedbool*
-nombrestringÚ
-4app\activities\application\dto\recordactivityrequestP
-__constructAapp\activities\application\dto\recordactivityrequest::__construct"action"	contextId"scope"title*
-actionstring*
-	contextIdstring*
-scopestring*
-titlestring∂
+pdopdo∂
  app\services\sonarmetricsservice<
 __construct-app\services\sonarmetricsservice::__construct:
 
@@ -505,10 +584,7 @@ getmetrics,app\services\sonarmetricsservice::getmetrics"client*
 seedifempty+app\dev\seed\seedheroesservice::seedifempty"albumRepository"createHeroUseCase"heroRepository*?
 albumRepository,app\albums\domain\repository\albumrepository*E
 createHeroUseCase0app\heroes\application\usecase\createherousecase*=
-heroRepository+app\heroes\domain\repository\herorepository∏
-*app\shared\domain\event\domaineventhandler@
-__invoke4app\shared\domain\event\domaineventhandler::__invokeH
-subscribedto8app\shared\domain\event\domaineventhandler::subscribedtoï
+heroRepository+app\heroes\domain\repository\herorepositoryï
 0app\heroes\application\usecase\deleteherousecaseL
 __construct=app\heroes\application\usecase\deleteherousecase::__constructD
 execute9app\heroes\application\usecase\deleteherousecase::execute"heroRepository*=
@@ -521,44 +597,7 @@ repository*9
 repository+app\heroes\domain\repository\herorepositoryà
 src\controllers\http\request2
 jsonbody&src\controllers\http\request::jsonbody4
-	wantshtml'src\controllers\http\request::wantshtml«
-1app\albums\application\usecase\updatealbumusecaseM
-__construct>app\albums\application\usecase\updatealbumusecase::__constructE
-execute:app\albums\application\usecase\updatealbumusecase::execute"eventBus"
-repository**
-eventBusapp\shared\domain\bus\eventbus*:
-
-repository,app\albums\domain\repository\albumrepository¯
-app\albums\domain\entity\album:
-__construct+app\albums\domain\entity\album::__constructB
-actualizarcover/app\albums\domain\entity\album::actualizarcover2
-albumid'app\albums\domain\entity\album::albumid<
-assertnombre,app\albums\domain\entity\album::assertnombre8
-
-coverimage*app\albums\domain\entity\album::coverimage0
-create&app\albums\domain\entity\album::create6
-	createdat)app\albums\domain\entity\album::createdat@
-fromprimitives.app\albums\domain\entity\album::fromprimitives0
-nombre&app\albums\domain\entity\album::nombre@
-normalizecover.app\albums\domain\entity\album::normalizecover6
-	renombrar)app\albums\domain\entity\album::renombrar<
-toprimitives,app\albums\domain\entity\album::toprimitives.
-touch%app\albums\domain\entity\album::touch6
-	updatedat)app\albums\domain\entity\album::updatedat"albumId"
-coverImage"	createdAt"nombre"	updatedAt*
-albumIdstring*
-
-coverImagestring*
-	createdAtdatetimeimmutable*
-nombrestring*
-	updatedAtdatetimeimmutableÅ
-5app\heroes\application\usecase\seedalbumheroesusecaseQ
-__constructBapp\heroes\application\usecase\seedalbumheroesusecase::__constructI
-execute>app\heroes\application\usecase\seedalbumheroesusecase::executeS
-generateuuidCapp\heroes\application\usecase\seedalbumheroesusecase::generateuuid"albumRepository"eventBus"heroRepository*?
-albumRepository,app\albums\domain\repository\albumrepository**
-eventBusapp\shared\domain\bus\eventbus*=
-heroRepository+app\heroes\domain\repository\herorepositoryd
+	wantshtml'src\controllers\http\request::wantshtmld
 'src\controllers\helpers\directoryhelper9
 ensure/src\controllers\helpers\directoryhelper::ensure≤
 appenditeratoriteratoriterator*
