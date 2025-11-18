@@ -1,4 +1,4 @@
-<main class="site-main">
+<main id="main-content" tabindex="-1" role="main" class="site-main">
   <div class="max-w-7xl mx-auto py-8 px-4 space-y-8">
     <div id="focus-edit-backdrop" class="focus-edit-backdrop hidden"></div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

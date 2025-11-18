@@ -68,7 +68,14 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",
-        "options": {}
+        "options": {
+          "headerParameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $env.MARVEL_UPDATE_TOKEN ? `Bearer ${$env.MARVEL_UPDATE_TOKEN}` : '' }}"
+            }
+          ]
+        }
       },
       "id": "89c3c447-5b07-4655-85a8-08d0f163b742",
       "name": "📤 Send Marvel Video to PHP",

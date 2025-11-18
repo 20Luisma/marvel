@@ -39,7 +39,7 @@ $activeTopAction = 'sonar';
     </div>
   </header>
 
-  <main class="site-main">
+  <main id="main-content" tabindex="-1" role="main" class="site-main">
     <div class="max-w-6xl mx-auto py-10 px-4">
       <section class="sonar-panel section-lined space-y-10" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -65,7 +65,7 @@ $activeTopAction = 'sonar';
           </div>
         </div>
 
-        <div id="sonar-error" class="sonar-alert"></div>
+        <div id="sonar-error" class="sonar-alert" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
         <div class="sonar-grid metrics">
           <article class="sonar-card">

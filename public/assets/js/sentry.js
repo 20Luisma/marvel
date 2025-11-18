@@ -4,13 +4,14 @@
   const statusEl = document.getElementById('sentry-status');
   const issuesList = document.getElementById('sentry-issues-list');
   const emptyState = document.getElementById('sentry-empty');
-  const sourcePill = document.getElementById('sentry-source-pill');
-  const sourceBadge = document.getElementById('sentry-source-badge');
+  const sourceIndicators = Array.from(document.querySelectorAll('[data-sentry-source]'));
   const refreshButton = document.getElementById('sentry-refresh-button');
   const loader = document.getElementById('sentry-loader');
   const alertBox = document.getElementById('sentry-warning');
   const inlineWarning = document.getElementById('sentry-issues-warning');
   const issuesCount = document.getElementById('sentry-issues-count');
+  const testStatus = document.getElementById('sentry-test-status');
+  const testButtons = document.querySelectorAll('[data-sentry-test]');
 
   const statusText = {
     live: 'En línea (datos frescos desde Sentry)',
@@ -52,7 +53,7 @@
 
   const applySource = (source) => {
     const normalized = sourceLabels[source] ?? 'empty';
-    [sourcePill, sourceBadge].forEach((el) => {
+    sourceIndicators.forEach((el) => {
       if (!el) return;
       el.dataset.source = normalized;
       el.textContent = normalized === 'live'
@@ -154,6 +155,50 @@
       setLoader(false);
     }
   };
+
+  const testErrorInfo = {
+    '500': { label: 'Error 500', description: 'Falla interna simulada' },
+    zero: { label: 'División por cero', description: 'Excepción aritmética' },
+    '404': { label: 'Error 404', description: 'Recurso no encontrado' },
+    method: { label: 'Método inexistente', description: 'Llamada a función ausente' },
+    db: { label: 'DB Error', description: 'Fallo de base de datos simulado' },
+    file: { label: 'Archivo no encontrado', description: 'Acceso a fichero inexistente' },
+    timeout: { label: 'Timeout', description: 'Solicitud que expira' },
+    external: { label: 'Servicio externo 503', description: 'Dependencia externa caída' },
+  };
+
+  const updateTestStatus = (value) => {
+    if (!testStatus) return;
+    testStatus.textContent = value;
+  };
+
+  const sentryTest = async (type) => {
+    const details = testErrorInfo[type] ?? { label: `Error ${type}`, description: 'Evento demo' };
+    updateTestStatus(`Enviando ${details.label} (${details.description})...`);
+
+    try {
+      const response = await fetch('/api/sentry-test.php?type=' + encodeURIComponent(type));
+      const json = await response.json();
+      if (response.ok && json?.ok) {
+        updateTestStatus(`✔ ${details.label} enviado (${details.description}). Pulsa ACTUALIZAR para verlo en el panel.`);
+      } else {
+        updateTestStatus(`⚠ Hubo un problema enviando ${details.label}.`);
+      }
+    } catch (error) {
+      console.error('Error al enviar el test de Sentry', error);
+      updateTestStatus(`❌ Error en la solicitud al enviar ${details.label}.`);
+    }
+  };
+
+  testButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const type = button.dataset.sentryTest;
+      if (!type) {
+        return;
+      }
+      sentryTest(type);
+    });
+  });
 
   if (refreshButton) {
     refreshButton.addEventListener('click', fetchSentryMetrics);

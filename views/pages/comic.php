@@ -28,7 +28,7 @@ require_once __DIR__ . '/../layouts/header.php';
   </div>
 </header>
 
-<main class="site-main">
+<main id="main-content" tabindex="-1" role="main" class="site-main">
   <div class="max-w-7xl mx-auto py-8 px-4 space-y-8">
     <div class="flex flex-col lg:flex-row lg:items-start gap-8">
       <!-- ASIDE: Crear cómic + actividad -->
@@ -149,7 +149,7 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section id="comic-slideshow-section" class="hidden relative card section-lined rounded-2xl p-6 shadow-xl space-y-4">
-          <button id="close-comic-result" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20">
+          <button id="close-comic-result" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20" aria-label="Cerrar cómic generado">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -158,14 +158,14 @@ require_once __DIR__ . '/../layouts/header.php';
           <div id="hero-slideshow" class="relative w-full max-w-2xl mx-auto">
             <div id="slideshow-container" class="relative h-80 overflow-hidden rounded-lg">
             </div>
-            <button id="slideshow-prev" type="button" class="absolute top-0 left-0 z-10 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+            <button id="slideshow-prev" type="button" class="absolute top-0 left-0 z-10 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" aria-label="Ver cómic anterior">
               <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white">
                 <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
                 </svg>
               </span>
             </button>
-            <button id="slideshow-next" type="button" class="absolute top-0 right-0 z-10 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+            <button id="slideshow-next" type="button" class="absolute top-0 right-0 z-10 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" aria-label="Ver próximo cómic">
               <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white">
                 <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
@@ -189,7 +189,7 @@ require_once __DIR__ . '/../layouts/header.php';
           </div>
         </section>
         <section id="rag-result-section" class="hidden relative card section-lined rounded-2xl p-6 shadow-xl space-y-5">
-          <button id="close-rag-result" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20">
+          <button id="close-rag-result" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20" aria-label="Cerrar resultado de la búsqueda">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>

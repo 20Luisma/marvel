@@ -56,7 +56,7 @@ require_once __DIR__ . '/../layouts/header.php';
   </div>
 </header>
 
-<main class="site-main seccion-main">
+<main id="main-content" tabindex="-1" role="main" class="site-main seccion-main">
   <div class="max-w-6xl mx-auto py-10 px-4 space-y-8">
     <section class="seccion-panel tech-panel space-y-6">
       <div class="space-y-3">

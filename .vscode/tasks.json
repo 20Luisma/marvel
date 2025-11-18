@@ -104,26 +104,39 @@
     },
 
     /* ➕ TAREA SEPARADA: solo sonar-scanner */
-    
-{
-  "label": "🔎 Ejecutar SonarScanner",
-  "type": "shell",
-  "command": "sonar-scanner",
-  "args": [],
-  "options": {
-    "cwd": "${workspaceFolder}",
-    "env": {
-      "SONAR_TOKEN": "65578836ceb48c5b7dab0d4a2fb2456611dab472"
-    }
-  },
-  "presentation": {
-    "reveal": "always",
-    "panel": "shared"
-  },
-  "problemMatcher": []
-},
+    {
+      "label": "🔎 Ejecutar SonarScanner",
+      "type": "shell",
+      "command": "sonar-scanner",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "SONAR_TOKEN": "65578836ceb48c5b7dab0d4a2fb2456611dab472"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
 
-/* =========================================================
+    /* ➕ NUEVA TAREA: análisis de accesibilidad con Pa11y (todas las páginas) */
+    {
+      "label": "♿ Analizar accesibilidad (Pa11y all)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "./pa11y-all.sh"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
+    /* =========================================================
        🧩 GIT COMMANDS (todos juntos y ordenados)
        ========================================================= */
 
