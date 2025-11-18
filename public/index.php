@@ -57,9 +57,10 @@ header('Content-Security-Policy: ' . implode('; ', $csp));
 </head>
 
 <body>
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
     <div class="stars"></div>
 
-    <main class="intro-shell" id="intro">
+    <main class="intro-shell" id="main-content" tabindex="-1" role="main">
         <div class="logo-frame">
             <img src="./assets/images/intromarvel.gif" alt="Intro Marvel Clean Album">
         </div>
@@ -95,7 +96,7 @@ header('Content-Security-Policy: ' . implode('; ', $csp));
                     </div>
                 </div>
 
-                <div class="error" id="login-error"></div>
+                <div class="error" id="login-error" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
                 <button type="submit" class="login-button">Entrar</button>
             </form>

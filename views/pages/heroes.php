@@ -25,7 +25,7 @@ require_once __DIR__ . '/../layouts/header.php';
     </div>
   </header>
 
-  <main class="site-main">
+  <main id="main-content" tabindex="-1" role="main" class="site-main">
     <div class="max-w-7xl mx-auto py-8 px-4 space-y-8">
       <div id="hero-focus-backdrop" class="hero-focus-backdrop hidden"></div>
       <!-- GRID: Aside a la izquierda, Main a la derecha -->
@@ -35,33 +35,36 @@ require_once __DIR__ . '/../layouts/header.php';
         <section class="card section-lined rounded-2xl p-6 shadow-xl">
           <h2 class="text-3xl text-white mb-4">Añadir Héroe</h2>
           <form id="hero-form" class="space-y-4">
-            <div class="grid grid-cols-1 gap-4">
-              <input id="hero-name" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="text" placeholder="Nombre del Héroe" required>
-              <input id="hero-image" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="url" placeholder="URL de la Imagen" required>
-            </div>
-            <textarea id="hero-content" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white resize-none min-h-24" rows="3" placeholder="Biografía del Héroe"></textarea>
-            <button class="btn btn-primary w-full" type="submit">¡Añadir Héroe!</button>
-          </form>
-          <p id="hero-message" class="text-sm mt-4 hidden msg-hidden"></p>
+          <div class="grid grid-cols-1 gap-4">
+            <label class="sr-only" for="hero-name">Nombre del héroe</label>
+            <input id="hero-name" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="text" placeholder="Nombre del Héroe" required>
+            <label class="sr-only" for="hero-image">URL de la imagen del héroe</label>
+            <input id="hero-image" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="url" placeholder="URL de la Imagen" required>
+          </div>
+          <label class="sr-only" for="hero-content">Biografía del héroe</label>
+          <textarea id="hero-content" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white resize-none min-h-24" rows="3" placeholder="Biografía del Héroe"></textarea>
+          <button class="btn btn-primary w-full" type="submit">¡Añadir Héroe!</button>
+        </form>
+          <p id="hero-message" class="text-sm mt-4 hidden msg-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
         </section>
 
         <!-- AVISADOR DE ACTIVIDAD: solo la más reciente, con navegación -->
         <section class="card section-lined rounded-2xl p-6 shadow-xl">
           <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
             <h2 class="text-3xl text-white">🔔 Actividad</h2>
-            <div class="flex items-center gap-2">
-              <button id="activity-prev" class="btn btn-secondary text-xs">⟵ Anterior</button>
-              <button id="activity-next" class="btn btn-secondary text-xs">Siguiente ⟶</button>
-              <button id="clear-hero-activity" class="btn btn-danger text-xs">Limpiar</button>
+              <div class="flex items-center gap-2">
+              <button id="activity-prev" type="button" class="btn btn-secondary text-xs">⟵ Anterior</button>
+              <button id="activity-next" type="button" class="btn btn-secondary text-xs">Siguiente ⟶</button>
+              <button id="clear-hero-activity" type="button" class="btn btn-danger text-xs">Limpiar</button>
             </div>
           </div>
 
-          <div id="hero-activity-empty" class="bg-slate-900/70 border border-slate-700 rounded-xl p-4 text-sm text-gray-300 italic">
+          <div id="hero-activity-empty" class="bg-slate-900/70 border border-slate-700 rounded-xl p-4 text-sm text-gray-300 italic" role="status" aria-live="polite" aria-atomic="true">
             No hay actividad registrada.
           </div>
 
           <!-- Vista de 1 sola entrada -->
-          <div id="hero-activity-view" class="hidden bg-slate-900/80 border border-slate-700 rounded-xl p-4 space-y-2">
+          <div id="hero-activity-view" class="hidden bg-slate-900/80 border border-slate-700 rounded-xl p-4 space-y-2" role="status" aria-live="polite" aria-atomic="true">
             <div class="flex items-center justify-between">
               <span id="hero-activity-tag" class="inline-flex items-center px-2 py-1 rounded-md text-[0.65rem] font-black uppercase tracking-[0.18em] border">
                 —

@@ -29,7 +29,7 @@ require_once __DIR__ . '/../layouts/header.php';
   </div>
 </header>
 
-<main class="site-main">
+<main id="main-content" tabindex="-1" role="main" class="site-main">
   <div class="max-w-5xl mx-auto py-8 px-4 space-y-8">
     <section class="card section-lined rounded-2xl p-6 shadow-xl space-y-6" id="marvel-dynamic-section" aria-live="polite">
       <header class="space-y-2">

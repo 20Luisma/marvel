@@ -1,6 +1,9 @@
 <section class="card section-lined rounded-2xl p-6 shadow-xl">
   <h2 class="text-3xl text-white mb-4">Crear Álbum</h2>
   <form id="album-form" class="space-y-4">
+    <label for="album-name" class="block text-sm font-medium text-slate-200 mb-1">
+      Nombre del nuevo álbum
+    </label>
     <input id="album-name" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="text" placeholder="Nombre del nuevo álbum" required>
     <div class="grid grid-cols-1 gap-4">
       <label class="space-y-2 text-sm font-semibold text-gray-300">

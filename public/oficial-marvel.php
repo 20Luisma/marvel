@@ -17,14 +17,15 @@ $cssPath = '/assets/css/marvel.css';
   <link rel="stylesheet" href="<?= htmlspecialchars($cssPath, ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="oficial-marvel-body">
-  <main class="oficial-marvel-wrapper">
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+  <main class="oficial-marvel-wrapper" id="main-content" tabindex="-1" role="main">
     <header class="oficial-marvel-header">
       <p class="oficial-marvel-tag">Marvel Studios</p>
       <h1 class="oficial-marvel-title">Último video enviado desde n8n</h1>
       <p class="oficial-marvel-subtitle">Este módulo muestra en tiempo real el contenido recibido vía automatización.</p>
     </header>
     <section id="marvel-dynamic-section" class="oficial-marvel-card" aria-live="polite">
-      <div id="marvel-loading">Sincronizando con Marvel Entertainment…</div>
+      <div id="marvel-loading" role="status" aria-live="polite" aria-atomic="true">Sincronizando con Marvel Entertainment…</div>
     </section>
   </main>
 

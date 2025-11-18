@@ -125,7 +125,7 @@ require_once __DIR__ . '/../layouts/header.php';
   </div>
 </header>
 
-<main class="site-main panel-github">
+<main id="main-content" tabindex="-1" role="main" class="site-main panel-github">
   <div class="panel-github__wrap">
     <section class="panel-github__card section-lined space-y-4 tech-panel">
       <header class="space-y-1">
@@ -148,7 +148,7 @@ require_once __DIR__ . '/../layouts/header.php';
       </form>
 
       <?php if ($hasError): ?>
-        <div class="panel-github__message panel-github__message--error">
+        <div class="panel-github__message panel-github__message--error" role="alert" aria-live="assertive" aria-atomic="true">
           <strong>Sin datos del API.</strong>
           <p><?= htmlspecialchars($data['error'] ?? 'Error desconocido') ?></p>
           <?php if (isset($data['detail'])): ?>
@@ -163,7 +163,7 @@ require_once __DIR__ . '/../layouts/header.php';
           <p>Revisa que <code>GITHUB_API_KEY</code> esté configurada con un token personal válido.</p>
         </div>
       <?php elseif (!$blocks): ?>
-        <div class="panel-github__message panel-github__message--empty">
+        <div class="panel-github__message panel-github__message--empty" role="status" aria-live="polite" aria-atomic="true">
           <strong>Sin actividad reciente.</strong>
           <p>No hay Pull Requests en este rango para el repositorio <code><?= htmlspecialchars($repoOwner) ?>/<?= htmlspecialchars($repoName) ?></code>.</p>
         </div>

@@ -49,7 +49,7 @@ final class PageController
         $additionalStyles = [];
         require_once $this->viewPath('layouts/header');
         ?>
-        <main class="site-main">
+        <main id="main-content" tabindex="-1" role="main" class="site-main">
           <div class="max-w-3xl mx-auto py-16 px-4 text-center space-y-6">
             <h1 class="text-5xl font-bold text-white">404</h1>
             <p class="text-lg text-gray-300 leading-relaxed">La ruta solicitada no existe o se encuentra temporalmente inactiva.</p>

@@ -22,3 +22,4 @@ $additionalStyles = $additionalStyles ?? [];
   <?php endforeach; ?>
 </head>
 <body class="<?= htmlspecialchars($bodyClass, ENT_QUOTES, 'UTF-8') ?>">
+  <a class="skip-link" href="#main-content">Saltar al contenido principal</a>

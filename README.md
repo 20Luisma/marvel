@@ -2,6 +2,8 @@
 
 **Clean Marvel Album** es una implementación educativa de Arquitectura Limpia en **PHP 8.2** que orquesta un backend modular (álbumes + héroes) y dos microservicios de IA desacoplados (`openai-service`, `rag-service`). Además de servir como demo funcional, actúa como blueprint para proyectos PHP que necesiten capas bien delimitadas, pruebas automatizadas y despliegues paralelos en local y hosting.
 
+> ✅ **Análisis completo terminado (WCAG 2.1 AA): 100% No issues found** (Pa11y) en todas las páginas públicas.
+
 ## 🎯 Objetivo
 
 - Mostrar cómo el dominio de álbumes y héroes se mantiene independiente de los detalles web o de infraestructura.  

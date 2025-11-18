@@ -6,7 +6,7 @@ $scripts = $scripts ?? [];
 ?>
 
   <!-- FOOTER -->
-  <footer class="site-footer">
+  <footer class="site-footer" role="contentinfo">
     <small>© creawebes 2025 · Clean Marvel Album</small>
   </footer>
 
