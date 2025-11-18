@@ -57,7 +57,6 @@ header('Content-Security-Policy: ' . implode('; ', $csp));
 </head>
 
 <body>
-    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
     <div class="stars"></div>
 
     <main class="intro-shell" id="main-content" tabindex="-1" role="main">
