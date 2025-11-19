@@ -18,6 +18,8 @@ final class PageController
         '/sonar' => 'pages/sonar',
         '/sentry' => 'pages/sentry',
         '/panel-github' => 'pages/panel-github',
+        '/accessibility' => 'pages/panel-accessibility',
+        '/panel-accessibility' => 'pages/panel-accessibility',
         '/seccion' => 'pages/seccion',
         '/movies' => 'pages/movies',
     ];

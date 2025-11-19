@@ -28,6 +28,13 @@ $sections = [
         'cta' => 'Revisar PRs',
     ],
     [
+        'title' => 'Accesibilidad',
+        'tag' => 'WAVE API',
+        'description' => 'Ejecuta la API de accesibilidad de WebAIM contra las páginas clave del proyecto y revisa errores/contrast en un panel dedicado.',
+        'href' => '/accessibility',
+        'cta' => 'Abrir panel',
+    ],
+    [
         'title' => 'README',
         'tag' => 'Documentación',
         'description' => 'Lee el README vivo con arquitectura, comandos y tareas recomendadas del proyecto.',

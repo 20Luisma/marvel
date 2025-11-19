@@ -117,6 +117,13 @@ clean-marvel/
   - Vista: `views/pages/sentry.php` lista eventos recientes (niveles, shortId, enlaces) y permite lanzar errores de prueba desde la UI para verificar el flujo.  
 - Ambos paneles se integran en la navegación superior y complementan la observabilidad: **SonarCloud** para calidad estática y **Sentry** para errores en tiempo de ejecución/operación.
 
+## ♿ Accesibilidad (WAVE API)
+
+- `public/api/accessibility-marvel.php` consume la API pública `https://wave.webaim.org/api/request` usando `WAVE_API_KEY` (configurada en `.env`). Valida cabeceras `Accept` y devuelve un resumen global con el total de errores, alertas y contraste, más un listado por página.  
+- La vista `views/pages/panel-accessibility.php` presenta un hero temático, un botón “Analizar accesibilidad” y muestra tablas con los resultados por URL; el botón se desactiva mientras se ejecuta la llamada y maneja errores del API con alertas claras.  
+- El panel aprovecha las mismas clases y helpers de `SonarCloud`, `Sentry` y `Panel GitHub` para mantener el mismo look & feel, y se integra en el menú superior (acción “Accesibilidad”) y en la “Secret Room”.  
+- El servicio usa rutas “clave” de la aplicación (`/`, `/albums`, `/heroes`, `/movies`, `/comic`, `/sonar`, `/sentry`, `/panel-github`, `/seccion`, `/oficial-marvel`, `/readme`) cuando no se le pasa un cuerpo JSON; cada URL se analiza en serie, sumando el total de violaciones y mostrando el enlace directo al informe WAVE cuando está disponible.
+
 ## 🧩 Microservicios
 
 ### 🤖 openai-service (`localhost:8081`)
