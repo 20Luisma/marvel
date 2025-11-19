@@ -34,6 +34,13 @@ $sections = [
             'href' => '/repo-marvel',
             'cta' => 'Ver repo',
         ],
+        [
+            'title' => 'Performance Marvel',
+            'tag' => 'Rendimiento',
+            'description' => 'Mide velocidad, metrics clave y cuellos de botella con PageSpeed Insights.',
+            'href' => '/performance',
+            'cta' => 'Ver rendimiento',
+        ],
     [
         'title' => 'Accesibilidad',
         'tag' => 'WAVE API',

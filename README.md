@@ -110,12 +110,18 @@ clean-marvel/
 - **SonarCloud**  
   - Endpoint PHP: `public/api/sonar-metrics.php` consulta la API oficial (`/api/measures/component`) con `SONARCLOUD_TOKEN` y `SONARCLOUD_PROJECT_KEY`. Incluye reintentos y mensajes claros si la llamada falla.  
   - Vista: `views/pages/sonar.php` muestra métricas clave (bugs, code smells, cobertura, duplicación, complejidad, rating) y gráficos para tener una foto rápida de la calidad sin salir del proyecto.  
-  - Uso: basta con configurar las variables en `.env`; el panel consume el endpoint interno `/api/sonar-metrics.php`.
+  - Uso: basta con configurar las variables en `.env`; el panel consume el endpoint interno `/api/sonar-metrics.php`.  
 - **Sentry**  
   - Inicialización: en `src/bootstrap.php` se registra Sentry con `SENTRY_DSN` y el `APP_ENV`; captura errores y excepciones globales.  
   - Endpoint PHP: `public/api/sentry-metrics.php` consulta eventos recientes del proyecto Sentry usando `SENTRY_API_TOKEN`, `SENTRY_ORG_SLUG` y `SENTRY_PROJECT_SLUG`, con cache/fallback y reintentos.  
   - Vista: `views/pages/sentry.php` lista eventos recientes (niveles, shortId, enlaces) y permite lanzar errores de prueba desde la UI para verificar el flujo.  
 - Ambos paneles se integran en la navegación superior y complementan la observabilidad: **SonarCloud** para calidad estática y **Sentry** para errores en tiempo de ejecución/operación.
+
+## ✨ Paneles adicionales
+
+- **Accesibilidad (WAVE):** `public/api/accessibility-marvel.php` y `views/pages/panel-accessibility.php` complementan la observabilidad con métricas de errores, contrastes y alertas detectadas por la API WAVE de WebAIM; la UI emplea tarjetas, resúmenes y una tabla responsive igual que el resto de dashboards.  
+- **Repo Marvel:** `public/api/github-repo-browser.php` reutiliza `App\Services\GithubClient` para mostrar carpetas/archivos del repo `20Luisma/marvel`, y la vista `views/pages/repo-marvel.php` con `public/assets/js/panel-repo-marvel.js` ofrece breadcrumb, tabla y navegación sin salir del dashboard.  
+- **Performance Marvel:** `public/api/performance-marvel.php` llama a PageSpeed Insights con `PAGESPEED_API_KEY` y las rutas clave del sitio. `views/pages/performance.php` junto a `public/assets/js/panel-performance.js` pintan KPIs con tarjetas coloridas y acordiones de cuellos de botella, brindando un vistazo rápido y accionable al rendimiento.
 
 ## ♿ Accesibilidad (WAVE API)
 
@@ -129,6 +135,12 @@ clean-marvel/
 - `public/api/github-repo-browser.php` reutiliza `App\Services\GithubClient` para consultar `/repos/20Luisma/marvel/contents/{path}` y devuelve un listado normalizado de archivos/carpetas con enlaces `html_url`.  
 - La vista `views/pages/repo-marvel.php` y el script `public/assets/js/panel-repo-marvel.js` construyen breadcrumb, tabla y estados de carga mientras navegas la repo desde Clean Marvel Album.  
 - El menú superior ahora incluye el botón “Repo Marvel” y la “Secret Room” también enlaza al panel, manteniendo coherencia visual con los demás dashboards de monitoreo y observabilidad.
+
+## 🚀 Performance Marvel
+
+- `public/api/performance-marvel.php` llama a `https://www.googleapis.com/pagespeedonline/v5/runPagespeed` con `PAGESPEED_API_KEY`, analiza las rutas clave (`/`, `/albums`, `/heroes`, `/movies`, `/comic`, `/panel-github`, `/sonar`, `/sentry`, `/seccion`, `/oficial-marvel`, `/readme`) y devuelve un JSON consolidado con score, métricas (LCP/FCP/CLS/TBT) y oportunidades.  
+- La vista `views/pages/performance.php` muestra un resumen general de los scores medios, un listado de páginas con sus métricas coloreadas y detalles colapsables de los cuellos de botella; `public/assets/js/panel-performance.js` gestiona los estados “Cargando/Error” y actualiza todo a la primera carga o al pulsar “Actualizar análisis”.  
+- Agrega `PAGESPEED_API_KEY=TU_API_KEY_AQUI` al `.env` y define la acción “Performance” en el menú superior para tener visibilidad sobre rendimiento y oportunidades de mejora sin salir del dashboard.
 
 ## 🧩 Microservicios
 
