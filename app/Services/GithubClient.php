@@ -350,6 +350,26 @@ final class GithubClient
         return [$reviewCount, $reviewers];
     }
 
+    public function listRepositoryContents(string $path = ''): array
+    {
+        $trimmed = trim((string) $path, '/');
+        $segments = $trimmed === '' ? [] : array_filter(explode('/', $trimmed), static fn ($segment) => $segment !== '');
+        $encodedPath = '';
+        if (!empty($segments)) {
+            $encodedPath = '/' . implode('/', array_map(static fn ($segment) => rawurlencode($segment), $segments));
+        }
+
+        $url = sprintf(
+            '%s/repos/%s/%s/contents%s',
+            self::BASE_URL,
+            self::OWNER,
+            self::REPO,
+            $encodedPath
+        );
+
+        return $this->requestGithub($url);
+    }
+
     /**
      * @return array{ok:bool,status:int,body:string,decoded:mixed,error?:string}
      */
