@@ -124,6 +124,12 @@ clean-marvel/
 - El panel aprovecha las mismas clases y helpers de `SonarCloud`, `Sentry` y `Panel GitHub` para mantener el mismo look & feel, y se integra en el menú superior (acción “Accesibilidad”) y en la “Secret Room”.  
 - El servicio usa rutas “clave” de la aplicación (`/`, `/albums`, `/heroes`, `/movies`, `/comic`, `/sonar`, `/sentry`, `/panel-github`, `/seccion`, `/oficial-marvel`, `/readme`) cuando no se le pasa un cuerpo JSON; cada URL se analiza en serie, sumando el total de violaciones y mostrando el enlace directo al informe WAVE cuando está disponible.
 
+## 🗂️ Repo Marvel
+
+- `public/api/github-repo-browser.php` reutiliza `App\Services\GithubClient` para consultar `/repos/20Luisma/marvel/contents/{path}` y devuelve un listado normalizado de archivos/carpetas con enlaces `html_url`.  
+- La vista `views/pages/repo-marvel.php` y el script `public/assets/js/panel-repo-marvel.js` construyen breadcrumb, tabla y estados de carga mientras navegas la repo desde Clean Marvel Album.  
+- El menú superior ahora incluye el botón “Repo Marvel” y la “Secret Room” también enlaza al panel, manteniendo coherencia visual con los demás dashboards de monitoreo y observabilidad.
+
 ## 🧩 Microservicios
 
 ### 🤖 openai-service (`localhost:8081`)

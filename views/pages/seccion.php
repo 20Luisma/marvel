@@ -20,13 +20,20 @@ $sections = [
         'href' => '/sentry',
         'cta' => 'Entrar a Sentry',
     ],
-    [
-        'title' => 'GitHub PRs',
-        'tag' => 'Repositorio',
-        'description' => 'Analiza la actividad de pull requests, revisiones y comentarios sobre el repositorio Clean Marvel.',
-        'href' => '/panel-github',
-        'cta' => 'Revisar PRs',
-    ],
+        [
+            'title' => 'GitHub PRs',
+            'tag' => 'Repositorio',
+            'description' => 'Analiza la actividad de pull requests, revisiones y comentarios sobre el repositorio Clean Marvel.',
+            'href' => '/panel-github',
+            'cta' => 'Revisar PRs',
+        ],
+        [
+            'title' => 'Repo Marvel',
+            'tag' => 'Repositorio',
+            'description' => 'Explora carpetas y archivos del repositorio desde Clean Marvel Album.',
+            'href' => '/repo-marvel',
+            'cta' => 'Ver repo',
+        ],
     [
         'title' => 'Accesibilidad',
         'tag' => 'WAVE API',
