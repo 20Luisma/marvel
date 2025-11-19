@@ -82,6 +82,7 @@ require_once __DIR__ . '/../layouts/header.php';
           <h3 class="text-2xl text-white">🔭 Observabilidad</h3>
           <p><strong>SonarCloud:</strong> el endpoint interno <code>/api/sonar-metrics.php</code> consulta la API oficial con token y project key configurados en el <code>.env</code>. La página <code>/sonar</code> (vista <code>views/pages/sonar.php</code>) muestra bugs, code smells, cobertura y duplicación en tiempo real.</p>
           <p><strong>Sentry:</strong> <code>src/bootstrap.php</code> inicializa Sentry con <code>SENTRY_DSN</code> y el entorno activo para capturar errores. El endpoint <code>/api/sentry-metrics.php</code> lista eventos recientes y la vista <code>/sentry</code> permite verlos y lanzar errores de prueba desde la UI.</p>
+          <p><strong>Accesibilidad:</strong> <code>/api/accessibility-marvel.php</code> usa <code>WAVE_API_KEY</code> para invocar <code>https://wave.webaim.org/api/request</code> y resumir errores, alertas y contraste. La página <code>/accessibility</code> muestra tarjetas, tabla y enlaces directos a los informes WAVE.</p>
         </section>
 
         <section class="space-y-3">
