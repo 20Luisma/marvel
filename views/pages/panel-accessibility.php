@@ -12,11 +12,8 @@ require_once __DIR__ . '/../layouts/header.php';
 <header class="app-hero app-hero--tech panel-accessibility__hero">
   <div class="app-hero__inner">
     <div class="space-y-3 max-w-3xl">
-      <p class="text-xs uppercase tracking-[0.35em] text-slate-400">
-        Accesibilidad · WAVE API
-      </p>
       <h1 class="app-hero__title text-4xl sm:text-5xl">
-        Evaluador WAVE para Clean Marvel Album
+        Clean Architecture with Marvel
       </h1>
       <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl">
         Analiza las páginas clave y detecta errores, contrastes y alertas con WAVE.

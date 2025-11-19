@@ -20,6 +20,8 @@ final class PageController
         '/panel-github' => 'pages/panel-github',
         '/repo-marvel' => 'pages/repo-marvel',
         '/panel-repo-marvel' => 'pages/repo-marvel',
+        '/performance' => 'pages/performance',
+        '/panel-performance' => 'pages/performance',
         '/accessibility' => 'pages/panel-accessibility',
         '/panel-accessibility' => 'pages/panel-accessibility',
         '/seccion' => 'pages/seccion',

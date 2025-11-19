@@ -86,6 +86,21 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section class="space-y-3">
+          <h3 class="text-2xl text-white">✨ Paneles adicionales</h3>
+          <ul class="space-y-3 text-gray-200">
+            <li>
+              <strong>Accesibilidad:</strong> tarjetas de errores/contrast y tabla de resultados alimentadas por <code>/api/accessibility-marvel.php</code>, con layout idéntico al resto de paneles y botón “Analizar accesibilidad”.
+            </li>
+            <li>
+              <strong>Repo Marvel:</strong> breadcrumb + tabla desde <code>/api/github-repo-browser.php</code>, ideal para explorar carpetas y archivos del repo sin salir del dashboard.
+            </li>
+            <li>
+              <strong>Performance Marvel:</strong> `public/assets/js/panel-performance.js` pinta KPIs coloridos y cuellos de botella, consumiendo <code>/api/performance-marvel.php</code> y PageSpeed Insights.
+            </li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
           <h3 class="text-2xl text-white">🔐 Seguridad aplicada</h3>
           <ul class="list-disc list-inside space-y-2 text-gray-200">
             <li>CORS restringido con <code>APP_ORIGIN</code>/<code>APP_URL</code>; los orígenes no autorizados reciben 403.</li>

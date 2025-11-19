@@ -8,6 +8,7 @@ Clean Marvel Album no requiere un sistema de usuarios complejo, pero sí integra
 - `SENTRY_DSN`, `SENTRY_API_TOKEN`, `SENTRY_ORG_SLUG`, `SENTRY_PROJECT_SLUG`: habilitan captura de errores y visualización desde `public/api/sentry-metrics.php`.  
 - `SONARCLOUD_TOKEN`, `SONARCLOUD_PROJECT_KEY`: permiten consultar SonarCloud desde `public/api/sonar-metrics.php`.  
 - `WAVE_API_KEY`: necesario para consultar la API de accesibilidad WAVE desde `public/api/accessibility-marvel.php` y para mostrar el panel `/accessibility`.  
+- `PAGESPEED_API_KEY`: habilita `public/api/performance-marvel.php` para llamar a PageSpeed Insights y alimentar el panel `/performance`.  
 - `GITHUB_API_KEY`: se usa en `App\Services\GithubClient` para llamar a `https://api.github.com/repos/20Luisma/marvel`.  
 - `ELEVENLABS_API_KEY` y ajustes opcionales (`ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL_ID`, `ELEVENLABS_VOICE_STABILITY`, `ELEVENLABS_VOICE_SIMILARITY`) para el proxy TTS `public/api/tts-elevenlabs.php`.  
 - `TTS_INTERNAL_TOKEN`: protege el endpoint TTS adicionalmente; `parseBearer` valida el token antes de solicitar ElevenLabs.  
