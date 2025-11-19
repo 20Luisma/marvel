@@ -17,9 +17,6 @@ require_once __DIR__ . '/../layouts/header.php';
         <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl">
           Documentación viva y guías técnicas del proyecto.
         </p>
-        <p class="text-sm text-emerald-200/90 font-semibold">
-          ✅ Análisis completo (WCAG 2.1 AA): 100% No issues found en todas las páginas públicas.
-        </p>
         <p class="app-hero__meta text-base text-slate-300">
           Consulta el README completo con arquitectura, comandos y flujos.
         </p>
