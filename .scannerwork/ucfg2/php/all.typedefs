@@ -298,6 +298,23 @@ repository,app\albums\domain\repository\albumrepositoryì
 loadrecordsEapp\heroes\infrastructure\persistence\fileherorepository::loadrecordsZ
 persistrecordsHapp\heroes\infrastructure\persistence\fileherorepository::persistrecordsF
 save>app\heroes\infrastructure\persistence\fileherorepository::save"storagePath*
+storagePathstringæ
+heatmaplogcleaner-
+__constructheatmaplogcleaner::__construct3
+cleanupoldlogs!heatmaplogcleaner::cleanupoldlogs;
+collectlogmetadata%heatmaplogcleaner::collectlogmetadata1
+ensurestorage heatmaplogcleaner::ensurestorage-
+getlogfilesheatmaplogcleaner::getlogfiles=
+isthresholdexceeded&heatmaplogcleaner::isthresholdexceeded/
+maybecleanupheatmaplogcleaner::maybecleanup7
+migratelegacylog#heatmaplogcleaner::migratelegacylog3
+monthlylogpath!heatmaplogcleaner::monthlylogpath%
+prepareheatmaplogcleaner::prepareG
+readlastcleanuptimestamp+heatmaplogcleaner::readlastcleanuptimestampC
+recordcleanuptimestamp)heatmaplogcleaner::recordcleanuptimestamp7
+shouldruncleanup#heatmaplogcleaner::shouldruncleanup"cleanupIntervalSeconds"retentionMonths"storagePath*
+cleanupIntervalSecondsint*
+retentionMonthsint*
 storagePathstring‚
 src\controllers\herocontroller:
 __construct+src\controllers\herocontroller::__construct2

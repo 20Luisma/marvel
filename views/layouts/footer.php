@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 $scripts = $scripts ?? [];
+$globalHeatmapScript = '/assets/js/heatmap-tracker.js';
+$scripts = array_merge([$globalHeatmapScript], $scripts);
 ?>
 
   <!-- FOOTER -->

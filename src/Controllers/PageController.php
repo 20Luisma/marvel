@@ -25,6 +25,8 @@ final class PageController
         '/accessibility' => 'pages/panel-accessibility',
         '/panel-accessibility' => 'pages/panel-accessibility',
         '/seccion' => 'pages/seccion',
+        '/secret-heatmap' => 'pages/secret-heatmap',
+        '/secret/heatmap' => 'pages/secret-heatmap',
         '/movies' => 'pages/movies',
     ];
 

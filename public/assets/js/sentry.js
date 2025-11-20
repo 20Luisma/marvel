@@ -12,19 +12,23 @@
   const issuesCount = document.getElementById('sentry-issues-count');
   const testStatus = document.getElementById('sentry-test-status');
   const testButtons = document.querySelectorAll('[data-sentry-test]');
-
-  const statusText = {
-    live: 'En línea (datos frescos desde Sentry)',
-    cache: 'Usando última respuesta guardada',
-    'cache-fallback': 'Usando última respuesta guardada',
-    empty: 'Sin datos (Sentry aún no ha devuelto información)',
-  };
+  const statusDots = document.querySelectorAll('#sentry-sync-dots .sentry-dot');
 
   const sourceLabels = {
     live: 'live',
     cache: 'cache',
     'cache-fallback': 'cache-fallback',
     empty: 'empty',
+  };
+
+  const PANEL_STATE = {
+    ONLINE: 'online',
+    OFFLINE: 'offline',
+  };
+
+  const STATUS_TEXT = {
+    [PANEL_STATE.ONLINE]: 'En línea (datos frescos desde Sentry)',
+    [PANEL_STATE.OFFLINE]: 'Fuera de línea (usando caché o sin datos)',
   };
 
   const setLoader = (visible) => {
@@ -51,6 +55,18 @@
     return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('es-ES');
   };
 
+  const formatTimestampForMetrics = (value) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
+
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    return `${pad(date.getHours())}:${pad(date.getMinutes())} · ${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+  };
+
   const applySource = (source) => {
     const normalized = sourceLabels[source] ?? 'empty';
     sourceIndicators.forEach((el) => {
@@ -59,6 +75,14 @@
       el.textContent = normalized === 'live'
         ? 'live'
         : (normalized === 'empty' ? 'empty' : 'cache');
+    });
+  };
+
+  const updateStatusDots = (state) => {
+    if (!statusDots || statusDots.length === 0) return;
+    statusDots.forEach((dot) => {
+      dot.classList.toggle('is-green', state === PANEL_STATE.ONLINE);
+      dot.classList.toggle('is-offline', state === PANEL_STATE.OFFLINE);
     });
   };
 
@@ -111,8 +135,14 @@
     });
   };
 
+  const determineState = (payload) => {
+    const isLive = Boolean(payload?.ok) && payload?.source === 'live';
+    return isLive ? PANEL_STATE.ONLINE : PANEL_STATE.OFFLINE;
+  };
+
   const renderPayload = (payload) => {
     const source = payload?.source ?? 'empty';
+    const state = determineState(payload);
     // Transformación: preferimos payload.events y degradamos a issues si llega el formato anterior.
     const data = payload?.data ?? payload ?? {};
 
@@ -124,9 +154,17 @@
       : (Number.isFinite(data.errors) ? data.errors : issues.length);
 
     if (totalEl) totalEl.textContent = count || '0';
-    if (updatedEl) updatedEl.textContent = formatDate(data.cached_at ?? null);
-    if (statusEl) statusEl.textContent = statusText[source] ?? statusText.empty;
+    if (state === PANEL_STATE.ONLINE && updatedEl) {
+      updatedEl.textContent = formatTimestampForMetrics(payload?.last_update ?? data.cached_at ?? null);
+    }
 
+    if (statusEl) {
+      statusEl.textContent = STATUS_TEXT[state];
+      statusEl.classList.toggle('text-emerald-300', state === PANEL_STATE.ONLINE);
+      statusEl.classList.toggle('text-amber-100', state === PANEL_STATE.OFFLINE);
+    }
+
+    updateStatusDots(state);
     applySource(source);
     renderIssues(issues);
   };

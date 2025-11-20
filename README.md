@@ -117,6 +117,13 @@ clean-marvel/
   - Vista: `views/pages/sentry.php` lista eventos recientes (niveles, shortId, enlaces) y permite lanzar errores de prueba desde la UI para verificar el flujo.  
 - Ambos paneles se integran en la navegación superior y complementan la observabilidad: **SonarCloud** para calidad estática y **Sentry** para errores en tiempo de ejecución/operación.
 
+## 🌡️ Heatmap de clics
+
+- El endpoint ~~`/api/heatmap/click.php`~~ captura cada clic (page, x/y, viewport y scroll) y lo almacena en archivos mensuales (`clicks_YYYY-MM.jsonl`) con backup de logs antiguos gestionados por `HeatmapLogCleaner`.  
+- `/api/heatmap/summary.php` reconstruye la matriz NxN para el heatmap y `/api/heatmap/pages.php` devuelve automáticamente las rutas detectadas, por lo que no hace falta configurar manualmente las páginas que se monitorean.  
+- La Secret Room ofrece `/secret-heatmap`: canvas con el “Marvel Glow” del heatmap principal, KPIs, una leyenda cromática y gráficos Chart.js (zonas Top/Middle/Bottom + distribución vertical) para entender dónde y cuándo hacen clic los usuarios dentro del proyecto.  
+- El tracker (`public/assets/js/heatmap-tracker.js`) se carga en el footer y normaliza las coordenadas `x`/`y` respecto al viewport completo (incluye scroll), así que el heatmap refleja la posición real dentro de cada página; el nuevo script `heatmap-viewer.js` pinta el canvas, actualiza los KPIs y alimenta los gráficos adicionales sin tocar la API PHP.
+
 ## ✨ Paneles adicionales
 
 - **Accesibilidad (WAVE):** `public/api/accessibility-marvel.php` y `views/pages/panel-accessibility.php` complementan la observabilidad con métricas de errores, contrastes y alertas detectadas por la API WAVE de WebAIM; la UI emplea tarjetas, resúmenes y una tabla responsive igual que el resto de dashboards.  
