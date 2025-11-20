@@ -20,6 +20,13 @@ $sections = [
         'href' => '/sentry',
         'cta' => 'Entrar a Sentry',
     ],
+    [
+        'title' => 'Heatmap',
+        'tag' => 'Analítica',
+        'description' => 'Explora los clics de cada página y descubre dónde los héroes hacen más clics dentro de la app.',
+        'href' => '/secret-heatmap',
+        'cta' => 'Ver heatmap',
+    ],
         [
             'title' => 'GitHub PRs',
             'tag' => 'Repositorio',

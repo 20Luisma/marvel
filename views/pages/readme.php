@@ -83,6 +83,13 @@ require_once __DIR__ . '/../layouts/header.php';
         </section>
 
         <section class="space-y-3">
+          <h3 class="text-2xl text-white">🌡️ Heatmap de interacción</h3>
+          <p>El tracker global (`public/assets/js/heatmap-tracker.js`) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic se registre en `storage/heatmap`.</p>
+          <p>El endpoint `/api/heatmap/summary.php` reconstruye una matriz NxN y `/api/heatmap/pages.php` descubre automáticamente las rutas monitoreadas; los logs viejos se limpian con `HeatmapLogCleaner` sin necesidad de cron.</p>
+          <p>Visita la nueva sección <code>/secret-heatmap</code> en la Secret Room para ver el mapa en canvas, KPIs y dos gráficos Chart.js (zonas Top/Middle/Bottom y distribución vertical) con estilo Marvel, además de una leyenda cromática que explica cada color.</p>
+        </section>
+
+        <section class="space-y-3">
           <h3 class="text-2xl text-white">✨ Paneles adicionales</h3>
           <ul class="space-y-3 text-gray-200">
             <li>

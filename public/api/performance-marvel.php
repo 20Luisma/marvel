@@ -38,7 +38,7 @@ if (class_exists(Dotenv::class)) {
 }
 
 $serviceConfigPath = $rootPath . '/config/services.php';
-$serviceConfig = is_file($serviceConfigPath) ? require $serviceConfigPath : ['environments' => []];
+$serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
 $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
 $appBaseUrl = $serviceUrlProvider->getAppBaseUrl();
 
