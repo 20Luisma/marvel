@@ -1,126 +1,0 @@
-
-%app\heroes\domain\entity\hero::createm
-c/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Domain/Entity/Hero.php (!"1*ô	
-1# #('N
-L
- (!	
-$heroId"__id*/
-
-__unknown_file (
-
-$heroIdstringP
-N
- (!
-
-$albumId"__id*0
-
-__unknown_file (
-
-$albumIdstringN
-L
- (!	
-$nombre"__id*/
-
-__unknown_file (
-
-$nombrestringT
-R
- (!
-
-$contenido"__id*2
-
-__unknown_file (
-
-
-$contenidostringN
-L
- (!	
-$imagen"__id*/
-
-__unknown_file (
-
-$imagenstring'%
-# #(&
-$now"datetimeimmutableX
-V
-# #(&
-%1"datetimeimmutable::__construct*$
-
-__unknown_file (
-
-$now—
-”
-$ $()
-%2" app\shared\util\slugger::slugify*7
-
-__unknown_file ("
-app\shared\util\slugger*'
-
-__unknown_file (
-	
-$nombre?
-=
-$ $()
-$slug"__id*"
-
-__unknown_file (
-
-%21/
-& &([
-%3"app\heroes\domain\entity\self§
-¤
-& &([
-%4"*app\heroes\domain\entity\self::__construct*"
-
-__unknown_file (
-
-%3*'
-
-__unknown_file (
-	
-$heroId*(
-
-__unknown_file (
-
-
-$albumId*'
-
-__unknown_file (
-	
-$nombre*%
-
-__unknown_file (	
-
-$slug**
-
-__unknown_file (
-
-
-$contenido*'
-
-__unknown_file (
-	
-$imagen*$
-
-__unknown_file (
-
-$now*$
-
-__unknown_file (
-
-$now"
-& &(\
-
-%3:
- (
-$heroIdstring:
- (
-$albumIdstring:
- (
-$nombrestring: 
-   (
-
-$contenidostring:
-! !(
-$imagenstringB!
-app\heroes\domain\entity\heroH

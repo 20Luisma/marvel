@@ -1,75 +1,0 @@
-
-1app\albums\domain\event\albumupdated::__constructt
-j/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Domain/Event/AlbumUpdated.php ("1*8
-2
-AlbumUpdated.php"
- (
-implicit return*Ú
-1 (AX
-V
- (
-$aggregateId"__id*4
-
-__unknown_file (
-
-$aggregateIdstringN
-L
- (	
-$nombre"__id*/
-
-__unknown_file (
-
-$nombrestringV
-T
- (
-$coverImage"__id*3
-
-__unknown_file (
-
-$coverImagestringP
-N
- (
-
-$eventId"__id*0
-
-__unknown_file (
-
-$eventIdstringa
-_
- (
-$occurredOn"__id*>
-
-__unknown_file ("
- 
-$occurredOndatetimeimmutableŽ
-‹
- (@
-%1".app\shared\domain\bus\domainevent::__construct*D
-
-__unknown_file ((&
-$app\albums\domain\event\albumupdated*,
-
-__unknown_file (
-
-$aggregateId*(
-
-__unknown_file (
-
-
-$eventId*+
-
-__unknown_file (
-
-$occurredOn*
-2:"
- (
-$aggregateIdstring:
- ('
-$nombrestring:!
- (,
-$coverImagestring:
- (
-$eventIdstring:,
- (- 
-$occurredOndatetimeimmutableB(&
-$app\albums\domain\event\albumupdatedH

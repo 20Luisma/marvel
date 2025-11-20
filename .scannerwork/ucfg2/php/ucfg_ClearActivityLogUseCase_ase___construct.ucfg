@@ -1,17 +1,0 @@
-
-Gapp\activities\application\usecase\clearactivitylogusecase::__construct‹
-€/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Application/UseCase/ClearActivityLogUseCase.php ("1*À
-1
-ClearActivityLogUseCase.php{
-y
- (
-$repository"__id*X
-
-__unknown_file (<
-:
-$repository+app\activities\domain\activitylogrepository"
- (
-implicit return:F
-  (R:
-$repository+app\activities\domain\activitylogrepositoryB><
-:app\activities\application\usecase\clearactivitylogusecaseH

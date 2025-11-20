@@ -1,94 +1,0 @@
-
-)src\controllers\activitycontroller::indexr
-h/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ActivityController.php ("1*ž
-2 (?JH
-  (8
-%4**
-
-__unknown_file (
-
-
-$exception2
-getmessage½
-º
- (>
-%5"#app\shared\http\jsonresponse::error*<
-
-__unknown_file ( "
-app\shared\http\jsonresponse*"
-
-__unknown_file (
-
-%4*!
-
-__unknown_file (2*
-4*>
-4
-ActivityController.php"
-! !(
-implicit return*£
-1 (EL
-J
- (
-$scope"__id*.
-
-__unknown_file (
-
-$scopestringT
-R
- (
-
-$contextId"__id*2
-
-__unknown_file (
-
-
-$contextIdstringn
-l
- ('
-%1"__id*T
-
-__unknown_file (8*6$
-"src\controllers\activitycontroller"
-listActivity”‘
- (D
-%2*"
-
-__unknown_file (
-
-%1*&
-
-__unknown_file (
-
-
-$scope**
-
-__unknown_file (
-
-
-$contextId2execute?
-=
- (D
-$data"__id*"
-
-__unknown_file (
-
-%2Ÿ
-œ
- ((
-%3"%app\shared\http\jsonresponse::success*<
-
-__unknown_file ( "
-app\shared\http\jsonresponse*%
-
-__unknown_file (	
-
-$data*
-2
-4:
- ('
-$scopestring: 
-) (B
-
-$contextIdstringB&$
-"src\controllers\activitycontrollerH

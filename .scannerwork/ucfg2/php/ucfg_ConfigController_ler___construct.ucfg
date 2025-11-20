@@ -1,17 +1,0 @@
-
--src\controllers\configcontroller::__constructp
-f/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ConfigController.php ("1*»
-1
-ConfigController.php}
-{
- (
-$serviceUrlProvider"__id*R
-
-__unknown_file (6
-4
-$serviceUrlProviderapp\config\serviceurlprovider"
- (
-implicit return:@
-  (W4
-$serviceUrlProviderapp\config\serviceurlproviderB$"
- src\controllers\configcontrollerH

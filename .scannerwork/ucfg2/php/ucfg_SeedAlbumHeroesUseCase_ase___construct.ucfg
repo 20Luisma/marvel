@@ -1,35 +1,0 @@
-
-Bapp\heroes\application\usecase\seedalbumheroesusecase::__construct…
-{/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/SeedAlbumHeroesUseCase.php- -("1*¿
-1
-SeedAlbumHeroesUseCase.php‡
-„
-- -(
-$albumRepository"__id*^
-
-__unknown_file (B
-@
-$albumRepository,app\albums\domain\repository\albumrepository„
-
-- -(
-$heroRepository"__id*\
-
-__unknown_file (@
->
-$heroRepository+app\heroes\domain\repository\herorepositoryj
-h
-- -(
-	$eventBus"__id*I
-
-__unknown_file (-
-+
-	$eventBusapp\shared\domain\bus\eventbus"
-2 2(
-implicit return:L
-. .(9@
-$albumRepository,app\albums\domain\repository\albumrepository:J
-/ /(7>
-$heroRepository+app\heroes\domain\repository\herorepository:7
-0 0(++
-	$eventBusapp\shared\domain\bus\eventbusB97
-5app\heroes\application\usecase\seedalbumheroesusecaseH

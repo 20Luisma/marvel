@@ -17,6 +17,11 @@ Thumbs.db
 *.swp
 *.bak
 
+# Archivos de SonarCloud (TEMPORALES)
+.scannerwork/
+.scannerwork/**/*
+.scannerwork/report-task.txt
+
 # Configuración local
 /.idea/
 

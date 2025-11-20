@@ -1,148 +1,0 @@
-
-Happ\activities\infrastructure\persistence\dbactivitylogrepository::clear’
-‡/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Infrastructure/Persistence/DbActivityLogRepository.phpK K("1*Ö
-2Q Q(4a
-_
-Q Q(3
-%3"__concat*
-Q Q(
-
-$sql*-
-Q Q(3!
- AND context_id = :context_id>
-<
-Q Q(3
-$sql"__id*"
-
-__unknown_file (
-
-%3ž
-›
-R R(!
-%4"__mapSet*'
-
-__unknown_file (
-	
-$params**
-
-__unknown_file (
-
-context_id**
-
-__unknown_file (
-
-
-$contextId*
-4*¯
-3T T(.[
-Y
-T T(-
-%5"__concat*
-T T(
-
-$sql*'
-T T(-
- AND context_id IS NULL>
-<
-T T(-
-$sql"__id*"
-
-__unknown_file (
-
-%5*
-4*¯
-4W W(*…
-‚
-W W(
-%6"__id*j
-
-__unknown_file (N*LC
-Aapp\activities\infrastructure\persistence\dbactivitylogrepository"
-pdoec
-W W()
-%7*"
-
-__unknown_file (
-
-%6*$
-
-__unknown_file (
-
-$sql2prepare?
-=
-W W()
-$stmt"__id*"
-
-__unknown_file (
-
-%7ki
-X X(
-%8*%
-
-__unknown_file (	
-
-$stmt*'
-
-__unknown_file (
-	
-$params2execute*
-5*C
-5
-DbActivityLogRepository.php"
-Y Y(
-implicit return*—
-1M M(@L
-J
-K K(
-$scope"__id*.
-
-__unknown_file (
-
-$scopestringT
-R
-K K(
-
-$contextId"__id*2
-
-__unknown_file (
-
-
-$contextIdstringj
-h
-M M(?
-$sql"__id*N
-
-__unknown_file (20
-.DELETE FROM activity_logs WHERE scope = :scope
-N N(%
-%1"$Array
-
-N N(%
-%2"__mapSet*"
-
-__unknown_file (
-
-%1*%
-
-__unknown_file (	
-scope*&
-
-__unknown_file (
-
-
-$scopeA
-?
-N N(%	
-$params"__id*"
-
-__unknown_file (
-
-%1*
-2
-3:
-K K('
-$scopestring: 
-K) K(B
-
-$contextIdstringBEC
-Aapp\activities\infrastructure\persistence\dbactivitylogrepositoryH

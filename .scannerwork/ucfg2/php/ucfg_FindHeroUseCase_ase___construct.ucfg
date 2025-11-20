@@ -1,17 +1,0 @@
-
-;app\heroes\application\usecase\findherousecase::__construct~
-t/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/FindHeroUseCase.php ("1*¸
-1
-FindHeroUseCase.php{
-y
- (
-$repository"__id*X
-
-__unknown_file (<
-:
-$repository+app\heroes\domain\repository\herorepository"
- (
-implicit return:F
-  (K:
-$repository+app\heroes\domain\repository\herorepositoryB20
-.app\heroes\application\usecase\findherousecaseH

@@ -1,71 +1,0 @@
-
-+app\albums\domain\entity\album::__constructn
-d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Domain/Entity/Album.php ( "1*1
-2
-	Album.php"
- (
-implicit return*Û
-1 (%P
-N
- ( 
-
-$albumId"__id*0
-
-__unknown_file (
-
-$albumIdstringN
-L
- ( 	
-$nombre"__id*/
-
-__unknown_file (
-
-$nombrestringV
-T
- ( 
-$coverImage"__id*3
-
-__unknown_file (
-
-$coverImagestring_
-]
- ( 
-
-$createdAt"__id*=
-
-__unknown_file (!
-
-
-$createdAtdatetimeimmutable_
-]
- ( 
-
-$updatedAt"__id*=
-
-__unknown_file (!
-
-
-$updatedAtdatetimeimmutableŠ‡
- ($
-%1*>
-
-__unknown_file (" 
-app\albums\domain\entity\album*'
-
-__unknown_file (
-	
-$nombre2assertnombre*
-2:
- ((
-$albumIdstring:
- (
-$nombrestring:!
- (#
-$coverImagestring:+
- (5
-
-$createdAtdatetimeimmutable:+
- (,
-
-$updatedAtdatetimeimmutableB" 
-app\albums\domain\entity\albumH
