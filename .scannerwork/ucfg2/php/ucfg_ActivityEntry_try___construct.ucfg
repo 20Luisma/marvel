@@ -1,56 +1,0 @@
-
-0app\activities\domain\activityentry::__constructs
-i/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Activities/Domain/ActivityEntry.php ( "1*Þ
-1
-ActivityEntry.phpL
-J
- ( 
-$scope"__id*.
-
-__unknown_file (
-
-$scopestringT
-R
- ( 
-
-$contextId"__id*2
-
-__unknown_file (
-
-
-$contextIdstringN
-L
- ( 	
-$action"__id*/
-
-__unknown_file (
-
-$actionstringL
-J
- ( 
-$title"__id*.
-
-__unknown_file (
-
-$titlestringa
-_
- ( 
-$occurredAt"__id*>
-
-__unknown_file ("
- 
-$occurredAtdatetimeimmutable"
- (
-implicit return:
- (&
-$scopestring: 
- (+
-
-$contextIdstring:
- ('
-$actionstring:
- (&
-$titlestring:,
- (6 
-$occurredAtdatetimeimmutableB'%
-#app\activities\domain\activityentryH

@@ -1,17 +1,0 @@
-
-=app\heroes\application\usecase\listheroesusecase::__construct€
-v/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/ListHeroesUseCase.php ("1*º
-1
-ListHeroesUseCase.php{
-y
- (
-$repository"__id*X
-
-__unknown_file (<
-:
-$repository+app\heroes\domain\repository\herorepository"
- (
-implicit return:F
-  (K:
-$repository+app\heroes\domain\repository\herorepositoryB42
-0app\heroes\application\usecase\listheroesusecaseH

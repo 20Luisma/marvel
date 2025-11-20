@@ -1,17 +1,0 @@
-
-Capp\heroes\infrastructure\persistence\dbherorepository::__construct†
-|/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Infrastructure/Persistence/DbHeroRepository.php ("1*ƒ
-1
-DbHeroRepository.phpE
-C
- (
-$pdo"__id*)
-
-__unknown_file (
-
-$pdopdo"
- (
-implicit return:
-  (9
-$pdopdoB:8
-6app\heroes\infrastructure\persistence\dbherorepositoryH

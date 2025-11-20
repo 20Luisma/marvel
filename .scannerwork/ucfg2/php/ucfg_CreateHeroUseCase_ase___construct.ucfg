@@ -1,35 +1,0 @@
-
-=app\heroes\application\usecase\createherousecase::__construct€
-v/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/UseCase/CreateHeroUseCase.php ("1*º
-1
-CreateHeroUseCase.php„
-
- (
-$heroRepository"__id*\
-
-__unknown_file (@
->
-$heroRepository+app\heroes\domain\repository\herorepository‡
-„
- (
-$albumRepository"__id*^
-
-__unknown_file (B
-@
-$albumRepository,app\albums\domain\repository\albumrepositoryj
-h
- (
-	$eventBus"__id*I
-
-__unknown_file (-
-+
-	$eventBusapp\shared\domain\bus\eventbus"
- (
-implicit return:J
- (7>
-$heroRepository+app\heroes\domain\repository\herorepository:L
- (9@
-$albumRepository,app\albums\domain\repository\albumrepository:7
- (++
-	$eventBusapp\shared\domain\bus\eventbusB42
-0app\heroes\application\usecase\createherousecaseH

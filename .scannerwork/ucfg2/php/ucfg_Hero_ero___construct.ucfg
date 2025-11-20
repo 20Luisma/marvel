@@ -1,111 +1,0 @@
-
-*app\heroes\domain\entity\hero::__constructm
-c/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Domain/Entity/Hero.php ( "1*0
-2
-
-Hero.php"
- (
-implicit return*À
-1 (!N
-L
- ( 	
-$heroId"__id*/
-
-__unknown_file (
-
-$heroIdstringP
-N
- ( 
-
-$albumId"__id*0
-
-__unknown_file (
-
-$albumIdstringJ
-H
- ( 
-$name"__id*-
-
-__unknown_file (
-
-$namestringJ
-H
- ( 
-$slug"__id*-
-
-__unknown_file (
-
-$slugstringP
-N
- ( 
-
-$content"__id*0
-
-__unknown_file (
-
-$contentstringL
-J
- ( 
-$image"__id*.
-
-__unknown_file (
-
-$imagestring_
-]
- ( 
-
-$createdAt"__id*=
-
-__unknown_file (!
-
-
-$createdAtdatetimeimmutable_
-]
- ( 
-
-$updatedAt"__id*=
-
-__unknown_file (!
-
-
-$updatedAtdatetimeimmutable…‚
- ( 
-%1*=
-
-__unknown_file (!
-app\heroes\domain\entity\hero*%
-
-__unknown_file (	
-
-$name2
-assertname‡„
- ("
-%2*=
-
-__unknown_file (!
-app\heroes\domain\entity\hero*&
-
-__unknown_file (
-
-
-$image2assertimage*
-2:
- ('
-$heroIdstring:
- ((
-$albumIdstring:
- (
-$namestring:
- (
-$slugstring:
- (
-$contentstring:
- (
-$imagestring:+
- (5
-
-$createdAtdatetimeimmutable:+
- (,
-
-$updatedAtdatetimeimmutableB!
-app\heroes\domain\entity\heroH

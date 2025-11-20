@@ -1,56 +1,0 @@
-
-+src\controllers\herocontroller::listbyalbumn
-d/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php# #("1*:
-2
-HeroController.php"
-' '(
-implicit return*œ
-1% %(5P
-N
-# #(
-
-$albumId"__id*0
-
-__unknown_file (
-
-$albumIdstringh
-f
-% %(!
-%1"__id*N
-
-__unknown_file (2*0 
-src\controllers\herocontroller"
-
-listHeroesig
-% %(4
-%2*"
-
-__unknown_file (
-
-%1*(
-
-__unknown_file (
-
-
-$albumId2execute?
-=
-% %(4
-$data"__id*"
-
-__unknown_file (
-
-%2Ÿ
-œ
-& &($
-%3"%app\shared\http\jsonresponse::success*<
-
-__unknown_file ( "
-app\shared\http\jsonresponse*%
-
-__unknown_file (	
-
-$data*
-2:
-#  #(/
-$albumIdstringB" 
-src\controllers\herocontrollerH

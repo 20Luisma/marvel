@@ -1,49 +1,0 @@
-
-9app\heroes\application\dto\updateherorequest::__construct|
-r/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Heroes/Application/DTO/UpdateHeroRequest.php	 	("1*ƒ
-1
-UpdateHeroRequest.phpN
-L
-	 	(	
-$heroId"__id*/
-
-__unknown_file (
-
-$heroIdstringN
-L
-	 	(	
-$nombre"__id*/
-
-__unknown_file (
-
-$nombrestringT
-R
-	 	(
-
-$contenido"__id*2
-
-__unknown_file (
-
-
-$contenidostringN
-L
-	 	(	
-$imagen"__id*/
-
-__unknown_file (
-
-$imagenstring"
- (
-implicit return:
-
- 
-('
-$heroIdstring:
- ((
-$nombrestring: 
- (+
-
-$contenidostring:
- ((
-$imagenstringB0.
-,app\heroes\application\dto\updateherorequestH

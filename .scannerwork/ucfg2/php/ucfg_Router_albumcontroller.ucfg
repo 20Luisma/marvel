@@ -1,151 +1,0 @@
-
-'src\shared\http\router::albumcontrollerh
-\/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Http/Router.phpó ó($"1*∆	
-2
-ö ö(*VT
-
-ö ö()
-%2*6
-
-__unknown_file (
-src\shared\http\router2usecasesE
-C
-
-ö ö()
-	$useCases"__id*"
-
-__unknown_file (
-
-%2u
-s
-
-ù ù('
-%4"__mapGet*)
-
-__unknown_file (
-
-	$useCases**
-
-__unknown_file (
-
-listAlbumsv
-t
-
-û û((
-%5"__mapGet*)
-
-__unknown_file (
-
-	$useCases*+
-
-__unknown_file (
-createAlbumv
-t
-
-ü ü((
-%6"__mapGet*)
-
-__unknown_file (
-
-	$useCases*+
-
-__unknown_file (
-updateAlbumv
-t
-
-† †((
-%7"__mapGet*)
-
-__unknown_file (
-
-	$useCases*+
-
-__unknown_file (
-deleteAlbumt
-r
-
-° °(&
-%8"__mapGet*)
-
-__unknown_file (
-
-	$useCases*)
-
-__unknown_file (
-	findAlbum53
-
-ú% ¢(
-%3"src\controllers\albumcontrollerõ
-ò
-
-ú% ¢(
-%9",src\controllers\albumcontroller::__construct*"
-
-__unknown_file (
-
-%3*"
-
-__unknown_file (
-
-%4*"
-
-__unknown_file (
-
-%5*"
-
-__unknown_file (
-
-%6*"
-
-__unknown_file (
-
-%7*"
-
-__unknown_file (
-
-%8g
-e
-
-ú ¢(-
-src\shared\http\router"
-albumController"__id*"
-
-__unknown_file (
-
-%3*
-3*î
-3
-• •(&h
-f
-
-• •(%
-%10"__id*K
-
-__unknown_file (/*-
-src\shared\http\router"
-albumControllera
-_
-
-• •(&&
-%11src\controllers\albumcontroller"__id*#
-
-__unknown_file (
-
-%10"6
-
-• •(&(
-&
-%11src\controllers\albumcontroller*Ä
-1
-ô ô(+g
-e
-
-ô ô("
-%1"__id*K
-
-__unknown_file (/*-
-src\shared\http\router"
-albumController*
-2
-3B
-src\shared\http\routerH

@@ -1,35 +1,0 @@
-
-/src\controllers\activitycontroller::__constructr
-h/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ActivityController.php ("1*÷
-1
-ActivityController.phpŽ
-‹
- (
-$listActivity"__id*h
-
-__unknown_file (L
-J
-$listActivity9app\activities\application\usecase\listactivitylogusecase‘
-Ž
- (
-$recordActivity"__id*i
-
-__unknown_file (M
-K
-$recordActivity8app\activities\application\usecase\recordactivityusecase‘
-Ž
- (
-$clearActivity"__id*j
-
-__unknown_file (N
-L
-$clearActivity:app\activities\application\usecase\clearactivitylogusecase"
- (
-implicit return:V
- (=J
-$listActivity9app\activities\application\usecase\listactivitylogusecase:W
- (>K
-$recordActivity8app\activities\application\usecase\recordactivityusecase:X
- (?L
-$clearActivity:app\activities\application\usecase\clearactivitylogusecaseB&$
-"src\controllers\activitycontrollerH

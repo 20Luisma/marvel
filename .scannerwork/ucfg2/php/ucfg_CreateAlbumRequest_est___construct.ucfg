@@ -1,28 +1,0 @@
-
-:app\albums\application\dto\createalbumrequest::__construct}
-s/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Albums/Application/DTO/CreateAlbumRequest.php	 	("1*æ
-1
-CreateAlbumRequest.phpN
-L
-	 	(	
-$nombre"__id*/
-
-__unknown_file (
-
-$nombrestringV
-T
-	 	(
-$coverImage"__id*3
-
-__unknown_file (
-
-$coverImagestring"
- (
-implicit return:
-
- 
-('
-$nombrestring:!
- (3
-$coverImagestringB1/
--app\albums\application\dto\createalbumrequestH

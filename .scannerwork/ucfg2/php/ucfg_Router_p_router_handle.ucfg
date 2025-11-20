@@ -1,140 +1,0 @@
-
-src\shared\http\router::handlef
-\/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Http/Router.php& &("1*#
-2+ +("
-+ +(
-void*ê
-4.! .(5y
-w
-.! .(5
-%3"'src\controllers\http\request::wantshtml*<
-
-__unknown_file ( "
-src\controllers\http\request*
-6
-7*x
-6/ /(.SQ
-/ /(-
-%4*/
-
-__unknown_file (
-
-$pageController2rendernotfound"
-0 0(
-void*¡
-74 4(0•¢
-4 4(0
-%5*6
-
-__unknown_file (
-src\shared\http\router*'
-
-__unknown_file (
-	
-$method*%
-
-__unknown_file (	
-
-$path2dispatch*
-
-8
-9
-12*Î
-85 5(D“
-œ
-5 5(C
-%6"#app\shared\http\jsonresponse::error*<
-
-__unknown_file ( "
-app\shared\http\jsonresponse*7
-
-__unknown_file (
-Endpoint no encontrado.*!
-
-__unknown_file (2î*
-9
-12*ı
-98 8(VJH
-87 8(O
-%7**
-
-__unknown_file (
-
-
-$exception2
-getmessageT
-R
-8  8(O
-%8"__concat*"
-8  8(4
-Error inesperado: *
-87 8(O
-
-%7Ω
-∫
-8 8(U
-%9"#app\shared\http\jsonresponse::error*<
-
-__unknown_file ( "
-app\shared\http\jsonresponse*"
-
-__unknown_file (
-
-%8*!
-
-__unknown_file (2Ù*
-12*Ö
-1( ((2N
-L
-& &(	
-$method"__id*/
-
-__unknown_file (
-
-$methodstringJ
-H
-& &(
-$path"__id*-
-
-__unknown_file (
-
-$pathstringZX
-( ((1
-%1*6
-
-__unknown_file (
-src\shared\http\router2pagecontrollerI
-G
-( ((1
-$pageController"__id*"
-
-__unknown_file (
-
-%1ß§
-* *(>
-%2*/
-
-__unknown_file (
-
-$pageController*'
-
-__unknown_file (
-	
-$method*%
-
-__unknown_file (	
-
-$path2renderifhtmlroute*	
-2
-4
-7*3
-12
-
-Router.php"
-: :(
-implicit return:
-& &()
-$methodstring:
-&+ &(7
-$pathstringB
-src\shared\http\routerH
