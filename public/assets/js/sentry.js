@@ -169,13 +169,39 @@
     renderIssues(issues);
   };
 
+  const retryDelay = 500;
+  const maxRetries = 3;
+
+  const fetchWithRetries = async (url, options = {}, attempts = maxRetries, delayMs = retryDelay) => {
+    let lastError = null;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      try {
+        const response = await fetch(url, options);
+        if (response.ok) {
+          return response;
+        }
+
+        const errorText = await response.text();
+        lastError = new Error(`HTTP ${response.status}: ${errorText}`);
+      } catch (error) {
+        lastError = error;
+      }
+
+      if (attempt < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+
+    throw lastError ?? new Error('Error desconocido al conectar con Sentry.');
+  };
+
   const fetchSentryMetrics = async () => {
     setLoader(true);
     setWarning(alertBox, '');
     setWarning(inlineWarning, '');
 
     try {
-      const response = await fetch('/api/sentry-metrics.php', { cache: 'no-store' });
+      const response = await fetchWithRetries('/api/sentry-metrics.php', { cache: 'no-store' }, maxRetries, retryDelay);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -187,8 +213,8 @@
       }
     } catch (error) {
       renderPayload({ source: 'empty', data: {} });
-      setWarning(alertBox, 'No se pudo cargar Sentry en este momento.');
-      console.error(error);
+      setWarning(alertBox, 'No se pudo conectar con Sentry tras varios intentos. Intenta de nuevo en unos segundos.');
+      console.error('Sentry fetch failed after retries', error);
     } finally {
       setLoader(false);
     }
