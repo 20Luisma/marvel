@@ -333,3 +333,4 @@ Servicios externos: Microservicio OpenAI, Microservicio RAG, OpenAI API
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  
 Con soporte de **Alfred**, asistente de IA 🤖  
 > “Diseñando tecnología limpia, modular y con propósito.”
+prueba test
