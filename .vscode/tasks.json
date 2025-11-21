@@ -34,6 +34,21 @@
       "type": "promptString",
       "description": "Nombre de la rama REMOTA (GitHub) a borrar",
       "default": "feature/nueva-rama"
+    },
+    {
+      "id": "tipoRama",
+      "type": "pickString",
+      "description": "Tipo de rama (feature / hotfix / release)",
+      "options": [
+        "feature",
+        "hotfix",
+        "release"
+      ]
+    },
+    {
+      "id": "nombreRama",
+      "type": "promptString",
+      "description": "Nombre de la rama (ej: accesibilidad-aa)"
     }
   ],
 
@@ -161,15 +176,21 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+
+    /* 🔁 NUEVA VERSIÓN: crear rama feature/hotfix/release automáticamente */
     {
-      "label": "Git | crear nueva rama (probar sin romper main)",
+      "label": "Git | crear nueva rama (feature/hotfix/release)",
       "type": "shell",
       "command": "bash",
-      "args": ["-c", "git checkout -b \"${input:nuevaRama}\""],
+      "args": [
+        "-c",
+        "git switch -c \"${input:tipoRama}/${input:nombreRama}\""
+      ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+
     {
       "label": "Git | cambiar de rama (escribir nombre)",
       "type": "shell",

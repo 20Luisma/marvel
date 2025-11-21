@@ -130,6 +130,11 @@ require_once __DIR__ . '/../layouts/header.php';
     </section>
   </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- TODO: añadir hash real de SRI de la versión de Chart.js usada -->
+<script
+  src="https://cdn.jsdelivr.net/npm/chart.js"
+  integrity="TODO_ADD_REAL_HASH_HERE"
+  crossorigin="anonymous"
+></script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
