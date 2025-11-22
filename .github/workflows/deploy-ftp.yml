@@ -3,8 +3,8 @@ name: Deploy Marvel a Hostinger (FTP)
 on:
   push:
     branches:
-      - main        # cada vez que se mergea algo a main
-  workflow_dispatch: # para lanzarlo a mano cuando quieras
+      - main
+  workflow_dispatch:
     inputs:
       motivo:
         description: "Motivo del deploy"
@@ -19,7 +19,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 1) Deploy de la app principal (iamasterbigschool)
+      ####################################################################
+      # 1) Deploy APP PRINCIPAL (Carpeta iamasterbigschool/public)
+      ####################################################################
       - name: Deploy app principal (iamasterbigschool)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -28,8 +30,14 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-          server-dir: /${{ secrets.FTP_PATH }}/iamasterbigschool/
-          local-dir: ./
+
+          # RUTA REAL DONDE VA EL PROYECTO
+          # (la misma que usas en FileZilla)
+          server-dir: /domains/contenido.creawebes.com/public_html/iamasterbigschool/public/
+
+          # Subir solo la carpeta public
+          local-dir: ./public/
+
           exclude: |
             **/.git*
             **/.github/**
@@ -48,7 +56,9 @@ jobs:
             openai-service/**
             rag-service/**
 
-      # 2) Deploy microservicio OpenAI
+      ####################################################################
+      # 2) Deploy microservicio OPENAI (carpeta openai-service)
+      ####################################################################
       - name: Deploy microservicio openai-service
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -57,10 +67,16 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-          server-dir: /${{ secrets.FTP_PATH }}/openai-service/
+
+          # RUTA REAL DEL MICROSERVICIO
+          server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
+
+          # Carpeta local
           local-dir: ./openai-service/
 
-      # 3) Deploy microservicio RAG
+      ####################################################################
+      # 3) Deploy microservicio RAG (carpeta rag-service)
+      ####################################################################
       - name: Deploy microservicio rag-service
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -69,5 +85,9 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-          server-dir: /${{ secrets.FTP_PATH }}/rag-service/
+
+          # RUTA REAL DEL MICROSERVICIO
+          server-dir: /domains/contenido.creawebes.com/public_html/rag-service/
+
+          # Carpeta local
           local-dir: ./rag-service/
