@@ -283,6 +283,7 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+
     {
       "label": "Git | crear tag (versión y subir)",
       "type": "shell",
@@ -295,6 +296,21 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+
+    /* 🆕 NUEVA TAREA: creador de versiones completo */
+    {
+      "label": "Git | crear versión (push main + tag + push tag)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "version=${input:nuevoTag}; branch=$(git rev-parse --abbrev-ref HEAD); if [ \"$branch\" != \"main\" ]; then echo \"❌ Debes estar en main (branch actual: $branch)\"; exit 1; fi; echo \"🔄 Subiendo main a remoto...\"; git push origin main; echo \"🏷  Creando tag $version...\"; git tag \"$version\"; echo \"📤 Subiendo tag $version a remoto...\"; git push origin \"$version\";"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
     {
       "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
       "type": "shell",
