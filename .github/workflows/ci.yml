@@ -167,11 +167,29 @@ jobs:
       - name: Prepare e2e tests folder
         run: mkdir -p tests/e2e
 
+      - name: Generate Playwright config (artifacts)
+        run: |
+          cat > playwright.config.cjs <<'EOF'
+          const { defineConfig } = require('@playwright/test');
+          module.exports = defineConfig({
+            testDir: 'tests/e2e',
+            reporter: 'line',
+            use: {
+              baseURL: 'http://localhost:8080',
+              browserName: 'chromium',
+              headless: true,
+              trace: 'on',
+              video: 'on',
+              screenshot: 'on',
+            },
+          });
+          EOF
+
       - name: Start PHP server
         run: php -S localhost:8080 -t public >/tmp/php-server.log 2>&1 &
 
       - name: Run Playwright E2E tests
-        run: npx playwright test tests/e2e --reporter=line --trace=on --video=on --screenshot=on
+        run: npx playwright test tests/e2e --config=playwright.config.cjs
 
       - name: Upload Playwright artifacts
         if: always()
