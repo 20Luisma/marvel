@@ -1,0 +1,83 @@
+name: Rollback Marvel a versión anterior (FTP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Commit, tag o rama a desplegar (ej: v1.0.0, 254eb87, main)"
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout versión a restaurar
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      ####################################################################
+      # 1) Rollback APP PRINCIPAL (iamasterbigschool)
+      ####################################################################
+      - name: Rollback app principal (iamasterbigschool)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          # Misma ruta que el deploy normal
+          server-dir: /domains/contenido.creawebes.com/public_html/iamasterbigschool/
+
+          # Subimos TODO el proyecto de esa versión
+          local-dir: ./
+
+          exclude: |
+            **/.git*
+            **/.github/**
+            node_modules/**
+            tests/**
+            .scannerwork/**
+            coverage.xml
+            pa11y-*.sh
+            package-lock.json
+            package.json
+            playwright.config.cjs
+            test-results/**
+            blob-report/**
+            playwright-report/**
+            openai-service/**
+            rag-service/**
+
+      ####################################################################
+      # 2) Rollback microservicio OPENAI
+      ####################################################################
+      - name: Rollback microservicio openai-service
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
+          local-dir: ./openai-service/
+
+      ####################################################################
+      # 3) Rollback microservicio RAG
+      ####################################################################
+      - name: Rollback microservicio rag-service
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          server-dir: /domains/contenido.creawebes.com/public_html/rag-service/
+          local-dir: ./rag-service/
