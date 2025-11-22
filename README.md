@@ -1,4 +1,5 @@
 # Clean Marvel Album – Documentación Técnica
+![CI](https://github.com/20Luisma/marvel/actions/workflows/ci.yml/badge.svg) ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=20Luisma_marvel&metric=coverage) ![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=20Luisma_marvel&metric=maintainability_rating) ![Pa11y](https://img.shields.io/badge/Pa11y-enabled-brightgreen) ![Playwright E2E](https://img.shields.io/badge/Playwright%20E2E-passing-brightgreen)
 
 **Clean Marvel Album** es una implementación educativa de Arquitectura Limpia en **PHP 8.2** que orquesta un backend modular (álbumes + héroes) y dos microservicios de IA desacoplados (`openai-service`, `rag-service`). Además de servir como demo funcional, actúa como blueprint para proyectos PHP que necesiten capas bien delimitadas, pruebas automatizadas y despliegues paralelos en local y hosting.
 
@@ -334,4 +335,3 @@ Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.co
 Con soporte de **Alfred**, asistente de IA 🤖  
 > “Diseñando tecnología limpia, modular y con propósito.”
 >
-Prueba del pipeline completo de CI (no funcional, solo test).
