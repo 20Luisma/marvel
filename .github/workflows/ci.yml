@@ -127,13 +127,8 @@ jobs:
         continue-on-error: true
         uses: treosh/lighthouse-ci-action@v10
         with:
-          urls: |
-            http://localhost:8080/index
-            http://localhost:8080/heroes
-            http://localhost:8080/albums
-            http://localhost:8080/comics
-            http://localhost:8080/movies
-          startServerCommand: php -S localhost:8080 -t public
+          configPath: ./lighthouserc.json
+          startServerCommand: php -S 0.0.0.0:8080 -t public
           uploadArtifacts: true
           temporaryPublicStorage: false
 
