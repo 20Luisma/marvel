@@ -1,0 +1,73 @@
+name: Deploy Marvel a Hostinger (FTP)
+
+on:
+  push:
+    branches:
+      - main        # cada vez que se mergea algo a main
+  workflow_dispatch: # para lanzarlo a mano cuando quieras
+    inputs:
+      motivo:
+        description: "Motivo del deploy"
+        required: false
+        default: "Deploy manual"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 1) Deploy de la app principal (iamasterbigschool)
+      - name: Deploy app principal (iamasterbigschool)
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /${{ secrets.FTP_PATH }}/iamasterbigschool/
+          local-dir: ./
+          exclude: |
+            **/.git*
+            **/.github/**
+            node_modules/**
+            vendor/**
+            tests/**
+            .scannerwork/**
+            coverage.xml
+            pa11y-*.sh
+            package-lock.json
+            package.json
+            playwright.config.cjs
+            test-results/**
+            blob-report/**
+            playwright-report/**
+            openai-service/**
+            rag-service/**
+
+      # 2) Deploy microservicio OpenAI
+      - name: Deploy microservicio openai-service
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /${{ secrets.FTP_PATH }}/openai-service/
+          local-dir: ./openai-service/
+
+      # 3) Deploy microservicio RAG
+      - name: Deploy microservicio rag-service
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /${{ secrets.FTP_PATH }}/rag-service/
+          local-dir: ./rag-service/
