@@ -1,2 +1,0 @@
-Prueba de deploy automático a Hostinger
-Versión 001 - ${FECHA_Y_HORA}
