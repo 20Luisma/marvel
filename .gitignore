@@ -25,12 +25,21 @@ Thumbs.db
 # Configuración local
 /.idea/
 
+# -----------------------------
 # Storage y backups
+# -----------------------------
+# Ignorar absolutamente todos los JSON generados...
 /storage/*.json
 /storage/backups/
 /storage/tmp/
 /storage/cache/
 /storage/logs/
+
+# ...pero permitir los SEEDS necesarios para E2E
+!/storage/albums.json
+!/storage/heroes.json
+!/storage/comics.json
+!/storage/movies.json
 
 # Tests PHP y cobertura
 /.phpunit.cache/
@@ -83,11 +92,11 @@ blob-report/
 # Lighthouse CI artefactos
 .lighthouseci/
 
-# Pa11y reports (si algún día generás .json o .html)
+# Pa11y reportss
 pa11y-report/
 pa11y-results/
 
-# Traces, videos y capturas adicionales
+# Traces, videos y capturas
 *.webm
 *.png
 *.zip
