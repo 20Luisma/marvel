@@ -328,6 +328,14 @@ Servicios externos: Microservicio OpenAI, Microservicio RAG, OpenAI API
 - Integraciones IA se encapsulan en `openai-service` y `rag-service`, por lo que cambiar de proveedor solo afecta a los microservicios.  
 - `ServiceUrlProvider` y `APP_ENV=auto` permiten mover la app entre local y hosting sin modificar el dominio ni los controladores.
 
+## 🧪 Tests E2E con Playwright
+
+Ejecuta la batería de pruebas de extremo a extremo con:
+
+```bash
+npx playwright test tests/e2e --config=playwright.config.cjs
+```
+
 ## 👤 Créditos y autor
 
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  
