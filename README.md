@@ -334,4 +334,3 @@ Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.co
 Con soporte de **Alfred**, asistente de IA 🤖  
 > “Diseñando tecnología limpia, modular y con propósito.”
 >
-> > Prueba de CI con rama feature/ci-prueba-final ✔
