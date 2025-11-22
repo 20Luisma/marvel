@@ -32,7 +32,7 @@ Thumbs.db
 /storage/cache/
 /storage/logs/
 
-# Tests y cobertura
+# Tests PHP y cobertura
 /.phpunit.cache/
 /coverage/
 /tests/.phpunit.result.cache
@@ -70,3 +70,25 @@ phpunit.xml.dist
 *.old
 /.env
 /openai-service/.env
+
+# -----------------------------
+# 🔥 NUEVAS EXCLUSIONES IMPORTANTES
+# -----------------------------
+
+# Playwright artifacts
+test-results/
+playwright-report/
+blob-report/
+
+# Lighthouse CI artefactos
+.lighthouseci/
+
+# Pa11y reports (si algún día generás .json o .html)
+pa11y-report/
+pa11y-results/
+
+# Traces, videos y capturas adicionales
+*.webm
+*.png
+*.zip
+*.mp4
