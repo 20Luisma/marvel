@@ -24,10 +24,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/iamasterbigschool/
           local-dir: ./
           exclude: |
@@ -53,10 +53,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/openai-service/
           local-dir: ./openai-service/
 
@@ -65,9 +65,9 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/rag-service/
           local-dir: ./rag-service/
