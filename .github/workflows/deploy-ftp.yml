@@ -21,7 +21,8 @@ jobs:
 
       # 1) Deploy de la app principal (iamasterbigschool)
       - name: Deploy app principal (iamasterbigschool)
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/ftp-deploy-action@v4
+
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -50,7 +51,7 @@ jobs:
 
       # 2) Deploy microservicio OpenAI
       - name: Deploy microservicio openai-service
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/ftp-deploy-action@v4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -62,7 +63,7 @@ jobs:
 
       # 3) Deploy microservicio RAG
       - name: Deploy microservicio rag-service
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/ftp-deploy-action@v4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
