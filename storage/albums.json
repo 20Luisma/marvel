@@ -1,0 +1,44 @@
+[
+    {
+        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
+        "nombre": "Avengers",
+        "coverImage": "https://static.posters.cz/image/1300/fotomurales/vengadores-marvel-i35716.jpg",
+        "createdAt": "2025-10-26T15:27:58+00:00",
+        "updatedAt": "2025-11-17T21:08:10+00:00"
+    },
+    {
+        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
+        "nombre": "X-Men",
+        "coverImage": "https://resizing.flixster.com/AJPSMUeHfapiiZq5P3skyeHWxJs=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p7892107_b_h9_ab.jpg",
+        "createdAt": "2025-10-26T15:28:10+00:00",
+        "updatedAt": "2025-10-26T16:22:11+00:00"
+    },
+    {
+        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
+        "nombre": "Guardians of the Galaxy",
+        "coverImage": "https://goombastomp.com/wp-content/uploads/2021/10/guardians.jpeg",
+        "createdAt": "2025-10-26T15:28:22+00:00",
+        "updatedAt": "2025-10-26T16:24:54+00:00"
+    },
+    {
+        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
+        "nombre": "Spider-Man",
+        "coverImage": "https://i.blogs.es/c7ed10/screenshot_90/1366_2000.jpeg",
+        "createdAt": "2025-10-26T15:28:34+00:00",
+        "updatedAt": "2025-10-26T15:37:08+00:00"
+    },
+    {
+        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
+        "nombre": "Fantastic Four",
+        "coverImage": "https://cdn.marvel.com/content/1x/_ff_card_0.jpg",
+        "createdAt": "2025-10-26T15:28:46+00:00",
+        "updatedAt": "2025-11-02T16:20:11+00:00"
+    },
+    {
+        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
+        "nombre": "Black Panther",
+        "coverImage": "https://i.blogs.es/271923/pantera-negra-comic/375_375.jpeg",
+        "createdAt": "2025-10-26T15:28:59+00:00",
+        "updatedAt": "2025-10-26T16:34:29+00:00"
+    }
+]
