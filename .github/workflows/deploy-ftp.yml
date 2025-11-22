@@ -21,16 +21,13 @@ jobs:
 
       # 1) Deploy de la app principal (iamasterbigschool)
       - name: Deploy app principal (iamasterbigschool)
-        uses: SamKirkland/FTP-Deploy-Action@v3.1.1
-
-
-
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/iamasterbigschool/
           local-dir: ./
           exclude: |
@@ -53,28 +50,24 @@ jobs:
 
       # 2) Deploy microservicio OpenAI
       - name: Deploy microservicio openai-service
-        uses: SamKirkland/FTP-Deploy-Action@v3.1.1
-
-
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/openai-service/
           local-dir: ./openai-service/
 
       # 3) Deploy microservicio RAG
       - name: Deploy microservicio rag-service
-        uses: SamKirkland/FTP-Deploy-Action@v3.1.1
-
-
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
           protocol: ftp
-          port: 21
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /${{ secrets.FTP_PATH }}/rag-service/
           local-dir: ./rag-service/
