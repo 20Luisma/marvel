@@ -8,11 +8,10 @@
         "http://localhost:8080/comics",
         "http://localhost:8080/movies"
       ],
-      "startServerCommand": "php -S 0.0.0.0:8080 -t public",
+      "numberOfRuns": 1,
       "settings": {
         "chromeFlags": "--no-sandbox --disable-dev-shm-usage --ignore-certificate-errors --disable-features=TranslateUI"
-      },
-      "numberOfRuns": 1
+      }
     },
     "upload": {
       "target": "filesystem",
