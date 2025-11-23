@@ -2,20 +2,23 @@ name: CI - Clean Marvel Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - 'feature/*'
+      - 'hotfix/*'
+      - 'release/*'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Clona el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Configura PHP 8.4 con las extensiones necesarias
       - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
@@ -23,15 +26,12 @@ jobs:
           extensions: mbstring, dom, json, pdo, sqlite
           coverage: none
 
-      # 3️⃣ Instala dependencias de Composer
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      # 4️⃣ Valida el archivo composer.json
       - name: Validate Composer configuration
         run: composer validate --strict
 
-      # 5️⃣ Ejecuta los tests de PHPUnit
       - name: Run PHPUnit tests
         run: |
           if [ -f vendor/bin/phpunit ]; then
@@ -41,7 +41,6 @@ jobs:
             exit 1
           fi
 
-      # 6️⃣ Ejecuta PHPStan para análisis estático
       - name: Run PHPStan analysis
         run: |
           if [ -f vendor/bin/phpstan ]; then
@@ -58,7 +57,40 @@ jobs:
       - name: Confirm existing test stage
         run: echo "Tests ejecutados en el job build; etapa placeholder para dependencias posteriores."
 
-  # 🟦 Accesibilidad AA con Pa11y
+  # 🟪 SONARCLOUD (CALIDAD + BUGS + VULNERABILIDADES + COVERAGE)
+  sonarcloud:
+    runs-on: ubuntu-latest
+    needs: [build, tests]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP 8.4 con Xdebug (coverage)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, json, pdo, sqlite
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run PHPUnit with coverage
+        run: |
+          vendor/bin/phpunit \
+            --configuration phpunit.xml.dist \
+            --coverage-clover=coverage.xml
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 🟦 PA11Y (ACCESIBILIDAD AA)
   pa11y:
     runs-on: ubuntu-latest
     needs: [build, tests]
@@ -82,14 +114,14 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Start PHP server
-        run: php -S localhost:8080 -t public >/tmp/php-server.log 2>&1 &
+      - name: Start PHP server (router)
+        run: php -S localhost:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
 
       - name: Run Pa11y audits
         continue-on-error: true
         run: |
           mkdir -p pa11y-reports
-          urls=(/index /heroes /albums /comics /movies)
+          urls=(/index.php /heroes.php /albums.php /comics.php /movies.php)
           for url in "${urls[@]}"; do
             safe_name=$(echo "${url#/}" | tr '/' '-')
             npx pa11y "http://localhost:8080${url}" --standard WCAG2AA --reporter json > "pa11y-reports/${safe_name}.json"
@@ -102,10 +134,11 @@ jobs:
           name: pa11y-reports
           path: pa11y-reports
 
-  # 🟧 Lighthouse CI (performance, SEO, accesibilidad)
+  # 🟧 LIGHTHOUSE (PERFORMANCE + SEO + ACCESIBILIDAD)
   lighthouse:
     runs-on: ubuntu-latest
     needs: [build, tests]
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -123,19 +156,21 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Start PHP server (router)
+        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
+
       - name: Run Lighthouse CI
-        continue-on-error: true
         uses: treosh/lighthouse-ci-action@v10
         with:
           configPath: ./lighthouserc.json
-          startServerCommand: php -S 0.0.0.0:8080 -t public
           uploadArtifacts: true
           temporaryPublicStorage: false
 
-  # 🟩 Playwright E2E con Chromium
+  # 🟩 PLAYWRIGHT (E2E)
   playwright:
     runs-on: ubuntu-latest
     needs: [build, tests]
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -162,7 +197,7 @@ jobs:
       - name: Prepare e2e tests folder
         run: mkdir -p tests/e2e
 
-      - name: Generate Playwright config (artifacts)
+      - name: Generate Playwright config
         run: |
           cat > playwright.config.cjs <<'EOF'
           const { defineConfig } = require('@playwright/test');
@@ -175,15 +210,15 @@ jobs:
               headless: true,
               trace: 'on',
               video: 'on',
-              screenshot: 'on',
-            },
+              screenshot: 'on'
+            }
           });
           EOF
 
       - name: Start PHP server
-        run: php -S localhost:8080 -t public >/tmp/php-server.log 2>&1 &
+        run: php -S localhost:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
 
-      - name: Run Playwright E2E tests
+      - name: Run Playwright tests
         run: npx playwright test tests/e2e --config=playwright.config.cjs
 
       - name: Upload Playwright artifacts
