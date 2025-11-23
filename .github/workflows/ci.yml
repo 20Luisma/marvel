@@ -2,9 +2,14 @@ name: CI - Clean Marvel Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - 'feature/*'
+      - 'hotfix/*'
+      - 'release/*'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -31,7 +36,7 @@ jobs:
       - name: Validate Composer configuration
         run: composer validate --strict
 
-      # 5️⃣ Ejecuta los tests de PHPUnit
+      # 5️⃣ Ejecuta los tests de PHPUnit (sin coverage aquí)
       - name: Run PHPUnit tests
         run: |
           if [ -f vendor/bin/phpunit ]; then
@@ -57,6 +62,44 @@ jobs:
     steps:
       - name: Confirm existing test stage
         run: echo "Tests ejecutados en el job build; etapa placeholder para dependencias posteriores."
+
+  # 🟪 SonarCloud (calidad + bugs + vulnerabilidades + coverage)
+  sonarcloud:
+    runs-on: ubuntu-latest
+    needs: [build, tests]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Necesario para historial/blame en Sonar
+
+      - name: Setup PHP 8.4 con Xdebug (para coverage)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, json, pdo, sqlite
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run PHPUnit with coverage (coverage.xml)
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit \
+              --configuration phpunit.xml.dist \
+              --coverage-clover=coverage.xml
+          else
+            echo "PHPUnit no encontrado"
+            exit 1
+          fi
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # 🟦 Accesibilidad AA con Pa11y
   pa11y:
