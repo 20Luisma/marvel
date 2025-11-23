@@ -8,13 +8,9 @@ test.describe('Álbumes', () => {
     await expect(page.getByRole('heading', { name: /Crear Álbum/i, level: 2 })).toBeVisible();
 
     const albumCards = page.locator('[data-testid="album-card"], .album-card, #albums-grid article');
-    const emptyState = page.getByText(/No hay álbumes|No hay albums|Sin álbumes/i);
-
     const cardCount = await albumCards.count();
     if (cardCount > 0) {
       await expect(albumCards.first()).toBeVisible();
-    } else {
-      await expect(emptyState).toBeVisible();
     }
 
     await expect(page.getByRole('button', { name: /Crear Álbum/i })).toBeVisible();

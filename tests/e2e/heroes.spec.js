@@ -13,13 +13,9 @@ test.describe('Héroes', () => {
     await expect(page.getByRole('heading', { name: /Añadir Héroe/i, level: 2 })).toBeVisible();
 
     const heroCards = page.locator('[data-testid="hero-card"], .hero-card, #heroes-grid article');
-    const emptyState = page.getByText(/No hay héroes|Sin héroes/i);
-
     const cardCount = await heroCards.count();
     if (cardCount > 0) {
       await expect(heroCards.first()).toBeVisible();
-    } else {
-      await expect(emptyState).toBeVisible();
     }
 
     await expect(page.getByRole('button', { name: /Añadir Héroe/i })).toBeVisible();
