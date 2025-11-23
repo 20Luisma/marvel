@@ -1,0 +1,16 @@
+[
+  {
+    "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
+    "nombre": "Avengers",
+    "coverImage": "https://static.posters.cz/image/1300/fotomurales/vengadores-marvel-i35716.jpg",
+    "createdAt": "2025-10-26T15:27:58+00:00",
+    "updatedAt": "2025-11-17T21:08:10+00:00"
+  },
+  {
+    "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
+    "nombre": "X-Men",
+    "coverImage": "https://resizing.flixster.com/AJPSMUeHfapiiZq5P3skyeHWxJs=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p7892107_b_h9_ab.jpg",
+    "createdAt": "2025-10-26T15:28:10+00:00",
+    "updatedAt": "2025-10-26T16:22:11+00:00"
+  }
+]
