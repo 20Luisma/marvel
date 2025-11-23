@@ -130,7 +130,7 @@ jobs:
       - name: Run Pa11y audits
         run: |
           mkdir -p pa11y-reports
-          urls=(/ /heroes /albums /comics /movies)
+          urls=(/ /heroes /albums /comic /movies)
           FINAL_EXIT_CODE=0
           for url in "${urls[@]}"; do
             safe_name=$(echo "${url#/}" | tr '/' '-')

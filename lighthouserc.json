@@ -5,7 +5,7 @@
         "http://localhost:8080/",
         "http://localhost:8080/heroes",
         "http://localhost:8080/albums",
-        "http://localhost:8080/comics",
+        "http://localhost:8080/comic",
         "http://localhost:8080/movies"
       ],
       "settings": {
