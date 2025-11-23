@@ -8,7 +8,7 @@
         "http://localhost:8080/comics",
         "http://localhost:8080/movies"
       ],
-      "startServerCommand": "php -S 0.0.0.0:8080 -t public",
+      "startServerCommand": "php -S 0.0.0.0:8080 -t public public/index.php",
       "settings": {
         "chromeFlags": "--no-sandbox --disable-dev-shm-usage --ignore-certificate-errors --disable-features=TranslateUI"
       },

@@ -111,17 +111,27 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Seed JSON storage
+        run: |
+          mkdir -p storage/json
+          if [ -d storage.example ]; then
+            cp -r storage.example/* storage/json/ || true
+            for f in storage.example/*.json; do
+              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+            done
+          fi
+
       - name: Install Node dependencies
         run: npm ci
 
       - name: Start PHP server (router)
-        run: php -S localhost:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
+        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
 
       - name: Run Pa11y audits
         continue-on-error: true
         run: |
           mkdir -p pa11y-reports
-          urls=(/index.php /heroes.php /albums.php /comics.php /movies.php)
+          urls=(/index /heroes /albums /comics /movies)
           for url in "${urls[@]}"; do
             safe_name=$(echo "${url#/}" | tr '/' '-')
             npx pa11y "http://localhost:8080${url}" --standard WCAG2AA --reporter json > "pa11y-reports/${safe_name}.json"
@@ -156,8 +166,15 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Start PHP server (router)
-        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
+      - name: Seed JSON storage
+        run: |
+          mkdir -p storage/json
+          if [ -d storage.example ]; then
+            cp -r storage.example/* storage/json/ || true
+            for f in storage.example/*.json; do
+              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+            done
+          fi
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
@@ -182,6 +199,16 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Seed JSON storage
+        run: |
+          mkdir -p storage/json
+          if [ -d storage.example ]; then
+            cp -r storage.example/* storage/json/ || true
+            for f in storage.example/*.json; do
+              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+            done
+          fi
 
       - name: Setup Node.js 18
         uses: actions/setup-node@v4
@@ -216,7 +243,7 @@ jobs:
           EOF
 
       - name: Start PHP server
-        run: php -S localhost:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
+        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
 
       - name: Run Playwright tests
         run: npx playwright test tests/e2e --config=playwright.config.cjs
