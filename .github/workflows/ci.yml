@@ -128,14 +128,25 @@ jobs:
         run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
 
       - name: Run Pa11y audits
-        continue-on-error: true
         run: |
           mkdir -p pa11y-reports
-          urls=(/index /heroes /albums /comics /movies)
+          urls=(/ /heroes /albums /comics /movies)
+          FINAL_EXIT_CODE=0
           for url in "${urls[@]}"; do
             safe_name=$(echo "${url#/}" | tr '/' '-')
-            npx pa11y "http://localhost:8080${url}" --standard WCAG2AA --reporter json --chrome-args="--no-sandbox --disable-setuid-sandbox" > "pa11y-reports/${safe_name}.json"
+            if [ "$url" == "/" ]; then safe_name="index"; fi
+            echo "Running Pa11y for http://localhost:8080${url}"
+            npx pa11y "http://localhost:8080${url}" --standard WCAG2AA --reporter json --chrome-args="--no-sandbox --disable-setuid-sandbox" > "pa11y-reports/${safe_name}.json" || {
+              EXIT_CODE=$?
+              if [ $EXIT_CODE -eq 1 ]; then
+                echo "Pa11y found accessibility issues in ${url} (exit code 1), but this will not fail the job."
+              else
+                echo "Pa11y failed to run for ${url} (exit code $EXIT_CODE)."
+                FINAL_EXIT_CODE=$EXIT_CODE
+              fi
+            }
           done
+          exit $FINAL_EXIT_CODE
 
       - name: Upload Pa11y reports
         if: always()

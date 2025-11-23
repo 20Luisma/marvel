@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Películas', () => {
   test('La página de películas carga correctamente', async ({ page }) => {
-    await page.goto('/movies', { waitUntil: 'domcontentloaded' });
+    await page.goto('/movies', { waitUntil: 'networkidle' });
 
     await expect(page.getByRole('heading', { name: /Marvel Movies/i })).toBeVisible();
     await expect(page.getByPlaceholder(/Buscar película/i)).toBeVisible();

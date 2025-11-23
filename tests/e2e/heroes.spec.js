@@ -6,7 +6,7 @@ const albumName = 'Avengers';
 test.describe('Héroes', () => {
   test('La página de héroes lista contenido', async ({ page }) => {
     await page.goto(`/heroes?albumId=${albumId}&albumName=${encodeURIComponent(albumName)}`, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle',
     });
 
     await expect(page.getByRole('heading', { name: /Galería de Héroes/i })).toBeVisible();
