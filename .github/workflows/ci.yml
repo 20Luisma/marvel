@@ -199,7 +199,7 @@ jobs:
           configPath: ./lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: false
-          artifactName: lighthouse-results
+          artifactName: lighthouse_results
 
   # 🟩 PLAYWRIGHT (E2E)
   playwright:
