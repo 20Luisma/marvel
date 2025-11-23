@@ -6,14 +6,14 @@ const albumName = 'Avengers';
 test.describe('Héroes', () => {
   test('La página de héroes lista contenido', async ({ page }) => {
     await page.goto(`/heroes?albumId=${albumId}&albumName=${encodeURIComponent(albumName)}`, {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     await expect(page.getByRole('heading', { name: /Galería de Héroes/i })).toBeVisible();
     await expect(page.getByText(new RegExp(`Álbum:\\s*${albumName}`, 'i'))).toBeVisible();
     await expect(page.getByRole('heading', { name: /Añadir Héroe/i, level: 2 })).toBeVisible();
 
-    const heroCards = page.locator('.hero-card');
+    const heroCards = page.locator('[data-testid="hero-card"], .hero-card');
     await expect(heroCards.first()).toBeVisible();
     const ironManCard = heroCards.filter({ hasText: /Iron Man/i }).first();
     await expect(ironManCard).toBeVisible();
