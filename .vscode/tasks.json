@@ -311,6 +311,21 @@
       "problemMatcher": []
     },
 
+    /* 🆕 NUEVA TAREA: ver versiones (tags) */
+   {
+  "label": "Git | ver versiones (tags)",
+  "type": "shell",
+  "command": "bash",
+  "args": [
+    "-c",
+    "echo \"🏷  Tags ordenados por fecha reciente:\" && git tag --sort=-creatordate --format=\"%(refname:short) %(creatordate:short)\""
+  ],
+  "options": { "cwd": "${workspaceFolder}" },
+  "presentation": { "reveal": "always", "panel": "shared" },
+  "problemMatcher": []
+}
+,
+
     {
       "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
       "type": "shell",
