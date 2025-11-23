@@ -1,0 +1,22 @@
+[
+  {
+    "heroId": "a1a1a1a1-0001-4f00-9000-000000000001",
+    "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
+    "nombre": "Iron Man",
+    "slug": "iron-man",
+    "contenido": "Genio multimillonario con armadura de alta tecnología.",
+    "imagen": "https://imgcdn.stablediffusionweb.com/2024/5/14/1818bdfc-7920-46a5-afd1-78a536121652.jpg",
+    "createdAt": "2025-10-26T15:55:00+00:00",
+    "updatedAt": "2025-10-27T17:54:21+00:00"
+  },
+  {
+    "heroId": "a1a1a1a1-0002-4f00-9000-000000000002",
+    "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
+    "nombre": "Captain America",
+    "slug": "captain-america",
+    "contenido": "Símbolo de justicia y coraje con escudo icónico.",
+    "imagen": "https://i.pinimg.com/736x/80/07/4e/80074ea36e3de24dd3b3b1a5a6f1825f.jpg",
+    "createdAt": "2025-10-26T15:55:05+00:00",
+    "updatedAt": "2025-10-26T16:43:38+00:00"
+  }
+]
