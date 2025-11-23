@@ -166,12 +166,14 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Start PHP server
+        run: php -S 0.0.0.0:8080 -t public >/tmp/php-server.log 2>&1 &
+
       - name: Run Lighthouse CI
         continue-on-error: true
         uses: treosh/lighthouse-ci-action@v10
         with:
           configPath: ./lighthouserc.json
-          startServerCommand: php -S 0.0.0.0:8080 -t public
           uploadArtifacts: true
           temporaryPublicStorage: false
 
