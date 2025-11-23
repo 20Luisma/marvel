@@ -2,13 +2,12 @@
   "ci": {
     "collect": {
       "url": [
-        "http://localhost:8080/index",
-        "http://localhost:8080/heroes",
-        "http://localhost:8080/albums",
-        "http://localhost:8080/comics",
-        "http://localhost:8080/movies"
+        "http://localhost:8080/index.php",
+        "http://localhost:8080/heroes.php",
+        "http://localhost:8080/albums.php",
+        "http://localhost:8080/comics.php",
+        "http://localhost:8080/movies.php"
       ],
-      "startServerCommand": "php -S 0.0.0.0:8080 -t public public/index.php",
       "settings": {
         "chromeFlags": "--no-sandbox --disable-dev-shm-usage --ignore-certificate-errors --disable-features=TranslateUI"
       },
