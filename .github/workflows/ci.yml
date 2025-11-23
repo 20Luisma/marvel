@@ -1,281 +1,398 @@
-name: CI - Clean Marvel Tests
+{
+  "version": "2.0.0",
 
-env:
-  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  /* ======================
+     📝 INPUTS (para pedir nombres de ramas/tags)
+     ====================== */
+  "inputs": [
+    {
+      "id": "nuevaRama",
+      "type": "promptString",
+      "description": "Nombre de la rama (ej: feature/nueva-rama)",
+      "default": "feature/nueva-rama"
+    },
+    {
+      "id": "cambiarRama",
+      "type": "promptString",
+      "description": "Rama a la que querés cambiar (ej: feature/video)",
+      "default": "feature/video"
+    },
+    {
+      "id": "nuevoTag",
+      "type": "promptString",
+      "description": "Nombre del tag (ej: v1.0.0)",
+      "default": "v1.0.0"
+    },
+    {
+      "id": "ramaBorrarLocal",
+      "type": "promptString",
+      "description": "Nombre de la rama LOCAL a borrar",
+      "default": "feature/nueva-rama"
+    },
+    {
+      "id": "ramaBorrarRemota",
+      "type": "promptString",
+      "description": "Nombre de la rama REMOTA (GitHub) a borrar",
+      "default": "feature/nueva-rama"
+    },
+    {
+      "id": "tipoRama",
+      "type": "pickString",
+      "description": "Tipo de rama (feature / hotfix / release)",
+      "options": [
+        "feature",
+        "hotfix",
+        "release"
+      ]
+    },
+    {
+      "id": "nombreRama",
+      "type": "promptString",
+      "description": "Nombre de la rama (ej: accesibilidad-aa)"
+    }
+  ],
 
-on:
-  push:
-    branches:
-      - main
-      - 'feature/*'
-      - 'hotfix/*'
-      - 'release/*'
-  pull_request:
-    branches:
-      - main
+  "tasks": [
+    /* =========================================================
+       🚀 SERVIDOR Y QA (tus tareas originales)
+       ========================================================= */
+    {
+      "label": "🚀 Iniciar servidor PHP (8080)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8080", "-t", "public"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Ejecutar Tests PHPUnit",
+      "type": "shell",
+      "command": "vendor/bin/phpunit",
+      "args": ["--colors=always", "--testdox"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 Analizar código (PHPStan)",
+      "type": "shell",
+      "command": "vendor/bin/phpstan",
+      "args": ["analyse", "--memory-limit=1G"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "⚙️ Validar composer",
+      "type": "shell",
+      "command": "composer",
+      "args": ["validate"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 QA completo (tests + phpstan + composer)",
+      "dependsOn": [
+        "🧪 Ejecutar Tests PHPUnit",
+        "🔍 Analizar código (PHPStan)",
+        "⚙️ Validar composer"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    /* ➕ NUEVA TAREA: solo tests + coverage (SIN sonar) */
+    {
+      "label": "🧪 Tests + Coverage",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "composer test:coverage"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    /* ➕ TAREA SEPARADA: solo sonar-scanner */
+    {
+      "label": "🔎 Ejecutar SonarScanner",
+      "type": "shell",
+      "command": "sonar-scanner",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "SONAR_TOKEN": "65578836ceb48c5b7dab0d4a2fb2456611dab472"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
 
-      - name: Setup PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, dom, json, pdo, sqlite
-          coverage: none
+    /* ➕ NUEVA TAREA: análisis de accesibilidad con Pa11y (todas las páginas) */
+    {
+      "label": "♿ Analizar accesibilidad (Pa11y all)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "./pa11y-all.sh"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+    /* =========================================================
+       🧩 GIT COMMANDS (todos juntos y ordenados)
+       ========================================================= */
 
-      - name: Validate Composer configuration
-        run: composer validate --strict
+    {
+      "label": "Git | mostrar estado (ver rama y cambios)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo '📦 Rama actual:' $(git rev-parse --abbrev-ref HEAD); git status -sb"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | mostrar ramas (todas las que tengo)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git branch -vv"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Run PHPUnit tests
-        run: |
-          if [ -f vendor/bin/phpunit ]; then
-            vendor/bin/phpunit --testdox --configuration phpunit.xml.dist
-          else
-            echo "PHPUnit no encontrado"
-            exit 1
-          fi
+    /* 🔁 NUEVA VERSIÓN: crear rama feature/hotfix/release automáticamente */
+    {
+      "label": "Git | crear nueva rama (feature/hotfix/release)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git switch -c \"${input:tipoRama}/${input:nombreRama}\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Run PHPStan analysis
-        run: |
-          if [ -f vendor/bin/phpstan ]; then
-            vendor/bin/phpstan analyse --memory-limit=1G
-          else
-            echo "PHPStan no encontrado"
-            exit 1
-          fi
+    {
+      "label": "Git | cambiar de rama (escribir nombre)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout \"${input:cambiarRama}\""],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | volver a main",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout main"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-  tests:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Confirm existing test stage
-        run: echo "Tests ejecutados en el job build; etapa placeholder para dependencias posteriores."
+    {
+      "label": "Git | fusionar rama actual en main (si salió bien)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "current=$(git rev-parse --abbrev-ref HEAD); if [ \"$current\" = \"main\" ]; then echo \"⚠️ Estás en main. Primero cambiate a la rama que querés fusionar.\"; else echo \"🔀 Fusionando rama $current → main...\"; git checkout main && git merge \"$current\"; fi"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-  # 🟪 SONARCLOUD (CALIDAD + BUGS + VULNERABILIDADES + COVERAGE)
-  sonarcloud:
-    runs-on: ubuntu-latest
-    needs: [build, tests]
+    {
+      "label": "Git | commit rápido (si hay cambios)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"commit rápido desde VS Code\"; else echo \"🔹 No hay cambios para commitear\"; fi"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | push seguro (subir a GitHub la rama actual)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"sync desde local\"; fi; git push origin \"$branch\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | pull seguro (traer de GitHub)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); git pull --rebase origin \"$branch\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | borrar rama LOCAL (ya no la quiero)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git branch -d \"${input:ramaBorrarLocal}\" || git branch -D \"${input:ramaBorrarLocal}\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | borrar rama REMOTA (GitHub)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git push origin --delete \"${input:ramaBorrarRemota}\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    {
+      "label": "Git | crear tag (versión y subir)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git tag -a \"${input:nuevoTag}\" -m \"Versión ${input:nuevoTag}\" && git push origin \"${input:nuevoTag}\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Setup PHP 8.4 con Xdebug (coverage)
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, dom, json, pdo, sqlite
-          coverage: xdebug
+    /* 🆕 NUEVA TAREA: creador de versiones completo */
+    {
+      "label": "Git | crear versión (push main + tag + push tag)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "version=${input:nuevoTag}; branch=$(git rev-parse --abbrev-ref HEAD); if [ \"$branch\" != \"main\" ]; then echo \"❌ Debes estar en main (branch actual: $branch)\"; exit 1; fi; echo \"🔄 Subiendo main a remoto...\"; git push origin main; echo \"🏷  Creando tag $version...\"; git tag \"$version\"; echo \"📤 Subiendo tag $version a remoto...\"; git push origin \"$version\";"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+    /* 🆕 NUEVA TAREA: ver versiones (tags) */
+    {
+      "label": "Git | ver versiones (tags)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo '🏷  Tags ordenados por fecha reciente:'; git tag --sort=-creatordate --format='%(refname:short) %(creatordate:short)'"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: Run PHPUnit with coverage
-        run: |
-          vendor/bin/phpunit \
-            --configuration phpunit.xml.dist \
-            --coverage-clover=coverage.xml
+    {
+      "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git clean -fd && git status -sb"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | subir TODO y pisar remoto (FORCE) ⚠️⚠️⚠️",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "git add -A && git commit -m \"subida limpia desde local\" || true; git push --force origin main"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    /* =========================================================
+       🟣 SERVICIOS LOCALES (los tuyos)
+       ========================================================= */
+    {
+      "label": "🤖 Run OpenAI Service (8081)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8081", "-t", "public"],
+      "options": { "cwd": "${workspaceFolder}/openai-service" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧬 Run RAG Service (8082)",
+      "type": "shell",
+      "command": "php",
+      "args": ["-S", "localhost:8082", "-t", "public"],
+      "options": { "cwd": "${workspaceFolder}/rag-service" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🚀 Run All Services (8080 + 8081 + 8082)",
+      "dependsOn": [
+        "🚀 Iniciar servidor PHP (8080)",
+        "🤖 Run OpenAI Service (8081)",
+        "🧬 Run RAG Service (8082)"
+      ],
+      "dependsOrder": "parallel",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "group": { "kind": "build", "isDefault": true }
+    },
 
-  # 🟦 PA11Y (ACCESIBILIDAD AA)
-  pa11y:
-    runs-on: ubuntu-latest
-    needs: [build, tests]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Seed JSON storage
-        run: |
-          mkdir -p storage/json
-          if [ -d storage.example ]; then
-            cp -r storage.example/* storage/json/ || true
-            for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
-            done
-          fi
-
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Start PHP server (router)
-        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
-
-      - name: Run Pa11y audits
-        run: |
-          mkdir -p pa11y-reports
-          urls=(/ /heroes /albums /comic /movies)
-          FINAL_EXIT_CODE=0
-          for url in "${urls[@]}"; do
-            safe_name=$(echo "${url#/}" | tr '/' '-')
-            if [ "$url" == "/" ]; then safe_name="index"; fi
-            echo "Running Pa11y for http://localhost:8080${url}"
-            npx pa11y "http://localhost:8080${url}" --standard WCAG2AA --reporter json --chrome-args="--no-sandbox --disable-setuid-sandbox" > "pa11y-reports/${safe_name}.json" || {
-              EXIT_CODE=$?
-              if [ $EXIT_CODE -eq 1 ]; then
-                echo "Pa11y found accessibility issues in ${url} (exit code 1), but this will not fail the job."
-              else
-                echo "Pa11y failed to run for ${url} (exit code $EXIT_CODE)."
-                FINAL_EXIT_CODE=$EXIT_CODE
-              fi
-            }
-          done
-          exit $FINAL_EXIT_CODE
-
-      - name: Upload Pa11y reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pa11y-reports
-          path: pa11y-reports
-
-  # 🟧 LIGHTHOUSE (PERFORMANCE + SEO + ACCESIBILIDAD)
-  lighthouse:
-    runs-on: ubuntu-latest
-    needs: [build, tests]
-    continue-on-error: true
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Seed JSON storage
-        run: |
-          mkdir -p storage/json
-          if [ -d storage.example ]; then
-            cp -r storage.example/* storage/json/ || true
-            for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
-            done
-          fi
-
-      - name: Start PHP server
-        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server-lh.log 2>&1 &
-
-      - name: Wait for PHP server
-        run: sleep 5
-
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v11
-        with:
-          configPath: ./lighthouserc.json
-          uploadArtifacts: false
-          temporaryPublicStorage: false
-
-  # 🟩 PLAYWRIGHT (E2E)
-  playwright:
-    runs-on: ubuntu-latest
-    needs: [build, tests]
-    continue-on-error: true
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Seed JSON storage
-        run: |
-          mkdir -p storage/json
-          if [ -d storage.example ]; then
-            cp -r storage.example/* storage/json/ || true
-            for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
-            done
-          fi
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Install Playwright (Chromium)
-        run: npx playwright install --with-deps chromium
-
-      - name: Prepare e2e tests folder
-        run: mkdir -p tests/e2e
-
-      - name: Generate Playwright config
-        run: |
-          cat > playwright.config.cjs <<'EOF'
-          const { defineConfig } = require('@playwright/test');
-          module.exports = defineConfig({
-            testDir: 'tests/e2e',
-            reporter: 'line',
-            use: {
-              baseURL: 'http://localhost:8080',
-              browserName: 'chromium',
-              headless: true,
-              trace: 'on',
-              video: 'on',
-              screenshot: 'on'
-            }
-          });
-          EOF
-
-      - name: Start PHP server
-        run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server.log 2>&1 &
-
-      - name: Wait for PHP server
-        run: sleep 5
-
-      - name: Run Playwright tests
-        run: npx playwright test tests/e2e --config=playwright.config.cjs
-
-      - name: Upload Playwright artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-artifacts
-          path: |
-            playwright-report/
-            test-results/
+    /* =========================================================
+       🤖 CLI CODEX (lo tuyo)
+       ========================================================= */
+    {
+      "label": "🤖 Abrir CLI Codex (agent.md)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "codex agent.md"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared", "focus": true },
+      "problemMatcher": []
+    }
+  ]
+}
