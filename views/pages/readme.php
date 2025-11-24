@@ -15,10 +15,10 @@ require_once __DIR__ . '/../layouts/header.php';
       <div class="space-y-3 max-w-3xl">
         <h1 class="app-hero__title text-4xl sm:text-5xl">Clean Architecture with Marvel</h1>
         <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl">
-          Documentación viva y guías técnicas del proyecto.
+          Documentación viva, CI/CD y guías técnicas del proyecto.
         </p>
         <p class="app-hero__meta text-base text-slate-300">
-          Consulta el README completo con arquitectura, comandos y flujos.
+          README sincronizado con el repositorio: arquitectura, comandos, pipelines y flujos de despliegue.
         </p>
       </div>
     </div>
@@ -42,7 +42,8 @@ require_once __DIR__ . '/../layouts/header.php';
           <p class="text-lg text-gray-300">README del Proyecto</p>
           <p>
             Clean Marvel Album es una experiencia educativa desarrollada en PHP 8.2 que demuestra cómo se ve una Arquitectura Limpia aplicada a un proyecto real.
-            Toda la aplicación está organizada en capas para mantener orden, claridad y facilidad de evolución.
+            Toda la aplicación está organizada en capas para mantener orden, claridad y facilidad de evolución. Además, el proyecto incluye un pipeline completo
+            de CI/CD con tests, análisis de calidad, accesibilidad y despliegue automático desde GitHub.
           </p>
         </section>
 
@@ -55,7 +56,7 @@ require_once __DIR__ . '/../layouts/header.php';
           </p>
           <p>
             Cada capa tiene su función: Presentación para la interfaz, Aplicación para los casos de uso, Dominio para las reglas del negocio e Infraestructura
-            para adaptadores, logs y persistencia.
+            para adaptadores, logs y persistencia. El core del dominio no conoce HTTP, base de datos ni proveedores externos de IA.
           </p>
         </section>
 
@@ -66,64 +67,24 @@ require_once __DIR__ . '/../layouts/header.php';
             <li>Probar la generación de historias con IA (OpenAI) y comparar héroes con el microservicio RAG educativo.</li>
             <li>Supervisar la actividad de la aplicación mediante logs y registros en tiempo real.</li>
             <li>Lanzar pruebas o “seeds” para validar comportamientos críticos del dominio.</li>
+            <li>Visualizar métricas de calidad, errores, accesibilidad, rendimiento y actividad del repositorio sin salir del dashboard.</li>
           </ul>
         </section>
 
         <section class="space-y-3">
           <h3 class="text-2xl text-white">💾 Persistencia de datos</h3>
           <p>En local (<code>APP_ENV=local</code>) todo se almacena en JSON: álbumes y héroes en <code>storage/albums.json</code> y <code>storage/heroes.json</code>, y actividad en <code>storage/actividad/</code>. En hosting (<code>APP_ENV=hosting</code>) se intenta abrir PDO con las credenciales de <code>.env</code> para usar MySQL (repositorios <code>Db*</code>); si la conexión falla se registra el error y la app sigue con JSON como fallback.</p>
-          <p>Para llevar los datos de JSON a la BD hay un script CLI: <code>php bin/migrar-json-a-db.php</code> que inserta álbumes, héroes y actividad evitando duplicados.</p>
-        </section>
-
-        <section class="space-y-3">
-          <h3 class="text-2xl text-white">🔭 Observabilidad</h3>
-          <p><strong>SonarCloud:</strong> el endpoint interno <code>/api/sonar-metrics.php</code> consulta la API oficial con token y project key configurados en el <code>.env</code>. La página <code>/sonar</code> (vista <code>views/pages/sonar.php</code>) muestra bugs, code smells, cobertura y duplicación en tiempo real.</p>
-          <p><strong>Sentry:</strong> <code>src/bootstrap.php</code> inicializa Sentry con <code>SENTRY_DSN</code> y el entorno activo para capturar errores. El endpoint <code>/api/sentry-metrics.php</code> lista eventos recientes y la vista <code>/sentry</code> permite verlos y lanzar errores de prueba desde la UI.</p>
-          <p><strong>Accesibilidad:</strong> <code>/api/accessibility-marvel.php</code> usa <code>WAVE_API_KEY</code> para invocar <code>https://wave.webaim.org/api/request</code> y resumir errores, alertas y contraste. La página <code>/accessibility</code> muestra tarjetas, tabla y enlaces directos a los informes WAVE.</p>
-        </section>
-
-        <section class="space-y-3">
-          <h3 class="text-2xl text-white">🌡️ Heatmap de interacción</h3>
-          <p>El tracker global (`public/assets/js/heatmap-tracker.js`) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic se registre en `storage/heatmap`.</p>
-          <p>El endpoint `/api/heatmap/summary.php` reconstruye una matriz NxN y `/api/heatmap/pages.php` descubre automáticamente las rutas monitoreadas; los logs viejos se limpian con `HeatmapLogCleaner` sin necesidad de cron.</p>
-          <p>Visita la nueva sección <code>/secret-heatmap</code> en la Secret Room para ver el mapa en canvas, KPIs y dos gráficos Chart.js (zonas Top/Middle/Bottom y distribución vertical) con estilo Marvel, además de una leyenda cromática que explica cada color.</p>
-        </section>
-
-        <section class="space-y-3">
-          <h3 class="text-2xl text-white">✨ Paneles adicionales</h3>
-          <ul class="space-y-3 text-gray-200">
-            <li>
-              <strong>Accesibilidad:</strong> tarjetas de errores/contrast y tabla de resultados alimentadas por <code>/api/accessibility-marvel.php</code>, con layout idéntico al resto de paneles y botón “Analizar accesibilidad”.
-            </li>
-            <li>
-              <strong>Repo Marvel:</strong> breadcrumb + tabla desde <code>/api/github-repo-browser.php</code>, ideal para explorar carpetas y archivos del repo sin salir del dashboard.
-            </li>
-            <li>
-              <strong>Performance Marvel:</strong> `public/assets/js/panel-performance.js` pinta KPIs coloridos y cuellos de botella, consumiendo <code>/api/performance-marvel.php</code> y PageSpeed Insights.
-            </li>
-          </ul>
-        </section>
-
-        <section class="space-y-3">
-          <h3 class="text-2xl text-white">🔐 Seguridad aplicada</h3>
-          <ul class="list-disc list-inside space-y-2 text-gray-200">
-            <li>CORS restringido con <code>APP_ORIGIN</code>/<code>APP_URL</code>; los orígenes no autorizados reciben 403.</li>
-            <li>Tokens opcionales/obligatorios: <code>TTS_INTERNAL_TOKEN</code> (TTS ElevenLabs) y <code>MARVEL_UPDATE_TOKEN</code> (webhook n8n). Se envían por cabecera <code>Authorization: Bearer ...</code> únicamente cuando la variable está configurada; si se deja vacía, n8n puede actualizar el video sin token, pero se recomienda fijarlo en entornos públicos.</li>
-            <li>Cabeceras globales: X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy same-origin, Permissions-Policy mínima y CSP permitiendo sólo CDNs necesarios, YouTube y hosts de desarrollo.</li>
-            <li>Logs/artefactos sensibles fuera de <code>public/</code>: n8n escribe en <code>storage/marvel/</code> con rotación; lectura con fallback al JSON legacy.</li>
-            <li>Uploads endurecidos: extensión + MIME real (finfo) y límite 5MB para portadas. <code>.htaccess</code> bloquea <code>.env</code> y extensiones sensibles.</li>
-            <li>Pendiente para nivel “alto”: tokens CSRF en formularios/POST y CSP sin <code>'unsafe-inline'</code> usando nonces/hash.</li>
-          </ul>
+          <p>Para llevar los datos de JSON a la BD hay un script CLI: <code>php bin/migrar-json-a-db.php</code> que inserta álbumes, héroes y actividad evitando duplicados. Esto permite desarrollar ligero en local y desplegar en hosting con BD real, sin perder resiliencia.</p>
         </section>
 
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🏗️ Arquitectura resumida</h3>
           <p>La estructura del proyecto sigue el principio de independencia entre capas:</p>
           <ul class="list-disc list-inside space-y-2 text-gray-200">
-            <li><strong>Presentación:</strong> en <code>public/</code> y <code>views/</code>.</li>
-            <li><strong>Aplicación:</strong> casos de uso en <code>src/*/Application</code>.</li>
-            <li><strong>Dominio:</strong> entidades y contratos en <code>src/*/Domain</code>.</li>
-            <li><strong>Infraestructura:</strong> adaptadores y persistencia en <code>src/*/Infrastructure</code>.</li>
+            <li><strong>Presentación:</strong> en <code>public/</code>, controladores en <code>src/Controllers</code> y vistas en <code>views/</code>.</li>
+            <li><strong>Aplicación:</strong> casos de uso y servicios de orquestación en <code>src/*/Application</code> (incluyendo AI y herramientas Dev).</li>
+            <li><strong>Dominio:</strong> entidades, eventos y contratos de repositorio en <code>src/*/Domain</code>.</li>
+            <li><strong>Infraestructura:</strong> adaptadores, EventBus y persistencia en <code>src/*/Infrastructure</code> y <code>storage/</code>.</li>
           </ul>
           <p>
             Los microservicios <strong>openai-service</strong> (puerto 8081) y <strong>rag-service</strong> (puerto 8082) se comunican con la app principal
@@ -135,27 +96,90 @@ require_once __DIR__ . '/../layouts/header.php';
           </p>
         </section>
 
+        <!-- CI/CD Y PIPELINE DE CALIDAD -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🧪 Calidad</h3>
+          <h3 class="text-2xl text-white">✅ CI/CD, calidad y despliegue</h3>
           <p>
-            El proyecto incluye pruebas automáticas (PHPUnit) y auditorías de actividad que permiten detectar errores antes de desplegar.
-            Cada acción —desde crear un álbum hasta comparar héroes— queda registrada para analizar el comportamiento del sistema en entornos reales.
+            El repositorio incluye un pipeline de GitHub Actions (<code>.github/workflows/ci.yml</code>) que se ejecuta en cada <strong>push</strong> a
+            <code>main</code>, <code>feature/*</code>, <code>hotfix/*</code>, <code>release/*</code> y en cada <strong>pull request</strong> hacia <code>main</code>.
+            El objetivo es asegurar que nada llega a producción sin pasar por tests y chequeos de calidad.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li><strong>Job build:</strong> PHP 8.4, instalación de dependencias, validación de <code>composer.json</code>, PHPUnit y PHPStan.</li>
+            <li><strong>Job sonarcloud:</strong> vuelve a ejecutar tests con coverage y sube métricas de bugs, code smells, duplicación y cobertura a SonarCloud.</li>
+            <li><strong>Job pa11y:</strong> lanza auditorías de accesibilidad WCAG 2.1 AA sobre rutas clave y guarda los resultados como artefactos JSON.</li>
+            <li><strong>Job lighthouse:</strong> analiza rendimiento, accesibilidad, SEO y best practices mediante Lighthouse CI.</li>
+            <li><strong>Job playwright:</strong> ejecuta tests E2E en Chromium sobre las páginas principales, con trazas, capturas y vídeos como artefactos.</li>
+          </ul>
+          <p>
+            Opcionalmente, un workflow separado de <strong>deploy FTP</strong> puede subirse a producción sólo cuando el pipeline de calidad pasa en verde, subiendo los
+            archivos al hosting via FTP/SFTP. El proyecto también está preparado para incluir un flujo de rollback sencillo, recuperando la versión anterior si algo falla
+            tras un despliegue.
           </p>
         </section>
 
+        <!-- OBSERVABILIDAD -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">📈 SonarCloud y tipos de tests</h3>
-          <p>
-            La página de SonarCloud muestra el estado de calidad del código consumiendo el reporte de cobertura generado por PHPUnit.
-            El pipeline lee <code>coverage.xml</code> para sincronizarse con <code>sonar-project.properties</code> sin exponer secretos.
-          </p>
-          <ul class="list-disc list-inside space-y-2 text-gray-200">
-            <li>Suites unitarias para entidades y servicios puros, más pruebas de aplicación con repositorios en memoria (sin tocar disco ni HTTP).</li>
-            <li>Dobles de prueba en <code>tests/Fakes</code> y <code>tests/Doubles</code> evitan dependencias reales y mantienen determinismo.</li>
-            <li>Ejecuta <code>composer test</code> o <code>composer test:cov</code> para generar <code>build/coverage.xml</code> que luego consume SonarCloud.</li>
+          <h3 class="text-2xl text-white">🔭 Observabilidad</h3>
+          <p><strong>SonarCloud:</strong> el endpoint interno <code>/api/sonar-metrics.php</code> consulta la API oficial con token y project key configurados en el <code>.env</code>. La página <code>/sonar</code> (vista <code>views/pages/sonar.php</code>) muestra bugs, code smells, cobertura y duplicación en tiempo real aprovechando el reporte de cobertura generado tanto en local como en el pipeline.</p>
+          <p><strong>Sentry:</strong> <code>src/bootstrap.php</code> inicializa Sentry con <code>SENTRY_DSN</code> y el entorno activo para capturar errores. El endpoint <code>/api/sentry-metrics.php</code> lista eventos recientes y la vista <code>/sentry</code> permite verlos y lanzar errores de prueba desde la UI.</p>
+          <p><strong>Accesibilidad (WAVE + Pa11y):</strong> <code>/api/accessibility-marvel.php</code> usa <code>WAVE_API_KEY</code> para invocar <code>https://wave.webaim.org/api/request</code> y resumir errores, alertas y contraste, mientras que Pa11y se ejecuta tanto en el pipeline como en scripts locales para mantener las páginas en WCAG 2.1 AA.</p>
+          <p><strong>Performance (PageSpeed + Lighthouse):</strong> <code>/api/performance-marvel.php</code> consulta PageSpeed Insights para las rutas clave y la página <code>/performance</code> muestra KPIs y oportunidades. Lighthouse CI refuerza este análisis en el pipeline en cada push.</p>
+        </section>
+
+        <!-- HEATMAP -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🌡️ Heatmap de interacción</h3>
+          <p>El tracker global (<code>public/assets/js/heatmap-tracker.js</code>) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic se registre en <code>storage/heatmap</code>.</p>
+          <p>El endpoint <code>/api/heatmap/summary.php</code> reconstruye una matriz NxN y <code>/api/heatmap/pages.php</code> descubre automáticamente las rutas monitoreadas; los logs viejos se limpian con <code>HeatmapLogCleaner</code> sin necesidad de cron y con rotación mensual para no llenar disco.</p>
+          <p>Visita la nueva sección <code>/secret-heatmap</code> en la Secret Room para ver el mapa en canvas, KPIs y dos gráficos Chart.js (zonas Top/Middle/Bottom y distribución vertical) con estilo Marvel, además de una leyenda cromática que explica cada color.</p>
+        </section>
+
+        <!-- PANELES ADICIONALES -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">✨ Paneles adicionales</h3>
+          <ul class="space-y-3 text-gray-200">
+            <li>
+              <strong>Accesibilidad:</strong> tarjetas de errores/contrast y tabla de resultados alimentadas por <code>/api/accessibility-marvel.php</code>, con layout idéntico al resto de paneles y botón “Analizar accesibilidad”.
+            </li>
+            <li>
+              <strong>Repo Marvel:</strong> breadcrumb + tabla desde <code>/api/github-repo-browser.php</code>, ideal para explorar carpetas y archivos del repo sin salir del dashboard.
+            </li>
+            <li>
+              <strong>Performance Marvel:</strong> <code>public/assets/js/panel-performance.js</code> pinta KPIs coloridos y cuellos de botella, consumiendo <code>/api/performance-marvel.php</code> y PageSpeed Insights.
+            </li>
           </ul>
         </section>
 
+        <!-- SEGURIDAD -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🔐 Seguridad aplicada</h3>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>CORS restringido con <code>APP_ORIGIN</code>/<code>APP_URL</code>; los orígenes no autorizados reciben 403.</li>
+            <li>Tokens opcionales/obligatorios: <code>TTS_INTERNAL_TOKEN</code> (TTS ElevenLabs) y <code>MARVEL_UPDATE_TOKEN</code> (webhook n8n). Se envían por cabecera <code>Authorization: Bearer ...</code> únicamente cuando la variable está configurada; si se deja vacía, n8n puede actualizar el vídeo sin token, pero se recomienda fijarlo en entornos públicos.</li>
+            <li>Cabeceras globales: X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy same-origin, Permissions-Policy mínima y CSP permitiendo sólo CDNs necesarios, YouTube y hosts de desarrollo.</li>
+            <li>Logs/artefactos sensibles fuera de <code>public/</code>: n8n escribe en <code>storage/marvel/</code> con rotación; lectura con fallback al JSON legacy.</li>
+            <li>Uploads endurecidos: extensión + MIME real (finfo) y límite 5MB para portadas. <code>.htaccess</code> bloquea <code>.env</code> y extensiones sensibles.</li>
+            <li>Pendiente para nivel “alto”: tokens CSRF en formularios/POST y CSP sin <code>'unsafe-inline'</code> usando nonces/hash.</li>
+          </ul>
+        </section>
+
+        <!-- CALIDAD Y TESTS -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🧪 Calidad y tipos de tests</h3>
+          <p>
+            El proyecto incluye pruebas automáticas (PHPUnit), análisis estático (PHPStan), auditorías de accesibilidad (WAVE + Pa11y), rendimiento (PageSpeed + Lighthouse) y tests E2E (Playwright).
+            La idea es tener una visión completa de la salud del sistema tanto en local como en la integración continua.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>Suites unitarias para entidades y servicios puros.</li>
+            <li>Pruebas de aplicación con repositorios en memoria (sin tocar disco ni HTTP externo).</li>
+            <li>Dobles de prueba en <code>tests/Fakes</code> y <code>tests/Doubles</code> para mantener determinismo.</li>
+            <li>Generación de <code>coverage.xml</code> con <code>composer test:cov</code> y uso de ese reporte en SonarCloud.</li>
+          </ul>
+        </section>
+
+        <!-- NARRACIÓN ELEVENLABS -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🔊 Narración con ElevenLabs</h3>
           <p>
@@ -169,28 +193,31 @@ require_once __DIR__ . '/../layouts/header.php';
           </ul>
         </section>
 
+        <!-- PANEL GITHUB -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🐙 Panel GitHub en vivo</h3>
           <p>
-            La nueva vista <code>/panel-github.php</code> consume la clase <code>App\Services\GithubClient</code> para consultar la API oficial de GitHub y mostrar Pull Requests del repo
+            La vista <code>/panel-github</code> consume la clase <code>App\Services\GithubClient</code> para consultar la API oficial de GitHub y mostrar Pull Requests del repo
             <code>20Luisma/marvel</code>. Puedes filtrar por rango de fechas y revisar cuántos commits, reviews y reviewers únicos tuvo cada PR, junto con sus labels.
           </p>
           <ul class="list-disc list-inside space-y-2 text-gray-200">
             <li>Configura <code>GITHUB_API_KEY</code> en el <code>.env</code> con un token personal que tenga permisos de lectura.</li>
             <li>El dashboard normaliza fechas (YYYY-MM-DD), muestra errores claros cuando falta el token y enlaza cada PR directo en GitHub.</li>
-            <li>Los estilos (<code>public/assets/css/panel-github.css</code>) y el top action dedicado mantienen el mismo look & feel del resto del proyecto.</li>
+            <li>Los estilos (<code>public/assets/css/panel-github.css</code>) y el top action dedicado mantienen el mismo look &amp; feel del resto del proyecto.</li>
           </ul>
         </section>
 
+        <!-- CONTENIDO OFICIAL -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">📺 Contenido oficial (YouTube + n8n)</h3>
           <p>
             La sección “Oficial Marvel” está pensada para recibir contenido que venga de las fuentes oficiales (por ejemplo el canal de YouTube).
-            Ese contenido se podrá traer mediante n8n o un scraper y guardarlo para mostrarlo dentro de la app con el mismo diseño.
+            Ese contenido se puede traer mediante n8n o un scraper y guardarlo para mostrarlo dentro de la app con el mismo diseño.
             La arquitectura ya está preparada para consumir ese contenido externo sin mezclarlo con el dominio principal.
           </p>
         </section>
 
+        <!-- COMANDOS ÚTILES -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">⚙️ Comandos útiles</h3>
           <div class="grid gap-4 md:grid-cols-2">
@@ -199,25 +226,30 @@ require_once __DIR__ . '/../layouts/header.php';
               <ul class="space-y-2 text-sm text-gray-200">
                 <li><code>composer install</code> — Instala las dependencias.</li>
                 <li><code>composer serve</code> — Levanta la app en <strong>localhost:8080</strong>.</li>
+                <li><code>php -S localhost:8081 -t public</code> — Microservicio OpenAI en local.</li>
+                <li><code>php -S localhost:8082 -t public</code> — Microservicio RAG en local.</li>
               </ul>
             </div>
             <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
               <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Calidad</p>
               <ul class="space-y-2 text-sm text-gray-200">
                 <li><code>vendor/bin/phpunit</code> — Ejecuta las pruebas automáticas.</li>
+                <li><code>composer test:cov</code> — Genera reporte de cobertura para SonarCloud.</li>
                 <li><code>vendor/bin/phpstan analyse</code> — Analiza la calidad del código.</li>
+                <li>Tasks de VS Code en <code>.vscode/tasks.json</code> para QA completo, Git y servidores en un clic.</li>
               </ul>
             </div>
           </div>
         </section>
 
+        <!-- CIERRE -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🚀 ¿Cómo continuar?</h3>
           <p>
             Explora la carpeta <code>docs/</code> para conocer más sobre la arquitectura, endpoints y roadmap.
             Revisa también los microservicios para entender cómo se integran con el backend principal.
             Todas las vistas comparten la misma cabecera y barra de acciones para que puedas moverte fácil entre álbumes, héroes,
-            cómics, documentación y la futura página oficial.
+            cómics, documentación, paneles de calidad y la sección oficial.
           </p>
         </section>
       </article>
