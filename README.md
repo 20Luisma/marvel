@@ -70,7 +70,7 @@ php bin/migrar-json-a-db.php
 - **rag-service** (`rag-service/`, puerto 8082)  
   Endpoint `POST /rag/heroes`, usa `storage/knowledge/heroes.json` y delega a `openai-service` para la respuesta final.
 - **Heatmap service** (Python/Flask externo)  
-  Recoge clics reales y alimenta `/secret-heatmap`. Documentación en `docs/microservicioheatmap/README.md`.
+  Recoge clics reales y alimenta `/secret-heatmap`. Documentación en `docs/microservicioheatmap/README.md`. Incluye contenedor Docker (build/run) para levantar el servicio en local o VM con `HEATMAP_API_TOKEN`.
 - **WAVE API** (Accesibilidad)  
   `public/api/accessibility-marvel.php` consulta la API de WebAIM con `WAVE_API_KEY`.
 - **ElevenLabs TTS**  
