@@ -130,9 +130,14 @@ require_once __DIR__ . '/../layouts/header.php';
         <!-- HEATMAP -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🌡️ Heatmap de interacción</h3>
-          <p>El tracker global (<code>public/assets/js/heatmap-tracker.js</code>) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic se registre en <code>storage/heatmap</code>.</p>
-          <p>El endpoint <code>/api/heatmap/summary.php</code> reconstruye una matriz NxN y <code>/api/heatmap/pages.php</code> descubre automáticamente las rutas monitoreadas; los logs viejos se limpian con <code>HeatmapLogCleaner</code> sin necesidad de cron y con rotación mensual para no llenar disco.</p>
-          <p>Visita la nueva sección <code>/secret-heatmap</code> en la Secret Room para ver el mapa en canvas, KPIs y dos gráficos Chart.js (zonas Top/Middle/Bottom y distribución vertical) con estilo Marvel, además de una leyenda cromática que explica cada color.</p>
+          <p>El tracker global (<code>public/assets/js/heatmap-tracker.js</code>) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic viaje al microservicio Python.</p>
+          <p>Los endpoints <code>/api/heatmap/click.php</code>, <code>summary.php</code> y <code>pages.php</code> funcionan ahora como proxies autenticados: reenvían POST/GET al microservicio (<code>http://34.74.102.123:8080</code> por defecto) adjuntando el token <code>HEATMAP_API_TOKEN</code> y devuelven el JSON tal cual para que el viewer siga operando con la misma matriz 20×20.</p>
+          <p>Configuración: en la VM Python exporta <code>HEATMAP_API_TOKEN</code> (p. ej. <code>dev-heatmap-token</code> en local) y en Marvel establece <code>HEATMAP_API_BASE_URL</code> + <code>HEATMAP_API_TOKEN</code> en el entorno del servidor.</p>
+          <p>Visita la sección <code>/secret-heatmap</code> en la Secret Room para ver el mapa en canvas, KPIs y dos gráficos Chart.js (zonas Top/Middle/Bottom y distribución vertical) con estilo Marvel, además de una leyenda cromática que explica cada color.</p>
+          <p class="text-sm text-gray-300">
+            Si quieres ver la documentación técnica completa del microservicio Heatmap (Python + Flask + Docker en Google Cloud),
+            está disponible en el repositorio en <code>docs/microservicioheatmap/README.md</code>.
+          </p>
         </section>
 
         <!-- PANELES ADICIONALES -->

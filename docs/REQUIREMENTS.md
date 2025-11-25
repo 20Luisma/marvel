@@ -23,6 +23,7 @@ Está pensado para desarrolladores que clonen el repositorio y quieran **levanta
   - Markdown All in One
   - *opcional:* CodeGPT / Gemini / Alfred para refactors
 - **Configuración lista para usar:** el repo incluye `.vscode/` con tasks y launchers preconfigurados para instalar dependencias y levantar ambos servidores localmente sin pasos extra.
+- **Servicios opcionales:** WAVE API (`WAVE_API_KEY`), PageSpeed Insights, ElevenLabs (`ELEVENLABS_API_KEY`), heatmap (`HEATMAP_API_BASE_URL`, `HEATMAP_API_TOKEN`), GitHub (`GITHUB_API_KEY`), Sentry y SonarCloud.
 
 ---
 

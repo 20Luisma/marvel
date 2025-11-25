@@ -1,68 +1,67 @@
 <?php
 declare(strict_types=1);
 
-if (!isGetRequest()) {
-    respondJson(['status' => 'error', 'message' => 'Solo se permiten GET.'], 405);
+use App\Heatmap\Infrastructure\HeatmapApiClient;
+use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
+
+$rootPath = dirname(__DIR__, 3);
+$autoload = $rootPath . '/vendor/autoload.php';
+if (is_file($autoload)) {
+    require_once $autoload;
+}
+
+$container = require $rootPath . '/src/bootstrap.php';
+$client = resolveHeatmapClient($container ?? null);
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
+    respondJson(['status' => 'error', 'message' => 'Method not allowed'], 405);
 }
 
 if (!acceptsApplicationJson()) {
     respondJson(['status' => 'error', 'message' => 'Se requiere el encabezado Accept: application/json.'], 406);
 }
 
-const GRID_ROWS = 20;
-const GRID_COLS = 20;
-
-$pageFilter = normalizePage(filter_input(INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
-$grid = initializeGrid(GRID_ROWS, GRID_COLS);
-$totalClicks = 0;
-$storagePath = dirname(__DIR__, 2) . '/storage/heatmap';
-
-require_once __DIR__ . '/HeatmapLogCleaner.php';
-$cleaner = new HeatmapLogCleaner($storagePath);
-$cleaner->prepare();
-$logFiles = $cleaner->getLogFiles();
-
-foreach ($logFiles as $logFile) {
-    if (!is_file($logFile)) {
-        continue;
-    }
-
-    $file = new SplFileObject($logFile, 'r');
-    while (!$file->eof()) {
-        $line = trim((string) $file->fgets());
-        if ($line === '') {
-            continue;
-        }
-
-        $event = json_decode($line, true);
-        if (!is_array($event)) {
-            continue;
-        }
-
-        $eventPage = normalizePage($event['page'] ?? '');
-        if ($pageFilter !== '' && $eventPage !== $pageFilter) {
-            continue;
-        }
-
-        $row = mapToCell($event['y'] ?? 0, GRID_ROWS);
-        $col = mapToCell($event['x'] ?? 0, GRID_COLS);
-        $grid[$row][$col]++;
-        $totalClicks++;
-    }
+$query = [];
+$pageFilter = null;
+if (isset($_GET['page']) && trim((string) $_GET['page']) !== '') {
+    $pageFilter = (string) $_GET['page'];
+    $query['page'] = $pageFilter;
 }
 
-respondJson([
-    'status' => 'ok',
-    'rows' => GRID_ROWS,
-    'cols' => GRID_COLS,
-    'page' => $pageFilter !== '' ? $pageFilter : 'all',
-    'totalClicks' => $totalClicks,
-    'grid' => $grid,
-]);
+try {
+    $apiResponse = $client->getSummary($query ?? []);
+    $statusCode = (int) $apiResponse['statusCode'];
+    if ($statusCode < 200 || $statusCode >= 300) {
+        $message = extractErrorMessage($apiResponse['body']);
+        respondJson(['status' => 'error', 'message' => $message], $statusCode > 0 ? $statusCode : 502);
+    }
 
-function isGetRequest(): bool
+    $body = json_decode($apiResponse['body'], true);
+    if (!is_array($body)) {
+        respondJson(['status' => 'error', 'message' => 'Respuesta inválida del microservicio'], 502);
+    }
+
+    $events = extractEvents($body);
+    $summary = buildHeatmapSummary($events, $pageFilter);
+    respondJson($summary, 200);
+} catch (Throwable $exception) {
+    respondJson(['status' => 'error', 'message' => 'Heatmap service unavailable'], 502);
+}
+
+function resolveHeatmapClient(?array $container): HeatmapApiClient
 {
-    return ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET';
+    $instance = $container['services']['heatmapApiClient'] ?? null;
+    if ($instance instanceof HeatmapApiClient) {
+        return $instance;
+    }
+
+    $baseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: 'http://34.74.102.123:8080'));
+    if ($baseUrl === '') {
+        $baseUrl = 'http://34.74.102.123:8080';
+    }
+    $token = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ''));
+
+    return new HttpHeatmapApiClient($baseUrl, $token !== '' ? $token : null);
 }
 
 function acceptsApplicationJson(): bool
@@ -71,38 +70,18 @@ function acceptsApplicationJson(): bool
     return stripos($acceptHeader, 'application/json') !== false;
 }
 
-function initializeGrid(int $rows, int $cols): array
+/**
+ * @param array{statusCode:int,body:string} $apiResponse
+ */
+function relayApiResponse(array $apiResponse): never
 {
-    return array_fill(0, $rows, array_fill(0, $cols, 0));
-}
+    $statusCode = (int) $apiResponse['statusCode'];
+    $body = (string) $apiResponse['body'];
 
-function normalizePage(mixed $value): string
-{
-    $clean = trim((string) $value);
-    return $clean === '' ? '/' : $clean;
-}
-
-function mapToCell(mixed $value, int $segments): int
-{
-    $float = clampFloat((float) $value);
-    $index = (int) floor($float * $segments);
-    if ($index >= $segments) {
-        $index = $segments - 1;
-    }
-
-    return max(0, $index);
-}
-
-function clampFloat(float $value): float
-{
-    if ($value < 0.0) {
-        return 0.0;
-    }
-    if ($value > 0.9999999999) {
-        return 0.9999999999;
-    }
-
-    return $value;
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code($statusCode);
+    echo $body;
+    exit;
 }
 
 function respondJson(array $payload, int $statusCode = 200): never
@@ -111,4 +90,74 @@ function respondJson(array $payload, int $statusCode = 200): never
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+/**
+ * @param array<string, mixed> $body
+ * @return array<int, array<string, mixed>>
+ */
+function extractEvents(array $body): array
+{
+    if (isset($body['events']) && is_array($body['events'])) {
+        return $body['events'];
+    }
+
+    return array_is_list($body) ? $body : [];
+}
+
+/**
+ * @param array<int, array<string, mixed>> $events
+ * @return array<string, mixed>
+ */
+function buildHeatmapSummary(array $events, ?string $pageFilter = null): array
+{
+    $rows = 20;
+    $cols = 20;
+    $grid = array_fill(0, $rows, array_fill(0, $cols, 0));
+    $totalClicks = 0;
+    $pages = [];
+
+    foreach ($events as $event) {
+        if (!is_array($event)) {
+            continue;
+        }
+        $pageUrl = isset($event['page_url']) ? (string) $event['page_url'] : (string) ($event['page'] ?? '');
+        if ($pageFilter !== null && $pageUrl !== $pageFilter) {
+            continue;
+        }
+
+        $pages[$pageUrl] = true;
+
+        $x = (float) ($event['x'] ?? 0);
+        $y = (float) ($event['y'] ?? 0);
+        $normalizedX = min(1, max(0, $x));
+        $normalizedY = min(1, max(0, $y));
+
+        $col = (int) floor($normalizedX * $cols);
+        $row = (int) floor($normalizedY * $rows);
+        $col = max(0, min($cols - 1, $col));
+        $row = max(0, min($rows - 1, $row));
+
+        $grid[$row][$col] += 1;
+        $totalClicks++;
+    }
+
+    return [
+        'status' => 'ok',
+        'rows' => $rows,
+        'cols' => $cols,
+        'grid' => $grid,
+        'totalClicks' => $totalClicks,
+        'pages' => array_keys($pages),
+    ];
+}
+
+function extractErrorMessage(string $body): string
+{
+    $decoded = json_decode($body, true);
+    if (is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])) {
+        return $decoded['message'];
+    }
+
+    return 'Heatmap microservice error';
 }

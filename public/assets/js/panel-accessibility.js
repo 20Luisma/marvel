@@ -34,6 +34,24 @@
       ? '—'
       : Number(value).toFixed(1);
 
+  const ensureLoaderStyles = () => {
+    if (document.getElementById('accessibility-loader-style')) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = 'accessibility-loader-style';
+    style.textContent = `
+      .sonar-inline-loader { display:inline-flex; align-items:center; gap:0.65rem; padding:0.85rem 1rem; border-radius:1rem; border:1px solid #1f2f46; background:#0f172a; color:#e2e8f0; }
+      .sonar-inline-loader__text { font-size:0.95rem; letter-spacing:0.02em; }
+      .perf-loader { display:inline-flex; align-items:center; gap:6px; }
+      .perf-loader span { width:8px; height:8px; border-radius:9999px; background:linear-gradient(120deg, #22d3ee, #7c3aed); opacity:0.3; animation:perf-bounce 1s infinite ease-in-out; }
+      .perf-loader span:nth-child(2) { animation-delay:0.15s; }
+      .perf-loader span:nth-child(3) { animation-delay:0.3s; }
+      @keyframes perf-bounce { 0%, 80%, 100% { opacity:0.3; transform:translateY(0); } 40% { opacity:1; transform:translateY(-6px); } }
+    `;
+    document.head.appendChild(style);
+  };
+
   const renderError = (message) => `
     <div class="sonar-alert sonar-alert--error" role="alert" aria-live="assertive" aria-atomic="true">
       <strong>Error:</strong> ${escapeHtml(message ?? 'La respuesta no pudo ser procesada.')}
@@ -212,9 +230,13 @@
   };
 
   runButton.addEventListener('click', async () => {
+    ensureLoaderStyles();
     startLoading();
-    resultContainer.innerHTML =
-      '<div class="sonar-alert" role="status">Consultando WAVE…</div>';
+    resultContainer.innerHTML = `
+      <div class="sonar-inline-loader" role="status" aria-live="polite" aria-atomic="true">
+        <span class="perf-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="sonar-inline-loader__text">Consultando WAVE…</span>
+      </div>`;
 
     try {
       const response = await fetch(endpoint, {

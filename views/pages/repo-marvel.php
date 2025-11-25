@@ -12,7 +12,7 @@ require_once __DIR__ . '/../layouts/header.php';
 <header class="app-hero app-hero--tech panel-github__hero">
   <div class="app-hero__inner">
     <div class="space-y-3 max-w-3xl">
-      <h1 class="app-hero__title text-4xl sm:text-5xl">Repo Marvel</h1>
+      <h1 class="app-hero__title text-4xl sm:text-5xl">Clean Architecture with Marvel</h1>
       <p class="text-lg text-gray-300 max-w-2xl leading-snug sm:text-xl">
         Explora la estructura del proyecto Clean Marvel Album directamente desde GitHub.
       </p>

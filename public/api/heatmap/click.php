@@ -1,8 +1,20 @@
 <?php
 declare(strict_types=1);
 
-if (!isPostRequest()) {
-    respondJson(['status' => 'error', 'message' => 'Solo se permiten POST.'], 405);
+use App\Heatmap\Infrastructure\HeatmapApiClient;
+use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
+
+$rootPath = dirname(__DIR__, 3);
+$autoload = $rootPath . '/vendor/autoload.php';
+if (is_file($autoload)) {
+    require_once $autoload;
+}
+
+$container = require $rootPath . '/src/bootstrap.php';
+$client = resolveHeatmapClient($container ?? null);
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    respondJson(['status' => 'error', 'message' => 'Method not allowed'], 405);
 }
 
 if (!acceptsApplicationJson()) {
@@ -11,53 +23,37 @@ if (!acceptsApplicationJson()) {
 
 $payload = json_decode(file_get_contents('php://input') ?: '', true);
 if (!is_array($payload)) {
-    respondJson(['status' => 'error', 'message' => 'JSON inválido o body vacío.'], 400);
+    respondJson(['status' => 'error', 'message' => 'El body debe ser JSON.'], 400);
 }
-
-$page = normalizePage($payload['page'] ?? '');
-$x = normalizeCoordinate($payload['x'] ?? null);
-$y = normalizeCoordinate($payload['y'] ?? null);
-$viewportW = normalizePositiveNumber($payload['viewportW'] ?? null);
-$viewportH = normalizePositiveNumber($payload['viewportH'] ?? null);
-$timestamp = normalizeTimestamp($payload['timestamp'] ?? null);
-
-$event = [
-    'page' => $page,
-    'x' => $x,
-    'y' => $y,
-    'viewportW' => $viewportW,
-    'viewportH' => $viewportH,
-    'timestamp' => $timestamp,
-];
-
-require_once __DIR__ . '/HeatmapLogCleaner.php';
-
-$storagePath = dirname(__DIR__, 2) . '/storage/heatmap';
-try {
-    $cleaner = new HeatmapLogCleaner($storagePath);
-    $cleaner->prepare();
-} catch (RuntimeException $exception) {
-    respondJson(['status' => 'error', 'message' => $exception->getMessage()], 500);
-}
-
-$logFile = $cleaner->monthlyLogPath(time());
-$pagesFile = $storagePath . '/pages.json';
-
-file_put_contents($logFile, json_encode($event, JSON_UNESCAPED_UNICODE) . PHP_EOL, FILE_APPEND | LOCK_EX);
-updatePagesList($pagesFile, $page);
 
 try {
-    $cleaner->maybeCleanup(time());
-} catch (RuntimeException $exception) {
-    error_log('Heatmap cleanup failed: ' . $exception->getMessage());
+    $apiResponse = $client->sendClick($payload);
+    $statusCode = (int) $apiResponse['statusCode'];
+
+    if ($statusCode >= 200 && $statusCode < 300) {
+        respondJson(['status' => 'ok'], 200);
+    }
+
+    $message = extractErrorMessage($apiResponse['body']);
+    respondJson(['status' => 'error', 'message' => $message], $statusCode > 0 ? $statusCode : 502);
+} catch (Throwable $exception) {
+    respondJson(['status' => 'error', 'message' => 'Heatmap service unavailable'], 502);
 }
-updatePagesList($pagesFile, $page);
 
-respondJson(['status' => 'ok']);
-
-function isPostRequest(): bool
+function resolveHeatmapClient(?array $container): HeatmapApiClient
 {
-    return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+    $instance = $container['services']['heatmapApiClient'] ?? null;
+    if ($instance instanceof HeatmapApiClient) {
+        return $instance;
+    }
+
+    $baseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: 'http://34.74.102.123:8080'));
+    if ($baseUrl === '') {
+        $baseUrl = 'http://34.74.102.123:8080';
+    }
+    $token = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ''));
+
+    return new HttpHeatmapApiClient($baseUrl, $token !== '' ? $token : null);
 }
 
 function acceptsApplicationJson(): bool
@@ -66,66 +62,18 @@ function acceptsApplicationJson(): bool
     return stripos($acceptHeader, 'application/json') !== false;
 }
 
-function normalizePage(string $page): string
+/**
+ * @param array{statusCode:int,body:string} $apiResponse
+ */
+function relayApiResponse(array $apiResponse): never
 {
-    $clean = trim($page);
-    return $clean === '' ? '/' : $clean;
-}
+    $statusCode = (int) $apiResponse['statusCode'];
+    $body = (string) $apiResponse['body'];
 
-function normalizeCoordinate(mixed $value): float
-{
-    if (!is_numeric($value)) {
-        respondJson(['status' => 'error', 'message' => 'Coordenadas inválidas.'], 400);
-    }
-
-    $float = (float) $value;
-    return max(0.0, min(1.0, $float));
-}
-
-function normalizePositiveNumber(mixed $value): float
-{
-    if (!is_numeric($value)) {
-        respondJson(['status' => 'error', 'message' => 'Tamaño de viewport inválido.'], 400);
-    }
-
-    $float = (float) $value;
-    return max(1.0, $float);
-}
-
-function normalizeTimestamp(mixed $value): int
-{
-    if ($value === null) {
-        return time();
-    }
-
-    if (is_numeric($value)) {
-        return (int) $value;
-    }
-
-    if (is_string($value)) {
-        $time = strtotime($value);
-        if ($time !== false) {
-            return $time;
-        }
-    }
-
-    return time();
-}
-
-function updatePagesList(string $pagesFile, string $page): void
-{
-    $pages = [];
-    if (is_file($pagesFile)) {
-        $json = json_decode(file_get_contents($pagesFile) ?: '[]', true);
-        if (is_array($json)) {
-            $pages = $json;
-        }
-    }
-
-    if (!in_array($page, $pages, true)) {
-        $pages[] = $page;
-        file_put_contents($pagesFile, json_encode(array_values($pages), JSON_UNESCAPED_UNICODE), LOCK_EX);
-    }
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code($statusCode);
+    echo $body;
+    exit;
 }
 
 function respondJson(array $payload, int $statusCode = 200): never
@@ -134,4 +82,14 @@ function respondJson(array $payload, int $statusCode = 200): never
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function extractErrorMessage(string $body): string
+{
+    $decoded = json_decode($body, true);
+    if (is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])) {
+        return $decoded['message'];
+    }
+
+    return 'Heatmap microservice error';
 }

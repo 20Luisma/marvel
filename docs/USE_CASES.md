@@ -8,3 +8,9 @@
 | Eliminar álbum | Elimina un álbum y sus héroes | `albumId` | Mensaje de éxito | `AlbumDeletedEvent` |
 | Crear héroe | Agrega héroe a un álbum | `albumId`, `name`, `imageUrl` | JSON con héroe | `HeroCreatedEvent` |
 | Eliminar héroe | Elimina héroe específico | `heroId` | Mensaje de éxito | `HeroDeletedEvent` |
+| Generar cómic IA | Genera historia Marvel con héroes seleccionados (OpenAI) | Héroes + prompt opcional | Texto del cómic | — (notifica actividad) |
+| Comparar héroes RAG | Compara dos héroes usando contexto (`rag-service`) | `heroA`, `heroB` | Texto comparativo + contexto | — (notifica actividad) |
+| Narrar texto (TTS) | Devuelve audio con voz ElevenLabs | `text`, `voiceId?` | Stream de audio | — |
+| Consultar accesibilidad | Ejecuta WAVE sobre páginas clave | URLs predefinidas | Resumen WCAG (errores/contraste/alertas) | — |
+| Métricas performance | Lanza PageSpeed Insights | URL objetivo | JSON con Core Web Vitals | — |
+| Actividad GitHub | Lista PRs recientes del repo configurado | Fechas opcionales | Lista de PRs con meta | — |

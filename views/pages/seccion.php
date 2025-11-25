@@ -31,7 +31,7 @@ $sections = [
             'title' => 'GitHub PRs',
             'tag' => 'Repositorio',
             'description' => 'Analiza la actividad de pull requests, revisiones y comentarios sobre el repositorio Clean Marvel.',
-            'href' => '/panel-github',
+            'href' => '/panel-github?lazy=1',
             'cta' => 'Revisar PRs',
         ],
         [

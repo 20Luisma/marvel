@@ -90,7 +90,7 @@ function fetchPerformanceReports(array $urls, string $apiKey): array
                 rawurlencode($apiKey)
             ),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 20,
+            CURLOPT_TIMEOUT => 30,
             CURLOPT_CONNECTTIMEOUT => 10,
         ]);
         curl_multi_add_handle($multiHandle, $ch);

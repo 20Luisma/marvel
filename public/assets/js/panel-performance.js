@@ -20,9 +20,45 @@
       .replace(/'/g, '&#39;');
   };
 
-  const setState = (message, isError = false) => {
+  const ensureLoaderStyles = () => {
+    if (document.getElementById('performance-loader-style')) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = 'performance-loader-style';
+    style.textContent = `
+      .perf-loader {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 8px;
+      }
+      .perf-loader span {
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: linear-gradient(120deg, #22d3ee, #7c3aed);
+        opacity: 0.3;
+        animation: perf-bounce 1s infinite ease-in-out;
+      }
+      .perf-loader span:nth-child(2) { animation-delay: 0.15s; }
+      .perf-loader span:nth-child(3) { animation-delay: 0.3s; }
+      @keyframes perf-bounce {
+        0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+        40% { opacity: 1; transform: translateY(-6px); }
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  const setState = (message, isError = false, withLoader = false) => {
     stateContainer.classList.toggle('sonar-alert--error', isError);
-    stateContainer.textContent = message;
+    if (withLoader) {
+      ensureLoaderStyles();
+      stateContainer.innerHTML = `<span class="perf-loader" aria-hidden="true"><span></span><span></span><span></span></span><span>${escapeHtml(message)}</span>`;
+    } else {
+      stateContainer.textContent = message;
+    }
     stateContainer.style.display = message ? 'block' : 'none';
   };
 
@@ -185,7 +221,7 @@
       refreshButton.disabled = isLoading;
       refreshButton.textContent = isLoading ? 'Analizando…' : 'Actualizar análisis';
     }
-    setState(isLoading ? 'Cargando rendimiento...' : '');
+    setState(isLoading ? 'Cargando rendimiento...' : '', false, isLoading);
   };
 
   const loadData = async () => {
