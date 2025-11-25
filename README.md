@@ -6,51 +6,34 @@
 ![Pa11y](https://img.shields.io/badge/Pa11y-enabled-brightgreen)
 ![Playwright E2E](https://img.shields.io/badge/Playwright%20E2E-passing-brightgreen)
 
-**Clean Marvel Album** es una implementación educativa de **Arquitectura Limpia** en **PHP 8.2+** que orquesta:
+**Clean Marvel Album** es una demo/producto educativo en **PHP 8.2+** que aplica **Arquitectura Limpia** para gestionar álbumes y héroes Marvel. Orquesta un backend modular y varios paneles de observabilidad conectados a microservicios de IA y utilidades externas.
 
-- Un backend modular (álbumes, héroes, notificaciones, actividad, AI…)
-- Dos microservicios desacoplados de IA (`openai-service`, `rag-service`)
-- Paneles internos de observabilidad (SonarCloud, Sentry, accesibilidad, performance, GitHub, repo, heatmap, etc.)
-- Un pipeline completo de **CI/CD** con tests, calidad y **deploy automático por FTP** a producción.
-
-> ✅ **Accesibilidad WCAG 2.1 AA**: Pa11y reporta `0 issues` en todas las páginas públicas analizadas.
+> ✅ **Accesibilidad WCAG 2.1 AA**: Pa11y reporta `0 issues` en todas las páginas públicas.
 
 ---
 
 ## 🎯 Objetivo
 
-- Mantener el **dominio** completamente limpio e independiente de framework, HTTP o infraestructura.
-- Integrar IA mediante microservicios PHP desacoplados y fácilmente reemplazables.
-- Servir como blueprint realista de proyecto PHP con arquitectura limpia, testing y despliegue automatizado.
+- Mantener el **dominio** limpio e independiente de frameworks.
+- Integrar IA mediante microservicios externos fáciles de sustituir.
+- Servir como blueprint de proyecto escalable con tests, calidad y despliegue profesional.
 
 ---
 
-## 🧠 Arquitectura general
+## 🧠 Arquitectura General
 
-| Capa            | Ubicación principal                                                                 | Responsabilidad |
-|-----------------|--------------------------------------------------------------------------------------|-----------------|
-| **Presentation**| `public/`, `src/Controllers`, `views/`, `Src\Shared\Http\Router`                    | Entradas HTTP, routing, vistas, respuestas JSON. |
-| **Application** | `src/*/Application/UseCase`, `src/AI`, `src/Dev`                                   | Casos de uso, orquestación, servicios de aplicación. |
-| **Domain**      | `src/*/Domain` (entidades, repos, eventos, VOs)                                     | Reglas de negocio puras, sin dependencias externas. |
-| **Infrastructure** | `src/*/Infrastructure`, `storage/*`, `App\Shared\Infrastructure\Bus`            | Persistencia JSON/DB, EventBus, adaptadores externos. |
+| Capa | Ubicación principal | Responsabilidad |
+| --- | --- | --- |
+| **Presentación** | `public/`, `src/Controllers`, `views/`, `Src\Shared\Http\Router` | Front Controller + Router HTTP; render de vistas y respuestas JSON. |
+| **Aplicación** | `src/*/Application`, `src/AI`, `src/Dev` | Casos de uso, orquestadores (comic generator, comparador RAG, seeders). |
+| **Dominio** | `src/*/Domain` | Entidades, Value Objects, eventos y contratos de repositorios. |
+| **Infraestructura** | `src/*/Infrastructure`, `storage/`, `Src\Shared\Infrastructure\Bus` | Repos JSON/DB, EventBus en memoria, adaptadores externos (notificaciones, gateways IA). |
 
-```
-[Browser / CLI]
-      ↓
-Presentation
-      ↓
-Application
-      ↓
-Domain
-      ↓
-Infrastructure
-      ↓
-Microservicios y APIs externas (OpenAI, RAG, GitHub, Sentry, SonarCloud, WAVE, PSI…)
-```
+Dependencias: Presentación → Aplicación → Dominio, e Infraestructura implementa contratos de Dominio. `App\Config\ServiceUrlProvider` resuelve los endpoints según entorno (`local` vs `hosting`).
 
 ---
 
-## 🗂️ Estructura del proyecto
+## 🗂️ Estructura del Proyecto
 
 ```
 clean-marvel/
@@ -58,24 +41,21 @@ clean-marvel/
 ├── src/
 ├── openai-service/
 ├── rag-service/
-├── storage/
-├── docs/
+├── docs/ (API, arquitectura, guías, microservicios, UML)
 ├── tests/
-├── .vscode/tasks.json
-├── .github/workflows/
 ├── docker-compose.yml
 └── .env
 ```
 
 ---
 
-## 💾 Persistencia: JSON en local y MySQL en hosting
+## 💾 Persistencia: JSON en Local, MySQL en Hosting
 
-- **Local (`APP_ENV=local`)** → repositorios JSON.
-- **Hosting (`APP_ENV=hosting`)** → repositorios PDO (MySQL).  
-- Si MySQL falla → **fallback automático** a JSON.
+- **Local (`APP_ENV=local`)** → JSON  
+- **Hosting (`APP_ENV=hosting`)** → PDO MySQL  
+- Si MySQL falla → fallback automático a JSON
 
-### Migración JSON → DB
+Migración manual:
 
 ```bash
 php bin/migrar-json-a-db.php
@@ -83,180 +63,64 @@ php bin/migrar-json-a-db.php
 
 ---
 
-## 🧩 Microservicios de IA
+## 🧩 Microservicios y servicios externos
 
-### 🤖 `openai-service` (8081)
-- Endpoint: `POST /v1/chat`.
-- Usa `OPENAI_API_KEY` + `OPENAI_MODEL`.
-- Fallback si OpenAI falla.
-
-### 🧠 `rag-service` (8082)
-- Endpoint: `POST /rag/heroes`.
-- Usa conocimiento local (`heroes.json`).
-- Llama al `openai-service` internamente.
-
----
-
-## 📊 Paneles de observabilidad
-
-### 🔭 SonarCloud
-- API interna: `/api/sonar-metrics.php`
-- Métricas: coverage, bugs, smells, duplicación…
-
-### 🧯 Sentry
-- Captura de errores y panel de eventos recientes.
-
-### 🐙 Panel GitHub
-- Listado de PRs, commits, reviewers y actividad.
-
-### 📁 Repo Marvel
-- Explorador de archivos del repo GitHub desde la web.
-
-### 📈 Performance Marvel (PageSpeed Insights)
-- Scores LCP / FCP / CLS / TBT por página.
-
-### ♿ Accesibilidad (WAVE + Pa11y)
-- WAVE analiza errores por página.
-- Pa11y ejecuta WCAG2AA automáticamente en CI.
-
-### 🌡️ Heatmap de clics
-- Tracker avanzado: X normalizado + Y respecto a página completa (scroll incluido).
-- Logs mensuales.
-- Panel con canvas + KPIs + Chart.js.
-
-### 🔊 ElevenLabs (Narración)
-- Servicio propio `/api/tts-elevenlabs.php`.
+- **openai-service** (`openai-service/`, puerto 8081)  
+  Endpoint `POST /v1/chat` con cURL a OpenAI. Configurable con `OPENAI_API_KEY` y `OPENAI_MODEL`. Tiene fallback JSON sin credencial.
+- **rag-service** (`rag-service/`, puerto 8082)  
+  Endpoint `POST /rag/heroes`, usa `storage/knowledge/heroes.json` y delega a `openai-service` para la respuesta final.
+- **Heatmap service** (Python/Flask externo)  
+  Recoge clics reales y alimenta `/secret-heatmap`. Documentación en `docs/microservicioheatmap/README.md`.
+- **WAVE API** (Accesibilidad)  
+  `public/api/accessibility-marvel.php` consulta la API de WebAIM con `WAVE_API_KEY`.
+- **ElevenLabs TTS**  
+  `public/api/tts-elevenlabs.php` añade narración a cómics y comparaciones RAG usando `ELEVENLABS_API_KEY`.
 
 ---
 
-## ⚙️ CI/CD: GitHub Actions + SonarCloud + FTP Deploy
+## ⚙️ CI/CD – GitHub Actions
 
-Pipeline completo ubicado en `.github/workflows/`.
-
-### 1️⃣ `ci.yml` (integración continua)
-
-Se ejecuta en cada push/PR.
-
-Incluye:
-
-#### ✔ build
-- Composer install  
-- PHPUnit  
-- PHPStan  
-- Composer validate  
-
-#### ✔ tests  
-Placeholder para ejecución extendida.
-
-#### ✔ sonarcloud  
-- Ejecuta PHPUnit con cobertura  
-- Sube resultados a SonarCloud  
-
-#### ✔ pa11y  
-- Levanta servidor local  
-- Ejecuta Pa11y en modo **WCAG2AA**  
-- Sube artefactos al CI  
-
-#### ✔ lighthouse  
-- Ejecuta auditoría completa de performance, accesibilidad, best practices y SEO  
-
-#### ✔ playwright  
-- Tests E2E headless  
-- Artefactos: trace, vídeo, screenshots  
-
-> Si cualquiera falla → el pipeline se detiene.
+Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud), `deploy-ftp.yml` (deploy automático si todo pasa), `rollback-ftp.yml` (rollback).
 
 ---
 
-### 2️⃣ `deploy-ftp.yml` (despliegue automático)
+## 🚀 Puesta en marcha (local)
 
-Cuando `ci.yml` está **todo en verde**:
+1. **Instala dependencias**  
+   `composer install` en la raíz. Si trabajas en microservicios, repite dentro de `openai-service/` y `rag-service/`.
+2. **Configura `.env`**  
+   Ajusta `APP_ENV` (`local` usa JSON, `hosting` usa MySQL con fallback a JSON), URLs de servicios (`OPENAI_SERVICE_URL`, `RAG_SERVICE_URL`, `HEATMAP_API_BASE_URL`), tokens (`GITHUB_API_KEY`, `ELEVENLABS_API_KEY`, `WAVE_API_KEY`, PSI, Sentry, SonarCloud).
+3. **Arranca la app principal**  
+   `composer serve` o `php -S localhost:8080 -t public`.
+4. **Arranca microservicios IA**  
+   - `php -S localhost:8081 -t public` (dentro de `openai-service/`)  
+   - `php -S localhost:8082 -t public` (dentro de `rag-service/`)
+5. **Verifica paneles**  
+   Navega a `/` y usa las acciones superiores para cómics, RAG, GitHub PRs, SonarCloud, Sentry, accesibilidad, performance, repo y heatmap.
 
-- Se activa `deploy-ftp.yml` (manual o automático).
-- Usa:
-  - `FTP_HOST`
-  - `FTP_USERNAME`
-  - `FTP_PASSWORD`
-  - `FTP_REMOTE_DIR`
+## 🧪 Calidad y pruebas
 
-Sube únicamente los cambios necesarios a Hostinger.
+- Suite completa: `vendor/bin/phpunit --colors=always`
+- Cobertura: `composer test:cov`
+- Análisis estático: `vendor/bin/phpstan analyse --memory-limit=512M`
+- Validación Composer: `composer validate`
 
-### 3️⃣ `rollback-ftp.yml`
-Permite volver a la versión previa en segundos.
+## 📚 Documentación ampliada
 
----
-
-## 🧪 Tests y calidad
-
-```bash
-vendor/bin/phpunit --colors=always
-vendor/bin/phpstan analyse
-composer test:cov
-```
-
-VS Code incluye tasks para QA completo.
-
----
-
-## 🚀 Ejecución
-
-### Localhost
-
-```bash
-php -S localhost:8080 -t public
-cd openai-service && php -S localhost:8081 -t public
-cd rag-service   && php -S localhost:8082 -t public
-```
-
-### Hosting
-
-- App: `https://iamasterbigschool.contenido.creawebes.com`
-- OpenAI-service: `https://openai-service.contenido.creawebes.com/v1/chat`
-- RAG-service: `https://rag-service.contenido.creawebes.com/rag/heroes`
-
----
-
-## 🔐 Variables de entorno
-
-`.env` raíz:
-
-| Variable | Uso |
-|---------|-----|
-| `APP_ENV` | auto/local/hosting |
-| `APP_URL` | origen para CORS |
-| `OPENAI_SERVICE_URL` | microservicio IA |
-| `ELEVENLABS_*` | TTS |
-| `WAVE_API_KEY` | accesibilidad |
-| `PAGESPEED_API_KEY` | performance |
-| `TTS_INTERNAL_TOKEN` | seguridad |
-| `MARVEL_UPDATE_TOKEN` | webhook n8n |
-
-Medidas extra:
-- CORS estricto  
-- Bloqueo de `.env`/`.sql` vía `.htaccess`  
-- Validación MIME real en uploads  
-- Cabeceras de seguridad aplicadas  
-
----
-
-## 📚 Documentación
-
-En `/docs`:
-
-- `ARCHITECTURE.md`
-- `REQUIREMENTS.md`
-- `API_REFERENCE.md`
-- `USE_CASES.md`
-- `ROADMAP.md`
-- `CHANGELOG.md`
-- `TASKS_AUTOMATION.md`
+- `docs/ARCHITECTURE.md`: capas, flujos y microservicios.
+- `docs/API_REFERENCE.md`: endpoints de la app y microservicios.
+- `docs/README.md`: índice de documentación.
+- `docs/guides/`: arranque rápido, autenticación, testing.
+- `docs/microservicioheatmap/README.md`: integración del heatmap.
+- `AGENTS.md` / `docs/agent.md`: roles y pautas para agentes de IA.
 - UML completo
+- Microservicio Heatmap → `/docs/microservicioheatmap/README.md`
 
 ---
 
 ## 👤 Créditos
 
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  
-Con soporte técnico de **Alfred**, asistente de IA 🤖
+Asistente técnico: **Alfred**, IA desarrollada con ❤️
 
 > *“Diseñando tecnología limpia, modular y con propósito.”*

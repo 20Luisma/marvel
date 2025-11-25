@@ -36,6 +36,12 @@
     loader.style.display = visible ? 'block' : 'none';
   };
 
+  const defaultLoaderText = loader?.textContent || 'Sincronizando métricas…';
+  const setLoaderMessage = (message) => {
+    if (!loader) return;
+    loader.textContent = message;
+  };
+
   const setWarning = (element, message) => {
     if (!element) return;
     if (message) {
@@ -169,12 +175,13 @@
     renderIssues(issues);
   };
 
-  const retryDelay = 500;
-  const maxRetries = 3;
+  const retryPlanMs = [600, 1200, 2000, 3200];
 
-  const fetchWithRetries = async (url, options = {}, attempts = maxRetries, delayMs = retryDelay) => {
+  const fetchWithRetries = async (url, options = {}, delays = retryPlanMs, onRetry = null) => {
     let lastError = null;
-    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const totalAttempts = delays.length + 1;
+
+    for (let attempt = 1; attempt <= totalAttempts; attempt += 1) {
       try {
         const response = await fetch(url, options);
         if (response.ok) {
@@ -187,8 +194,12 @@
         lastError = error;
       }
 
-      if (attempt < attempts) {
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      if (attempt < totalAttempts) {
+        if (typeof onRetry === 'function') {
+          onRetry(attempt + 1, totalAttempts);
+        }
+        const delay = delays[attempt - 1] ?? 500;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -197,11 +208,17 @@
 
   const fetchSentryMetrics = async () => {
     setLoader(true);
+    setLoaderMessage(defaultLoaderText);
     setWarning(alertBox, '');
     setWarning(inlineWarning, '');
 
     try {
-      const response = await fetchWithRetries('/api/sentry-metrics.php', { cache: 'no-store' }, maxRetries, retryDelay);
+      const response = await fetchWithRetries(
+        '/api/sentry-metrics.php',
+        { cache: 'no-store' },
+        retryPlanMs,
+        (nextAttempt, total) => setLoaderMessage(`Reintentando conexión (${nextAttempt}/${total})…`)
+      );
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -217,6 +234,7 @@
       console.error('Sentry fetch failed after retries', error);
     } finally {
       setLoader(false);
+      setLoaderMessage(defaultLoaderText);
     }
   };
 

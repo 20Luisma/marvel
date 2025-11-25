@@ -5,6 +5,7 @@ declare(strict_types=1);
 $pageTitle = 'Clean Marvel Album — Accesibilidad';
 $activeTopAction = 'accessibility';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-accessibility-page';
+$additionalStyles = ['/assets/css/panel-accessibility.css'];
 
 require_once __DIR__ . '/../layouts/header.php';
 ?>

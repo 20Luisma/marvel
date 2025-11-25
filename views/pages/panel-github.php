@@ -21,22 +21,22 @@ require_once $root . '/app/Services/GithubClient.php';
  */
 function normalizeDateParamView(string $param, string $default, ?array &$errorRef): string
 {
-    $raw = $_GET[$param] ?? null;
-    if ($raw === null || trim((string) $raw) === '') {
-        return $default;
-    }
+  $raw = $_GET[$param] ?? null;
+  if ($raw === null || trim((string) $raw) === '') {
+    return $default;
+  }
 
-    $normalized = normalizeDateView((string) $raw);
-    if ($normalized === null) {
-        $errorRef = [
-            'error' => "Fecha '{$param}' inválida. Usa YYYY-MM-DD o DD/MM/AAAA.",
-            'status' => 400,
-            'detail' => 'Formato de fecha inválido en el panel.',
-        ];
-        return $default;
-    }
+  $normalized = normalizeDateView((string) $raw);
+  if ($normalized === null) {
+    $errorRef = [
+      'error' => "Fecha '{$param}' inválida. Usa YYYY-MM-DD o DD/MM/AAAA.",
+      'status' => 400,
+      'detail' => 'Formato de fecha inválido en el panel.',
+    ];
+    return $default;
+  }
 
-    return $normalized;
+  return $normalized;
 }
 
 /**
@@ -44,34 +44,41 @@ function normalizeDateParamView(string $param, string $default, ?array &$errorRe
  */
 function normalizeDateView(string $value): ?string
 {
-    $value = trim($value);
-    if ($value === '') {
-        return null;
-    }
-
-    $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
-    foreach ($formats as $format) {
-        $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
-        if ($dt instanceof DateTimeImmutable) {
-            return $dt->format('Y-m-d');
-        }
-    }
-
-    $timestamp = strtotime($value);
-    if ($timestamp !== false) {
-        return gmdate('Y-m-d', $timestamp);
-    }
-
+  $value = trim($value);
+  if ($value === '') {
     return null;
+  }
+
+  $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
+  foreach ($formats as $format) {
+    $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
+    if ($dt instanceof DateTimeImmutable) {
+      return $dt->format('Y-m-d');
+    }
+  }
+
+  $timestamp = strtotime($value);
+  if ($timestamp !== false) {
+    return gmdate('Y-m-d', $timestamp);
+  }
+
+  return null;
 }
+
+$lazyMode = isset($_GET['lazy']) && $_GET['lazy'] === '1';
 
 $dateError = null;
 $from = normalizeDateParamView('from', date('Y-m-d', strtotime('-14 days')), $dateError);
 $to   = normalizeDateParamView('to', date('Y-m-d'), $dateError);
-$client = new \App\Services\GithubClient($root);
-$data = $dateError !== null
+
+if ($lazyMode) {
+  $data = ['lazy' => true];
+} else {
+  $client = new \App\Services\GithubClient($root);
+  $data = $dateError !== null
     ? $dateError
     : $client->fetchActivity($from, $to);
+}
 
 /**
  * @param array<string, mixed>|array<int, mixed>|null $payload
@@ -79,27 +86,35 @@ $data = $dateError !== null
  */
 function extract_activity_entries($payload): array
 {
-    if (!is_array($payload)) {
-        return [];
-    }
-
-    if (isset($payload['error'])) {
-        return [];
-    }
-
-    if (isset($payload['data']) && is_array($payload['data'])) {
-        return $payload['data'];
-    }
-
-    if (array_is_list($payload)) {
-        return $payload;
-    }
-
+  if (!is_array($payload)) {
     return [];
+  }
+
+  if (isset($payload['error'])) {
+    return [];
+  }
+
+  if (isset($payload['data']) && is_array($payload['data'])) {
+    return $payload['data'];
+  }
+
+  if (array_is_list($payload)) {
+    return $payload;
+  }
+
+  return [];
 }
 
-$blocks = extract_activity_entries($data);
-$hasError = !is_array($data) || isset($data['error']);
+$blocks = [];
+$hasError = false;
+if (is_array($data) && ($data['lazy'] ?? false) === true) {
+  $lazyMode = true;
+  $blocks = [];
+  $hasError = false;
+} else {
+  $blocks = extract_activity_entries($data);
+  $hasError = !is_array($data) || isset($data['error']);
+}
 $repoOwner = \App\Services\GithubClient::OWNER;
 $repoName = \App\Services\GithubClient::REPO;
 
@@ -129,25 +144,25 @@ require_once __DIR__ . '/../layouts/header.php';
   <div class="panel-github__wrap">
     <section class="panel-github__card section-lined space-y-4 tech-panel">
       <header class="space-y-1">
-        <p class="panel-github__tag">GitHub Activity</p>
         <h2>Reporte de Pull Requests</h2>
         <p class="text-slate-300 text-base">
           Consulta PRs abiertos, mergeados o cerrados con estadísticas de commits, reviews y reviewers.
         </p>
-        <p class="text-sm text-slate-400">Rango actual: <?= htmlspecialchars($from) ?> → <?= htmlspecialchars($to) ?></p>
       </header>
 
-      <form class="panel-github__filters" method="get">
+      <form class="panel-github__filters" method="get" action="/panel-github">
         <label>Desde
           <input type="date" name="from" value="<?= htmlspecialchars($from) ?>">
         </label>
         <label>Hasta
           <input type="date" name="to" value="<?= htmlspecialchars($to) ?>">
         </label>
-        <button class="btn-primary" type="submit">Actualizar</button>
+        <button class="btn-primary" type="submit">Ver PRs</button>
       </form>
 
-      <?php if ($hasError): ?>
+      <?php if ($lazyMode): ?>
+        <?php // Sin placeholder inicial en modo lazy ?>
+      <?php elseif ($hasError): ?>
         <div class="panel-github__message panel-github__message--error" role="alert" aria-live="assertive" aria-atomic="true">
           <strong>Sin datos del API.</strong>
           <p><?= htmlspecialchars($data['error'] ?? 'Error desconocido') ?></p>
@@ -173,32 +188,32 @@ require_once __DIR__ . '/../layouts/header.php';
             <?php
             $details = $entry['details'] ?? [];
             if (!is_array($details)) {
-                $details = [];
+              $details = [];
             }
 
             $metaText = '';
             if (!empty($entry['meta'])) {
-                $metaText = (string) $entry['meta'];
+              $metaText = (string) $entry['meta'];
             } else {
-                $metaParts = [];
-                if (isset($details['commit_count'])) {
-                    $metaParts[] = 'Commits: ' . (string) $details['commit_count'];
-                }
-                if (isset($details['review_count'])) {
-                    $metaParts[] = 'Reviews: ' . (string) $details['review_count'];
-                }
-                if (!empty($details['reviewers']) && is_array($details['reviewers'])) {
-                    $metaParts[] = 'Reviewers: ' . implode(', ', $details['reviewers']);
-                }
-                $metaText = implode(' · ', array_filter($metaParts));
+              $metaParts = [];
+              if (isset($details['commit_count'])) {
+                $metaParts[] = 'Commits: ' . (string) $details['commit_count'];
+              }
+              if (isset($details['review_count'])) {
+                $metaParts[] = 'Reviews: ' . (string) $details['review_count'];
+              }
+              if (!empty($details['reviewers']) && is_array($details['reviewers'])) {
+                $metaParts[] = 'Reviewers: ' . implode(', ', $details['reviewers']);
+              }
+              $metaText = implode(' · ', array_filter($metaParts));
             }
 
             $dateLine = 'Creado: ' . htmlspecialchars((string) ($details['created_at'] ?? 'N/D'));
             if (!empty($details['updated_at'])) {
-                $dateLine .= ' · Actualizado: ' . htmlspecialchars((string) $details['updated_at']);
+              $dateLine .= ' · Actualizado: ' . htmlspecialchars((string) $details['updated_at']);
             }
             if (!empty($details['merged_at'])) {
-                $dateLine .= ' · Mergeado: ' . htmlspecialchars((string) $details['merged_at']);
+              $dateLine .= ' · Mergeado: ' . htmlspecialchars((string) $details['merged_at']);
             }
             ?>
             <article class="panel-github__pr">
@@ -235,10 +250,82 @@ require_once __DIR__ . '/../layouts/header.php';
           Asegúrate de que el token personal tenga permisos de lectura sobre el repositorio.
         </p>
       <?php endif; ?>
+
+      <div id="panel-github-loader" class="panel-github__loader hidden" role="status" aria-live="polite" aria-atomic="true">
+        <span class="perf-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="panel-github__loader-text">Consultando GitHub…</span>
+      </div>
     </section>
   </div>
 </main>
 
-<?php
-$scripts = ['/assets/js/panel-github.js'];
-require_once __DIR__ . '/../layouts/footer.php';
+<!-- 🔥 JS INLINE SOLO PARA ESTE PANEL -->
+<script>
+  // Helpers
+  const enableGithubButton = (button) => {
+    if (!button) return;
+    button.disabled = false;
+    button.classList.remove('is-disabled');
+    const fallbackLabel = button.dataset.originalLabel || 'Ver PRs';
+    button.textContent = fallbackLabel;
+  };
+
+  const disableGithubButton = (button) => {
+    if (!button) return;
+    if (!button.dataset.originalLabel) {
+      button.dataset.originalLabel = (button.textContent || 'Ver PRs').trim();
+    }
+    button.disabled = true;
+    button.classList.add('is-disabled');
+    button.textContent = 'Cargando…';
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔥 JS inline del panel GitHub cargado');
+
+    const filterForm = document.querySelector('.panel-github__filters');
+    if (!filterForm) {
+      console.warn('No se encontró .panel-github__filters');
+      return;
+    }
+
+    const submitButton = filterForm.querySelector('button[type="submit"]');
+    const dateInputs = filterForm.querySelectorAll('input[type="date"]');
+    const loader = document.getElementById('panel-github-loader');
+    const loaderText = loader ? loader.querySelector('.panel-github__loader-text') : null;
+
+    filterForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      disableGithubButton(submitButton);
+
+      if (loader) {
+        if (loaderText) {
+          loaderText.textContent = 'Consultando GitHub…';
+        }
+        loader.classList.remove('hidden');
+        loader.style.display = 'flex';
+        loader.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end'
+        });
+      }
+
+      window.requestAnimationFrame(() => {
+        setTimeout(() => {
+          filterForm.submit();
+        }, 80);
+      });
+    });
+
+    dateInputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        if (submitButton && submitButton.disabled) {
+          enableGithubButton(submitButton);
+        }
+      });
+    });
+  });
+</script>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

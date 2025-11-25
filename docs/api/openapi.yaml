@@ -160,6 +160,108 @@ paths:
           description: Log borrado
   /comics/generate:
     post:
+      summary: Genera un cómic Marvel con héroes seleccionados
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                heroes:
+                  type: array
+                  items:
+                    type: string
+                prompt:
+                  type: string
+              required: [heroes]
+      responses:
+        "200":
+          description: Texto del cómic generado
+  /api/rag/heroes.php:
+    post:
+      summary: Compara dos héroes usando RAG (rag-service)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                heroA:
+                  type: string
+                heroB:
+                  type: string
+              required: [heroA, heroB]
+      responses:
+        "200":
+          description: Texto comparativo con contexto
+  /api/tts-elevenlabs.php:
+    post:
+      summary: Convierte texto a audio con ElevenLabs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                voiceId:
+                  type: string
+      responses:
+        "200":
+          description: Stream de audio
+  /api/accessibility-marvel.php:
+    post:
+      summary: Ejecuta WAVE API sobre las páginas clave
+      responses:
+        "200":
+          description: Resumen WCAG (errores, contrastes, alertas)
+  /api/performance-marvel.php:
+    post:
+      summary: Lanza PageSpeed Insights para la URL configurada
+      responses:
+        "200":
+          description: Métricas de performance
+  /api/github-activity.php:
+    get:
+      summary: Devuelve actividad reciente de Pull Requests del repo configurado
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Lista de PRs y meta
+  /api/sentry-metrics.php:
+    get:
+      summary: Consulta eventos recientes de Sentry (con caché local)
+      responses:
+        "200":
+          description: Eventos e issues con estado live/cache
+  /api/sonar-metrics.php:
+    get:
+      summary: Métricas cacheadas de SonarCloud
+      responses:
+        "200":
+          description: KPIs de calidad
+  /api/heatmap/events.php:
+    get:
+      summary: Devuelve eventos de clics desde el microservicio de heatmap
+      responses:
+        "200":
+          description: Datos agregados para renderizar el panel
+  /comics/generate:
+    post:
       summary: Genera un cómic con IA
       requestBody:
         required: true

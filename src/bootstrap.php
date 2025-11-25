@@ -19,6 +19,7 @@ use App\Albums\Infrastructure\Persistence\FileAlbumRepository;
 use App\Albums\Infrastructure\Persistence\DbAlbumRepository;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
+use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
 use App\Heroes\Application\UseCase\CreateHeroUseCase;
 use App\Heroes\Application\UseCase\DeleteHeroUseCase;
 use App\Heroes\Application\UseCase\FindHeroUseCase;
@@ -109,6 +110,11 @@ return (static function (): array {
 
     $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
     // TODO: usar TMDB_API_KEY en el endpoint de películas Marvel
+    $heatmapBaseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? 'http://34.74.102.123:8080'))); // TODO mover a env obligatorio
+    if ($heatmapBaseUrl === '') {
+        $heatmapBaseUrl = 'http://34.74.102.123:8080';
+    }
+    $heatmapApiToken = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
 
     // --- JSON vs DB ----------------------------------------------------------
     // Persistencia adaptativa:
@@ -165,6 +171,8 @@ return (static function (): array {
         ],
         'services' => [
             'urlProvider' => $serviceUrlProvider,
+            // Asegúrate de configurar HEATMAP_API_TOKEN tanto en PHP como en el microservicio Python.
+            'heatmapApiClient' => new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
         ],
         'useCases' => [
             'createAlbum'    => new CreateAlbumUseCase($albumRepository),
