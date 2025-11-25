@@ -10,7 +10,7 @@ if (is_file($autoload)) {
     require_once $autoload;
 }
 
-$container = require $rootPath . '/src/bootstrap.php';
+$container = require_once $rootPath . '/src/bootstrap.php';
 $client = resolveHeatmapClient($container ?? null);
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {

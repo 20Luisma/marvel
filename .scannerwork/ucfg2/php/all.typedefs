@@ -298,23 +298,6 @@ repository,app\albums\domain\repository\albumrepositoryì
 loadrecordsEapp\heroes\infrastructure\persistence\fileherorepository::loadrecordsZ
 persistrecordsHapp\heroes\infrastructure\persistence\fileherorepository::persistrecordsF
 save>app\heroes\infrastructure\persistence\fileherorepository::save"storagePath*
-storagePathstringæ
-heatmaplogcleaner-
-__constructheatmaplogcleaner::__construct3
-cleanupoldlogs!heatmaplogcleaner::cleanupoldlogs;
-collectlogmetadata%heatmaplogcleaner::collectlogmetadata1
-ensurestorage heatmaplogcleaner::ensurestorage-
-getlogfilesheatmaplogcleaner::getlogfiles=
-isthresholdexceeded&heatmaplogcleaner::isthresholdexceeded/
-maybecleanupheatmaplogcleaner::maybecleanup7
-migratelegacylog#heatmaplogcleaner::migratelegacylog3
-monthlylogpath!heatmaplogcleaner::monthlylogpath%
-prepareheatmaplogcleaner::prepareG
-readlastcleanuptimestamp+heatmaplogcleaner::readlastcleanuptimestampC
-recordcleanuptimestamp)heatmaplogcleaner::recordcleanuptimestamp7
-shouldruncleanup#heatmaplogcleaner::shouldruncleanup"cleanupIntervalSeconds"retentionMonths"storagePath*
-cleanupIntervalSecondsint*
-retentionMonthsint*
 storagePathstring‚
 src\controllers\herocontroller:
 __construct+src\controllers\herocontroller::__construct2
@@ -438,7 +421,12 @@ occurredOndatetimeimmutable¼
  src\shared\http\readmecontroller<
 __construct-src\shared\http\readmecontroller::__construct6
 __invoke*src\shared\http\readmecontroller::__invoke"projectRoot*
-projectRootstring’
+projectRootstringü
++app\heatmap\infrastructure\heatmapapiclientA
+getpages5app\heatmap\infrastructure\heatmapapiclient::getpagesE
+
+getsummary7app\heatmap\infrastructure\heatmapapiclient::getsummaryC
+	sendclick6app\heatmap\infrastructure\heatmapapiclient::sendclick’
 src\controllers\pagecontroller0
 render&src\controllers\pagecontroller::renderF
 renderifhtmlroute1src\controllers\pagecontroller::renderifhtmlroute@
@@ -611,7 +599,17 @@ getmetrics,app\services\sonarmetricsservice::getmetrics"client*
 execute7app\heroes\application\usecase\findherousecase::execute"
 repository*9
 
-repository+app\heroes\domain\repository\herorepositoryˆ
+repository+app\heroes\domain\repository\herorepository­
+/app\heatmap\infrastructure\httpheatmapapiclientK
+__construct<app\heatmap\infrastructure\httpheatmapapiclient::__constructE
+getpages9app\heatmap\infrastructure\httpheatmapapiclient::getpagesI
+
+getsummary;app\heatmap\infrastructure\httpheatmapapiclient::getsummaryS
+mapclickpayload@app\heatmap\infrastructure\httpheatmapapiclient::mapclickpayloadC
+request8app\heatmap\infrastructure\httpheatmapapiclient::requestG
+	sendclick:app\heatmap\infrastructure\httpheatmapapiclient::sendclick"apiToken"baseUrl*
+apiTokenstring*
+baseUrlstringˆ
 src\controllers\http\request2
 jsonbody&src\controllers\http\request::jsonbody4
 	wantshtml'src\controllers\http\request::wantshtmld
