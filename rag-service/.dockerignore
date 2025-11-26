@@ -1,0 +1,11 @@
+.git
+.gitignore
+vendor/
+node_modules/
+tests/
+phpunit.xml
+.env
+.env.local
+.DS_Store
+.idea
+.vscode
