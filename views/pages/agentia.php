@@ -60,7 +60,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
       <div id="agent-chat-messages" class="agent-chat-messages">
         <div class="agent-message agent-message--bot">
-          <p>Soy Alfred, asistente Marvel. ¿En qué puedo ayudarte? Puedo guiarte sobre arquitectura, microservicios y calidad del proyecto.</p>
+          <p>Listo para responder dudas técnicas sobre arquitectura, microservicios y calidad del proyecto.</p>
         </div>
       </div>
 
