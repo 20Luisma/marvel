@@ -6,7 +6,10 @@ use Creawebes\Rag\Application\HeroRagService;
 use Creawebes\Rag\Application\HeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
 use Creawebes\Rag\Controllers\RagController;
+use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
+use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
+use Creawebes\Rag\Application\Clients\OpenAiEmbeddingClient;
 
 return (static function (): array {
     $rootPath = dirname(__DIR__);
@@ -55,7 +58,22 @@ return (static function (): array {
     $environment = $resolveEnvironment();
 
     $knowledgeBase = new HeroJsonKnowledgeBase($rootPath . '/storage/knowledge/heroes.json');
-    $retriever = new HeroRetriever($knowledgeBase);
+    $lexicalRetriever = new HeroRetriever($knowledgeBase);
+
+    $embeddingStore = new EmbeddingStore($rootPath . '/storage/embeddings/heroes.json');
+    $useEmbeddings = filter_var($_ENV['RAG_USE_EMBEDDINGS'] ?? getenv('RAG_USE_EMBEDDINGS'), FILTER_VALIDATE_BOOL) === true;
+    $autoRefresh = filter_var($_ENV['RAG_EMBEDDINGS_AUTOREFRESH'] ?? getenv('RAG_EMBEDDINGS_AUTOREFRESH'), FILTER_VALIDATE_BOOL) === true;
+
+    $retriever = $useEmbeddings
+        ? new VectorHeroRetriever(
+            $knowledgeBase,
+            $embeddingStore,
+            new OpenAiEmbeddingClient(),
+            $lexicalRetriever,
+            useEmbeddings: $useEmbeddings,
+            autoRefreshEmbeddings: $autoRefresh,
+        )
+        : $lexicalRetriever;
 
     $openAiEndpoint = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
     if (!is_string($openAiEndpoint) || trim($openAiEndpoint) === '') {
