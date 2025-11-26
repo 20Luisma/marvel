@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Creawebes\OpenAI\Controller;
 
-use Creawebes\OpenAI\Service\OpenAIChatService;
+use Creawebes\OpenAI\Application\UseCase\GenerateContent;
 use Throwable;
 
 final class OpenAIController
 {
     public function __construct(
-        private readonly OpenAIChatService $chatService
+        private readonly GenerateContent $generateContent
     ) {
     }
 
@@ -23,9 +23,12 @@ final class OpenAIController
         $data = json_decode($raw, true) ?? [];
 
         $messages = $data['messages'] ?? [];
+        if (!is_array($messages)) {
+            $messages = [];
+        }
 
         try {
-            $story = $this->chatService->generateStory($messages);
+            $story = $this->generateContent->handle($messages);
 
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode([
