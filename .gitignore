@@ -98,6 +98,5 @@ pa11y-results/
 
 # Traces, videos y capturas
 *.webm
-*.png
 *.zip
 *.mp4
