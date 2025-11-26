@@ -48,3 +48,12 @@ cd openai-service
 ```
 
 La suite PHPUnit vive en `openai-service/tests` con configuración en `openai-service/phpunit.xml`.
+
+## Docker
+
+### Construir la imagen
+
+```bash
+cd openai-service
+docker build -t openai-service:latest .
+```
