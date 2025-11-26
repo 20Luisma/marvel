@@ -1,0 +1,17 @@
+[
+  {
+    "id": "section-1",
+    "title": "Resumen",
+    "text": "Clean Marvel Album usa PHP 8 y microservicios para RAG y OpenAI."
+  },
+  {
+    "id": "section-2",
+    "title": "Infraestructura",
+    "text": "openai-service en /v1/chat y rag-service en /rag/heroes y /rag/agent."
+  },
+  {
+    "id": "section-3",
+    "title": "Calidad",
+    "text": "PHPUnit y PHPStan más QA frontend con Playwright, Pa11y y Lighthouse."
+  }
+]
