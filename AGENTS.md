@@ -19,7 +19,7 @@ Las dependencias fluyen de Presentación → Aplicación → Dominio, e Infraest
 
 ### 🛰️ Microservicios IA
 - **openai-service (`openai-service/`, puerto 8081):** expone `POST /v1/chat` via `Creawebes\OpenAI\Http\Router`. Usa cURL contra `https://api.openai.com/v1/chat/completions`, maneja fallback JSON cuando falta `OPENAI_API_KEY` y permite configurar `OPENAI_MODEL`.
-- **rag-service (`rag-service/`, puerto 8082):** resuelve `POST /rag/heroes` con `Creawebes\Rag\Controllers\RagController`. Lee conocimiento desde `storage/knowledge/heroes.json`, recupera contextos (`HeroRetriever`) y delega la comparación a `HeroRagService`, que a su vez llama al endpoint anterior (o `openai-service` remoto).
+- **rag-service (`rag-service/`, puerto 8082):** resuelve `POST /rag/heroes` y `/rag/agent`. Conocimiento en `storage/knowledge/*.json` y `storage/marvel_agent_kb.json`. Recupera contextos vía retriever vectorial si `RAG_USE_EMBEDDINGS=1` y existen embeddings (`storage/embeddings/*.json` o `storage/marvel_agent_embeddings.json`); si faltan, cae al retriever léxico. Estado actual: el flujo Marvel Agent está en vectorial (embeddings generados en `storage/marvel_agent_embeddings.json`), el flujo de héroes sigue en léxico porque falta `storage/embeddings/heroes.json`. Delegado a `HeroRagService`/`MarvelAgent` y luego a `openai-service`.
 - Ambos servicios cargan `.env` manualmente, mantienen su propio `composer.json` y pueden desplegarse de forma independiente (hosting vs local) usando las URLs definidas en `config/services.php`.
 
 ### 🔊 Soporte ElevenLabs TTS
@@ -73,5 +73,6 @@ Las dependencias fluyen de Presentación → Aplicación → Dominio, e Infraest
 | Servir microservicio OpenAI | `["bash","-lc","php -S localhost:8081 -t public","workdir":"openai-service"]` |
 | Servir microservicio RAG | `["bash","-lc","php -S localhost:8082 -t public","workdir":"rag-service"]` |
 | Comparar ambientes configurados | `["bash","-lc","php -r 'var_export((new App\\Config\\ServiceUrlProvider(require \"config/services.php\"))->toArrayForFrontend());'"]` |
+| Refrescar KB + embeddings del Marvel Agent | `["bash","-lc","cd rag-service && ./bin/refresh_marvel_agent.sh"]` (requiere `OPENAI_API_KEY` exportada) |
 
 > Mantén este documento actualizado cada vez que cambie la arquitectura, los comandos soportados o los roles del equipo.***
