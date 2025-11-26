@@ -46,6 +46,12 @@ require_once __DIR__ . '/../layouts/header.php';
         <li>
           <strong>Calidad y métricas:</strong> “¿Qué monitorea SonarCloud y cómo interpretarlo?”
         </li>
+        <li>
+          <strong>Heatmap:</strong> “¿Cómo funciona el tracking de clics y qué datos guarda?”
+        </li>
+        <li>
+          <strong>KB y embeddings:</strong> “¿Cómo se generan los embeddings y se refresca la knowledge base?”
+        </li>
       </ul>
     </aside>
 
