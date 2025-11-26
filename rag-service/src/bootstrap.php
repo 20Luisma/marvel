@@ -8,11 +8,13 @@ use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
 use Creawebes\Rag\Controllers\RagController;
 use Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
+use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
 use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiEmbeddingClient;
+use Creawebes\Rag\Infrastructure\Retrieval\VectorMarvelAgentRetriever;
 
 return (static function (): array {
     $rootPath = dirname(__DIR__);
@@ -88,7 +90,22 @@ return (static function (): array {
     $llmClient = new OpenAiHttpClient($openAiEndpoint);
     $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClient);
     $agentKb = new MarvelAgentKnowledgeBase($rootPath . '/storage/marvel_agent_kb.json');
-    $agentRetriever = new MarvelAgentRetriever($agentKb);
+    $agentLexicalRetriever = new MarvelAgentRetriever($agentKb);
+    $agentEmbeddingStore = new EmbeddingStore($rootPath . '/storage/marvel_agent_embeddings.json');
+    $agentUseEmbeddings = filter_var($_ENV['AGENT_USE_EMBEDDINGS'] ?? getenv('AGENT_USE_EMBEDDINGS'), FILTER_VALIDATE_BOOL) === true;
+    $agentAutoRefresh = filter_var($_ENV['AGENT_EMBEDDINGS_AUTOREFRESH'] ?? getenv('AGENT_EMBEDDINGS_AUTOREFRESH'), FILTER_VALIDATE_BOOL) === true;
+
+    $agentRetriever = $agentUseEmbeddings
+        ? new VectorMarvelAgentRetriever(
+            $agentKb,
+            $agentEmbeddingStore,
+            new OpenAiEmbeddingClient(),
+            $agentLexicalRetriever,
+            useEmbeddings: $agentUseEmbeddings,
+            autoRefreshEmbeddings: $agentAutoRefresh,
+        )
+        : $agentLexicalRetriever;
+
     $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClient);
 
     return [

@@ -6,7 +6,7 @@ namespace Creawebes\Rag\Application\Rag;
 
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 
-final class MarvelAgentRetriever
+final class MarvelAgentRetriever implements MarvelAgentRetrieverInterface
 {
     public function __construct(private readonly MarvelAgentKnowledgeBase $knowledgeBase)
     {
