@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Creawebes\Rag\Application\HeroRagService;
 use Creawebes\Rag\Application\HeroRetriever;
+use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
 use Creawebes\Rag\Controllers\RagController;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
 
@@ -63,7 +64,8 @@ return (static function (): array {
             : 'http://localhost:8081/v1/chat';
     }
 
-    $ragService = new HeroRagService($retriever, $openAiEndpoint);
+    $llmClient = new OpenAiHttpClient($openAiEndpoint);
+    $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClient);
 
     return [
         'ragController' => new RagController($ragService),

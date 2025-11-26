@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Application;
 
-use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
+use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
+use Creawebes\Rag\Application\Contracts\RetrieverInterface;
 
-final class HeroRetriever
+final class HeroRetriever implements RetrieverInterface
 {
-    public function __construct(private readonly HeroJsonKnowledgeBase $knowledgeBase)
+    public function __construct(private readonly KnowledgeBaseInterface $knowledgeBase)
     {
     }
 

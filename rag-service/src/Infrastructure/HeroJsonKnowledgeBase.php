@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Infrastructure;
 
+use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
 use RuntimeException;
 
-final class HeroJsonKnowledgeBase
+final class HeroJsonKnowledgeBase implements KnowledgeBaseInterface
 {
     /** @var array<string, array{heroId: string, nombre: string, contenido: string}> */
     private array $heroes = [];
