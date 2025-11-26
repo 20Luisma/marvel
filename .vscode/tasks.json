@@ -381,6 +381,13 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "group": { "kind": "build", "isDefault": true }
     },
+    {
+  "label": "SSH: VM Heatmap",
+  "type": "shell",
+  "command": "gcloud compute ssh headmap --zone=us-east1-b",
+  "problemMatcher": []
+},
+
 
     /* =========================================================
        🤖 CLI CODEX (lo tuyo)

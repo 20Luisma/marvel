@@ -1,0 +1,13 @@
+vendor
+.env
+.git
+.gitignore
+.idea
+.vscode
+node_modules
+tests
+phpunit.xml
+phpunit.xml.dist
+composer.lock
+*.log
+.DS_Store
