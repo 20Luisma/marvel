@@ -1,0 +1,17 @@
+[
+    {
+        "heroId": "ironman",
+        "nombre": "Iron Man",
+        "contenido": "Armadura tecnologica y vuelo supersónico"
+    },
+    {
+        "heroId": "captain",
+        "nombre": "Captain Valor",
+        "contenido": "Estratega con escudo resistente y liderazgo"
+    },
+    {
+        "heroId": "spider",
+        "nombre": "Spider Hero",
+        "contenido": "Agilidad, reflejos y lanzamiento de telaranas"
+    }
+]
