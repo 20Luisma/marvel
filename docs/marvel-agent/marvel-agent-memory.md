@@ -120,6 +120,8 @@ También expone proxies para APIs clave: `/api/github-activity.php` (PRs), `/api
     - `/rag/heroes`: comparación de héroes con KB de héroes (`storage/knowledge/heroes.json`, embeddings opcionales en `storage/embeddings/heroes.json`).
     - `/rag/agent`: RAG técnico de Marvel Agent con KB propia (`storage/marvel_agent_kb.json`, embeddings opcionales en `storage/marvel_agent_embeddings.json`).
     - Ambos comparten cliente LLM y configuración, con KBs independientes.
+    - Estado actual: el flujo de héroes opera en modo léxico (no hay `storage/embeddings/heroes.json` generado). El flujo del Marvel Agent es un RAG completo: embeddings generados (`storage/marvel_agent_embeddings.json`), `RAG_USE_EMBEDDINGS=1` activo y recuperación vectorial por defecto, con fallback léxico solo si faltaran vectores.
+    - Para activar vectorial en héroes: generar `storage/embeddings/heroes.json` con embeddings y mantener `RAG_USE_EMBEDDINGS=1`; hasta entonces, la comparación de héroes se resuelve con el retriever léxico.
   - Generación de embeddings offline (scripts en `bin/`) y uso opt-in vía flags de entorno para no romper despliegues.
 
 - **Cliente hacia OpenAI**:
@@ -129,8 +131,13 @@ También expone proxies para APIs clave: `/api/github-activity.php` (PRs), `/api
   - `OPENAI_SERVICE_URL`
   - `RAG_USE_EMBEDDINGS`
   - `RAG_EMBEDDINGS_AUTOREFRESH`
+- **Estado actual (local)**:
+  - Embeddings del Marvel Agent generados en `rag-service/storage/marvel_agent_embeddings.json`.
+  - `RAG_USE_EMBEDDINGS=1`, modo vectorial activo por defecto; si faltan vectores, cae al retriever léxico.
 
 - **Tests**: suite propia en `rag-service/tests/` con `phpunit.xml`.
+
+**Mantenimiento rápido:** cada vez que agregues memoria en el markdown maestro, regenera KB y embeddings exportando `OPENAI_API_KEY` en la consola y ejecutando: `cd rag-service && ./bin/refresh_marvel_agent.sh`.
 
 En la práctica, `rag-service` opera como doble RAG: uno para comparar héroes y otro (Marvel Agent) para responder preguntas técnicas sobre el propio proyecto. Ambos reutilizan el mismo cliente LLM y se configuran vía `.env`, lo que facilita moverlos entre local y hosting. El flujo típico: el frontend llama a `/rag/heroes` o `/rag/agent`, el servicio recupera contexto (KB de héroes o KB del agente), construye prompt, delega en `openai-service` y devuelve `answer + contexts`.
 
@@ -287,4 +294,4 @@ Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, le
 ---
 
 > Cuando se actualice esta memoria, es necesario regenerar la KB ejecutando:  
-> `cd rag-service php bin/build_marvel_agent_kb.php`
+> `cd rag-service php bin/build_marvel_agent_kb.php` `cd rag-service && php bin/generate_agent_embeddings.php`
