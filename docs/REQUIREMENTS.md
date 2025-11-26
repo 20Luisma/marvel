@@ -205,28 +205,20 @@ composer dump-autoload
 - Devuelve SIEMPRE JSON
 
 ### 6.3. Controlador principal
-Ubicado en `openai-service/src/Controller/OpenAIController.php` (o similar, según tu último cambio).  
-Su responsabilidad:
+Ubicado en `openai-service/src/Controller/OpenAIController.php`.  
+Responsabilidades:
 - leer el body JSON de la petición
 - validar que vengan `messages`
-- delegar en el **servicio** `OpenAIChatService`
-- encapsular la respuesta en `{ "ok": true|false, ... }`
+- delegar en el caso de uso `Application/UseCase/GenerateContent`
+- devolver JSON `{ "ok": true|false, ... }`
 
 ### 6.4. Servicio de OpenAI
-`openai-service/src/Service/OpenAIChatService.php`
+`openai-service/src/Application/UseCase/GenerateContent.php` + `openai-service/src/Infrastructure/Client/OpenAiClient.php`
 
 Responsabilidades:
 
-1. Leer la API key:
-   ```php
-   $apiKey = getenv('OPENAI_API_KEY');
-   ```
-
-2. Si no existe → devolver mensaje controlado (no fatal):
-
-   ```php
-   return '⚠️ No se ha configurado OPENAI_API_KEY en el entorno.';
-   ```
+1. `GenerateContent` limpia/valida contenido, extrae el `content` de la respuesta del LLM y genera fallback seguro si falta la clave o la respuesta.
+2. `OpenAiClient` lee `OPENAI_API_KEY`, `OPENAI_API_BASE` y `OPENAI_MODEL` desde `.env`, construye la petición `POST /v1/chat/completions` (Guzzle) y lanza excepciones descriptivas en caso de error.
 
 3. Construir la llamada real a OpenAI:
 
@@ -265,7 +257,8 @@ Esto es importante porque el **frontend ya está preparado** para mostrar un men
 - `src/bootstrap.php`: carga variables de entorno (`.env` opcional, incl. `OPENAI_SERVICE_URL`) y registra la base de conocimiento (`storage/knowledge/heroes.json`), el `HeroRetriever` y el `HeroRagService`.
 - `Infrastructure/HeroJsonKnowledgeBase.php`: lee el JSON y normaliza `{ heroId, nombre, contenido }`. Si el archivo cambia en despliegues, basta con reemplazarlo.
 - `Application/HeroRetriever.php`: vectoriza texto con bolsa de palabras + coseno para ordenar los héroes según la pregunta y obtiene los mejores contextos.
-- `Application/HeroRagService.php`: arma el prompt con formato “Atributo | Valoración … 🧩 …”, llama al microservicio OpenAI usando `OPENAI_SERVICE_URL` (por defecto `http://localhost:8081/v1/chat`) y devuelve la respuesta enriquecida.
+- `Infrastructure/VectorHeroRetriever.php`: retriever opcional basado en embeddings precalculados (`storage/embeddings/heroes.json`), con fallback automático al retriever léxico.
+- `Application/HeroRagService.php`: arma un prompt narrativo (sin tablas), llama al microservicio OpenAI usando `OPENAI_SERVICE_URL` (por defecto `http://localhost:8081/v1/chat`) y devuelve la respuesta con contextos y `heroIds`.
 - `Controllers/RagController.php`: expone `POST /rag/heroes` y responde `{ answer, contexts, heroIds }`, propagando errores controlados.
 
 > Este microservicio **no** genera historias propias: solo hace RAG sobre el JSON y delega la generación al servicio de OpenAI (8081). Puedes escalarlo en otra máquina apuntando el `.env` al endpoint OpenAI correspondiente.
@@ -293,9 +286,9 @@ Si en cualquier punto hay un error (8081 apagado, API key faltante, OpenAI caíd
 1. Usuario hace clic en **“🧠 Comparar héroes (RAG)”** en la UI.
 2. El frontend valida que haya ≥2 héroes seleccionados y hace `POST http://localhost:8082/rag/heroes`.
 3. El microservicio RAG recupera los héroes desde su JSON, arma el prompt y llama a `http://localhost:8081/v1/chat`.
-4. El microservicio OpenAI genera la tabla/summary y responde al RAG.
+4. El microservicio OpenAI genera la respuesta narrativa y responde al RAG.
 5. RAG devuelve `{ answer, contexts, heroIds }` al frontend.
-6. El frontend muestra la tabla + conclusión dentro del panel lateral.
+6. El frontend muestra la respuesta y los contextos dentro del panel lateral.
 
 Si 8082 no está disponible (o 8081 está caído), el panel muestra un mensaje de error controlado.
 

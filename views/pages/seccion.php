@@ -88,7 +88,10 @@ require_once __DIR__ . '/../layouts/header.php';
   <div class="max-w-6xl mx-auto py-10 px-4 space-y-8">
     <section class="seccion-panel tech-panel space-y-6">
       <div class="space-y-3">
-        <h2 class="text-4xl text-white">Panel Central Marvel</h2>
+        <div class="seccion-panel__header">
+          <h2 class="text-4xl text-white seccion-panel__title">Panel Central Marvel</h2>
+          <a href="/agentia" class="btn-marvel-agent">🧠 Marvel Agent</a>
+        </div>
       </div>
 
       <div class="seccion-grid">

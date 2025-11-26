@@ -17,7 +17,7 @@ Resumen de los flujos y módulos clave del proyecto. Cada diagrama está numerad
 7. **Cómic IA** — `Panel :comic.png`  
    `/comic` → `POST /comics/generate` → OpenAIComicGenerator → `openai-service` → OpenAI API.
 8. **Comparación RAG** — `flujorag.png`  
-   `/rag` → `rag-service` (contexto JSON) con opción de resumen vía `openai-service`.
+   `/rag/heroes` → `rag-service` (contexto JSON, retriever léxico/vectorial) → `openai-service` para la respuesta final.
 9. **Heatmap** — `headmap.png`  
    Tracker JS → `/api/heatmap/click.php` → heatmap-service; panel `/secret-heatmap` consulta `/events`.
 10. **GitHub PRs** — `panelgithub.png`  
@@ -39,4 +39,4 @@ Resumen de los flujos y módulos clave del proyecto. Cada diagrama está numerad
 18. **Pipeline QA/CI/CD** — `act-ci-cd-qa.png`  
     QA local → GitHub Actions (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright) → deploy FTP → rollback.
 
-Todas las imágenes están en `docs/uml/` y reflejan el estado actual del proyecto y sus integraciones.***
+Todas las imágenes están en `docs/uml/` y reflejan el estado actual del proyecto y sus integraciones.
