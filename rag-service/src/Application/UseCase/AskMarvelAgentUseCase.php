@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Creawebes\Rag\Application\UseCase;
 
 use Creawebes\Rag\Application\Contracts\LlmClientInterface;
-use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
+use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
 use InvalidArgumentException;
 
 final class AskMarvelAgentUseCase
 {
     public function __construct(
-        private readonly MarvelAgentRetriever $retriever,
+        private readonly MarvelAgentRetrieverInterface $retriever,
         private readonly LlmClientInterface $llmClient
     ) {
     }
