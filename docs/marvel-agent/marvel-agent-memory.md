@@ -41,12 +41,14 @@ El objetivo de este documento es:
   - `/agentia`: interfaz del **Marvel Agent** (chat técnico, inicialmente simulado).
 
 En la práctica, Clean Marvel Album actúa como un sandbox técnico y proyecto de máster: combina generación creativa (cómics), paneles de observabilidad y microservicios IA. La elección de Clean Architecture permite que los microservicios cambien o evolucionen sin alterar la lógica de dominio, y facilita probar y desplegar en hosting o cloud con solo ajustar configuración y URLs.
+También funciona como un “laboratorio” para prácticas de CI/CD y observabilidad: el monolito orquesta paneles (Sonar, Sentry, GitHub, accesibilidad, performance) y expone proxies seguros que aíslan tokens y dependencias externas.
 
 ---
 
 ## 2. Arquitectura técnica unificada
 
 Mapa mental: la app principal PHP sirve vistas y proxies internos; delega en microservicios IA (`openai-service` y `rag-service`) y en servicios externos (heatmap, accesibilidad, performance). La calidad se asegura con PHPUnit/PHPStan + QA frontend. El despliegue se mueve de local a hosting ajustando únicamente variables de entorno y subdominios, manteniendo el mismo código.
+Todo convive con automatizaciones externas (n8n) que alimentan contenido (último video de Marvel en YouTube) a través de un endpoint PHP seguro, demostrando cómo integrar servicios SaaS sin acoplarlos al dominio.
 
 ### 2.1 App principal (PHP)
 
@@ -75,6 +77,7 @@ Mapa mental: la app principal PHP sirve vistas y proxies internos; delega en mic
   - Objetivo: ocultar credenciales y normalizar payloads antes de llamar a servicios externos o microservicios.
 
 En la práctica, la app principal es el “hub” de navegación: renderiza vistas, lanza fetch a los proxies para mantener tokens a salvo y orquesta la UX (cómic, paneles de calidad, Secret Room, Marvel Agent). Esto permite a un desarrollador cambiar servicios sin tocar el frontend, siempre que respete los contratos de los proxies y los microservicios.
+También expone proxies para APIs clave: `/api/github-activity.php` (PRs), `/api/sonar-metrics.php` (calidad), `/api/performance-marvel.php` (PageSpeed), `/api/accessibility-marvel.php` (WAVE), `/api/heatmap/*` (tracking), `/api/tts-elevenlabs.php` (TTS) y `/api/marvel-agent.php` (puerta de entrada al agente).
 
 ### 2.2 Microservicio `rag-service` (RAG de héroes)
 
@@ -180,6 +183,7 @@ En la práctica, el heatmap registra clics desde todas las vistas y los muestra 
 - **Marvel Agent (/agentia)**: solo frontend; chat simulado con JS placeholder. El botón en Secret Room apunta a `/agentia`.
 
 Un flujo típico de cómic: el usuario en `/comic` envía héroes + prompt → la app llama a `/comics/generate` → `openai-service` responde → se renderiza el texto y opcionalmente se narra con TTS. Para RAG de héroes, el frontend envía `heroIds` a `/rag/heroes`, recibe `answer + contexts` y los muestra con audio si está habilitado. Para Marvel Agent, el frontend envía `question` a `/rag/agent` (vía proxy `/api/marvel-agent.php`) y recibe una respuesta técnica basada en la memoria maestra.
+Automatización n8n: un workflow (`n8n/Daily Marvel YouTube Video Fetcher and Backend Sync.json`) ejecuta un trigger horario, consulta el último video de Marvel en YouTube (`https://www.googleapis.com/youtube/v3/search` con `GOOGLE_YT_API_KEY`) y lo envía al backend PHP (`/api/actualizar-video-marvel.php`) con Authorization Bearer `MARVEL_UPDATE_TOKEN`. Así se refresca contenido sin tocar el core.
 
 ### 2.6 Infraestructura, despliegue y hosting de microservicios
 
@@ -202,6 +206,8 @@ Clean Marvel Album está pensado para moverse entre local y producción sin camb
 - **Subdominios y hosting**:
   - Los microservicios PHP resuelven su URL vía `.env` (`OPENAI_SERVICE_URL`, `RAG_SERVICE_URL`), con fallback a subdominios `openai-service.contenido.creawebes.com` y `rag-service.contenido.creawebes.com` cuando están en hosting.
   - La app principal consume microservicios vía HTTP; proxies PHP (`public/api/*.php`) ocultan tokens y orquestan llamadas externas (heatmap, etc.).
+- **Automatización externa (n8n)**:
+  - Workflow programado que consulta la API de YouTube y envía el último video Marvel al endpoint PHP `/api/actualizar-video-marvel.php` con Authorization Bearer (`MARVEL_UPDATE_TOKEN`). Usa `GOOGLE_YT_API_KEY` y se ejecuta de forma recurrente.
 - **Entornos (resumen)**:
   - Local: App 8080 / `openai-service` 8081 / `rag-service` 8082 / heatmap (VM 34.74.102.123:8080 o localhost si se levanta).
   - Producción: App en hosting PHP (`APP_PUBLIC_URL`), `openai-service` y `rag-service` en subdominios configurados por `.env`/bootstrap, heatmap en VM Docker (IP/URL documentada).
@@ -275,7 +281,10 @@ Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, le
 - **Pregunta:** “¿Cuál es la diferencia entre /rag/heroes y /rag/agent?”  
   **Respuesta ejemplo:** Ambos viven en el mismo `rag-service`. `/rag/heroes` compara dos héroes usando la KB de héroes (JSON + embeddings opcionales). `/rag/agent` responde preguntas técnicas usando la memoria maestra del proyecto (otra KB). Comparten cliente LLM (`openai-service`) y configuración, con fallback léxico si no hay embeddings.
 
+- **Pregunta:** “¿Qué automatizaciones externas usa el proyecto?”  
+  **Respuesta ejemplo:** Hay un workflow n8n (`Daily Marvel YouTube Video Fetcher and Backend Sync.json`) que consulta la API de YouTube con `GOOGLE_YT_API_KEY` y envía el último video al endpoint PHP `/api/actualizar-video-marvel.php` con autorización Bearer (`MARVEL_UPDATE_TOKEN`). Así se refrescan contenidos sin tocar el dominio.
+
 ---
 
 > Cuando se actualice esta memoria, es necesario regenerar la KB ejecutando:  
-> `cd rag-service && php bin/build_marvel_agent_kb.php`
+> `cd rag-service php bin/build_marvel_agent_kb.php`
