@@ -28,6 +28,7 @@ final class PageController
         '/secret-heatmap' => 'pages/secret-heatmap',
         '/secret/heatmap' => 'pages/secret-heatmap',
         '/movies' => 'pages/movies',
+        '/agentia' => 'pages/agentia',
     ];
 
     public function renderIfHtmlRoute(string $method, string $path): bool

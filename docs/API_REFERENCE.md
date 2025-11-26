@@ -16,7 +16,7 @@
 | Método | Endpoint | Descripción |
 |---------|-----------|-------------|
 | POST | `/comics/generate` | Genera cómic Marvel con héroes elegidos (usa `openai-service`) |
-| POST | `/api/rag/heroes.php` | Compara dos héroes con recuperación de contexto (via `rag-service`) |
+| POST | `http://localhost:8082/rag/heroes` (local) | Compara dos héroes con recuperación de contexto (`rag-service`, llamado desde el frontend/configuración) |
 | POST | `/api/tts-elevenlabs.php` | Narración de texto a audio (ElevenLabs) |
 
 ## Observabilidad y herramientas
@@ -34,6 +34,6 @@
 | Servicio | Endpoint principal | Notas |
 |----------|--------------------|-------|
 | `openai-service` | `POST /v1/chat` | cURL a OpenAI; fallback JSON si falta `OPENAI_API_KEY`. Puerto por defecto: 8081. |
-| `rag-service` | `POST /rag/heroes` | Recupera contexto desde `storage/knowledge/heroes.json` y delega a `openai-service`. Puerto por defecto: 8082. |
+| `rag-service` | `POST /rag/heroes` | Recupera contexto desde `storage/knowledge/heroes.json` (retriever léxico por defecto, vectorial opcional) y delega a `openai-service` para la respuesta. Puerto por defecto: 8082. |
 
 > Las rutas internas bajo `public/api/*.php` devuelven JSON y son consumidas por los paneles (`/comic`, `/panel-github`, `/accessibility`, `/performance`, `/sentry`, `/secret-heatmap`). Ajusta tokens y URLs en `.env` y `config/services.php`.

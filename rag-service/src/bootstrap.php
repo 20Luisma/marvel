@@ -6,6 +6,9 @@ use Creawebes\Rag\Application\HeroRagService;
 use Creawebes\Rag\Application\HeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
 use Creawebes\Rag\Controllers\RagController;
+use Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase;
+use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
+use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
 use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
@@ -84,8 +87,12 @@ return (static function (): array {
 
     $llmClient = new OpenAiHttpClient($openAiEndpoint);
     $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClient);
+    $agentKb = new MarvelAgentKnowledgeBase($rootPath . '/storage/marvel_agent_kb.json');
+    $agentRetriever = new MarvelAgentRetriever($agentKb);
+    $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClient);
 
     return [
         'ragController' => new RagController($ragService),
+        'askMarvelAgentUseCase' => $agentUseCase,
     ];
 })();

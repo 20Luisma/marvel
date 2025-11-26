@@ -16,6 +16,39 @@
   color: #93c5fd;
 }
 
+.seccion-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.seccion-panel__title {
+  margin: 0;
+}
+
+.btn-marvel-agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(63, 140, 255, 0.7);
+  background-color: #0b1120;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.btn-marvel-agent:hover {
+  background-color: #1e293b;
+  box-shadow: 0 0 0 1px rgba(63, 140, 255, 0.6);
+  transform: translateY(-1px);
+}
+
 .seccion-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

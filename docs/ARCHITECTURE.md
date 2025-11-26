@@ -29,7 +29,7 @@ Dependencias siempre fluyen hacia el dominio. `App\Config\ServiceUrlProvider` re
 
 ## Microservicios y servicios externos
 - **openai-service** (`openai-service/`, puerto 8081): `POST /v1/chat`, cURL a OpenAI, fallback JSON sin `OPENAI_API_KEY`.
-- **rag-service** (`rag-service/`, puerto 8082): `POST /rag/heroes`, usa `storage/knowledge/heroes.json`, delega a `openai-service`.
+- **rag-service** (`rag-service/`, puerto 8082): `POST /rag/heroes`, usa `storage/knowledge/heroes.json`, retriever léxico por defecto (vectorial opcional con embeddings) y delega a `openai-service`.
 - **Heatmap service** (Python/Flask): recoge clics reales para `/secret-heatmap`. Ver `docs/microservicioheatmap/README.md`.
 - **WAVE API**: accesibilidad vía `public/api/accessibility-marvel.php`.
 - **ElevenLabs TTS**: narración de cómics y comparaciones RAG en `/api/tts-elevenlabs.php`.

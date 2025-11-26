@@ -72,6 +72,46 @@ if ($method === 'POST' && $path === '/rag/heroes') {
     return;
 }
 
+if ($method === 'POST' && $path === '/rag/agent') {
+    $useCase = $container['askMarvelAgentUseCase'] ?? null;
+    if ($useCase instanceof \Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase) {
+        $raw = file_get_contents('php://input') ?: '';
+        $data = json_decode($raw, true);
+        if (!is_array($data)) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Payload inválido.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+
+        $question = isset($data['question']) ? trim((string) $data['question']) : '';
+        if ($question === '') {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'La pregunta es obligatoria.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+
+        try {
+            $response = $useCase->ask($question);
+            http_response_code(200);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        } catch (\Throwable $exception) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Error interno llamando al Marvel Agent.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+    }
+
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => 'Caso de uso Marvel Agent no disponible.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    return;
+}
+
 http_response_code(404);
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode(['error' => 'Ruta no encontrada.'], JSON_UNESCAPED_UNICODE);

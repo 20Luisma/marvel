@@ -178,9 +178,10 @@ paths:
       responses:
         "200":
           description: Texto del cómic generado
-  /api/rag/heroes.php:
+  /rag/heroes:
     post:
       summary: Compara dos héroes usando RAG (rag-service)
+      description: Endpoint del microservicio `rag-service` que recupera contextos (retriever léxico por defecto; vectorial opcional) y delega la generación de texto en `openai-service`.
       requestBody:
         required: true
         content:
@@ -188,14 +189,18 @@ paths:
             schema:
               type: object
               properties:
-                heroA:
+                heroIds:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs de héroes (exactamente 2)
+                question:
                   type: string
-                heroB:
-                  type: string
-              required: [heroA, heroB]
+                  description: Pregunta opcional para guiar la comparación
+              required: [heroIds]
       responses:
         "200":
-          description: Texto comparativo con contexto
+          description: Texto comparativo con contexto y heroIds
   /api/tts-elevenlabs.php:
     post:
       summary: Convierte texto a audio con ElevenLabs
