@@ -12,7 +12,14 @@ if (!$question) {
     exit;
 }
 
-$ragUrl = $_ENV['RAG_SERVICE_URL'] ?? 'http://localhost:8082/rag/agent';
+$ragUrl = $_ENV['RAG_SERVICE_URL'] ?? getenv('RAG_SERVICE_URL');
+if (!is_string($ragUrl) || trim($ragUrl) === '') {
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $host = is_string($host) ? strtolower($host) : '';
+    $ragUrl = str_contains($host, 'creawebes.com')
+        ? 'https://rag-service.contenido.creawebes.com/rag/agent'
+        : 'http://localhost:8082/rag/agent';
+}
 
 $payload = json_encode(['question' => $question]);
 
