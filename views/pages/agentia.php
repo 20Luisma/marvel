@@ -47,16 +47,6 @@ require_once __DIR__ . '/../layouts/header.php';
           <strong>Calidad y métricas:</strong> “¿Qué monitorea SonarCloud y cómo interpretarlo?”
         </li>
       </ul>
-
-      <div class="agentia-help__section">
-        <h4 class="agentia-help__title">Fuentes de conocimiento (futuro)</h4>
-        <p class="agentia-help__text">El agente se nutrirá de la carpeta <code>docs/</code>, READMEs de microservicios, ADRs de arquitectura y documentación de calidad/CI/CD.</p>
-      </div>
-
-      <div class="agentia-help__section">
-        <h4 class="agentia-help__title">Estado actual</h4>
-        <p class="agentia-help__text">Versión solo frontend con respuestas simuladas. La conexión RAG/LLM se añadirá en una fase posterior.</p>
-      </div>
     </aside>
 
     <section class="agentia-card agentia-chat">
@@ -70,7 +60,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
       <div id="agent-chat-messages" class="agent-chat-messages">
         <div class="agent-message agent-message--bot">
-          <p>Hola, soy Marvel Agent. Puedo explicarte la arquitectura del proyecto, los microservicios, los pipelines de calidad y la documentación técnica.</p>
+          <p>Soy Alfred, asistente Marvel. ¿En qué puedo ayudarte? Puedo guiarte sobre arquitectura, microservicios y calidad del proyecto.</p>
         </div>
       </div>
 
