@@ -293,5 +293,11 @@ Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, le
 
 ---
 
-> Cuando se actualice esta memoria, es necesario regenerar la KB ejecutando:  
-> `cd rag-service php bin/build_marvel_agent_kb.php` `cd rag-service && php bin/generate_agent_embeddings.php`
+ Regla obligatoria:
+Cada vez que se actualice este archivo maestro de memoria del Marvel Agent, hay que ejecutar SIEMPRE los dos comandos de regeneración desde la raíz del proyecto:
+
+cd rag-service && php bin/build_marvel_agent_kb.php
+cd rag-service && php bin/generate_agent_embeddings.php
+
+
+Solo así la KB (marvel_agent_kb.json) y los embeddings (marvel_agent_embeddings.json) quedarán alineados y el Marvel Agent usará la memoria correcta en modo vectorial.****
