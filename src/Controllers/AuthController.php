@@ -42,11 +42,12 @@ final class AuthController
         $password = (string) ($_POST['password'] ?? '');
 
         if ($this->authService->login($email, $password)) {
-            $redirectTo = isset($_SESSION['intended_path']) && is_string($_SESSION['intended_path'])
-                ? $_SESSION['intended_path']
-                : '/seccion';
+            $redirectTo = '/seccion';
+            if (isset($_SESSION['redirect_to']) && is_string($_SESSION['redirect_to']) && $_SESSION['redirect_to'] !== '') {
+                $redirectTo = $_SESSION['redirect_to'];
+            }
 
-            unset($_SESSION['intended_path'], $_SESSION['auth_error']);
+            unset($_SESSION['redirect_to'], $_SESSION['auth_error']);
 
             $this->redirect($redirectTo);
             return;

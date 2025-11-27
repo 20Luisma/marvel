@@ -46,57 +46,18 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     <div class="stars"></div>
 
     <main class="intro-shell" id="main-content" tabindex="-1" role="main">
+        <p class="marvel-motto">"UN GRAN PODER CONLLEVA UNA GRAN RESPONSABILIDAD"</p>
         <div class="logo-frame">
             <img src="./assets/images/intromarvel.gif" alt="Intro Marvel Clean Album">
         </div>
     </main>
 
-    <section class="login-shell" id="login-shell" aria-live="polite">
-
-        <!-- ⭐ FRASE MARVEL ORIGINAL -->
-        <p class="marvel-motto">"UN GRAN PODER CONLLEVA UNA GRAN RESPONSABILIDAD"</p>
-
-        <!-- ⭐ BOX DEL FORMULARIO -->
-        <div class="login-card">
-            <h2>Inicia sesión de prueba</h2>
-
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <div class="input-wrap">
-                        <svg class="input-icon" viewBox="0 0 24 24">
-                            <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-3.33 0-7 1.67-7 3.5V20h14v-2.5C19 15.67 15.33 14 12 14Z" />
-                        </svg>
-                        <input id="username" type="email" placeholder="marvel@gmail.com" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <div class="input-wrap">
-                        <svg class="input-icon" viewBox="0 0 24 24">
-                            <path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9Zm-8-2a3 3 0 0 1 6 0v2H9Zm8 4v8H7v-8Z" />
-                        </svg>
-                        <input id="password" type="password" placeholder="marvel2025" required>
-                    </div>
-                </div>
-
-                <div class="error" id="login-error" role="alert" aria-live="assertive" aria-atomic="true"></div>
-
-                <button type="submit" class="login-button">Entrar</button>
-            </form>
-        </div>
-
-        <!-- ⭐ NUEVA FRASE: FUERA DEL BOX -->
-        <p class="master-note-big">
-            PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA - BIG SCHOOL 2025
-        </p>
-        <p class="master-note-small">
-            CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT)
-        </p>
-        <!-- ⭐ -->
-
-    </section>
+    <p class="master-note-big">
+        PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA - BIG SCHOOL 2025
+    </p>
+    <p class="master-note-small">
+        CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT)
+    </p>
 
     <script src="./assets/js/intro.js" defer></script>
 
