@@ -19,23 +19,38 @@ class OpenAIComicGenerator
 
     public function __construct(?string $serviceUrl = null)
     {
-        $resolved = $serviceUrl ?? ($_ENV['OPENAI_SERVICE_URL'] ?? null);
+        $resolved = $serviceUrl;
         if ($resolved === null) {
-            $envValue = getenv('OPENAI_SERVICE_URL');
+            $envValue = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL');
             if (is_string($envValue) && $envValue !== '') {
                 $resolved = $envValue;
             }
         }
 
-        if (!is_string($resolved) || trim($resolved) === '') {
+        if (!is_string($resolved) || trim((string) $resolved) === '') {
             $resolved = self::DEFAULT_SERVICE_URL;
         }
 
         $this->serviceUrl = rtrim($resolved, '/');
-        $internalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?? '';
+        $envInternalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY');
+        $internalKey = is_string($envInternalKey) ? $envInternalKey : null;
         $this->internalApiKey = is_string($internalKey) && trim($internalKey) !== '' ? trim($internalKey) : null;
-        $callerCandidate = $_ENV['APP_HOST'] ?? getenv('APP_HOST') ?? ($_ENV['APP_URL'] ?? getenv('APP_URL') ?? ($_SERVER['HTTP_HOST'] ?? ''));
-        $this->internalCaller = is_string($callerCandidate) && trim($callerCandidate) !== '' ? trim((string) $callerCandidate) : 'clean-marvel-app';
+
+        $callerCandidate = '';
+        foreach ([
+            $_ENV['APP_HOST'] ?? null,
+            getenv('APP_HOST') ?: null,
+            $_ENV['APP_URL'] ?? null,
+            getenv('APP_URL') ?: null,
+            $_SERVER['HTTP_HOST'] ?? null,
+        ] as $candidate) {
+            if (is_string($candidate) && trim($candidate) !== '') {
+                $callerCandidate = trim($candidate);
+                break;
+            }
+        }
+
+        $this->internalCaller = $callerCandidate !== '' ? $callerCandidate : 'clean-marvel-app';
     }
 
     public function isConfigured(): bool
