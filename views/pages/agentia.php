@@ -71,6 +71,7 @@ require_once __DIR__ . '/../layouts/header.php';
       </div>
 
       <form id="agent-chat-form" class="agent-chat-form">
+        <?= csrf_field() ?>
         <input
           type="text"
           id="agentia-input"

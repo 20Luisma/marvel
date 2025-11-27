@@ -151,6 +151,7 @@ require_once __DIR__ . '/../layouts/header.php';
       </header>
 
       <form class="panel-github__filters" method="get" action="/panel-github">
+        <?= csrf_field() ?>
         <label>Desde
           <input type="date" name="from" value="<?= e($from) ?>">
         </label>
