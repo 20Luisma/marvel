@@ -41,6 +41,7 @@ require_once __DIR__ . '/../layouts/header.php';
             </div>
 
             <form id="comic-form" class="space-y-4">
+              <?= csrf_field() ?>
               <input type="hidden" id="selected-heroes-input" name="heroIds" value="[]">
 
               <div class="rounded-xl border border-slate-700/70 bg-slate-900/65 px-4 py-4 space-y-3">

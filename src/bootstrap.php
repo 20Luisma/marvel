@@ -33,7 +33,10 @@ use App\Notifications\Application\ListNotificationsUseCase;
 use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
+use App\Security\Auth\AuthService;
 use App\Security\Config\ConfigValidator;
+use App\Security\Http\AuthMiddleware;
+use App\Security\Http\CsrfTokenManager;
 use App\Security\Http\SecurityHeaders;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
@@ -67,6 +70,23 @@ return (static function (): array {
 
     if ($appEnvironment === '' || $appEnvironment === null) {
         $appEnvironment = 'local';
+    }
+
+    if (session_status() === PHP_SESSION_NONE) {
+        $cookieParams = session_get_cookie_params();
+        $isSecure = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === '1'))
+            || ((int)($_SERVER['SERVER_PORT'] ?? 80) === 443);
+
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => $cookieParams['path'] ?? '/',
+            'domain' => $cookieParams['domain'] ?? '',
+            'secure' => $isSecure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+
+        session_start();
     }
 
     // Middleware de cabeceras de seguridad para toda la app.
@@ -200,6 +220,15 @@ return (static function (): array {
             'listActivity'       => new ListActivityLogUseCase($activityRepository),
             'clearActivity'      => new ClearActivityLogUseCase($activityRepository),
         ],
+    ];
+
+    $authService = new AuthService();
+    $csrfTokenManager = new CsrfTokenManager($appEnvironment);
+
+    $container['security'] = [
+        'auth' => $authService,
+        'csrf' => $csrfTokenManager,
+        'middleware' => new AuthMiddleware($authService),
     ];
 
     $container['seedHeroesService'] = new SeedHeroesService(

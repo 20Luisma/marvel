@@ -1,6 +1,7 @@
 <section class="card section-lined rounded-2xl p-6 shadow-xl">
   <h2 class="text-3xl text-white mb-4">Crear Álbum</h2>
   <form id="album-form" class="space-y-4">
+    <?= csrf_field() ?>
     <label for="album-name" class="block text-sm font-medium text-slate-200 mb-1">
       Nombre del nuevo álbum
     </label>

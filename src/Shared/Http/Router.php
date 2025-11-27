@@ -13,9 +13,13 @@ use App\Activities\Domain\ActivityScope;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Shared\Http\JsonResponse;
+use App\Security\Auth\AuthService;
+use App\Security\Http\AuthMiddleware;
+use App\Security\Http\CsrfTokenManager;
 use Src\Controllers\ActivityController;
 use Src\Controllers\AdminController;
 use Src\Controllers\AlbumController;
+use Src\Controllers\AuthController;
 use Src\Controllers\ConfigController;
 use Src\Controllers\ComicController;
 use Src\Controllers\DevController;
@@ -37,6 +41,16 @@ final class Router
 
     public function handle(string $method, string $path): void
     {
+        $authMiddleware = $this->authMiddleware();
+        if ($authMiddleware !== null && !$authMiddleware->checkAdminRoute($path)) {
+            return;
+        }
+
+        if ($method === 'GET' && $path === '/login') {
+            $this->authController()->showLogin();
+            return;
+        }
+
         $pageController = $this->pageController();
 
         if ($pageController->renderIfHtmlRoute($method, $path)) {
@@ -137,6 +151,16 @@ final class Router
 
         if (preg_match('#^/activity/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
             $this->activityController()->store(ActivityScope::HEROES, $matches[1]);
+            return true;
+        }
+
+        if ($path === '/login') {
+            $this->authController()->login();
+            return true;
+        }
+
+        if ($path === '/logout') {
+            $this->authController()->logout();
             return true;
         }
 
@@ -245,6 +269,39 @@ final class Router
         $useCases = $this->container['useCases'] ?? [];
 
         return $useCases;
+    }
+
+    private ?AuthController $authController = null;
+    private ?AuthMiddleware $authMiddleware = null;
+
+    private function authController(): AuthController
+    {
+        if ($this->authController === null) {
+            $security = $this->container['security'] ?? [];
+            $authService = is_array($security) ? ($security['auth'] ?? null) : null;
+            $csrfManager = is_array($security) ? ($security['csrf'] ?? null) : null;
+
+            if (!$authService instanceof AuthService || !$csrfManager instanceof CsrfTokenManager) {
+                throw new RuntimeException('Servicios de autenticación no disponibles.');
+            }
+
+            $this->authController = new AuthController($authService, $csrfManager);
+        }
+
+        return $this->authController;
+    }
+
+    private function authMiddleware(): ?AuthMiddleware
+    {
+        if ($this->authMiddleware === null) {
+            $security = $this->container['security'] ?? [];
+            $middleware = is_array($security) ? ($security['middleware'] ?? null) : null;
+            if ($middleware instanceof AuthMiddleware) {
+                $this->authMiddleware = $middleware;
+            }
+        }
+
+        return $this->authMiddleware;
     }
 
     private ?ActivityController $activityController = null;

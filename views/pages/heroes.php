@@ -35,6 +35,7 @@ require_once __DIR__ . '/../layouts/header.php';
         <section class="card section-lined rounded-2xl p-6 shadow-xl">
           <h2 class="text-3xl text-white mb-4">Añadir Héroe</h2>
           <form id="hero-form" class="space-y-4">
+          <?= csrf_field() ?>
           <div class="grid grid-cols-1 gap-4">
             <label class="sr-only" for="hero-name">Nombre del héroe</label>
             <input id="hero-name" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 focus:border-[var(--marvel)] focus:ring-0 focus:outline-none text-white" type="text" placeholder="Nombre del Héroe" required>
