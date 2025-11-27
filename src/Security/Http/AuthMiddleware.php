@@ -12,12 +12,17 @@ final class AuthMiddleware
      * @var string[]
      */
     private array $protectedPaths = [
+        '/seccion',
         '/secret-heatmap',
         '/panel-github',
         '/panel-repo-marvel',
+        '/repo-marvel',
         '/panel-accessibility',
+        '/accessibility',
         '/panel-performance',
         '/performance',
+        '/sonar',
+        '/sentry',
         '/agentia',
     ];
 
@@ -35,7 +40,7 @@ final class AuthMiddleware
             return true;
         }
 
-        $_SESSION['intended_path'] = $path;
+        $_SESSION['redirect_to'] = $_SERVER['REQUEST_URI'] ?? $path;
         header('Location: /login', true, 302);
         return false;
     }

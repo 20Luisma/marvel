@@ -6,10 +6,11 @@ namespace App\Security\Auth;
 
 final class AuthService
 {
-    private const ADMIN_EMAIL = 'marvel@gmail.com';
+    private const ADMIN_EMAIL = 'seguridadmarvel@gmail.com';
     private const ADMIN_ID = 'marvel-admin';
     private const ADMIN_ROLE = 'admin';
-    private const PASSWORD_HASH = '$2y$12$A.080AUUXuXqTrK/AkUjZ.ivvYUceZB3Zn.TLKYNmiNj96hlAK8tC'; // hash de "marvel2025"
+    private const PASSWORD_HASH = '$2y$12$I9Z9uy.ksfLKelJO/Ov8.unFdMtI0ZyehDNVu3x3ULC5PeWGxG4My'; // hash de "seguridadmarvel2025"
+    private const SESSION_TTL_SECONDS = 1800; // 30 minutos
 
     public function login(string $email, string $password): bool
     {
@@ -32,6 +33,7 @@ final class AuthService
             'user_id' => self::ADMIN_ID,
             'role' => self::ADMIN_ROLE,
             'email' => self::ADMIN_EMAIL,
+            'last_activity' => time(),
         ];
 
         return true;
@@ -41,7 +43,7 @@ final class AuthService
     {
         $this->ensureSession();
 
-        unset($_SESSION['auth'], $_SESSION['intended_path']);
+        unset($_SESSION['auth'], $_SESSION['intended_path'], $_SESSION['redirect_to']);
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', [
@@ -68,8 +70,19 @@ final class AuthService
 
         $user = $_SESSION['auth'];
 
-        return ($user['user_id'] ?? null) === self::ADMIN_ID
-            && ($user['role'] ?? null) === self::ADMIN_ROLE;
+        if (($user['user_id'] ?? null) !== self::ADMIN_ID || ($user['role'] ?? null) !== self::ADMIN_ROLE) {
+            return false;
+        }
+
+        $lastActivity = isset($user['last_activity']) ? (int)$user['last_activity'] : 0;
+        if ($lastActivity > 0 && (time() - $lastActivity) > self::SESSION_TTL_SECONDS) {
+            $this->logout();
+            return false;
+        }
+
+        $_SESSION['auth']['last_activity'] = time();
+
+        return true;
     }
 
     public function requireAdmin(): bool

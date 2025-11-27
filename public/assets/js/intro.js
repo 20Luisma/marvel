@@ -3,30 +3,31 @@
     const introDuration = 10000;
     let audioStarted = false;
     const fadeDuration = 1800;
-    let loginShown = false;
+    const fadeOutOffset = 1500; // texto desaparece 1.5s antes de salir
 
-    const introShell = document.getElementById('intro');
-    const loginShell = document.getElementById('login-shell');
-    const form = document.getElementById('login-form');
-    const errorBox = document.getElementById('login-error');
     const logoFrame = document.querySelector('.logo-frame');
+    const textBlocks = document.querySelectorAll('.marvel-motto, .master-note-big, .master-note-small');
 
-    const validUser = 'marvel@gmail.com';
-    const validPass = 'marvel2025';
-
-    const showLogin = () => {
-        if (loginShown) return;
-        loginShown = true;
-        introShell?.classList.add('hidden');
-        loginShell?.classList.add('visible');
+    const fadeTexts = () => {
+        textBlocks.forEach((el) => {
+            el.classList.add('fade-out');
+        });
     };
 
-    window.setTimeout(showLogin, introDuration + 200);
+    const goHome = () => {
+        window.location.href = './home.php';
+    };
+
     if (logoFrame) {
-        logoFrame.addEventListener('animationend', showLogin, {
+        logoFrame.addEventListener('animationend', () => {
+            fadeTexts();
+            window.setTimeout(goHome, fadeOutOffset);
+        }, {
             once: true
         });
     }
+    window.setTimeout(fadeTexts, Math.max(0, introDuration - fadeOutOffset));
+    window.setTimeout(goHome, introDuration + 200);
 
     const fadeInAudio = () => {
         let start = null;
@@ -70,20 +71,4 @@
         });
     });
 
-    form?.addEventListener('submit', (event) => {
-        event.preventDefault();
-        if (!form || !errorBox) {
-            window.location.href = './home.php';
-            return;
-        }
-        const username = (form.querySelector('#username') || {}).value?.trim() || '';
-        const password = (form.querySelector('#password') || {}).value || '';
-
-        if (username.toLowerCase() === validUser && password === validPass) {
-            errorBox.textContent = '';
-            window.location.href = './home.php';
-        } else {
-            errorBox.textContent = 'Credenciales de prueba incorrectas. Usa marvel@gmail.com / marvel2025.';
-        }
-    });
 }());
