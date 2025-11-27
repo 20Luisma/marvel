@@ -26,6 +26,7 @@
     "scripts": {
         "serve": "php -S localhost:8080 -t public",
         "test": "phpunit",
-        "test:coverage": "phpunit --coverage-clover coverage.xml"
+        "test:coverage": "phpunit --coverage-clover coverage.xml",
+        "security:audit": "composer audit --no-dev"
     }
 }

@@ -33,6 +33,8 @@ use App\Notifications\Application\ListNotificationsUseCase;
 use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
+use App\Security\Config\ConfigValidator;
+use App\Security\Http\SecurityHeaders;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
 use Sentry\ClientBuilder;
@@ -66,6 +68,9 @@ return (static function (): array {
     if ($appEnvironment === '' || $appEnvironment === null) {
         $appEnvironment = 'local';
     }
+
+    // Middleware de cabeceras de seguridad para toda la app.
+    SecurityHeaders::apply();
 
     if ($sentryDsn) {
         try {
@@ -107,6 +112,9 @@ return (static function (): array {
     if (class_exists(ServiceUrlProvider::class)) {
         $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
     }
+
+    // Validación temprana de configuración para evitar fallos en runtime por .env incompleto.
+    (new ConfigValidator($_ENV + ['APP_ENV' => $appEnvironment], $serviceUrlProvider, $appEnvironment))->validate();
 
     $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
     // TODO: usar TMDB_API_KEY en el endpoint de películas Marvel

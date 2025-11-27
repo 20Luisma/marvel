@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Security\Http\SecurityHeaders;
 use Src\Shared\Http\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// Aplica cabeceras de seguridad de forma centralizada.
+SecurityHeaders::apply();
 
 if (!function_exists('route')) {
     /**
@@ -22,24 +26,6 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     require_once __DIR__ . '/home.php';
     exit;
 }
-
-$csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com",
-    "font-src 'self' https://fonts.gstatic.com https://r2cdn.perplexity.ai data:",
-    "img-src 'self' data: blob: https:",
-    "media-src 'self' data: blob: https:",
-    "connect-src 'self' https: https://sentry.io http://localhost:8080 http://localhost:8081 http://localhost:8082",
-    "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
-    "frame-ancestors 'self'",
-];
-
-header('X-Frame-Options: SAMEORIGIN');
-header('X-Content-Type-Options: nosniff');
-header('Referrer-Policy: same-origin');
-header('Permissions-Policy: microphone=(), camera=(), geolocation=()');
-header('Content-Security-Policy: ' . implode('; ', $csp));
 
 ?>
 <!DOCTYPE html>
