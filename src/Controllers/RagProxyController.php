@@ -18,7 +18,7 @@ final class RagProxyController
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $ragServiceUrl,
-        private readonly ?string $internalToken
+        ?string $internalToken
     ) {
         $caller = is_string($_SERVER['HTTP_HOST'] ?? null) ? trim((string) $_SERVER['HTTP_HOST']) : 'clean-marvel-app';
         $this->signer = is_string($internalToken) && $internalToken !== ''

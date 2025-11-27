@@ -225,7 +225,8 @@ return (static function (): array {
 
     $authService = new AuthService();
     $csrfTokenManager = new CsrfTokenManager($appEnvironment);
-    $internalApiKey = trim((string) ($_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?? ''));
+    $envInternalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY');
+    $internalApiKey = is_string($envInternalKey) ? trim($envInternalKey) : '';
 
     $container['security'] = [
         'auth' => $authService,
