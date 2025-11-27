@@ -18,6 +18,7 @@ require_once $autoload;
 
 $envPath = $baseDir . '/.env';
 loadEnvIfAvailable($envPath);
+$_SERVER['__RAW_INPUT__'] = read_raw_input();
 
 $router = new Router();
 $router->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
@@ -54,4 +55,14 @@ function loadEnvIfAvailable(string $envPath): void
         $_ENV[$name] = $value;
         $_SERVER[$name] = $value;
     }
+}
+
+function read_raw_input(): string
+{
+    $content = file_get_contents('php://input');
+    if ($content === false) {
+        return '';
+    }
+
+    return (string) $content;
 }

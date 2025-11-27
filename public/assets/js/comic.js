@@ -368,10 +368,7 @@ function computeUiLabels(config) {
 }
 
 function getRagEndpoint() {
-  return pickString(
-    serviceConfig?.services?.rag?.heroesUrl,
-    FALLBACK_SERVICE_CONFIG.services.rag.heroesUrl
-  );
+  return '/api/rag/heroes';
 }
 
 // misma idea, por si otras partes del código usan esta función

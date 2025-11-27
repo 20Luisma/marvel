@@ -8,6 +8,9 @@ use RuntimeException;
 
 final class CurlHttpClient implements HttpClientInterface
 {
+    private const BASE_BACKOFF_MS = 250;
+    private const MAX_BACKOFF_MS = 3000;
+
     public function __construct(private readonly ?string $internalToken = null)
     {
     }
@@ -15,10 +18,10 @@ final class CurlHttpClient implements HttpClientInterface
     /**
      * @param array<string, string> $headers
      */
-    public function postJson(string $url, array $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+    public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
     {
         $attempts = max(1, $retries + 1);
-        $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $encodedPayload = is_string($payload) ? $payload : json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         if ($encodedPayload === false) {
             throw new RuntimeException('No se pudo codificar el payload JSON.');
@@ -54,6 +57,7 @@ final class CurlHttpClient implements HttpClientInterface
             if ($body === false || $httpCode === 0) {
                 $lastError = $error !== '' ? $error : 'Sin respuesta del servidor';
                 if ($i + 1 < $attempts) {
+                    $this->sleepBackoff($i);
                     continue;
                 }
                 throw new RuntimeException('Fallo al llamar al servicio: ' . $lastError);
@@ -77,5 +81,15 @@ final class CurlHttpClient implements HttpClientInterface
         }
 
         return $formatted;
+    }
+
+    private function sleepBackoff(int $attempt): void
+    {
+        $milliseconds = min(
+            self::MAX_BACKOFF_MS,
+            (int) (self::BASE_BACKOFF_MS * (2 ** $attempt))
+        );
+
+        usleep($milliseconds * 1000);
     }
 }
