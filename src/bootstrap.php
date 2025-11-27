@@ -39,6 +39,7 @@ use App\Security\Http\AuthMiddleware;
 use App\Security\Http\CsrfTokenManager;
 use App\Security\Http\SecurityHeaders;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
+use App\Shared\Infrastructure\Http\CurlHttpClient;
 use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
 use Sentry\ClientBuilder;
 use Sentry\SentrySdk;
@@ -224,11 +225,13 @@ return (static function (): array {
 
     $authService = new AuthService();
     $csrfTokenManager = new CsrfTokenManager($appEnvironment);
+    $internalApiKey = trim((string) ($_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?? ''));
 
     $container['security'] = [
         'auth' => $authService,
         'csrf' => $csrfTokenManager,
         'middleware' => new AuthMiddleware($authService),
+        'internal_api_key' => $internalApiKey !== '' ? $internalApiKey : null,
     ];
 
     $container['seedHeroesService'] = new SeedHeroesService(
@@ -253,6 +256,10 @@ return (static function (): array {
 
     $container['devTools'] = [
         'testRunner' => PhpUnitTestRunner::fromEnvironment($rootPath),
+    ];
+
+    $container['http'] = [
+        'client' => new CurlHttpClient(),
     ];
 
     try {

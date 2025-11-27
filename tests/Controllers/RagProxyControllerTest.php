@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tests\Controllers;
 
 use App\Shared\Infrastructure\Http\HttpResponse;
+use App\Shared\Infrastructure\Security\InternalRequestSigner;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\RagProxyController;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerTest extends TestCase
 {
-    public function testForwardsPayloadWithInternalToken(): void
+    public function testForwardsPayloadWithHmacHeaders(): void
     {
         $client = new HttpClientStub();
         $client->body = json_encode(['answer' => 'ok']);
@@ -24,6 +25,15 @@ final class RagProxyControllerTest extends TestCase
         ob_end_clean();
 
         self::assertCount(1, $client->requests);
-        self::assertSame('secret-token', $client->requests[0]['headers']['X-Internal-Token'] ?? null);
+        $headers = $client->requests[0]['headers'] ?? [];
+
+        self::assertArrayHasKey('X-Internal-Signature', $headers);
+        self::assertArrayHasKey('X-Internal-Timestamp', $headers);
+
+        $timestamp = (int) $headers['X-Internal-Timestamp'];
+        $signer = new InternalRequestSigner('secret-token');
+        $expectedSignature = $signer->computeSignature('POST', '/rag/heroes', (string) $client->requests[0]['payload'], $timestamp);
+
+        self::assertSame($expectedSignature, $headers['X-Internal-Signature']);
     }
 }

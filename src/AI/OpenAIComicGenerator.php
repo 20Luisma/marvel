@@ -14,6 +14,8 @@ class OpenAIComicGenerator
     private const DEFAULT_SERVICE_URL = 'http://localhost:8081/v1/chat';
 
     private readonly string $serviceUrl;
+    private readonly ?string $internalApiKey;
+    private readonly string $internalCaller;
 
     public function __construct(?string $serviceUrl = null)
     {
@@ -30,6 +32,10 @@ class OpenAIComicGenerator
         }
 
         $this->serviceUrl = rtrim($resolved, '/');
+        $internalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?? '';
+        $this->internalApiKey = is_string($internalKey) && trim($internalKey) !== '' ? trim($internalKey) : null;
+        $callerCandidate = $_ENV['APP_HOST'] ?? getenv('APP_HOST') ?? ($_ENV['APP_URL'] ?? getenv('APP_URL') ?? ($_SERVER['HTTP_HOST'] ?? ''));
+        $this->internalCaller = is_string($callerCandidate) && trim($callerCandidate) !== '' ? trim((string) $callerCandidate) : 'clean-marvel-app';
     }
 
     public function isConfigured(): bool
@@ -159,20 +165,50 @@ PROMPT,
             $payload['model'] = $model;
         }
 
-        $ch = curl_init($this->serviceUrl);
-        if ($ch === false) {
-            throw new RuntimeException('No se pudo inicializar la petición al microservicio de OpenAI.');
+        $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($encodedPayload === false) {
+            throw new RuntimeException('No se pudo serializar el payload para el microservicio de OpenAI.');
         }
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $attempts = 0;
+        $maxAttempts = 3;
+        $response = false;
+        $httpCode = 0;
+        $error = '';
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
+        while ($attempts < $maxAttempts) {
+            $attempts++;
+            $ch = curl_init($this->serviceUrl);
+            if ($ch === false) {
+                $error = 'No se pudo inicializar la petición al microservicio de OpenAI.';
+                continue;
+            }
+
+            $headers = ['Content-Type: application/json'];
+            if ($this->internalApiKey !== null) {
+                $headers = array_merge($headers, $this->signatureHeaders($encodedPayload));
+            }
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedPayload);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            if ($response !== false && $httpCode > 0 && $httpCode < 500) {
+                break;
+            }
+
+            if ($attempts < $maxAttempts) {
+                usleep((int) (250000 * (2 ** ($attempts - 1))));
+            }
+        }
 
         if ($response === false || $httpCode >= 500) {
             throw new RuntimeException('Microservicio OpenAI no disponible' . ($error !== '' ? ': ' . $error : ''));
@@ -240,5 +276,22 @@ PROMPT,
         }
 
         return $decoded;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function signatureHeaders(string $rawBody): array
+    {
+        $timestamp = time();
+        $path = parse_url($this->serviceUrl, PHP_URL_PATH) ?: '/v1/chat';
+        $canonical = "POST\n{$path}\n{$timestamp}\n" . hash('sha256', $rawBody);
+        $signature = hash_hmac('sha256', $canonical, (string) $this->internalApiKey);
+
+        return [
+            'X-Internal-Signature: ' . $signature,
+            'X-Internal-Timestamp: ' . $timestamp,
+            'X-Internal-Caller: ' . $this->internalCaller,
+        ];
     }
 }

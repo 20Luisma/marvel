@@ -19,7 +19,7 @@ final class OpenAIController
      */
     public function chat(): void
     {
-        $raw = file_get_contents('php://input') ?: '';
+        $raw = $_SERVER['__RAW_INPUT__'] ?? file_get_contents('php://input') ?: '';
         $data = json_decode($raw, true) ?? [];
 
         $messages = $data['messages'] ?? [];

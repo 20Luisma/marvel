@@ -10,28 +10,45 @@ use Creawebes\OpenAI\Infrastructure\Client\OpenAiClient;
 
 class Router
 {
+    private ?string $lastAuthError = null;
+
     public function handle(string $method, string $uri): void
     {
+        $start = microtime(true);
+        $normalizedMethod = strtoupper($method);
         $path = parse_url($uri, PHP_URL_PATH) ?? '/';
+
         if (!$this->applyCors()) {
-            $this->denyCorsRequest(strtoupper($method));
+            $this->denyCorsRequest($normalizedMethod);
+            $this->logRequest($start, $path, http_response_code() ?: 403, 'origin-not-allowed');
             return;
         }
 
-        if (strtoupper($method) === 'OPTIONS') {
+        if ($normalizedMethod === 'OPTIONS') {
             http_response_code(204);
+            $this->logRequest($start, $path, 204);
             return;
         }
 
-        if (strtoupper($method) === 'POST' && $path === '/v1/chat') {
+        if ($normalizedMethod === 'POST' && $path === '/v1/chat') {
+            if (!$this->authorizeInternalSignature($normalizedMethod, $path)) {
+                http_response_code(401);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['error' => 'Unauthorized request'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $this->logRequest($start, $path, 401, $this->lastAuthError ?? 'signature');
+                return;
+            }
+
             $controller = new OpenAIController(new GenerateContent(new OpenAiClient()));
             $controller->chat();
+            $this->logRequest($start, $path, http_response_code() ?: 200);
             return;
         }
 
         http_response_code(404);
         header('Content-Type: application/json');
         echo json_encode(['error' => 'Not Found']);
+        $this->logRequest($start, $path, 404, 'not-found');
     }
 
     private function applyCors(): bool
@@ -53,7 +70,7 @@ class Router
         }
 
         header('Access-Control-Allow-Methods: POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller');
         header('Access-Control-Max-Age: 86400');
 
         return true;
@@ -90,5 +107,127 @@ class Router
         http_response_code(403);
         header('Content-Type: application/json');
         echo json_encode(['error' => 'Origin not allowed'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    private function authorizeInternalSignature(string $method, string $path): bool
+    {
+        $this->lastAuthError = null;
+        $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
+        $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
+        if ($normalizedKey === '') {
+            return true;
+        }
+
+        $signature = $_SERVER['HTTP_X_INTERNAL_SIGNATURE'] ?? '';
+        $timestampHeader = $_SERVER['HTTP_X_INTERNAL_TIMESTAMP'] ?? '';
+        $caller = $_SERVER['HTTP_X_INTERNAL_CALLER'] ?? '';
+        $timestamp = is_numeric($timestampHeader) ? (int) $timestampHeader : 0;
+
+        if (!is_string($signature) || trim($signature) === '' || $timestamp <= 0) {
+            $this->lastAuthError = 'missing-signature';
+            return false;
+        }
+
+        $canonical = strtoupper($method) . "\n" . $path . "\n" . $timestamp . "\n" . hash('sha256', $this->rawInput());
+        $expected = hash_hmac('sha256', $canonical, $normalizedKey);
+
+        if (!hash_equals($expected, trim((string) $signature))) {
+            $this->lastAuthError = 'signature-mismatch';
+            return false;
+        }
+
+        if (abs(time() - $timestamp) > 300) {
+            $this->lastAuthError = 'timestamp-out-of-range';
+            return false;
+        }
+
+        $allowedCallers = $this->allowedCallers();
+        $normalizedCaller = $this->normalizeHost((string) $caller);
+        if ($allowedCallers !== [] && $normalizedCaller !== '' && !in_array($normalizedCaller, $allowedCallers, true)) {
+            $this->lastAuthError = 'caller-not-allowed';
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function allowedCallers(): array
+    {
+        $configured = $_ENV['ALLOWED_INTERNAL_CALLERS'] ?? getenv('ALLOWED_INTERNAL_CALLERS') ?: null;
+        if (is_string($configured) && trim($configured) !== '') {
+            $entries = array_filter(array_map([$this, 'normalizeHost'], explode(',', $configured)));
+            if ($entries !== []) {
+                return array_values($entries);
+            }
+        }
+
+        $entries = array_filter(array_map(function (string $origin): string {
+            $host = parse_url($origin, PHP_URL_HOST);
+            return $this->normalizeHost($host ?: $origin);
+        }, $this->allowedOrigins()));
+
+        $entries[] = $this->normalizeHost('rag-service.contenido.creawebes.com');
+        $entries[] = $this->normalizeHost('localhost:8082');
+
+        return array_values(array_unique(array_filter($entries)));
+    }
+
+    private function normalizeHost(?string $host): string
+    {
+        $value = strtolower(trim((string) $host));
+        if ($value === '') {
+            return '';
+        }
+
+        if (str_contains($value, '://')) {
+            $parsed = parse_url($value, PHP_URL_HOST);
+            if (is_string($parsed) && $parsed !== '') {
+                $value = $parsed;
+            }
+        }
+
+        return explode('/', $value)[0];
+    }
+
+    private function rawInput(): string
+    {
+        $raw = $_SERVER['__RAW_INPUT__'] ?? null;
+        if (is_string($raw)) {
+            return $raw;
+        }
+
+        $content = file_get_contents('php://input');
+        return $content === false ? '' : (string) $content;
+    }
+
+    private function logRequest(float $start, string $path, int $statusCode, ?string $error = null): void
+    {
+        $logFile = __DIR__ . '/../storage/logs/requests.log';
+        $directory = dirname($logFile);
+        if (!is_dir($directory)) {
+            @mkdir($directory, 0775, true);
+        }
+
+        $entry = [
+            'timestamp' => date('c'),
+            'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+            'path' => $path,
+            'status' => $statusCode,
+            'duration_ms' => (int) round((microtime(true) - $start) * 1000),
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'caller' => $_SERVER['HTTP_X_INTERNAL_CALLER'] ?? null,
+        ];
+
+        if ($error !== null) {
+            $entry['error'] = $error;
+        }
+
+        $encoded = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        if ($encoded !== false) {
+            @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
+        }
     }
 }

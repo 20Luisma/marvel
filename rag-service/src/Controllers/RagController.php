@@ -17,7 +17,7 @@ final class RagController
 
     public function compareHeroes(): void
     {
-        $body = file_get_contents('php://input') ?: '';
+        $body = $_SERVER['__RAW_INPUT__'] ?? file_get_contents('php://input') ?: '';
         $payload = json_decode($body, true) ?? [];
 
         $question = isset($payload['question']) ? (string) $payload['question'] : null;

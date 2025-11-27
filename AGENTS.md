@@ -4,6 +4,7 @@
 - **Clean Marvel Album** es una demo/producto educativo en **PHP 8.2** que aplica Arquitectura Limpia para gestionar álbumes y héroes Marvel, desacoplando la lógica del framework, la UI (`public/`, `views/`) y la infraestructura (`storage/`, adaptadores JSON).
 - El backend central orquesta dos microservicios IA propios (`openai-service` y `rag-service`) y expone los casos de uso mediante controladores HTTP y vistas Twig-less. La capa `App\Config\ServiceUrlProvider` resuelve automáticamente los endpoints según entorno (`local`, `hosting`).
 - La base de conocimiento y logs viven en `storage/`, lo que facilita semillas reproducibles (`App\Dev\Seed`) y auditoría de eventos/actividades.
+- El tráfico hacia microservicios se firma con HMAC usando `INTERNAL_API_KEY` y las cabeceras `X-Internal-*`; el frontend consume `/api/rag/heroes` como proxy sin exponer claves. Rag/OpenAI rechazan peticiones sin firma válida o con timestamp vencido y registran logs en `storage/logs` (sin credenciales).
 - El flujo de desarrollo se apoya en Composer scripts (`composer serve`, `composer test`, `composer test:cov`), tasks de VS Code documentadas en `docs/TASKS_AUTOMATION.md`, y un runner HTTP `/dev/tests/run` que dispara PHPUnit desde `App\Dev\Test\PhpUnitTestRunner`.
 - Los resultados de texto (cómic y comparación RAG) ahora ofrecen narración con ElevenLabs: los botones del frontend apuntan a `/api/tts-elevenlabs.php`, que usa `ELEVENLABS_API_KEY` desde `.env` sin exponerla al navegador.
 
