@@ -152,10 +152,10 @@ require_once __DIR__ . '/../layouts/header.php';
 
       <form class="panel-github__filters" method="get" action="/panel-github">
         <label>Desde
-          <input type="date" name="from" value="<?= htmlspecialchars($from) ?>">
+          <input type="date" name="from" value="<?= e($from) ?>">
         </label>
         <label>Hasta
-          <input type="date" name="to" value="<?= htmlspecialchars($to) ?>">
+          <input type="date" name="to" value="<?= e($to) ?>">
         </label>
         <button class="btn-primary" type="submit">Ver PRs</button>
       </form>
@@ -165,22 +165,22 @@ require_once __DIR__ . '/../layouts/header.php';
       <?php elseif ($hasError): ?>
         <div class="panel-github__message panel-github__message--error" role="alert" aria-live="assertive" aria-atomic="true">
           <strong>Sin datos del API.</strong>
-          <p><?= htmlspecialchars($data['error'] ?? 'Error desconocido') ?></p>
+          <p><?= e($data['error'] ?? 'Error desconocido') ?></p>
           <?php if (isset($data['detail'])): ?>
-            <p>Detalle: <?= htmlspecialchars((string) $data['detail']) ?></p>
+            <p>Detalle: <?= e((string) $data['detail']) ?></p>
           <?php endif; ?>
           <?php if (isset($data['status'])): ?>
-            <p>HTTP: <?= htmlspecialchars((string) $data['status']) ?></p>
+            <p>HTTP: <?= e((string) $data['status']) ?></p>
           <?php endif; ?>
           <?php if (isset($data['body'])): ?>
-            <p>Payload: <?= htmlspecialchars(is_string($data['body']) ? $data['body'] : json_encode($data['body'])) ?></p>
+            <p>Payload: <?= e(is_string($data['body']) ? $data['body'] : json_encode($data['body'])) ?></p>
           <?php endif; ?>
           <p>Revisa que <code>GITHUB_API_KEY</code> esté configurada con un token personal válido.</p>
         </div>
       <?php elseif (!$blocks): ?>
         <div class="panel-github__message panel-github__message--empty" role="status" aria-live="polite" aria-atomic="true">
           <strong>Sin actividad reciente.</strong>
-          <p>No hay Pull Requests en este rango para el repositorio <code><?= htmlspecialchars($repoOwner) ?>/<?= htmlspecialchars($repoName) ?></code>.</p>
+          <p>No hay Pull Requests en este rango para el repositorio <code><?= e($repoOwner) ?>/<?= e($repoName) ?></code>.</p>
         </div>
       <?php else: ?>
         <div class="panel-github__row">
@@ -208,28 +208,28 @@ require_once __DIR__ . '/../layouts/header.php';
               $metaText = implode(' · ', array_filter($metaParts));
             }
 
-            $dateLine = 'Creado: ' . htmlspecialchars((string) ($details['created_at'] ?? 'N/D'));
+            $dateLine = 'Creado: ' . e((string) ($details['created_at'] ?? 'N/D'));
             if (!empty($details['updated_at'])) {
-              $dateLine .= ' · Actualizado: ' . htmlspecialchars((string) $details['updated_at']);
+              $dateLine .= ' · Actualizado: ' . e((string) $details['updated_at']);
             }
             if (!empty($details['merged_at'])) {
-              $dateLine .= ' · Mergeado: ' . htmlspecialchars((string) $details['merged_at']);
+              $dateLine .= ' · Mergeado: ' . e((string) $details['merged_at']);
             }
             ?>
             <article class="panel-github__pr">
-              <h3><?= htmlspecialchars($entry['title'] ?? 'Actividad') ?></h3>
+              <h3><?= e($entry['title'] ?? 'Actividad') ?></h3>
               <?php if (!empty($entry['subtitle'])): ?>
-                <p class="panel-github__subtitle"><?= htmlspecialchars((string) $entry['subtitle']) ?></p>
+                <p class="panel-github__subtitle"><?= e((string) $entry['subtitle']) ?></p>
               <?php endif; ?>
 
               <?php if ($metaText !== ''): ?>
-                <p class="panel-github__meta"><?= htmlspecialchars($metaText) ?></p>
+                <p class="panel-github__meta"><?= e($metaText) ?></p>
               <?php endif; ?>
 
               <div class="panel-github__actions">
                 <span><?= $dateLine ?></span>
                 <?php if (!empty($details['url'])): ?>
-                  <a class="panel-github__link" href="<?= htmlspecialchars((string) $details['url']) ?>" target="_blank" rel="noopener">
+                  <a class="panel-github__link" href="<?= e((string) $details['url']) ?>" target="_blank" rel="noopener">
                     Ver en GitHub →
                   </a>
                 <?php endif; ?>
@@ -238,7 +238,7 @@ require_once __DIR__ . '/../layouts/header.php';
               <?php if (!empty($details['labels']) && is_array($details['labels'])): ?>
                 <div class="panel-github__labels">
                   <?php foreach ($details['labels'] as $label): ?>
-                    <span class="panel-github__label"><?= htmlspecialchars((string) $label) ?></span>
+                    <span class="panel-github__label"><?= e((string) $label) ?></span>
                   <?php endforeach; ?>
                 </div>
               <?php endif; ?>
@@ -246,7 +246,7 @@ require_once __DIR__ . '/../layouts/header.php';
           <?php endforeach; ?>
         </div>
         <p class="panel-github__footnote">
-          Fuente: API REST de GitHub para <code><?= htmlspecialchars($repoOwner) ?>/<?= htmlspecialchars($repoName) ?></code>.
+          Fuente: API REST de GitHub para <code><?= e($repoOwner) ?>/<?= e($repoName) ?></code>.
           Asegúrate de que el token personal tenga permisos de lectura sobre el repositorio.
         </p>
       <?php endif; ?>

@@ -103,6 +103,7 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 - Suite completa: `vendor/bin/phpunit --colors=always`
 - Cobertura: `composer test:cov`
 - Análisis estático: `vendor/bin/phpstan analyse --memory-limit=512M`
+- Auditoría de dependencias: `composer security:audit`
 - Validación Composer: `composer validate`
 
 ## 📚 Documentación ampliada

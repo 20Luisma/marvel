@@ -1,4 +1,8 @@
-Ì
+‘
+!app\security\http\securityheaders1
+apply(app\security\http\securityheaders::apply7
+buildcsp+app\security\http\securityheaders::buildcspC
+ishttpsrequest1app\security\http\securityheaders::ishttpsrequestÌ
 0app\heroes\application\usecase\createherousecaseL
 __construct=app\heroes\application\usecase\createherousecase::__constructD
 execute9app\heroes\application\usecase\createherousecase::executeN
@@ -196,7 +200,16 @@ listAlbums"updateAlbum*@
 	findAlbum/app\albums\application\usecase\findalbumusecase*>
 
 listAlbums0app\albums\application\usecase\listalbumsusecase*@
-updateAlbum1app\albums\application\usecase\updatealbumusecase•
+updateAlbum1app\albums\application\usecase\updatealbumusecaseﬁ
+#app\security\config\configvalidator?
+__construct0app\security\config\configvalidator::__constructA
+isproduction1app\security\config\configvalidator::isproduction7
+readenv,app\security\config\configvalidator::readenv9
+validate-app\security\config\configvalidator::validate?
+validateurl0app\security\config\configvalidator::validateurl"env"environment"serviceUrlProvider*
+envarray*
+environmentstring*3
+serviceUrlProviderapp\config\serviceurlprovider•
 8app\activities\application\usecase\recordactivityusecaseT
 __constructEapp\activities\application\usecase\recordactivityusecase::__constructL
 executeAapp\activities\application\usecase\recordactivityusecase::execute"
