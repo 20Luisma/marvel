@@ -18,15 +18,22 @@ if (!function_exists('csrf_field')) {
      */
     function csrf_field(): string
     {
+        $token = null;
         $container = $GLOBALS['__clean_marvel_container'] ?? null;
         $csrfManager = is_array($container) ? ($container['security']['csrf'] ?? null) : null;
 
         if ($csrfManager instanceof \App\Security\Http\CsrfTokenManager) {
             $token = $csrfManager->generate();
-
-            return '<input type="hidden" name="_token" value="' . e($token) . '">';
+        } else {
+            $token = \App\Security\Csrf\CsrfService::generateToken();
         }
 
-        return '';
+        $escaped = e((string) $token);
+
+        // Incluimos ambos nombres para compatibilidad con middleware nuevo y controladores existentes.
+        return sprintf(
+            '<input type="hidden" name="csrf_token" value="%1$s"><input type="hidden" name="_token" value="%1$s">',
+            $escaped
+        );
     }
 }

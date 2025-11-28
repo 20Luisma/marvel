@@ -16,6 +16,8 @@ use App\Shared\Http\JsonResponse;
 use App\Security\Auth\AuthService;
 use App\Security\Http\AuthMiddleware;
 use App\Security\Http\CsrfTokenManager;
+use App\Security\Http\RateLimitMiddleware;
+use App\Security\Http\ApiFirewall;
 use Src\Controllers\ActivityController;
 use Src\Controllers\AdminController;
 use Src\Controllers\AlbumController;
@@ -41,6 +43,16 @@ final class Router
 
     public function handle(string $method, string $path): void
     {
+        $firewall = $this->apiFirewall();
+        if ($firewall !== null && !$firewall->handle($method, $path)) {
+            return;
+        }
+
+        $rateLimiter = $this->rateLimitMiddleware();
+        if ($rateLimiter !== null && !$rateLimiter->handle($method, $path)) {
+            return;
+        }
+
         $authMiddleware = $this->authMiddleware();
         if ($authMiddleware !== null && !$authMiddleware->checkAdminRoute($path)) {
             return;
@@ -480,5 +492,34 @@ final class Router
         }
 
         return $this->pageController;
+    }
+
+    private ?RateLimitMiddleware $rateLimitMiddleware = null;
+    private ?ApiFirewall $apiFirewall = null;
+
+    private function rateLimitMiddleware(): ?RateLimitMiddleware
+    {
+        if ($this->rateLimitMiddleware === null) {
+            $security = $this->container['security'] ?? [];
+            $middleware = is_array($security) ? ($security['rateLimitMiddleware'] ?? null) : null;
+            if ($middleware instanceof RateLimitMiddleware) {
+                $this->rateLimitMiddleware = $middleware;
+            }
+        }
+
+        return $this->rateLimitMiddleware;
+    }
+
+    private function apiFirewall(): ?ApiFirewall
+    {
+        if ($this->apiFirewall === null) {
+            $security = $this->container['security'] ?? [];
+            $firewall = is_array($security) ? ($security['apiFirewall'] ?? null) : null;
+            if ($firewall instanceof ApiFirewall) {
+                $this->apiFirewall = $firewall;
+            }
+        }
+
+        return $this->apiFirewall;
     }
 }

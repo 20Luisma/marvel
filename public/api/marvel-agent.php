@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Shared\Infrastructure\Http\CurlHttpClient;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
+use App\Security\Sanitizer;
+use App\Security\Validation\JsonValidator;
 
 $rootPath = dirname(__DIR__, 2);
 require_once $rootPath . '/vendor/autoload.php';
@@ -17,6 +19,8 @@ if (!is_string($question) || trim($question) === '') {
     echo json_encode(['error' => 'Missing question'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
+$sanitizer = new Sanitizer();
+$question = $sanitizer->sanitizeString($question);
 
 $ragUrl = $_ENV['RAG_SERVICE_URL'] ?? getenv('RAG_SERVICE_URL');
 if (!is_string($ragUrl) || trim($ragUrl) === '') {
@@ -28,6 +32,15 @@ if (!is_string($ragUrl) || trim($ragUrl) === '') {
 }
 
 $payload = ['question' => $question];
+try {
+    (new JsonValidator())->validate($payload, [
+        'question' => ['type' => 'string', 'required' => true],
+    ], allowEmpty: false);
+} catch (\InvalidArgumentException $exception) {
+    http_response_code(400);
+    echo json_encode(['error' => $exception->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
 $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 if ($encodedPayload === false) {
     http_response_code(400);
@@ -78,6 +91,7 @@ function log_microservice_call(string $targetUrl, int $status, float $durationSe
         'duration_ms' => (int) round($durationSeconds * 1000),
         'remote_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
         'caller' => $_SERVER['HTTP_HOST'] ?? null,
+        'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
     ];
 
     if ($error !== null && $error !== '') {

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Src\Shared\Http\Router;
+use App\Security\Http\CsrfMiddleware;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -55,6 +56,10 @@ if (!defined('SKIP_HTTP_BOOT')) {
     if ($path === '/home.php') {
         $path = '/';
     }
+
+    // CSRF middleware antes de controladores.
+    $csrfMiddleware = new CsrfMiddleware($container['security']['logger'] ?? null);
+    $csrfMiddleware->handle($path);
 
     (new Router($container))->handle($method, $path);
 }
