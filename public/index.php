@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Security\Http\SecurityHeaders;
+use App\Security\Http\CsrfMiddleware;
 use Src\Shared\Http\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -21,6 +22,10 @@ if (!function_exists('route')) {
 }
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+// CSRF middleware inicial para rutas POST de landing/home.
+$csrfMiddleware = new CsrfMiddleware($GLOBALS['__clean_marvel_container']['security']['logger'] ?? null);
+$csrfMiddleware->handle($requestPath);
 
 if ($requestPath !== '/' && $requestPath !== '/index.php') {
     require_once __DIR__ . '/home.php';

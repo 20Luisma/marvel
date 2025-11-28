@@ -9,6 +9,7 @@ use App\Activities\Application\UseCase\ClearActivityLogUseCase;
 use App\Activities\Application\UseCase\ListActivityLogUseCase;
 use App\Activities\Application\UseCase\RecordActivityUseCase;
 use App\Shared\Http\JsonResponse;
+use App\Security\Sanitizer;
 use InvalidArgumentException;
 use Src\Controllers\Http\Request;
 use Throwable;
@@ -35,8 +36,9 @@ final class ActivityController
     public function store(string $scope, ?string $contextId = null): void
     {
         $payload = Request::jsonBody();
-        $action = trim((string)($payload['action'] ?? ''));
-        $title = trim((string)($payload['title'] ?? ''));
+        $sanitizer = new Sanitizer();
+        $action = $sanitizer->sanitizeString((string)($payload['action'] ?? ''));
+        $title = $sanitizer->sanitizeString((string)($payload['title'] ?? ''));
 
         try {
             $entry = $this->recordActivity->execute(

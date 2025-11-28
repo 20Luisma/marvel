@@ -12,6 +12,7 @@ use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Heroes\Application\UseCase\ListHeroesUseCase;
 use App\Heroes\Application\UseCase\UpdateHeroUseCase;
 use App\Shared\Http\JsonResponse;
+use App\Security\Sanitizer;
 use InvalidArgumentException;
 use Src\Controllers\Http\Request;
 
@@ -41,9 +42,10 @@ final class HeroController
     public function store(string $albumId): void
     {
         $payload = Request::jsonBody();
-        $nombre = trim((string)($payload['nombre'] ?? ''));
-        $contenido = (string)($payload['contenido'] ?? '');
-        $imagen = trim((string)($payload['imagen'] ?? ''));
+        $sanitizer = new Sanitizer();
+        $nombre = $sanitizer->sanitizeString((string)($payload['nombre'] ?? ''));
+        $contenido = $sanitizer->sanitizeString((string)($payload['contenido'] ?? ''));
+        $imagen = $sanitizer->sanitizeString((string)($payload['imagen'] ?? ''));
 
         if ($nombre === '' || $imagen === '') {
             JsonResponse::error('Los campos nombre e imagen son obligatorios.', 422);
@@ -67,9 +69,10 @@ final class HeroController
     public function update(string $heroId): void
     {
         $payload = Request::jsonBody();
-        $nombre = array_key_exists('nombre', $payload) ? (string)$payload['nombre'] : null;
-        $contenido = array_key_exists('contenido', $payload) ? (string)$payload['contenido'] : null;
-        $imagen = array_key_exists('imagen', $payload) ? (string)$payload['imagen'] : null;
+        $sanitizer = new Sanitizer();
+        $nombre = array_key_exists('nombre', $payload) ? $sanitizer->sanitizeString((string)$payload['nombre']) : null;
+        $contenido = array_key_exists('contenido', $payload) ? $sanitizer->sanitizeString((string)$payload['contenido']) : null;
+        $imagen = array_key_exists('imagen', $payload) ? $sanitizer->sanitizeString((string)$payload['imagen']) : null;
 
         $response = $this->updateHero->execute(new UpdateHeroRequest($heroId, $nombre, $contenido, $imagen));
         JsonResponse::success($response->toArray());

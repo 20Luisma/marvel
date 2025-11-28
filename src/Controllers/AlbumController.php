@@ -12,6 +12,10 @@ use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
 use App\Shared\Http\JsonResponse;
+use App\Security\Sanitizer;
+use App\Security\Validation\InputSanitizer;
+use App\Security\Logging\SecurityLogger;
+use App\Security\Validation\JsonValidator;
 use InvalidArgumentException;
 use RuntimeException;
 use Src\Controllers\Helpers\DirectoryHelper;
@@ -38,8 +42,29 @@ final class AlbumController
     public function store(): void
     {
         $payload = Request::jsonBody();
-        $nombre = trim((string)($payload['nombre'] ?? ''));
-        $coverImage = array_key_exists('coverImage', $payload) ? (string)$payload['coverImage'] : null;
+        $sanitizer = new Sanitizer();
+        $inputSanitizer = new InputSanitizer();
+        try {
+            (new JsonValidator())->validate($payload, [
+                'nombre' => ['type' => 'string', 'required' => true],
+                'coverImage' => ['type' => 'string', 'required' => false],
+            ], allowEmpty: false);
+        } catch (\InvalidArgumentException $exception) {
+            JsonResponse::error($exception->getMessage(), 400);
+            return;
+        }
+        $nombreOriginal = (string)($payload['nombre'] ?? '');
+        $nombre = $inputSanitizer->sanitizeString($nombreOriginal, 255);
+        $logger = $GLOBALS['__clean_marvel_container']['security']['logger'] ?? null;
+        if ($inputSanitizer->isSuspicious($nombreOriginal) && $logger instanceof SecurityLogger) {
+            $logger->logEvent('payload_suspicious', [
+                'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'path' => '/albums',
+                'field' => 'nombre',
+            ]);
+        }
+        $coverImage = array_key_exists('coverImage', $payload) ? $sanitizer->sanitizeString((string)$payload['coverImage']) : null;
 
         $response = $this->createAlbum->execute(new CreateAlbumRequest($nombre, $coverImage));
         JsonResponse::success($response->toArray(), 201);
@@ -48,9 +73,13 @@ final class AlbumController
     public function update(string $albumId): void
     {
         $payload = Request::jsonBody();
-        $nombre = array_key_exists('nombre', $payload) ? (string)$payload['nombre'] : null;
+        $sanitizer = new Sanitizer();
+        $nombre = array_key_exists('nombre', $payload) ? $sanitizer->sanitizeString((string)$payload['nombre']) : null;
         $coverProvided = array_key_exists('coverImage', $payload);
         $coverImage = $coverProvided ? ($payload['coverImage'] ?? null) : null;
+        if (is_string($coverImage)) {
+            $coverImage = $sanitizer->sanitizeString($coverImage);
+        }
 
         $response = $this->updateAlbum->execute(new UpdateAlbumRequest($albumId, $nombre, $coverImage, $coverProvided));
         JsonResponse::success($response->toArray());

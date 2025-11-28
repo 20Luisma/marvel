@@ -38,9 +38,14 @@ use App\Security\Config\ConfigValidator;
 use App\Security\Http\AuthMiddleware;
 use App\Security\Http\CsrfTokenManager;
 use App\Security\Http\SecurityHeaders;
+use App\Security\Http\RateLimitMiddleware;
+use App\Security\Http\ApiFirewall;
+use App\Security\RateLimit\RateLimiter;
+use App\Security\Logging\SecurityLogger;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use App\Shared\Infrastructure\Http\CurlHttpClient;
 use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
+use App\Monitoring\TraceIdGenerator;
 use Sentry\ClientBuilder;
 use Sentry\SentrySdk;
 use Sentry\State\Hub;
@@ -73,6 +78,15 @@ return (static function (): array {
         $appEnvironment = 'local';
     }
 
+    // Trace ID global por request (se reutiliza en logs y cabeceras).
+    $traceGenerator = new TraceIdGenerator();
+    $traceId = $_SERVER['X_TRACE_ID'] ?? null;
+    if (!is_string($traceId) || trim($traceId) === '') {
+        $traceId = $traceGenerator->generate();
+        $_SERVER['X_TRACE_ID'] = $traceId;
+    }
+    header('X-Trace-Id: ' . $traceId);
+
     if (session_status() === PHP_SESSION_NONE) {
         $cookieParams = session_get_cookie_params();
         $isSecure = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === '1'))
@@ -92,6 +106,12 @@ return (static function (): array {
 
     // Middleware de cabeceras de seguridad para toda la app.
     SecurityHeaders::apply();
+    // Cabeceras adicionales de protección.
+    header('X-Content-Security-Policy: ' . ($_SERVER['HTTP_CONTENT_SECURITY_POLICY'] ?? "default-src 'self'"));
+    header('X-XSS-Protection: 0');
+    header('Cross-Origin-Resource-Policy: same-origin');
+    header('Cross-Origin-Opener-Policy: same-origin');
+    header('Cross-Origin-Embedder-Policy: unsafe-none');
 
     if ($sentryDsn) {
         try {
@@ -228,11 +248,47 @@ return (static function (): array {
     $envInternalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY');
     $internalApiKey = is_string($envInternalKey) ? trim($envInternalKey) : '';
 
+    $rateLimitEnabledRaw = $_ENV['RATE_LIMIT_ENABLED'] ?? getenv('RATE_LIMIT_ENABLED');
+    if (!is_string($rateLimitEnabledRaw) || $rateLimitEnabledRaw === '') {
+        $rateLimitEnabledRaw = 'true';
+    }
+    $rateLimitEnabled = $rateLimitEnabledRaw !== 'false';
+
+    $defaultMaxRaw = $_ENV['RATE_LIMIT_DEFAULT_MAX_REQUESTS'] ?? getenv('RATE_LIMIT_DEFAULT_MAX_REQUESTS');
+    if (!is_numeric($defaultMaxRaw)) {
+        $defaultMaxRaw = 60;
+    }
+    $defaultMax = (int) $defaultMaxRaw;
+
+    $defaultWindowRaw = $_ENV['RATE_LIMIT_DEFAULT_WINDOW_SECONDS'] ?? getenv('RATE_LIMIT_DEFAULT_WINDOW_SECONDS');
+    if (!is_numeric($defaultWindowRaw)) {
+        $defaultWindowRaw = 60;
+    }
+    $defaultWindow = (int) $defaultWindowRaw;
+    $routeLimits = [
+        '/login' => ['max' => 10, 'window' => 60],
+        '/api/rag/heroes' => ['max' => 20, 'window' => 60],
+        '/agentia' => ['max' => 20, 'window' => 60],
+    ];
+
+    $rateLimiter = new RateLimiter(
+        enabled: $rateLimitEnabled,
+        defaultMaxRequests: $defaultMax > 0 ? $defaultMax : 60,
+        defaultWindowSeconds: $defaultWindow > 0 ? $defaultWindow : 60,
+        routeLimits: $routeLimits
+    );
+
+    $securityLogger = new SecurityLogger();
+
     $container['security'] = [
         'auth' => $authService,
         'csrf' => $csrfTokenManager,
         'middleware' => new AuthMiddleware($authService),
         'internal_api_key' => $internalApiKey !== '' ? $internalApiKey : null,
+        'rateLimiter' => $rateLimiter,
+        'rateLimitMiddleware' => new RateLimitMiddleware($rateLimiter, $routeLimits, $securityLogger),
+        'apiFirewall' => new ApiFirewall($securityLogger),
+        'logger' => $securityLogger,
     ];
 
     $container['seedHeroesService'] = new SeedHeroesService(
@@ -263,6 +319,10 @@ return (static function (): array {
         'client' => new CurlHttpClient(),
     ];
 
+    $container['monitoring'] = [
+        'trace_id' => $traceId,
+    ];
+
     try {
         $container['seedHeroesService']->seedIfEmpty();
     } catch (Throwable $e) {
@@ -272,6 +332,7 @@ return (static function (): array {
     $container['readme.show'] = static fn(): ReadmeController => new ReadmeController($rootPath);
 
     $GLOBALS['__clean_marvel_container'] = $container;
+    $GLOBALS['__clean_marvel_trace_id'] = $traceId;
 
     return $container;
 })();

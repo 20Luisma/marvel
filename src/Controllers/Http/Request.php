@@ -15,6 +15,8 @@ final class Request
     {
         if (defined('PHPUNIT_RUNNING') && isset($GLOBALS['mock_php_input'])) {
             $raw = $GLOBALS['mock_php_input'];
+        } elseif (isset($GLOBALS['__raw_input__'])) {
+            $raw = $GLOBALS['__raw_input__'];
         } else {
             $raw = file_get_contents('php://input');
         }

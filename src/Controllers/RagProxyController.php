@@ -6,6 +6,9 @@ namespace Src\Controllers;
 
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
+use App\Security\Sanitizer;
+use App\Security\Validation\InputSanitizer;
+use App\Security\Validation\JsonValidator;
 use Src\Controllers\Http\Request;
 
 final class RagProxyController
@@ -29,6 +32,50 @@ final class RagProxyController
     public function forwardHeroesComparison(): void
     {
         $payload = Request::jsonBody();
+        $sanitizer = new Sanitizer();
+        $inputSanitizer = new InputSanitizer();
+        $validator = new JsonValidator();
+        try {
+            $validator->validate($payload, [
+                'heroIds' => ['type' => 'array', 'required' => true],
+                'question' => ['type' => 'string', 'required' => false],
+            ], allowEmpty: false);
+
+            if (!is_array($payload['heroIds'] ?? null)) {
+                throw new \InvalidArgumentException('El campo heroIds es obligatorio.');
+            }
+            $heroIds = $payload['heroIds'];
+            if (count($heroIds) < 2) {
+                throw new \InvalidArgumentException('Debes enviar al menos dos héroes.');
+            }
+            foreach ($heroIds as $idx => $value) {
+                if (!is_string($value)) {
+                    throw new \InvalidArgumentException('heroIds debe ser arreglo de strings.');
+                }
+                $heroIds[$idx] = $inputSanitizer->sanitizeString($value, 255);
+            }
+            $payload['heroIds'] = $heroIds;
+        } catch (\InvalidArgumentException $exception) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => $exception->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+
+        $sanitizer = new Sanitizer();
+        if (isset($payload['question']) && is_string($payload['question'])) {
+            $originalQuestion = $payload['question'];
+            $payload['question'] = $inputSanitizer->sanitizeString($originalQuestion, 1000);
+            if ($payload['question'] === '' || strlen($payload['question']) > 1000) {
+                http_response_code(400);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['error' => 'La pregunta es demasiado larga.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                return;
+            }
+            if ($inputSanitizer->isSuspicious($originalQuestion)) {
+                $this->logSuspicious('question');
+            }
+        }
         $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($encodedPayload === false) {
             http_response_code(400);
@@ -83,6 +130,7 @@ final class RagProxyController
             'duration_ms' => $durationMs,
             'remote_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
             'caller' => $_SERVER['HTTP_HOST'] ?? null,
+            'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
         ];
 
         if ($error !== null) {
@@ -92,6 +140,19 @@ final class RagProxyController
         $encoded = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if ($encoded !== false) {
             @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    private function logSuspicious(string $field): void
+    {
+        $logger = $GLOBALS['__clean_marvel_container']['security']['logger'] ?? null;
+        if ($logger instanceof \App\Security\Logging\SecurityLogger) {
+            $logger->logEvent('payload_suspicious', [
+                'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'path' => '/api/rag/heroes',
+                'field' => $field,
+            ]);
         }
     }
 }
