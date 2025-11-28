@@ -14,7 +14,7 @@ Resumen de los flujos y módulos clave del proyecto. Cada diagrama está numerad
    Paneles (GitHub, PSI, WAVE, Sentry, Sonar, Heatmap, Repo, Comic/RAG) y sus dependencias API/microservicios.
 6. **CRUD Álbumes y Héroes** — `modules/albums-heroes.png`  
    Secuencia de casos de uso, repos JSON/DB, eventos y handlers de notificaciones.
-7. **Cómic IA** — `Panel :comic.png`  
+7. **Cómic IA** — `panels/Panel-comic.png`  
    `/comic` → `POST /comics/generate` → OpenAIComicGenerator → `openai-service` → OpenAI API.
 8. **Comparación RAG** — `flujorag.png`  
    `/rag/heroes` → `rag-service` (contexto JSON, retriever léxico/vectorial) → `openai-service` para la respuesta final.
