@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security\Logging;
 
+use App\Security\LogSanitizer;
+
 final class SecurityLogger
 {
     private string $logFile;
@@ -14,18 +16,20 @@ final class SecurityLogger
     }
 
     /**
-     * @param array<string, scalar|null> $context
+     * @param array<string, mixed> $context
      */
     public function logEvent(string $type, array $context): void
     {
+        $sanitizedContext = LogSanitizer::sanitizeContext($context);
+
         $directory = dirname($this->logFile);
         if (!is_dir($directory)) {
             @mkdir($directory, 0775, true);
         }
 
-        $traceId = $context['trace_id'] ?? ($_SERVER['X_TRACE_ID'] ?? '-');
-        $ip = $context['ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-        $path = $context['path'] ?? 'unknown';
+        $traceId = $sanitizedContext['trace_id'] ?? ($_SERVER['X_TRACE_ID'] ?? '-');
+        $ip = $sanitizedContext['ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+        $path = $sanitizedContext['path'] ?? 'unknown';
 
         $line = sprintf(
             '[%s] event=%s trace_id=%s ip=%s path=%s %s',
@@ -41,7 +45,7 @@ final class SecurityLogger
     }
 
     /**
-     * @param array<string, scalar|null> $context
+     * @param array<string, mixed> $context
      */
     private function formatContext(array $context): string
     {
@@ -49,6 +53,9 @@ final class SecurityLogger
         foreach ($context as $key => $value) {
             if (in_array($key, ['trace_id', 'ip', 'path'], true)) {
                 continue;
+            }
+            if (is_array($value)) {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             }
             $parts[] = sprintf('%s=%s', $key, $value === null ? '-' : $value);
         }
