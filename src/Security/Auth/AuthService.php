@@ -10,7 +10,8 @@ final class AuthService
     private const ADMIN_ID = 'marvel-admin';
     private const ADMIN_ROLE = 'admin';
     private const PASSWORD_HASH = '$2y$12$I9Z9uy.ksfLKelJO/Ov8.unFdMtI0ZyehDNVu3x3ULC5PeWGxG4My'; // hash de "seguridadmarvel2025"
-    private const SESSION_TTL_SECONDS = 1800; // 30 minutos
+    private const SESSION_TTL_SECONDS = 1800; // 30 minutos inactividad
+    private const SESSION_MAX_LIFETIME = 28800; // 8 horas
 
     public function login(string $email, string $password): bool
     {
@@ -28,6 +29,7 @@ final class AuthService
 
         $this->ensureSession();
         session_regenerate_id(true);
+        $_SESSION['session_created_at'] = time();
 
         $_SESSION['auth'] = [
             'user_id' => self::ADMIN_ID,
@@ -76,6 +78,12 @@ final class AuthService
 
         $lastActivity = isset($user['last_activity']) ? (int)$user['last_activity'] : 0;
         if ($lastActivity > 0 && (time() - $lastActivity) > self::SESSION_TTL_SECONDS) {
+            $this->logout();
+            return false;
+        }
+
+        $createdAt = isset($_SESSION['session_created_at']) ? (int) $_SESSION['session_created_at'] : 0;
+        if ($createdAt > 0 && (time() - $createdAt) > self::SESSION_MAX_LIFETIME) {
             $this->logout();
             return false;
         }

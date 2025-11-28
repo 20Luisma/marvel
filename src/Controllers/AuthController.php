@@ -6,12 +6,14 @@ namespace Src\Controllers;
 
 use App\Security\Auth\AuthService;
 use App\Security\Http\CsrfTokenManager;
+use App\Application\Security\LoginAttemptService;
 
 final class AuthController
 {
     public function __construct(
         private readonly AuthService $authService,
         private readonly CsrfTokenManager $csrfTokenManager,
+        private readonly LoginAttemptService $loginAttemptService,
     ) {
     }
 
@@ -40,8 +42,20 @@ final class AuthController
 
         $email = (string) ($_POST['email'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
+        $ip = is_string($_SERVER['REMOTE_ADDR'] ?? null) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';
+
+        if ($this->loginAttemptService->isBlocked($email, $ip)) {
+            $minutes = $this->loginAttemptService->getBlockMinutesRemaining($email, $ip);
+            http_response_code(429);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'error' => 'Demasiados intentos de login. Inténtalo de nuevo en ' . $minutes . ' minutos.',
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
 
         if ($this->authService->login($email, $password)) {
+            $this->loginAttemptService->clearAttempts($email, $ip);
             $redirectTo = '/seccion';
             if (isset($_SESSION['redirect_to']) && is_string($_SESSION['redirect_to']) && $_SESSION['redirect_to'] !== '') {
                 $redirectTo = $_SESSION['redirect_to'];
@@ -53,6 +67,7 @@ final class AuthController
             return;
         }
 
+        $this->loginAttemptService->registerFailedAttempt($email, $ip);
         $this->authService->logout();
         $this->flashError('Credenciales inválidas. Usa marvel@gmail.com / marvel2025.');
         $this->redirect('/login');
