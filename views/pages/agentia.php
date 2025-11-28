@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Http\AuthGuards;
+
+AuthGuards::requireAuth();
+AuthGuards::requireAdmin();
+
 $pageTitle = 'Marvel Agent — Asistente Técnico';
 $additionalStyles = [
     '/assets/css/seccion.css',

@@ -10,6 +10,7 @@ use App\Activities\Application\UseCase\ClearActivityLogUseCase;
 use App\Activities\Application\UseCase\ListActivityLogUseCase;
 use App\Activities\Application\UseCase\RecordActivityUseCase;
 use App\Activities\Domain\ActivityScope;
+use App\Application\Security\IpBlockerService;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Shared\Http\JsonResponse;
@@ -292,12 +293,13 @@ final class Router
             $security = $this->container['security'] ?? [];
             $authService = is_array($security) ? ($security['auth'] ?? null) : null;
             $csrfManager = is_array($security) ? ($security['csrf'] ?? null) : null;
+            $ipBlocker = is_array($security) ? ($security['ipBlocker'] ?? null) : null;
 
-            if (!$authService instanceof AuthService || !$csrfManager instanceof CsrfTokenManager) {
+            if (!$authService instanceof AuthService || !$csrfManager instanceof CsrfTokenManager || !$ipBlocker instanceof IpBlockerService) {
                 throw new RuntimeException('Servicios de autenticación no disponibles.');
             }
 
-            $this->authController = new AuthController($authService, $csrfManager);
+            $this->authController = new AuthController($authService, $csrfManager, $ipBlocker);
         }
 
         return $this->authController;

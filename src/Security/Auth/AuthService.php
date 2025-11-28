@@ -28,9 +28,13 @@ final class AuthService
         }
 
         $this->ensureSession();
+        // Regeneramos la sesión tras autenticación para evitar session fixation.
         session_regenerate_id(true);
         $_SESSION['session_created_at'] = time();
 
+        $_SESSION['user_id'] = self::ADMIN_ID;
+        $_SESSION['user_email'] = self::ADMIN_EMAIL;
+        $_SESSION['user_role'] = self::ADMIN_ROLE;
         $_SESSION['auth'] = [
             'user_id' => self::ADMIN_ID,
             'role' => self::ADMIN_ROLE,
@@ -45,7 +49,14 @@ final class AuthService
     {
         $this->ensureSession();
 
-        unset($_SESSION['auth'], $_SESSION['intended_path'], $_SESSION['redirect_to']);
+        unset(
+            $_SESSION['auth'],
+            $_SESSION['intended_path'],
+            $_SESSION['redirect_to'],
+            $_SESSION['user_id'],
+            $_SESSION['user_email'],
+            $_SESSION['user_role']
+        );
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', [
@@ -72,7 +83,10 @@ final class AuthService
 
         $user = $_SESSION['auth'];
 
-        if (($user['user_id'] ?? null) !== self::ADMIN_ID || ($user['role'] ?? null) !== self::ADMIN_ROLE) {
+        $userId = $user['user_id'] ?? null;
+        $role = $user['role'] ?? null;
+
+        if (!is_string($userId) || trim($userId) === '' || !is_string($role) || trim($role) === '') {
             return false;
         }
 
@@ -93,9 +107,26 @@ final class AuthService
         return true;
     }
 
-    public function requireAdmin(): bool
+    public function isAdmin(): bool
+    {
+        if (!$this->isAuthenticated()) {
+            return false;
+        }
+
+        $user = $_SESSION['auth'] ?? [];
+
+        return ($user['user_id'] ?? null) === self::ADMIN_ID
+            && ($user['role'] ?? null) === self::ADMIN_ROLE;
+    }
+
+    public function requireAuth(): bool
     {
         return $this->isAuthenticated();
+    }
+
+    public function requireAdmin(): bool
+    {
+        return $this->isAdmin();
     }
 
     private function ensureSession(): void

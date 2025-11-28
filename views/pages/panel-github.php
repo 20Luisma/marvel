@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Http\AuthGuards;
+
+AuthGuards::requireAuth();
+AuthGuards::requireAdmin();
+
 @ini_set('max_execution_time', '650');
 @ini_set('default_socket_timeout', '650');
 @set_time_limit(650);
