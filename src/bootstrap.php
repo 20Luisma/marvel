@@ -44,6 +44,7 @@ use App\Security\Http\RateLimitMiddleware;
 use App\Security\Http\ApiFirewall;
 use App\Security\RateLimit\RateLimiter;
 use App\Security\Logging\SecurityLogger;
+use App\Security\Session\SessionReplayMonitor;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use App\Shared\Infrastructure\Http\CurlHttpClient;
 use App\Shared\Infrastructure\Persistence\PdoConnectionFactory;
@@ -57,7 +58,8 @@ return (static function (): array {
     $rootPath = dirname(__DIR__);
     $envPath = $rootPath . DIRECTORY_SEPARATOR . '.env';
 
-    if (is_file($envPath)) {
+    $skipDotEnv = (getenv('APP_ENV') === 'test') || (($_ENV['APP_ENV'] ?? null) === 'test');
+    if (!$skipDotEnv && is_file($envPath)) {
         foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
             if (str_starts_with($line, '#')) {
                 continue;
@@ -106,14 +108,71 @@ return (static function (): array {
         session_start();
     }
 
+    $ip = is_string($_SERVER['REMOTE_ADDR'] ?? null) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';
+    $uaRaw = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $ua = is_string($uaRaw) ? preg_replace('/[\\x00-\\x1F\\x7F]/', '', $uaRaw) : '';
+    $ua = is_string($ua) ? substr($ua, 0, 200) : '';
+    $path = $_SERVER['REQUEST_URI'] ?? 'unknown';
+    $securityLogPath = $rootPath . '/storage/logs/security.log';
+    if (!is_dir(dirname($securityLogPath))) {
+        @mkdir(dirname($securityLogPath), 0775, true);
+    }
+
+    // FASE 7.4 — Anti-Replay en modo Soft
+    if (empty($_SESSION['session_replay_token'])) {
+        $_SESSION['session_replay_token'] = bin2hex(random_bytes(32));
+        error_log(
+            "[" . date('Y-m-d H:i:s') . "] event=session_replay_token_issued trace_id={$traceId} ip={$ip} path={$path} user_agent={$ua} timestamp=" . time() . "\n",
+            3,
+            $securityLogPath
+        );
+    }
+
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+        $header = $_SERVER['HTTP_X_SESSION_REPLAY'] ?? null;
+        $expected = $_SESSION['session_replay_token'] ?? null;
+
+        if (!$header) {
+            error_log(
+                "[" . date('Y-m-d H:i:s') . "] event=session_replay_missing_soft trace_id={$traceId} ip={$ip} path={$path} user_agent={$ua} timestamp=" . time() . "\n",
+                3,
+                $securityLogPath
+            );
+        } elseif (!is_string($expected) || $header !== $expected) {
+            error_log(
+                "[" . date('Y-m-d H:i:s') . "] event=session_replay_mismatch_soft trace_id={$traceId} ip={$ip} path={$path} user_agent={$ua} timestamp=" . time() . "\n",
+                3,
+                $securityLogPath
+            );
+        } else {
+            error_log(
+                "[" . date('Y-m-d H:i:s') . "] event=session_replay_valid_soft trace_id={$traceId} ip={$ip} path={$path} user_agent={$ua} timestamp=" . time() . "\n",
+                3,
+                $securityLogPath
+            );
+        }
+    }
+
     // Middleware de cabeceras de seguridad para toda la app.
     SecurityHeaders::apply();
     // Cabeceras adicionales de protección.
-    header('X-Content-Security-Policy: ' . ($_SERVER['HTTP_CONTENT_SECURITY_POLICY'] ?? "default-src 'self'"));
-    header('X-XSS-Protection: 0');
-    header('Cross-Origin-Resource-Policy: same-origin');
-    header('Cross-Origin-Opener-Policy: same-origin');
-    header('Cross-Origin-Embedder-Policy: unsafe-none');
+    $isTestEnv = ($appEnvironment === 'test');
+    if ($isTestEnv && !isset($GLOBALS['__test_headers'])) {
+        $GLOBALS['__test_headers'] = [];
+    }
+    $testHeaders =& $GLOBALS['__test_headers'];
+    $addHeader = static function (string $name, string $value) use (&$testHeaders, $isTestEnv): void {
+        header($name . ': ' . $value);
+        if ($isTestEnv) {
+            $testHeaders[] = $name . ': ' . $value;
+        }
+    };
+
+    $addHeader('X-Content-Security-Policy', $_SERVER['HTTP_CONTENT_SECURITY_POLICY'] ?? "default-src 'self'");
+    $addHeader('X-XSS-Protection', '0');
+    $addHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    $addHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    $addHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
 
     if ($sentryDsn) {
         try {
@@ -147,7 +206,7 @@ return (static function (): array {
 
     $serviceConfigPath = $rootPath . '/config/services.php';
     /** @var array<string, mixed> $serviceConfig */
-    $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
+    $serviceConfig = is_file($serviceConfigPath) ? require $serviceConfigPath : ['environments' => []];
 
     $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
 
@@ -211,8 +270,10 @@ return (static function (): array {
     $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus);
 
     $securityLogger = new SecurityLogger();
-    $authService = new AuthService(config: null, logger: $securityLogger);
+    $replayMonitor = new SessionReplayMonitor($securityLogger);
+    $authService = new AuthService(config: null, logger: $securityLogger, replayMonitor: $replayMonitor);
     $authService->enforceSessionSecurity();
+    $replayMonitor->detectReplayAttack();
 
     $container = [
         'albumRepository'      => $albumRepository,
@@ -297,6 +358,7 @@ return (static function (): array {
         'logger' => $securityLogger,
         'ipBlocker' => $ipBlockerService,
         'loginAttemptService' => $loginAttemptService,
+        'replayMonitor' => $replayMonitor,
     ];
 
     $container['seedHeroesService'] = new SeedHeroesService(
@@ -344,3 +406,29 @@ return (static function (): array {
 
     return $container;
 })();
+
+/*
+--------------------------------------------------------------
+ FASE 7.4 — SISTEMA ANTI-REPLAY (MODO SOFT)
+--------------------------------------------------------------
+
+Este sistema protege contra ataques de repetición de solicitudes
+sin romper compatibilidad con las rutas existentes ni requerir
+nuevos encabezados obligatorios.
+
+Características:
+- No bloquea tráfico real.
+- Cada sesión tiene un token único session_replay_token.
+- POST sin header → solo registra evento.
+- POST con header incorrecto → registra evento.
+- POST con header correcto → registra evento.
+- En login exitoso el token rota silenciosamente.
+- Totalmente compatible con fases 7.1, 7.2 y 7.3.
+
+Eventos generados en security.log:
+- session_replay_token_issued
+- session_replay_missing_soft
+- session_replay_mismatch_soft
+- session_replay_valid_soft
+- session_replay_rotated_soft
+*/

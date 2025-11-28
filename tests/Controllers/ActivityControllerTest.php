@@ -13,6 +13,7 @@ use App\Activities\Domain\ActivityLogRepository;
 use App\Activities\Domain\ActivityScope;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\ActivityController;
+use Src\Controllers\Http\Request;
 
 final class ActivityControllerTest extends TestCase
 {
@@ -33,7 +34,7 @@ final class ActivityControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        unset($GLOBALS['mock_php_input']);
+        Request::withJsonBody('');
         parent::tearDown();
     }
 
@@ -92,7 +93,7 @@ final class ActivityControllerTest extends TestCase
 
     private function setJsonBody(array $body): void
     {
-        $GLOBALS['mock_php_input'] = json_encode($body, JSON_UNESCAPED_UNICODE);
+        Request::withJsonBody(json_encode($body, JSON_UNESCAPED_UNICODE));
     }
 
     /**

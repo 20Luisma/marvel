@@ -8,6 +8,7 @@ use App\Shared\Infrastructure\Http\HttpResponse;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\RagProxyController;
+use Src\Controllers\Http\Request;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerTest extends TestCase
@@ -18,7 +19,7 @@ final class RagProxyControllerTest extends TestCase
         $client->body = json_encode(['answer' => 'ok']);
 
         $controller = new RagProxyController($client, 'http://rag-service/rag/heroes', 'secret-token');
-        $GLOBALS['mock_php_input'] = json_encode(['heroIds' => ['a', 'b']]);
+        Request::withJsonBody(json_encode(['heroIds' => ['a', 'b']]));
 
         ob_start();
         $controller->forwardHeroesComparison();

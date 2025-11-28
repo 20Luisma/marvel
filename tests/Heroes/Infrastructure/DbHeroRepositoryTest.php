@@ -57,8 +57,9 @@ final class DbHeroRepositoryTest extends TestCase
 
         $updated = $this->heroRepository->find('hero-1');
 
-        self::assertSame('peter-quill', $updated?->slug());
-        self::assertSame('Updated bio', $updated?->contenido());
+        self::assertNotNull($updated);
+        self::assertSame('peter-quill', $updated->slug());
+        self::assertSame('Updated bio', $updated->contenido());
     }
 
     // Devuelve null cuando se busca un héroe inexistente.

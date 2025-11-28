@@ -9,6 +9,7 @@ use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Heroes\Domain\Entity\Hero;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\ComicController;
+use Src\Controllers\Http\Request;
 use Tests\Doubles\InMemoryHeroRepository;
 use Tests\Support\OpenAITransportStub;
 
@@ -29,7 +30,7 @@ final class ComicControllerTest extends TestCase
 
     public function testGenerateFailsWhenHeroIdsMissing(): void
     {
-        $GLOBALS['mock_php_input'] = json_encode(['heroIds' => []]);
+        Request::withJsonBody(json_encode(['heroIds' => []]));
 
         $payload = $this->captureJson(fn () => $this->controller->generate());
 
@@ -39,7 +40,7 @@ final class ComicControllerTest extends TestCase
 
     public function testGenerateReturns404WhenNoHeroesResolved(): void
     {
-        $GLOBALS['mock_php_input'] = json_encode(['heroIds' => ['missing-hero']]);
+        Request::withJsonBody(json_encode(['heroIds' => ['missing-hero']]));
 
         $payload = $this->captureJson(fn () => $this->controller->generate());
 
@@ -52,7 +53,7 @@ final class ComicControllerTest extends TestCase
     {
         $hero = Hero::create('hero-1', 'album-1', 'Thor', 'Trueno', 'https://example.com/thor.jpg');
         $this->heroRepository->save($hero);
-        $GLOBALS['mock_php_input'] = json_encode(['heroIds' => ['hero-1']]);
+        Request::withJsonBody(json_encode(['heroIds' => ['hero-1']]));
 
         OpenAITransportStub::$response = json_encode([
             'choices' => [

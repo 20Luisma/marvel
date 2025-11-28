@@ -39,6 +39,7 @@ use App\Albums\Domain\Entity\Album;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\AlbumController;
+use Src\Controllers\Http\Request;
 use Tests\Doubles\InMemoryAlbumRepository;
 use Tests\Doubles\InMemoryHeroRepository;
 
@@ -78,7 +79,6 @@ final class AlbumControllerTest extends TestCase
         http_response_code(200);
         $_FILES = [];
         $_GET = [];
-        $GLOBALS['mock_php_input'] = null;
         $GLOBALS['__album_controller_uploaded_files__'] = [];
     }
 
@@ -100,10 +100,10 @@ final class AlbumControllerTest extends TestCase
 
     public function testStoreCreatesAlbumFromRequestBody(): void
     {
-        $GLOBALS['mock_php_input'] = json_encode([
+        Request::withJsonBody(json_encode([
             'nombre' => 'Nuevos Vengadores',
             'coverImage' => 'https://example.com/cover.jpg',
-        ], JSON_THROW_ON_ERROR);
+        ], JSON_THROW_ON_ERROR));
 
         $payload = $this->captureJson(fn () => $this->controller->store());
 

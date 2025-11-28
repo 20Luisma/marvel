@@ -7,6 +7,7 @@ namespace Tests\Controllers;
 use App\Security\Validation\InputSanitizer;
 use PHPUnit\Framework\TestCase;
 use Src\Controllers\RagProxyController;
+use Src\Controllers\Http\Request;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerSecurityTest extends TestCase
@@ -28,7 +29,7 @@ final class RagProxyControllerSecurityTest extends TestCase
         $question = '<script>alert(1)</script> DROP TABLE users;';
         $payload = json_encode(['heroIds' => ['spiderman', 'ironman'], 'question' => $question]);
 
-        $GLOBALS['mock_php_input'] = $payload;
+        Request::withJsonBody((string) $payload);
         $_SERVER['CONTENT_TYPE'] = 'application/json';
 
         ob_start();

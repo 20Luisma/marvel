@@ -24,32 +24,32 @@ namespace App\AI;
 
 use Tests\Support\OpenAITransportStub;
 
-function curl_init(string $url)
+function curl_init(string $url): string
 {
     OpenAITransportStub::$lastUrl = $url;
     return 'curl-resource';
 }
 
-function curl_setopt($ch, int $option, mixed $value): bool
+function curl_setopt(string $ch, int $option, mixed $value): bool
 {
     return true;
 }
 
-function curl_exec($ch): string|false
+function curl_exec(string $ch): string
 {
     return OpenAITransportStub::$response;
 }
 
-function curl_getinfo($ch, int $option): int
+function curl_getinfo(string $ch, int $option): int
 {
     return $option === \CURLINFO_HTTP_CODE ? OpenAITransportStub::$httpCode : 200;
 }
 
-function curl_error($ch): string
+function curl_error(string $ch): string
 {
     return OpenAITransportStub::$error;
 }
 
-function curl_close($ch): void
+function curl_close(string $ch): void
 {
 }

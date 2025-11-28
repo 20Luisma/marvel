@@ -8,18 +8,22 @@ use App\Shared\Http\JsonResponse;
 
 final class Request
 {
+    private static ?string $rawInputOverride = null;
+
+    public static function withJsonBody(string $json): void
+    {
+        self::$rawInputOverride = $json;
+    }
+
     /**
      * @return array<string,mixed>
      */
     public static function jsonBody(): array
     {
-        if (defined('PHPUNIT_RUNNING') && isset($GLOBALS['mock_php_input'])) {
-            $raw = $GLOBALS['mock_php_input'];
-        } elseif (isset($GLOBALS['__raw_input__'])) {
-            $raw = $GLOBALS['__raw_input__'];
-        } else {
-            $raw = file_get_contents('php://input');
-        }
+        $raw = self::$rawInputOverride
+            ?? ($GLOBALS['__raw_input__'] ?? file_get_contents('php://input'));
+
+        self::$rawInputOverride = null;
 
         if ($raw === false || trim($raw) === '') {
             return [];

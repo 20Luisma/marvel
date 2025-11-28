@@ -1,51 +1,107 @@
-# Clean Marvel Album — Security Overview (v1)
+# Clean Marvel Album — Seguridad (fuente de verdad)
 
-## 1. Security Overview Global
-Clean Marvel Album sigue arquitectura limpia (presentación, aplicación, dominio, infraestructura) con seguridad centralizada en `src/Security/*`. El arranque (`src/bootstrap.php`) carga `.env`, prepara sesión segura, aplica cabeceras de seguridad, genera `trace_id` por request y expone servicios en un contenedor global. El router (`Src\Shared\Http\Router`) ejecuta en orden `ApiFirewall` → `RateLimitMiddleware` → `AuthMiddleware` antes de despachar controladores o vistas. Almacenamiento local en `storage/` para rate-limit (`storage/rate_limit`), intentos de login (`storage/security/login_attempts.json`) y logs de seguridad (`storage/logs/security.log`). Microservicios externos se resuelven vía `ServiceUrlProvider` según entorno.
+## 1. Introducción
+- Enfoque: arquitectura limpia (Presentación → Aplicación → Dominio; Infra implementa contratos), con capa de seguridad centralizada (`src/Security/*`) y controles adicionales en `src/bootstrap.php`.
+- Alcance: app principal PHP (`public/`, `views/`, `src/`), almacenamiento local (`storage/`), microservicios asociados (`openai-service`, `rag-service`, heatmap) configurados vía `config/services.php` y variables `.env`.
 
-## 2. Autenticación y Sesiones
-`App\Security\Auth\AuthService` valida el único admin (`seguridadmarvel@gmail.com`) con `password_verify`. En login correcto: asegura sesión activa, llama `session_regenerate_id(true)`, guarda `session_created_at`, `last_activity`, `user_id`, `user_email`, `user_role` y array `auth`. TTL de inactividad: 30 min (`SESSION_TTL_SECONDS`); vida máxima: 8h (`SESSION_MAX_LIFETIME`). `isAuthenticated` renueva `last_activity` y expulsa al superar TTL/lifetime. `logout` borra auth y user_* y destruye cookie si existe. `bootstrap.php` configura cookies de sesión con `httponly`, `samesite=Lax`, `secure` cuando HTTPS y aplica `session_set_cookie_params` antes de `session_start`.
+## 2. Estado actual de la seguridad
+- **Fortalezas:** hardening inicial de cabeceras, CSRF en POST críticos, rate-limit y bloqueo de login por intentos, autenticación con hash bcrypt, sesión con TTL y lifetime, sellado IP/UA, detección de hijack y anti-replay en modo pasivo, firewall de payloads y sanitización básica, logging centralizado con trace_id.
+- **Debilidades:** único usuario admin hardcodeado, CSP permisiva (unsafe-inline + CDNs), HSTS solo activo cuando HTTPS (no forzado), storage local para rate-limit/intentos (no distribuido), controles anti-replay solo en observación, falta de pruebas automáticas de CORS/CSP avanzadas, claves HMAC entre servicios no validadas en el proxy principal.
 
-## 3. Roles y Permisos
-Rol admin se guarda en `$_SESSION['user_role']` y en `auth['role']`. `AuthMiddleware` protege rutas (`/seccion`, `/secret*`, `/admin*`, paneles, `agentia`, etc.): si no autenticado redirige a `/login`, si no admin responde 403. `App\Infrastructure\Http\AuthGuards` se incluye en vistas sensibles y exige sesión + rol admin. Rutas protegidas incluyen Secret Room, paneles técnicos, agentia y alias definidos en `PageController`.
+## 3. Controles de seguridad implementados
+### Autenticación y sesiones
+- `AuthService`: email admin configurable (`SecurityConfig`), hash bcrypt `$2y$12...` (contraseña “seguridadmarvel2025”). Login verifica credenciales, regenera sesión, establece `user_id/user_email/user_role`, `session_created_at`, `last_activity`, `session_ip_hash`, `session_ua_hash`. TTL inactividad 30 min, lifetime 8h. Logout limpia sesión y cookie.
+- Anti-hijack: compara IP/UA en cada request; si difiere, invalida y loggea `session_hijack_detected`. Anti-replay soft: token `session_replay_token` generado/rotado, logs de ausencia/mismatch/validez (no bloquea).
+- Cookies: `httponly`, `samesite=Lax`, `secure` cuando HTTPS. Trace ID por request.
 
-## 4. CSRF Protection
-`CsrfTokenManager` y `CsrfService` generan tokens almacenados en sesión; las vistas incluyen los campos hidden (`csrf_field()` en `views/helpers.php`). `CsrfMiddleware` protege POST en rutas críticas (`/login`, `/logout`, `/agentia`, paneles, `/api/rag/heroes`, etc.); en fallo devuelve 403 JSON y registra evento `csrf_failed` mediante `SecurityLogger`.
+### Autorización y roles
+- Rol único `admin`. `AuthMiddleware` protege `/seccion`, `/secret*`, `/admin*`, paneles, `agentia`; no logueado → 302 /login, no admin → 403. `AuthGuards` en vistas sensibles refuerzan acceso admin. Aliases en `PageController` sirven vistas protegidas.
 
-## 5. Validaciones y Sanitización
-`Sanitizer` elimina scripts/PHP/JNDI y controla longitud. `InputSanitizer` recorta, limpia HTML y detecta patrones sospechosos; se usa en controladores (ej. `AlbumController`) con logging de payload sospechoso. `JsonValidator` verifica tipos y campos requeridos en payloads JSON. `ApiFirewall` valida tamaño y estructura antes de controladores.
+### CSRF
+- Tokens generados por `CsrfTokenManager` / `CsrfService`; `csrf_field()` en vistas. `CsrfMiddleware` valida POST en login/logout/agentia/paneles `/api/rag/heroes`, etc.; fallo → 403 JSON + log `csrf_failed`.
 
-## 6. Security Headers
-`SecurityHeaders::apply()` añade `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer-when-downgrade`, `Permissions-Policy` (geolocation/microphone/camera vacíos) y `Strict-Transport-Security` en HTTPS. CSP básica: `default-src 'self'`, permite imágenes/media/fonts/styles/scripts necesarios (Google Fonts, Tailwind CDN, jsdelivr), `connect-src` incluye self y puertos locales 8080/8081/8082, `frame-src` Youtube, `frame-ancestors 'self'`. `bootstrap.php` añade cabeceras extra (CSP redundante, X-XSS-Protection:0, Cross-Origin-*). Cookies de sesión `httponly`, `samesite=Lax`, `secure` cuando aplica.
+### XSS
+- Escapado con helper `e()` en vistas. Sanitización de entradas (`Sanitizer`, `InputSanitizer`) y validación (`JsonValidator`) en controladores. CSP básica ayuda pero es permisiva (unsafe-inline).
 
-## 7. Rate Limit & IP Blocker
-`RateLimiter` (file-based) controla por IP y ruta; `RateLimitMiddleware` aplica a rutas configuradas (login, `/api/rag/heroes`, `agentia`, paneles) devolviendo 429 (JSON/HTML) y loggeando `rate_limit`. `LoginAttemptService` controla intentos de login (5 en 15 min, bloqueo 15 min) y registra `login_failed` y `login_blocked`. `IpBlockerService` envuelve ese servicio: `check` bloquea si excedido, registra `login_blocked` via `SecurityLogger`, limpia intentos tras login exitoso y expone minutos restantes.
+### Inyección
+- Payload JSON validado antes de uso (JsonValidator). Sanitizadores eliminan scripts/JNDI. Repositorios de archivos JSON; si se usa PDO en hosting, conexión via `PdoConnectionFactory` (debe usarse con consultas preparadas; no se observan interpolaciones directas aquí). Firewall de API bloquea patrones de inyección básicos.
 
-## 8. Seguridad entre Microservicios
-`ServiceUrlProvider` resuelve endpoints según entorno (`config/services.php`). `INTERNAL_API_KEY` se carga en el contenedor para firmar/proteger tráfico hacia microservicios (`openai-service`, `rag-service`), usando cabeceras `X-Internal-*` y HMAC (implementación en microservicios; la app actúa como proxy).
+### Cabeceras y configuración HTTP
+- `SecurityHeaders::apply()` y bootstrap añaden: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer-when-downgrade`, `Permissions-Policy: geolocation=(), microphone=(), camera=()`, CSP básica (default-src 'self' + CDNs necesarios), `X-Content-Security-Policy` (fallback), `X-XSS-Protection: 0`, `Cross-Origin-Resource-Policy: same-origin`, `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Embedder-Policy: unsafe-none`, HSTS solo en HTTPS. Intro (`public/index.php`) también aplica headers.
+- CORS: en `public/home.php`, si `HTTP_ORIGIN` coincide con `APP_ORIGIN`/`APP_URL` se permite `Access-Control-Allow-Origin` + `Vary: Origin`; métodos `GET, POST, PUT, DELETE, OPTIONS`, cabeceras `Content-Type, Authorization`; OPTIONS devuelve 204; caso contrario 403.
 
-## 9. Secret Room & Admin Protection
-Rutas `/seccion`, `/secret/*`, paneles técnicos (sonar, sentry, heatmap, repo, github, performance, accessibility) y `agentia` se protegen vía `AuthMiddleware` y `AuthGuards` en las vistas. Flujo: anónimo → redirección 302 a `/login`; usuario no admin → 403 con mensaje genérico; admin → acceso 200. `PageController` mapea alias (`/secret/heatmap`, `/secret/sonar`, `/secret/sentry`, `/secret`, etc.) para servir vistas protegidas.
+### Gestión de errores y logs
+- `SecurityLogger` (sanitiza contexto) escribe en `storage/logs/security.log` eventos `rate_limit`, `payload_suspicious`, `login_failed/block/success`, `csrf_failed`, `session_expired_ttl/lifetime`, `session_hijack_detected`, eventos anti-replay soft, etc., con `trace_id`, IP, path, user_agent. Sentry inicializable si DSN presente; router captura throwables y responde con mensaje genérico.
 
-## 10. Endpoints /api/
-`ApiFirewall` inspecciona todas las rutas no allowlisted: límite de 1MB, rechaza JSON inválido o con claves duplicadas, valores demasiado largos, tipos no permitidos y patrones de ataque (`<script`, `drop table`, `${jndi:ldap://`, `<?php`). Si falla responde 400 y loggea `payload_suspicious`. `/api/rag/heroes` además está en rate-limit y CSRF (cuando POST).
+### Microservicios y APIs externas
+- URLs resueltas por `ServiceUrlProvider` según entorno (`config/services.php`). Clave interna `INTERNAL_API_KEY` cargada en contenedor (firma HMAC esperada en microservicios; proxy principal no valida explícitamente en cada llamada). `/api/rag/heroes` proxifica RAG; OpenAI via microservicio; heatmap cliente HTTP con token opcional. Anti-replay/logging no modifica payloads.
 
-## 11. CORS
-En `public/home.php`, si `APP_ORIGIN`/`APP_URL` coincide con `HTTP_ORIGIN`, se habilita `Access-Control-Allow-Origin` y `Vary: Origin`; si difiere, responde 403. Permite métodos `GET, POST, PUT, DELETE, OPTIONS` y cabeceras `Content-Type, Authorization`. Maneja preflight con 204.
+### Gestión de secretos
+- Variables `.env` por entorno (APP_ENV, claves internas, API keys). `SecurityConfig` lee correo y hash admin, `ServiceUrlProvider` lee endpoints. No hay gestor de secretos externo; claves deben configurarse manualmente en `.env` de app y microservicios.
 
-## 12. Logging y Auditoría
-`SecurityLogger` escribe en `storage/logs/security.log`, creando directorios si faltan. Eventos incluyen `rate_limit`, `payload_suspicious`, `login_failed`, `login_blocked`, `login_success`, `csrf_failed`. Cada línea incluye timestamp, `trace_id` (de `TraceIdGenerator` en bootstrap), IP, path y contexto (estado, remaining/reset, motivo).
+## 4. Riesgos y brechas detectadas
+- Admin único hardcodeado; sin MFA ni cambio de credenciales (Impacto Alto, Prob Media, Prioridad Alta).
+- CSP permisiva (`'unsafe-inline'`, CDNs); riesgo XSS/asset hijack (Impacto Alto, Prob Media, Prioridad Alta).
+- HSTS solo activo en HTTPS, no forzado en prod; riesgo downgrade en HTTP (Impacto Medio, Prob Baja-Media, Prioridad Media).
+- Anti-replay en modo observación; no bloquea reuso de cookies (Impacto Medio, Prob Media, Prioridad Media).
+- Rate-limit e intentos en disco local; no distribuido, posible bypass multi-nodo (Impacto Medio, Prob Media, Prioridad Media).
+- Clave interna no verificada en proxy principal; confianza en microservicios (Impacto Medio, Prob Baja-Media, Prioridad Media).
+- Sin tests automáticos de cabeceras/CORS/CSP; riesgo de regresión silenciosa (Impacto Medio, Prob Media, Prioridad Media).
+- Storage de logs puede crecer sin rotación y contener IP/UA (Impacto Bajo-Medio, Prob Media, Prioridad Media-Baja).
 
-## 13. Tests de Seguridad Existentes
-Suite PHPUnit incluye: `ApiFirewallTest`, `RateLimiterTest`, `RateLimitMiddlewareTest`, `SanitizerTest`, `SecuritySmokeTest` (CSRF, sanitizador, rate-limit), `LoginAttemptServiceTest`, `AuthServiceTest` (regeneración de sesión), `AdminRouteProtectionTest` (anon/user/admin sobre ruta secreta), `LoginThrottleTest` (bloqueo y log). Cobertura sobre throttling, firewall, guard admin y sanitización básica.
+## 5. Roadmap de fases de seguridad
+- **Fase 1 — Hardening HTTP básico**  
+  Objetivo: cabeceras y cookies seguras.  
+  Hecho: headers listados, cookies HttpOnly/Lax, HSTS en HTTPS.  
+  Falta: HSTS forzado en prod y refinar cookies (SameSite/secure estrictos). Prioridad: Media-Alta.
 
-## 14. Brechas o Áreas Incompletas
-Usuario admin hardcodeado (sin multiusuario ni roles avanzados); CSP permisiva (`'unsafe-inline'`, CDNs) sin nonce/SRI; cookie de sesión solo `secure` si HTTPS (en local puede ir sin `secure`); CSRF requiere añadir rutas nuevas manualmente; firma HMAC hacia microservicios documentada pero no verificada en código principal; sin MFA; rate-limit/login-attempts almacenados en disco (no distribuido); faltan tests para headers/CORS/CSP y protección de microservicios; mensajes de error básicos (sin MFA/lockout per-account configurable).
+- **Fase 2 — Autenticación y sesiones**  
+  Hecho: bcrypt, regen ID en login, TTL 30m, lifetime 8h, sellado IP/UA, anti-hijack, anti-replay soft, logout seguro.  
+  Falta: MFA, rotación de credenciales admin, endurecer SameSite/secure siempre, anti-replay en modo enforcement. Prioridad: Alta.
 
-## 15. Fases de Seguridad
+- **Fase 3 — Autorización y control de acceso**  
+  Hecho: AuthMiddleware y AuthGuards protegen Secret Room/paneles/agentia; rol admin único.  
+  Falta: modelo multirol/usuarios, auditoría de privilegios por recurso. Prioridad: Media-Alta.
 
-### 15.1 Fases completadas (1–6)
-F1: Hardening inicial (headers, bootstrap seguro, router con orden de middleware). F2: CSRF tokens + middleware en rutas críticas. F3: Sanitización y validación (Sanitizer, InputSanitizer, JsonValidator) + ApiFirewall. F4: Rate limiting y logging de eventos. F5: Configuración de microservicios y claves internas via `ServiceUrlProvider`/`INTERNAL_API_KEY`. F6: Autenticación con password_hash/verify, regeneración de sesión, roles admin, guards en rutas secretas/paneles, throttling de login, tests de seguridad añadidos.
+- **Fase 4 — CSRF y XSS**  
+  Hecho: CSRF tokens + middleware en POST críticos; escapado en vistas; sanitización de entrada.  
+  Falta: cobertura automática de formularios nuevos, CSP más estricta con nonce/SRI para mitigar XSS. Prioridad: Alta.
 
-### 15.2 Fases pendientes (7–10)
-Endurecer CSP/cookies (nonce/SRI, `secure` siempre, `SameSite=Strict` donde aplique), incorporar multiusuario/roles avanzados y MFA, validar HMAC/token en el proxy principal, distribuir rate-limit/intent storage, ampliar tests (headers/CORS/CSP/microservicios), y otras mejoras de observabilidad/alertas para seguridad.
+- **Fase 5 — Seguridad en APIs y microservicios**  
+  Hecho: ApiFirewall (tamaño/patrones), rate-limit en rutas clave, clave interna disponible, RAG/OpenAI detrás de proxy.  
+  Falta: validación HMAC en proxy, segmentación/red de confianza, firma/verificación consistente, tests de endpoints. Prioridad: Media-Alta.
+
+- **Fase 6 — Monitorización y logs**  
+  Hecho: SecurityLogger con trace_id, eventos de sesión/rate-limit/CSRF/payloads; Sentry opcional.  
+  Falta: alertas/rotación de logs, clasificación de severidad, anonimización de PII. Prioridad: Media.
+
+- **Fase 7 — Gestión avanzada de sesión y anti-replay**  
+  Hecho: IP/UA binding, TTL/lifetime, anti-replay soft (token emitido/rotado + logging).  
+  Falta: modo enforcement con bloqueo, sincronizar con headers de cliente, pruebas funcionales de replay. Prioridad: Media-Alta.
+
+- **Fase 8 — Endurecimiento de cabeceras**  
+  Hecho: cabeceras endurecidas (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Content-Security-Policy y X-Content-Security-Policy, X-Download-Options, X-Permitted-Cross-Domain-Policies, Cross-Origin-Resource-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy) activas en HTML y APIs; cookies de sesión con HttpOnly + SameSite=Lax. Tests automáticos (`tests/Security/HeadersSecurityTest.php`) validan rutas clave (`/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes`) y la suite completa está verde.
+
+### Validación Fase 8 (real)
+- Automática: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php` y la suite completa `vendor/bin/phpunit --colors=always --testdox`.
+- Manual (curl):
+  - Home: `curl -i http://localhost:8080/ -H "Accept: text/html"`
+  - Login: `curl -i http://localhost:8080/login -H "Accept: text/html"`
+  - Sección: `curl -i http://localhost:8080/seccion -H "Accept: text/html" -L`
+  - Secret: `curl -i http://localhost:8080/secret/sonar -H "Accept: text/html" -L`
+  - API RAG: `curl -i http://localhost:8080/api/rag/heroes -H "Content-Type: application/json" -d '{"heroes":[1,2],"question":"test"}'`
+- Conclusión: la Fase 8 se considera completada y cubierta por tests automatizados y verificación manual en entorno local.
+
+- **Fase 9 — Gestión de secretos y despliegue**  
+  Plan: mover secretos a gestor seguro, reducir exposición de `.env`, revisar permisos de `storage/`, asegurar despliegues HTTPS. Prioridad: Media-Alta.
+
+- **Fase 10 — Pruebas automáticas de seguridad**  
+  Plan: agregar tests de cabeceras/CORS/CSP, escaneos `composer audit`/SAST, tests de microservicios y anti-replay en enforcement. Prioridad: Media.
+
+## 6. Próximos pasos
+- Endurecer CSP (reducir unsafe-inline, añadir nonce/SRI) y habilitar HSTS en producción tras validar HTTPS.
+- Diseñar MFA o al menos rotación de credenciales para el admin; considerar soporte multiusuario/roles.
+- Activar anti-replay en modo enforcement de forma progresiva (primero rutas sensibles), coordinando cliente para enviar `X-Session-Replay`.
+- Implementar validación de firma/HMAC en el proxy antes de llamar a microservicios y documentar el contrato.
+- Añadir pruebas automáticas adicionales para CORS/CSP y monitoreo/rotación de logs.
+- Evaluar mover rate-limit/intentos a un backend centralizado si hay múltiples instancias.

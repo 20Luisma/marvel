@@ -14,65 +14,46 @@ use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
+use App\Shared\Http\JsonResponse;
+use Src\Controllers\HeroController;
+use Src\Controllers\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Tests\Doubles\InMemoryAlbumRepository;
 use Tests\Doubles\InMemoryHeroRepository;
 
-class CreateHeroUseCaseHttpTest extends TestCase
+final class CreateHeroUseCaseHttpTest extends TestCase
 {
-    private array $container;
+    private InMemoryAlbumRepository $albumRepository;
+    private InMemoryHeroRepository $heroRepository;
+    private InMemoryEventBus $eventBus;
+    private FileNotificationSender $notificationSender;
+    private NotificationRepository $notificationRepository;
+    private CreateAlbumUseCase $createAlbumUseCase;
+    private ListAlbumsUseCase $listAlbumsUseCase;
+    private CreateHeroUseCase $createHeroUseCase;
+    private ListHeroesUseCase $listHeroesUseCase;
+    private AlbumUpdatedNotificationHandler $albumUpdatedNotificationHandler;
+    private HeroCreatedNotificationHandler $heroCreatedNotificationHandler;
 
     protected function setUp(): void
     {
         parent::setUp();
-        if (!defined('PHPUNIT_RUNNING')) {
-            define('PHPUNIT_RUNNING', true);
-        }
 
-        if (!defined('SKIP_HTTP_BOOT')) {
-            define('SKIP_HTTP_BOOT', true);
-        }
+        $this->albumRepository = new InMemoryAlbumRepository();
+        $this->heroRepository = new InMemoryHeroRepository();
+        $this->eventBus = new InMemoryEventBus();
+        $this->notificationSender = new FileNotificationSender(dirname(__DIR__, 2) . '/storage/test_notifications.log');
+        $this->notificationRepository = new NotificationRepository(dirname(__DIR__, 2) . '/storage/test_notifications.log');
 
-        require_once dirname(__DIR__, 2) . '/public/index.php';
+        $this->createAlbumUseCase = new CreateAlbumUseCase($this->albumRepository);
+        $this->listAlbumsUseCase = new ListAlbumsUseCase($this->albumRepository);
+        $this->createHeroUseCase = new CreateHeroUseCase($this->heroRepository, $this->albumRepository, $this->eventBus);
+        $this->listHeroesUseCase = new ListHeroesUseCase($this->heroRepository);
+        $this->albumUpdatedNotificationHandler = new AlbumUpdatedNotificationHandler($this->notificationSender);
+        $this->heroCreatedNotificationHandler = new HeroCreatedNotificationHandler($this->notificationSender);
 
-        $bootstrapContainer = require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
-        /** @var array<string, mixed> $resolvedContainer */
-        $resolvedContainer = is_array($bootstrapContainer)
-            ? $bootstrapContainer
-            : ($GLOBALS['__clean_marvel_container'] ?? []);
-        $this->container = $resolvedContainer;
-        $logPath = dirname(__DIR__, 2) . '/storage/test_notifications.log';
-        if (is_file($logPath)) {
-            unlink($logPath);
-        }
-
-        $albumRepository = new InMemoryAlbumRepository();
-        $heroRepository = new InMemoryHeroRepository();
-        $eventBus = new InMemoryEventBus();
-        $notificationRepository = new NotificationRepository($logPath);
-        $notificationSender = new FileNotificationSender($logPath);
-
-        $eventBus->subscribe(new HeroCreatedNotificationHandler($notificationSender));
-        $eventBus->subscribe(new AlbumUpdatedNotificationHandler($notificationSender));
-
-        $this->container['albumRepository'] = $albumRepository;
-        $this->container['heroRepository'] = $heroRepository;
-        $this->container['notificationRepository'] = $notificationRepository;
-        $this->container['eventBus'] = $eventBus;
-
-        $this->container['useCases']['createAlbum'] = new CreateAlbumUseCase($albumRepository);
-        $this->container['useCases']['listAlbums'] = new ListAlbumsUseCase($albumRepository);
-        $this->container['useCases']['createHero'] = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus);
-        $this->container['useCases']['listHeroes'] = new ListHeroesUseCase($heroRepository);
-    }
-
-    private function createAlbum(string $name): string
-    {
-        $useCase = $this->container['useCases']['createAlbum'];
-        $response = $useCase->execute(new CreateAlbumRequest($name, null));
-        $data = $response->toArray();
-
-        return $data['albumId'];
+        $this->eventBus->subscribe($this->albumUpdatedNotificationHandler);
+        $this->eventBus->subscribe($this->heroCreatedNotificationHandler);
     }
 
     protected function tearDown(): void
@@ -88,14 +69,13 @@ class CreateHeroUseCaseHttpTest extends TestCase
     public function testCreateHeroSuccessfully(): void
     {
         $albumId = $this->createAlbum('Test Album');
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_SERVER['REQUEST_URI'] = "/albums/$albumId/heroes";
-        $GLOBALS['mock_php_input'] = json_encode(['nombre' => 'Test Hero', 'imagen' => 'test.jpg', 'contenido' => 'Test content']);
+        Request::withJsonBody(json_encode(['nombre' => 'Test Hero', 'imagen' => 'test.jpg', 'contenido' => 'Test content']));
 
+        $controller = $this->heroController();
         ob_start();
-        \route('POST', "/albums/$albumId/heroes", $this->container);
+        $controller->store($albumId);
         $output = ob_get_clean();
-        $response = json_decode($output, true);
+        $response = json_decode((string) $output, true);
 
         $this->assertEquals(201, http_response_code());
         $this->assertEquals('éxito', $response['estado']);
@@ -105,17 +85,34 @@ class CreateHeroUseCaseHttpTest extends TestCase
     public function testCreateHeroFailsWithMissingData(): void
     {
         $albumId = $this->createAlbum('Test Album');
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_SERVER['REQUEST_URI'] = "/albums/$albumId/heroes";
-        $GLOBALS['mock_php_input'] = json_encode(['nombre' => 'Test Hero']); // Missing imagen
+        Request::withJsonBody(json_encode(['nombre' => 'Test Hero'])); // Missing imagen
 
+        $controller = $this->heroController();
         ob_start();
-        \route('POST', "/albums/$albumId/heroes", $this->container);
+        $controller->store($albumId);
         $output = ob_get_clean();
-        $response = json_decode($output, true);
+        $response = json_decode((string) $output, true);
 
         $this->assertEquals(422, http_response_code());
         $this->assertEquals('error', $response['estado']);
         $this->assertEquals('Los campos nombre e imagen son obligatorios.', $response['message']);
+    }
+
+    private function createAlbum(string $name): string
+    {
+        $response = $this->createAlbumUseCase->execute(new CreateAlbumRequest($name, null));
+
+        return $response->toArray()['albumId'];
+    }
+
+    private function heroController(): HeroController
+    {
+        return new HeroController(
+            $this->listHeroesUseCase,
+            $this->createHeroUseCase,
+            new \App\Heroes\Application\UseCase\UpdateHeroUseCase($this->heroRepository),
+            new \App\Heroes\Application\UseCase\DeleteHeroUseCase($this->heroRepository),
+            new \App\Heroes\Application\UseCase\FindHeroUseCase($this->heroRepository),
+        );
     }
 }
