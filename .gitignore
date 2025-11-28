@@ -73,7 +73,6 @@ phpunit.xml.dist
 
 # Archivos de configuración temporal o personalizados
 *.local
-*.env.example
 *.secret
 *.bakup
 *.old

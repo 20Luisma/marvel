@@ -3,6 +3,22 @@
 ## 1. Introducción
 - Enfoque: arquitectura limpia (Presentación → Aplicación → Dominio; Infra implementa contratos), con capa de seguridad centralizada (`src/Security/*`) y controles adicionales en `src/bootstrap.php`.
 - Alcance: app principal PHP (`public/`, `views/`, `src/`), almacenamiento local (`storage/`), microservicios asociados (`openai-service`, `rag-service`, heatmap) configurados vía `config/services.php` y variables `.env`.
+- Niveles de madurez: Fases 1–8 implementadas a “Nivel Máster” (controles activos y probados). En las Fases 1–7 permanecen mejoras de hardening “Nivel Enterprise” (MFA, HSTS forzado, CSP sin inline, HMAC completo, etc.) como backlog futuro.
+
+### Estado por fase (Máster vs Enterprise)
+
+| Fase | Tema | Estado base app (Máster) | Hardening enterprise (pendiente) |
+| --- | --- | --- | --- |
+| 1 | Hardening HTTP básico | ✅ Implementado | 🔸 HSTS forzado/cookies estrictas |
+| 2 | Autenticación y sesiones | ✅ Implementado | 🔸 MFA, rotación credenciales, SameSite/secure siempre |
+| 3 | Autorización y control de acceso | ✅ Implementado (admin único) | 🔸 Multirol/usuarios |
+| 4 | CSRF y XSS | ✅ Implementado | 🔸 CSP sin unsafe-inline, SRI/nonce |
+| 5 | APIs y microservicios | ✅ Implementado | 🔸 HMAC completo en proxy, segmentación/red |
+| 6 | Monitorización y logs | ✅ Implementado | 🔸 Rotación/alertas, anonimización PII |
+| 7 | Anti-replay avanzado | ✅ Modo observación | 🔸 Modo bloqueo/enforcement |
+| 8 | Endurecimiento de cabeceras + tests | ✅ COMPLETADA | — |
+| 9 | Gestión de secretos y despliegue | 🚧 En progreso | 🔸 Hardening futuro |
+| 10 | Seguridad enterprise (MFA, roles, etc.) | 🚧 Futuro | 🔸 Consolidar backlog enterprise |
 
 ## 2. Estado actual de la seguridad
 - **Fortalezas:** hardening inicial de cabeceras, CSRF en POST críticos, rate-limit y bloqueo de login por intentos, autenticación con hash bcrypt, sesión con TTL y lifetime, sellado IP/UA, detección de hijack y anti-replay en modo pasivo, firewall de payloads y sanitización básica, logging centralizado con trace_id.
@@ -50,10 +66,11 @@
 - Storage de logs puede crecer sin rotación y contener IP/UA (Impacto Bajo-Medio, Prob Media, Prioridad Media-Baja).
 
 ## 5. Roadmap de fases de seguridad
+Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver tabla de estados).
 - **Fase 1 — Hardening HTTP básico**  
   Objetivo: cabeceras y cookies seguras.  
   Hecho: headers listados, cookies HttpOnly/Lax, HSTS en HTTPS.  
-  Falta: HSTS forzado en prod y refinar cookies (SameSite/secure estrictos). Prioridad: Media-Alta.
+  Hardening enterprise pendiente: HSTS forzado en prod y refinar cookies (SameSite/secure estrictos). Prioridad: Media-Alta.
 
 - **Fase 2 — Autenticación y sesiones**  
   Hecho: bcrypt, regen ID en login, TTL 30m, lifetime 8h, sellado IP/UA, anti-hijack, anti-replay soft, logout seguro.  
@@ -105,3 +122,5 @@
 - Implementar validación de firma/HMAC en el proxy antes de llamar a microservicios y documentar el contrato.
 - Añadir pruebas automáticas adicionales para CORS/CSP y monitoreo/rotación de logs.
 - Evaluar mover rate-limit/intentos a un backend centralizado si hay múltiples instancias.
+
+> Nota: las tareas pendientes en fases 1–7 son mejoras de hardening “Nivel Enterprise”; la base de cada fase está implementada y probada para el alcance del Máster.
