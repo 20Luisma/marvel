@@ -50,6 +50,7 @@ final class UpdateAlbumUseCaseTest extends TestCase
         self::assertNull($repository->stored()->coverImage());
         self::assertNull($response->toArray()['coverImage']);
         self::assertCount(1, $eventBus->events);
+        self::assertInstanceOf(AlbumUpdated::class, $eventBus->events[0]);
         self::assertNull($eventBus->events[0]->coverImage());
     }
 

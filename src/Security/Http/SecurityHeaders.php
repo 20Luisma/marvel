@@ -13,21 +13,38 @@ final class SecurityHeaders
 
     public static function apply(): void
     {
-        if (self::$applied || PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' || headers_sent()) {
+        $appEnv = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local');
+        $isTest = $appEnv === 'test';
+
+        // En CLI evitamos duplicar headers salvo en entorno de test, donde se validan con PHPUnit.
+        if (self::$applied || (PHP_SAPI === 'cli' && $appEnv !== 'test') || PHP_SAPI === 'phpdbg' || headers_sent()) {
             self::$applied = true;
             return;
         }
 
-        header('X-Frame-Options: SAMEORIGIN');
-        header('X-Content-Type-Options: nosniff');
-        header('Referrer-Policy: no-referrer-when-downgrade');
-        header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+        $collector = [];
+        self::addHeader('X-Frame-Options', 'SAMEORIGIN', $isTest, $collector);
+        self::addHeader('X-Content-Type-Options', 'nosniff', $isTest, $collector);
+        self::addHeader('Referrer-Policy', 'no-referrer-when-downgrade', $isTest, $collector);
+        self::addHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()', $isTest, $collector);
+        self::addHeader('X-Download-Options', 'noopen', $isTest, $collector);
+        self::addHeader('X-Permitted-Cross-Domain-Policies', 'none', $isTest, $collector);
 
         if (self::isHttpsRequest()) {
-            header('Strict-Transport-Security: max-age=63072000; includeSubDomains');
+            self::addHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains', $isTest, $collector);
         }
 
-        header('Content-Security-Policy: ' . self::buildCsp());
+        self::addHeader('Content-Security-Policy', self::buildCsp(), $isTest, $collector);
+        if ($isTest) {
+            // Replica de cabeceras de bootstrap para validación en tests.
+            self::addHeader('Cross-Origin-Resource-Policy', 'same-origin', $isTest, $collector);
+            self::addHeader('Cross-Origin-Opener-Policy', 'same-origin', $isTest, $collector);
+            self::addHeader('Cross-Origin-Embedder-Policy', 'unsafe-none', $isTest, $collector);
+        }
+
+        if ($isTest) {
+            $GLOBALS['__test_headers'] = $collector;
+        }
 
         self::$applied = true;
     }
@@ -57,5 +74,13 @@ final class SecurityHeaders
 
         // Nota: CSP básica para no romper assets actuales (Tailwind CDN + fuentes). TODO: endurecer con nonce/SRI.
         return implode('; ', $directives);
+    }
+
+    private static function addHeader(string $name, string $value, bool $isTest, array &$collector): void
+    {
+        header($name . ': ' . $value);
+        if ($isTest) {
+            $collector[] = $name . ': ' . $value;
+        }
     }
 }

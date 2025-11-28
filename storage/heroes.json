@@ -34,10 +34,10 @@
         "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Black Widow",
         "slug": "black-widow",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espionaje / sigilo)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Espía maestra con precisión quirúrgica.",
+        "contenido": "AtributoValoraciónPoder de ataqueDefensa / ResistenciaHabilidad especial (espionaje / sigilo)Inteligencia tácticaVelocidad / movilidadNivel total19 / 25 Espía maestra con precisión quirúrgica.",
         "imagen": "https://www.zonanegativa.com/imagenes/2020/01/black-widow-widows-sting-muestra-portada-1.jpg",
         "createdAt": "2025-10-26T15:55:15+00:00",
-        "updatedAt": "2025-11-15T12:56:33+00:00"
+        "updatedAt": "2025-11-28T15:42:09+00:00"
     },
     {
         "heroId": "a1a1a1a1-0005-4f00-9000-000000000005",

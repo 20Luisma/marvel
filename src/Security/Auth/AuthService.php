@@ -6,6 +6,7 @@ namespace App\Security\Auth;
 
 use App\Config\SecurityConfig;
 use App\Security\Logging\SecurityLogger;
+use App\Security\Session\SessionReplayMonitor;
 
 final class AuthService
 {
@@ -16,11 +17,16 @@ final class AuthService
 
     private SecurityConfig $config;
     private ?SecurityLogger $logger;
+    private ?SessionReplayMonitor $replayMonitor;
 
-    public function __construct(?SecurityConfig $config = null, ?SecurityLogger $logger = null)
-    {
+    public function __construct(
+        ?SecurityConfig $config = null,
+        ?SecurityLogger $logger = null,
+        ?SessionReplayMonitor $replayMonitor = null
+    ) {
         $this->config = $config ?? new SecurityConfig();
         $this->logger = $logger;
+        $this->replayMonitor = $replayMonitor;
     }
 
     public function login(string $email, string $password): bool
@@ -49,12 +55,31 @@ final class AuthService
         $_SESSION['user_role'] = self::ADMIN_ROLE;
         $_SESSION['session_ip_hash'] = $this->hashIp($this->clientIp());
         $_SESSION['session_ua_hash'] = $this->hashUserAgent($this->userAgent());
+        if ($this->replayMonitor instanceof SessionReplayMonitor) {
+            $this->replayMonitor->initReplayToken();
+        }
         $_SESSION['auth'] = [
             'user_id' => self::ADMIN_ID,
             'role' => self::ADMIN_ROLE,
             'email' => $this->config->getAdminEmail(),
             'last_activity' => time(),
         ];
+
+        // FASE 7.4 — Rotar token Anti-Replay después de login exitoso (soft mode)
+        $_SESSION['session_replay_token'] = bin2hex(random_bytes(32));
+        $traceId = $_SERVER['X_TRACE_ID'] ?? '-';
+        $ip = $this->clientIp();
+        $ua = $this->userAgent();
+        $path = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $securityLogPath = dirname(__DIR__, 3) . '/storage/logs/security.log';
+        if (!is_dir(dirname($securityLogPath))) {
+            @mkdir(dirname($securityLogPath), 0775, true);
+        }
+        error_log(
+            "[" . date('Y-m-d H:i:s') . "] event=session_replay_rotated_soft trace_id={$traceId} ip={$ip} path={$path} user_agent={$ua} timestamp=" . time() . "\n",
+            3,
+            $securityLogPath
+        );
 
         return true;
     }

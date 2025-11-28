@@ -11,20 +11,21 @@ final class RequestTest extends TestCase
 {
     protected function tearDown(): void
     {
-        unset($GLOBALS['mock_php_input'], $_SERVER['HTTP_ACCEPT']);
+        Request::withJsonBody('');
+        unset($_SERVER['HTTP_ACCEPT']);
         parent::tearDown();
     }
 
     public function testJsonBodyReturnsArrayWhenPayloadIsValid(): void
     {
-        $GLOBALS['mock_php_input'] = json_encode(['foo' => 'bar'], JSON_THROW_ON_ERROR);
+        Request::withJsonBody(json_encode(['foo' => 'bar'], JSON_THROW_ON_ERROR));
 
         self::assertSame(['foo' => 'bar'], Request::jsonBody());
     }
 
     public function testJsonBodyReturnsEmptyArrayWhenPayloadIsEmpty(): void
     {
-        $GLOBALS['mock_php_input'] = '   ';
+        Request::withJsonBody('   ');
 
         self::assertSame([], Request::jsonBody());
     }

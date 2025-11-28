@@ -46,8 +46,9 @@ final class DbAlbumRepositoryTest extends TestCase
 
         $stored = $this->repository->find('album-1');
 
-        self::assertSame('Guardians 2', $stored?->nombre());
-        self::assertSame('cover.png', $stored?->coverImage());
+        self::assertNotNull($stored);
+        self::assertSame('Guardians 2', $stored->nombre());
+        self::assertSame('cover.png', $stored->coverImage());
     }
 
     // Devuelve null cuando se busca un álbum inexistente.
