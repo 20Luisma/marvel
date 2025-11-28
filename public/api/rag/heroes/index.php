@@ -10,7 +10,7 @@ use Src\Controllers\RagProxyController;
 
 require_once dirname(__DIR__, 4) . '/vendor/autoload.php';
 
-$container = require dirname(__DIR__, 4) . '/src/bootstrap.php';
+$container = require_once dirname(__DIR__, 4) . '/src/bootstrap.php';
 
 $limiter = $container['security']['rateLimiter'] ?? null;
 $securityLogger = $container['security']['logger'] ?? null;

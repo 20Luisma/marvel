@@ -25,6 +25,8 @@ Está pensado para desarrolladores que clonen el repositorio y quieran **levanta
 - **Configuración lista para usar:** el repo incluye `.vscode/` con tasks y launchers preconfigurados para instalar dependencias y levantar ambos servidores localmente sin pasos extra.
 - **Servicios opcionales:** WAVE API (`WAVE_API_KEY`), PageSpeed Insights, ElevenLabs (`ELEVENLABS_API_KEY`), heatmap (`HEATMAP_API_BASE_URL`, `HEATMAP_API_TOKEN`), GitHub (`GITHUB_API_KEY`), Sentry y SonarCloud.
 
+**Seguridad (resumen):** cabeceras de hardening activas, CSRF en POST críticos, rate-limit/login throttling, sesiones con TTL/lifetime + sellado IP/UA + anti-replay pasivo, firewall de payloads y sanitización, guard admin y logging con trace_id. Detalle y roadmap (Máster vs Enterprise) en `docs/security.md`.
+
 ---
 
 ## 3. Estructura del repositorio (técnica)
@@ -48,9 +50,13 @@ clean-marvel/                # raíz de la app principal
 │
 ├── rag-service/             # ⬅️ microservicio PHP independiente → :8082
 │   ├── public/              # index.php + routing simple
-│   ├── src/                 # controladores + servicios RAG
-│   ├── storage/knowledge/   # base JSON con héroes
+│   ├── src/                 # controladores + servicios RAG y Agent (hero + marvel_agent)
+│   ├── storage/             # knowledge heroes.json, embeddings y KB del agent
+│   ├── bin/                 # scripts para KB/embeddings del agente (generate_agent_embeddings.php, build_marvel_agent_kb.php)
 │   └── composer.json        # autoload PSR-4: Creawebes\Rag\ → src/
+│
+├── docs/microservicioheatmap/   # guía del microservicio Heatmap (Python/Flask + Docker)
+├── docker-compose.yml           # stack auxiliar (n8n, etc.) para entornos locales
 │
 ├── docs/                    # este archivo + diagramas
 ├── tests/                   # pruebas PHPUnit
@@ -91,25 +97,25 @@ composer install
 cd ..
 ```
 
-### 4.5. Crear archivos `.env` para los microservicios
-Dentro de `openai-service/` debe existir un `.env` con la clave de OpenAI:
+### 4.5. Crear archivos `.env` (app + microservicios)
 
-```env
-OPENAI_API_KEY=your-openai-key-here
-OPENAI_MODEL=gpt-4o-mini
+En la raíz, parte de `/.env.example` (cópialo a `.env`):
+
+```bash
+cp .env.example .env
 ```
 
-- Este archivo **NO se sube a GitHub** (está en `.gitignore`).
-- El microservicio ya tiene código en `public/index.php` para **cargar este .env manualmente con `putenv()`**. No hace falta phpdotenv.
+Variables principales (ver el archivo para la lista completa):
+- APP/DB: `APP_ENV`, `APP_DEBUG`, `APP_URL`, `DB_HOST/DB_NAME/DB_USER/DB_PASSWORD`
+- Seguridad: `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `INTERNAL_API_KEY`
+- IA y APIs: `OPENAI_API_KEY`, `OPENAI_MODEL`, `ELEVENLABS_API_KEY`, `WAVE_API_KEY`, `GITHUB_API_KEY`, `TMDB_API_KEY`
+- Heatmap: `HEATMAP_API_BASE_URL`, `HEATMAP_API_TOKEN`
+- Observabilidad: `SENTRY_DSN`, `SONAR_TOKEN` (si aplica), PSI claves, etc.
 
-> Si necesitás apuntar al microservicio OpenAI en otra URL/puerto (por ejemplo, en staging), crea un archivo `rag-service/.env` con:
-
-```env
-OPENAI_SERVICE_URL=https://tu-dominio.com/openai/v1/chat
-```
-
-- Este `.env` es opcional en local (usa `http://localhost:8081/v1/chat` por defecto).
-- Tanto `openai-service` como `rag-service` cargan su `.env` manualmente mediante `putenv()`.
+Microservicios:
+- `openai-service/.env.example` → copiar a `.env` y rellenar `OPENAI_API_KEY`, `OPENAI_MODEL` (fallback JSON si falta la key).
+- `rag-service/.env.example` → copiar a `.env`; opcional `OPENAI_SERVICE_URL` si no es `http://localhost:8081/v1/chat`.
+- Ambos cargan su `.env` con `putenv()` en `public/index.php`.
 
 ---
 
@@ -173,6 +179,17 @@ Para ejecutarlo:
 2. VS Code abrirá 2 terminales internas, una para cada servidor.
 
 > **Nota:** por ahora el microservicio RAG (8082) se arranca manualmente con el comando anterior o creando una task adicional en VS Code.
+
+---
+
+## 6. Checks de calidad y seguridad mínimos
+
+- Tests completos: `vendor/bin/phpunit --colors=always --testdox` (raíz).
+- Security check local: `bash bin/security-check.sh` (ejecuta PHPUnit de seguridad, PHPStan sobre `src/Security` + `tests/Security` y `composer audit`).
+- Análisis estático general: `vendor/bin/phpstan analyse --memory-limit=512M`.
+- Auditoría de dependencias: `composer audit --no-interaction`.
+
+El workflow `security-check.yml` corre estos pasos en cada PR/push a `main`; si falla, no se debe desplegar.
 
 ---
 
@@ -262,6 +279,16 @@ Esto es importante porque el **frontend ya está preparado** para mostrar un men
 - `Controllers/RagController.php`: expone `POST /rag/heroes` y responde `{ answer, contexts, heroIds }`, propagando errores controlados.
 
 > Este microservicio **no** genera historias propias: solo hace RAG sobre el JSON y delega la generación al servicio de OpenAI (8081). Puedes escalarlo en otra máquina apuntando el `.env` al endpoint OpenAI correspondiente.
+
+### 6.7. Heatmap service (Python/Flask + Docker)
+- Código y guía: `docs/microservicioheatmap/` (incluye Dockerfile). En producción corre en una VM de Google Cloud (contenedor Docker).
+- Variables clave: `HEATMAP_API_BASE_URL`, `HEATMAP_API_TOKEN` (la app principal proxy en `/api/heatmap/*` envía el token sin exponerlo).
+- Ejemplo de build/run (ajusta ruta si cambias la ubicación):
+  ```bash
+  cd docs/microservicioheatmap
+  docker build -t heatmap-service .
+  docker run -e HEATMAP_API_TOKEN=dev-heatmap-token -p 8080:8080 heatmap-service
+  ```
 
 ---
 

@@ -8,10 +8,12 @@ Este documento describe cómo debe operar el agente (Codex) dentro del repositor
 - Sincronizar app principal con microservicios (`openai-service`, `rag-service`) y paneles (GitHub, SonarCloud, Sentry, accesibilidad, performance, heatmap, repo).
 
 ## Contexto clave del proyecto
-- **Arquitectura Limpia en PHP 8.2+**: Presentación → Aplicación → Dominio, con infraestructura desacoplada (repos JSON/DB, EventBus).
-- **Microservicios IA**: `openai-service` (`POST /v1/chat`, puerto 8081) y `rag-service` (`POST /rag/heroes`, puerto 8082). Ambos cargan `.env` propio.
-- **Servicios externos**: WAVE API (`/api/accessibility-marvel.php`), ElevenLabs TTS (`/api/tts-elevenlabs.php`), heatmap service Python (documentado en `docs/microservicioheatmap/README.md`).
-- **Almacenamiento**: `storage/` para datos y logs; semillas en `App\Dev\Seed`.
+- **Arquitectura Limpia en PHP 8.2+**: Presentación → Aplicación → Dominio; infraestructura desacoplada (repos JSON/DB, EventBus).
+- **Persistencia**: JSON en local (`APP_ENV=local`), PDO MySQL en hosting con fallback a JSON.
+- **Microservicios IA**: `openai-service` (`POST /v1/chat`, 8081, fallback JSON) y `rag-service` (`POST /rag/heroes`, 8082, incluye flujo agent con embeddings/KB). Scripts en `rag-service/bin/*`.
+- **Heatmap service**: Python/Flask en contenedor (GCP), proxy en `/api/heatmap/*` con `HEATMAP_API_TOKEN`; guía en `docs/microservicioheatmap/README.md`.
+- **Servicios externos**: WAVE API (`/api/accessibility-marvel.php`), ElevenLabs TTS (`/api/tts-elevenlabs.php`), PageSpeed, GitHub PRs, Sentry, SonarCloud.
+- **Almacenamiento**: `storage/` para datos/logs; semillas en `App\Dev\Seed`.
 - **URLs**: `App\Config\ServiceUrlProvider` y `config/services.php` resuelven endpoints por entorno (`local`, `hosting`).
 
 ## Qué puede hacer el agente
@@ -32,6 +34,7 @@ Este documento describe cómo debe operar el agente (Codex) dentro del repositor
 - Pruebas: `vendor/bin/phpunit --colors=always`
 - Análisis estático: `vendor/bin/phpstan analyse --memory-limit=512M`
 - Cobertura: `composer test:cov`
+- Security check: `bash bin/security-check.sh` (PHPUnit de seguridad + PHPStan de seguridad + composer audit); workflow `security-check.yml` en PR/push a main.
 
 ## Paneles y rutas útiles
 - GitHub PRs: `/panel-github`

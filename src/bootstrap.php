@@ -205,10 +205,12 @@ return (static function (): array {
     // -------------------------------------------------------------------------
 
     $serviceConfigPath = $rootPath . '/config/services.php';
-    /** @var array<string, mixed> $serviceConfig */
-    $serviceConfig = is_file($serviceConfigPath) ? require $serviceConfigPath : ['environments' => []];
-
-    $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
+    $serviceConfig = $GLOBALS['__clean_marvel_service_config'] ?? null;
+    if (!is_array($serviceConfig)) {
+        /** @var array<string, mixed> $serviceConfig */
+        $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
+        $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
+    }
 
     $serviceUrlProvider = null;
     if (class_exists(ServiceUrlProvider::class)) {
