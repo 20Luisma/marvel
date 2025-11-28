@@ -17,7 +17,7 @@ test.describe('Home', () => {
   test('El menú principal muestra enlaces clave', async ({ page }) => {
     await page.goto('/readme', { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByRole('heading', { name: /README del proyecto/i, level: 2 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Clean Architecture with Marvel/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Inicio/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Crear Cómic/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Marvel Movies/i })).toBeVisible();
