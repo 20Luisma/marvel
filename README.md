@@ -119,6 +119,16 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 
 ---
 
+## 🔐 Seguridad (resumen corto)
+
+- Cabeceras de hardening (CSP básica, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, COOP/COEP/CORP) y cookies de sesión HttpOnly + SameSite=Lax.
+- CSRF en POST críticos, rate-limit/login throttling, firewall de payloads y sanitización de entrada.
+- Sesiones con TTL/lifetime, sellado IP/UA y anti-replay en modo observación; rutas sensibles con AuthMiddleware/guards.
+- Logs de seguridad con trace_id y secretos vía `.env` (app + microservicios); verificación previa a despliegue con `bin/security-check.sh` y workflow `security-check.yml`.
+- Detalle completo, fases y backlog Enterprise en `docs/security.md`.
+
+---
+
 ## 👤 Créditos
 
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  

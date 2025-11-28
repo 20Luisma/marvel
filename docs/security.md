@@ -4,6 +4,7 @@
 - Enfoque: arquitectura limpia (Presentación → Aplicación → Dominio; Infra implementa contratos), con capa de seguridad centralizada (`src/Security/*`) y controles adicionales en `src/bootstrap.php`.
 - Alcance: app principal PHP (`public/`, `views/`, `src/`), almacenamiento local (`storage/`), microservicios asociados (`openai-service`, `rag-service`, heatmap) configurados vía `config/services.php` y variables `.env`.
 - Niveles de madurez: Fases 1–8 implementadas a “Nivel Máster” (controles activos y probados). En las Fases 1–7 permanecen mejoras de hardening “Nivel Enterprise” (MFA, HSTS forzado, CSP sin inline, HMAC completo, etc.) como backlog futuro.
+- Resumen corto disponible en `README.md` y en la vista `views/pages/readme.php`; este documento mantiene el detalle completo y el roadmap.
 
 ### Estado por fase (Máster vs Enterprise)
 
@@ -124,3 +125,11 @@ Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver
 - Evaluar mover rate-limit/intentos a un backend centralizado si hay múltiples instancias.
 
 > Nota: las tareas pendientes en fases 1–7 son mejoras de hardening “Nivel Enterprise”; la base de cada fase está implementada y probada para el alcance del Máster.
+
+### Fase 10 — Verificación de seguridad antes del despliegue
+- Script local: `bin/security-check.sh` (chmod +x). Ejecuta, en orden:
+  - Tests de seguridad: `vendor/bin/phpunit --colors=always tests/Security`
+  - PHPStan sobre seguridad: `PHPSTAN_DISABLE_PARALLEL=1 vendor/bin/phpstan analyse --memory-limit=1G src/Security tests/Security`
+  - Auditoría de dependencias: `composer audit --no-interaction` (falla si hay vulnerabilidades)
+- Ejecución local: `bash bin/security-check.sh`.
+- CI: workflow `.github/workflows/security-check.yml` corre en cada PR a `main` y en cada push a `main`. Si falla, no se debe desplegar.

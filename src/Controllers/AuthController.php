@@ -28,7 +28,7 @@ final class AuthController
             unset($_SESSION['auth_error']);
         }
 
-        require dirname(__DIR__, 2) . '/views/pages/login.php';
+        require_once dirname(__DIR__, 2) . '/views/pages/login.php';
     }
 
     public function login(): void
