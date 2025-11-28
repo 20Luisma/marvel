@@ -454,6 +454,6 @@ Sirve para mantener el README **del proyecto** y el README **del repo raíz** si
 - Añadir tests específicos para el microservicio (mock de cURL / OpenAI)
 - Dockerizar los dos servicios (8080 y 8081)
 
-----
+-----
 
 **Documento generado para el proyecto Creawebes — Clean Marvel Album (actualizado, microservicio funcional).**
