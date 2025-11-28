@@ -17,7 +17,14 @@ final class SecurityConfig
 
     public function getAdminPasswordHash(): string
     {
-        return '$2y$12$I9Z9uy.ksfLKelJO/Ov8.unFdMtI0ZyehDNVu3x3ULC5PeWGxG4My';
+        $envHash = getenv('ADMIN_PASSWORD_HASH') ?: ($_ENV['ADMIN_PASSWORD_HASH'] ?? null);
+
+        if (is_string($envHash) && trim($envHash) !== '') {
+            return $envHash;
+        }
+
+        // Fallback solo para entornos de desarrollo/testing; configura ADMIN_PASSWORD_HASH en producción.
+        return password_hash('seguridadmarvel2025', PASSWORD_BCRYPT, ['cost' => 12]);
     }
 
     public function getInternalApiKey(): ?string

@@ -110,7 +110,7 @@ Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver
 - Conclusión: la Fase 8 se considera completada y cubierta por tests automatizados y verificación manual en entorno local.
 
 - **Fase 9 — Gestión de secretos y despliegue**  
-  Plan: mover secretos a gestor seguro, reducir exposición de `.env`, revisar permisos de `storage/`, asegurar despliegues HTTPS. Prioridad: Media-Alta.
+  En progreso (Nivel Máster): inventario de secretos, `.env.example` actualizados (app principal + microservicios), workflows sin claves planas y guía de despliegue (`docs/deploy.md`). Hardening enterprise futuro: vault/rotación automática, HSTS forzado tras HTTPS total. Prioridad: Media-Alta.
 
 - **Fase 10 — Pruebas automáticas de seguridad**  
   Plan: agregar tests de cabeceras/CORS/CSP, escaneos `composer audit`/SAST, tests de microservicios y anti-replay en enforcement. Prioridad: Media.

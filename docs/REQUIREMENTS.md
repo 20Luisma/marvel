@@ -95,7 +95,7 @@ cd ..
 Dentro de `openai-service/` debe existir un `.env` con la clave de OpenAI:
 
 ```env
-OPENAI_API_KEY=sk-pon-aqui-tu-api-key-real
+OPENAI_API_KEY=your-openai-key-here
 OPENAI_MODEL=gpt-4o-mini
 ```
 
