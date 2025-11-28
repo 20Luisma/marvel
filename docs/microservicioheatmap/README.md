@@ -184,7 +184,7 @@ Ambos llaman a `/events`, adaptan la respuesta y generan:
 
 ```
 HEATMAP_API_BASE_URL=http://34.74.102.123:8080
-HEATMAP_API_TOKEN=super-secreto-123
+HEATMAP_API_TOKEN=your-heatmap-token
 ```
 
 ---

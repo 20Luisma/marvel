@@ -53,18 +53,19 @@ final class CsrfMiddleware
 
     private function logFailure(string $path, mixed $token): void
     {
+        $tokenState = is_string($token) && trim((string) $token) !== '' ? 'present' : 'missing';
         if ($this->logger instanceof SecurityLogger) {
             $this->logger->logEvent('csrf_failed', [
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                 'path' => $path,
-                'token' => is_string($token) ? $token : 'none',
+                'token_state' => $tokenState,
             ]);
         } else {
             error_log(sprintf(
-                "event=csrf_failed ip=%s path=%s token=%s",
+                "event=csrf_failed ip=%s path=%s token_state=%s",
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                 $path,
-                $token ?? 'none'
+                $tokenState
             ));
         }
     }

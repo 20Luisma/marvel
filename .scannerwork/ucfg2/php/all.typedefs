@@ -1,13 +1,25 @@
-¬
-app\security\auth\authservice=
-ensuresession,app\security\auth\authservice::ensuresession1
+¿
+app\security\auth\authservice9
+__construct*app\security\auth\authservice::__construct3
+clientip'app\security\auth\authservice::clientipO
+enforcesessionsecurity5app\security\auth\authservice::enforcesessionsecurity=
+ensuresession,app\security\auth\authservice::ensuresession/
+haship%app\security\auth\authservice::haship=
+hashuseragent,app\security\auth\authservice::hashuseragentE
+invalidatesession0app\security\auth\authservice::invalidatesession1
 isadmin&app\security\auth\authservice::isadminA
-isauthenticated.app\security\auth\authservice::isauthenticated-
+isauthenticated.app\security\auth\authservice::isauthenticated3
+logevent'app\security\auth\authservice::logevent-
 login$app\security\auth\authservice::login/
 logout%app\security\auth\authservice::logout;
 requireadmin+app\security\auth\authservice::requireadmin9
-requireauth*app\security\auth\authservice::requireauthÔ
-!app\security\http\securityheaders1
+requireauth*app\security\auth\authservice::requireauth5
+	useragent(app\security\auth\authservice::useragent"config"logger"replayMonitor*#
+configapp\config\securityconfig*-
+logger#app\security\logging\securitylogger*:
+replayMonitor)app\security\session\sessionreplaymonitor
+!app\security\http\securityheaders9
+	addheader,app\security\http\securityheaders::addheader1
 apply(app\security\http\securityheaders::apply7
 buildcsp+app\security\http\securityheaders::buildcspC
 ishttpsrequest1app\security\http\securityheaders::ishttpsrequestí
@@ -160,7 +172,11 @@ serviceUrlstringx
 clear>app\notifications\infrastructure\notificationrepository::clearW
 ensurestorageFapp\notifications\infrastructure\notificationrepository::ensurestorage_
 lastnotificationsJapp\notifications\infrastructure\notificationrepository::lastnotifications"filePath*
-filePathstringÊ
+filePathstringÊ
+app\security\logsanitizer;
+issensitivekey)app\security\logsanitizer::issensitivekey1
+	maskvalue$app\security\logsanitizer::maskvalue=
+sanitizecontext*app\security\logsanitizer::sanitizecontextÊ
 8app\shared\infrastructure\security\internalrequestsignerT
 __constructEapp\shared\infrastructure\security\internalrequestsigner::__construct^
 computesignatureJapp\shared\infrastructure\security\internalrequestsigner::computesignatureL
@@ -232,7 +248,15 @@ repository*9
 repository+app\activities\domain\activitylogrepository§
 %app\security\validation\jsonvalidatorA
 matchestype2app\security\validation\jsonvalidator::matchestype;
-validate/app\security\validation\jsonvalidator::validate^
+validate/app\security\validation\jsonvalidator::validateˆ
+)app\security\session\sessionreplaymonitorE
+__construct6app\security\session\sessionreplaymonitor::__constructS
+detectreplayattack=app\security\session\sessionreplaymonitor::detectreplayattack?
+gettoken3app\security\session\sessionreplaymonitor::gettokenM
+initreplaytoken:app\security\session\sessionreplaymonitor::initreplaytoken5
+log.app\security\session\sessionreplaymonitor::logA
+	useragent4app\security\session\sessionreplaymonitor::useragent"logger*-
+logger#app\security\logging\securitylogger^
 $src\shared\markdown\markdownrenderer6
 render,src\shared\markdown\markdownrenderer::renderÄ
 src\controllers\albumcontroller;
@@ -341,7 +365,11 @@ httpClient2app\shared\infrastructure\http\httpclientinterface*
 "app\infrastructure\http\authguards@
 requireadmin0app\infrastructure\http\authguards::requireadmin>
 requireauth/app\infrastructure\http\authguards::requireauth>
-sessionuser/app\infrastructure\http\authguards::sessionuser~
+sessionuser/app\infrastructure\http\authguards::sessionuserâ
+app\config\securityconfig9
+getadminemail(app\config\securityconfig::getadminemailG
+getadminpasswordhash/app\config\securityconfig::getadminpasswordhashA
+getinternalapikey,app\config\securityconfig::getinternalapikey~
 2app\shared\infrastructure\http\httpclientinterfaceH
 postjson<app\shared\infrastructure\http\httpclientinterface::postjson
 <app\notifications\application\herocreatednotificationhandlerX
@@ -800,10 +828,11 @@ getsummary;app\heatmap\infrastructure\httpheatmapapiclient::getsummaryS
 request8app\heatmap\infrastructure\httpheatmapapiclient::requestG
 	sendclick:app\heatmap\infrastructure\httpheatmapapiclient::sendclick"apiToken"baseUrl*
 apiTokenstring*
-baseUrlstringˆ
+baseUrlstringÄ
 src\controllers\http\request2
 jsonbody&src\controllers\http\request::jsonbody4
-	wantshtml'src\controllers\http\request::wantshtmld
+	wantshtml'src\controllers\http\request::wantshtml:
+withjsonbody*src\controllers\http\request::withjsonbodyd
 'src\controllers\helpers\directoryhelper9
 ensure/src\controllers\helpers\directoryhelper::ensure²
 appenditeratoriteratoriterator*
