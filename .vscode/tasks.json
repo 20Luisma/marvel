@@ -75,6 +75,15 @@
       "problemMatcher": []
     },
     {
+      "label": "🛡️ Run Security Tests",
+      "type": "shell",
+      "command": "vendor/bin/phpunit",
+      "args": ["--group", "security"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
       "label": "🔍 Analizar código (PHPStan)",
       "type": "shell",
       "command": "vendor/bin/phpstan",
