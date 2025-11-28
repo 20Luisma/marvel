@@ -1,10 +1,12 @@
-¾
+¬
 app\security\auth\authservice=
-ensuresession,app\security\auth\authservice::ensuresessionA
+ensuresession,app\security\auth\authservice::ensuresession1
+isadmin&app\security\auth\authservice::isadminA
 isauthenticated.app\security\auth\authservice::isauthenticated-
 login$app\security\auth\authservice::login/
 logout%app\security\auth\authservice::logout;
-requireadmin+app\security\auth\authservice::requireadminÔ
+requireadmin+app\security\auth\authservice::requireadmin9
+requireauth*app\security\auth\authservice::requireauthÔ
 !app\security\http\securityheaders1
 apply(app\security\http\securityheaders::apply7
 buildcsp+app\security\http\securityheaders::buildcspC
@@ -87,7 +89,17 @@ repository*E
 
 repository7app\notifications\infrastructure\notificationrepositoryF
 app\shared\util\slugger+
-slugify app\shared\util\slugger::slugifyé
+slugify app\shared\util\slugger::slugifyº
+ app\security\http\csrfmiddleware<
+__construct-app\security\http\csrfmiddleware::__construct2
+handle(app\security\http\csrfmiddleware::handle:
+
+logfailure,app\security\http\csrfmiddleware::logfailure"logger"protectedPostRoutes*-
+logger#app\security\logging\securitylogger*
+protectedPostRoutesarray
+app\security\csrf\csrfservice=
+generatetoken,app\security\csrf\csrfservice::generatetoken=
+validatetoken,app\security\csrf\csrfservice::validatetokené
 src\shared\http\router2
 __construct#src\shared\http\router::__construct@
 activitycontroller*src\shared\http\router::activitycontroller:
@@ -325,7 +337,11 @@ httpClient"ragServiceUrl"signer*@
 
 httpClient2app\shared\infrastructure\http\httpclientinterface*
 ragServiceUrlstring*B
-signer8app\shared\infrastructure\security\internalrequestsigner~
+signer8app\shared\infrastructure\security\internalrequestsigneræ
+"app\infrastructure\http\authguards@
+requireadmin0app\infrastructure\http\authguards::requireadmin>
+requireauth/app\infrastructure\http\authguards::requireauth>
+sessionuser/app\infrastructure\http\authguards::sessionuser~
 2app\shared\infrastructure\http\httpclientinterfaceH
 postjson<app\shared\infrastructure\http\httpclientinterface::postjson
 <app\notifications\application\herocreatednotificationhandlerX
@@ -358,7 +374,17 @@ loglimited1app\security\http\ratelimitmiddleware::loglimitedG
 shouldprotect4app\security\http\ratelimitmiddleware::shouldprotect"limiter"logger"routeLimits*-
 limiter"app\security\ratelimit\ratelimiter*-
 logger#app\security\logging\securitylogger*
-routeLimitsarrayª
+routeLimitsarray
+)app\application\security\ipblockerserviceE
+__construct6app\application\security\ipblockerservice::__construct9
+check0app\application\security\ipblockerservice::check_
+getblockminutesremainingCapp\application\security\ipblockerservice::getblockminutesremainingW
+getremainingattempts?app\application\security\ipblockerservice::getremainingattemptsM
+logloginblocked:app\application\security\ipblockerservice::logloginblockedY
+registerfailedattempt@app\application\security\ipblockerservice::registerfailedattempt]
+registersuccessfulloginBapp\application\security\ipblockerservice::registersuccessfullogin"logger"loginAttemptService*-
+logger#app\security\logging\securitylogger*C
+loginAttemptService,app\application\security\loginattemptserviceª
 app\shared\http\jsonresponse,
 error#app\shared\http\jsonresponse::error*
 send"app\shared\http\jsonresponse::send0
@@ -425,7 +451,7 @@ listHeroes0app\heroes\application\usecase\listheroesusecase*>
 updateHero0app\heroes\application\usecase\updateherousecaseŒ
 app\shared\domain\bus\eventbus2
 publish'app\shared\domain\bus\eventbus::publish6
-	subscribe)app\shared\domain\bus\eventbus::subscribeë
+	subscribe)app\shared\domain\bus\eventbus::subscribe¼
 src\controllers\authcontroller:
 __construct+src\controllers\authcontroller::__construct8
 
@@ -433,9 +459,10 @@ flasherror*src\controllers\authcontroller::flasherror.
 login%src\controllers\authcontroller::login0
 logout&src\controllers\authcontroller::logout4
 redirect(src\controllers\authcontroller::redirect6
-	showlogin)src\controllers\authcontroller::showlogin"authService"csrfTokenManager*,
+	showlogin)src\controllers\authcontroller::showlogin"authService"csrfTokenManager"ipBlockerService*,
 authServiceapp\security\auth\authservice*6
-csrfTokenManager"app\security\http\csrftokenmanager•
+csrfTokenManager"app\security\http\csrftokenmanager*=
+ipBlockerService)app\application\security\ipblockerservice•
 0app\heroes\application\usecase\updateherousecaseL
 __construct=app\heroes\application\usecase\updateherousecase::__constructD
 execute9app\heroes\application\usecase\updateherousecase::execute"heroRepository*=
@@ -527,13 +554,14 @@ coverImagestring*
 appEnvironmentstringä
 :app\shared\infrastructure\persistence\pdoconnectionfactoryF
 env?app\shared\infrastructure\persistence\pdoconnectionfactory::env^
-fromenvironmentKapp\shared\infrastructure\persistence\pdoconnectionfactory::fromenvironmentÈ
+fromenvironmentKapp\shared\infrastructure\persistence\pdoconnectionfactory::fromenvironment÷
  app\security\http\authmiddleware<
 __construct-app\security\http\authmiddleware::__constructD
 checkadminroute1app\security\http\authmiddleware::checkadminroute<
-isprotected-app\security\http\authmiddleware::isprotected"authService"protectedPaths*,
+isprotected-app\security\http\authmiddleware::isprotected"authService"protectedPaths"protectedPrefixes*,
 authServiceapp\security\auth\authservice*
-protectedPathsarrayÊ
+protectedPathsarray*
+protectedPrefixesarrayÊ
 'app\heroes\application\dto\heroresponseC
 __construct4app\heroes\application\dto\heroresponse::__construct=
 fromhero1app\heroes\application\dto\heroresponse::fromhero;
@@ -703,7 +731,22 @@ repository+app\heroes\domain\repository\herorepositoryð
 execute@app\notifications\application\clearnotificationsusecase::execute"
 repository*E
 
-repository7app\notifications\infrastructure\notificationrepositoryê
+repository7app\notifications\infrastructure\notificationrepositoryÿ
+,app\application\security\loginattemptserviceH
+__construct9app\application\security\loginattemptservice::__constructB
+cleanold6app\application\security\loginattemptservice::cleanoldL
+clearattempts;app\application\security\loginattemptservice::clearattemptsL
+ensuresession;app\application\security\loginattemptservice::ensuresessionb
+getblockminutesremainingFapp\application\security\loginattemptservice::getblockminutesremainingZ
+getremainingattemptsBapp\application\security\loginattemptservice::getremainingattemptsD
+	isblocked7app\application\security\loginattemptservice::isblocked8
+key1app\application\security\loginattemptservice::key8
+log1app\application\security\loginattemptservice::log:
+read2app\application\security\loginattemptservice::read\
+registerfailedattemptCapp\application\security\loginattemptservice::registerfailedattempt<
+write3app\application\security\loginattemptservice::write"filePath"logger*
+filePathstring*-
+logger#app\security\logging\securityloggerê
 1app\albums\application\usecase\deletealbumusecaseM
 __construct>app\albums\application\usecase\deletealbumusecase::__constructE
 execute:app\albums\application\usecase\deletealbumusecase::execute"albumRepository"heroRepository*?

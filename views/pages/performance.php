@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Http\AuthGuards;
+
+AuthGuards::requireAuth();
+AuthGuards::requireAdmin();
+
 $pageTitle = 'Clean Marvel Album — Performance';
 $activeTopAction = 'performance';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-performance-page';

@@ -27,6 +27,9 @@ final class PageController
         '/seccion' => 'pages/seccion',
         '/secret-heatmap' => 'pages/secret-heatmap',
         '/secret/heatmap' => 'pages/secret-heatmap',
+        '/secret/sonar' => 'pages/sonar',
+        '/secret/sentry' => 'pages/sentry',
+        '/secret' => 'pages/seccion',
         '/movies' => 'pages/movies',
         '/agentia' => 'pages/agentia',
     ];

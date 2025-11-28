@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use App\Infrastructure\Http\AuthGuards;
+
+AuthGuards::requireAuth();
+AuthGuards::requireAdmin();
+
 $pageTitle = 'Clean Marvel Album — Heatmap';
 $additionalStyles = ['/assets/css/seccion.css', '/assets/css/heatmap.css'];
 $activeTopAction = 'secret';

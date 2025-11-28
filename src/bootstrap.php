@@ -33,6 +33,8 @@ use App\Notifications\Application\ListNotificationsUseCase;
 use App\Notifications\Application\HeroCreatedNotificationHandler;
 use App\Notifications\Infrastructure\FileNotificationSender;
 use App\Notifications\Infrastructure\NotificationRepository;
+use App\Application\Security\IpBlockerService;
+use App\Application\Security\LoginAttemptService;
 use App\Security\Auth\AuthService;
 use App\Security\Config\ConfigValidator;
 use App\Security\Http\AuthMiddleware;
@@ -279,6 +281,8 @@ return (static function (): array {
     );
 
     $securityLogger = new SecurityLogger();
+    $loginAttemptService = new LoginAttemptService($securityLogger);
+    $ipBlockerService = new IpBlockerService($loginAttemptService, $securityLogger);
 
     $container['security'] = [
         'auth' => $authService,
@@ -289,6 +293,8 @@ return (static function (): array {
         'rateLimitMiddleware' => new RateLimitMiddleware($rateLimiter, $routeLimits, $securityLogger),
         'apiFirewall' => new ApiFirewall($securityLogger),
         'logger' => $securityLogger,
+        'ipBlocker' => $ipBlockerService,
+        'loginAttemptService' => $loginAttemptService,
     ];
 
     $container['seedHeroesService'] = new SeedHeroesService(

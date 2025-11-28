@@ -14,6 +14,11 @@ final class AuthMiddleware
     private array $protectedPaths = [
         '/seccion',
         '/secret-heatmap',
+        '/secret/heatmap',
+        '/secret/sonar',
+        '/secret/sentry',
+        '/secret',
+        '/secret/',
         '/panel-github',
         '/panel-repo-marvel',
         '/repo-marvel',
@@ -23,8 +28,18 @@ final class AuthMiddleware
         '/performance',
         '/sonar',
         '/sentry',
+        '/admin',
+        '/admin/',
+        '/admin/seed-all',
         '/agentia',
     ];
+
+    /**
+     * Prefijos que requieren rol admin (ej. /secret/*).
+     *
+     * @var string[]
+     */
+    private array $protectedPrefixes = ['/secret/'];
 
     public function __construct(private readonly AuthService $authService)
     {
@@ -36,17 +51,34 @@ final class AuthMiddleware
             return true;
         }
 
+        if (!$this->authService->requireAuth()) {
+            $_SESSION['redirect_to'] = $_SERVER['REQUEST_URI'] ?? $path;
+            header('Location: /login', true, 302);
+            return false;
+        }
+
         if ($this->authService->requireAdmin()) {
             return true;
         }
 
-        $_SESSION['redirect_to'] = $_SERVER['REQUEST_URI'] ?? $path;
-        header('Location: /login', true, 302);
+        http_response_code(403);
+        echo 'Acceso restringido.';
+
         return false;
     }
 
     private function isProtected(string $path): bool
     {
-        return in_array($path, $this->protectedPaths, true);
+        if (in_array($path, $this->protectedPaths, true)) {
+            return true;
+        }
+
+        foreach ($this->protectedPrefixes as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
