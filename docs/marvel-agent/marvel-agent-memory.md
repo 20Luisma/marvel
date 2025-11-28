@@ -291,6 +291,14 @@ Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, le
 - **Pregunta:** “¿Qué automatizaciones externas usa el proyecto?”  
   **Respuesta ejemplo:** Hay un workflow n8n (`Daily Marvel YouTube Video Fetcher and Backend Sync.json`) que consulta la API de YouTube con `GOOGLE_YT_API_KEY` y envía el último video al endpoint PHP `/api/actualizar-video-marvel.php` con autorización Bearer (`MARVEL_UPDATE_TOKEN`). Así se refrescan contenidos sin tocar el dominio.
 
+### Fase 5 — Tests rápidos de seguridad
+- Existe un grupo `@group security` en PHPUnit para chequear rápidamente CSRF, sanitización del RAG y rate-limit básico por IP+path.
+- Se ejecuta con: `vendor/bin/phpunit --group security` o desde VS Code con la tarea “Run Security Tests”.
+- Cobertura mínima:
+  - CSRF: tokens inválidos se rechazan.
+  - Sanitización RAG: elimina `<script>`/`onerror` de preguntas y mantiene el texto útil.
+  - Rate limit: bloquea después de superar el máximo de intentos configurado por IP+ruta.
+
 ---
 
  Regla obligatoria:
