@@ -4,25 +4,34 @@ declare(strict_types=1);
 
 namespace App\Security\Auth;
 
+use App\Config\SecurityConfig;
+
 final class AuthService
 {
-    private const ADMIN_EMAIL = 'seguridadmarvel@gmail.com';
     private const ADMIN_ID = 'marvel-admin';
     private const ADMIN_ROLE = 'admin';
-    private const PASSWORD_HASH = '$2y$12$I9Z9uy.ksfLKelJO/Ov8.unFdMtI0ZyehDNVu3x3ULC5PeWGxG4My'; // hash de "seguridadmarvel2025"
     private const SESSION_TTL_SECONDS = 1800; // 30 minutos inactividad
     private const SESSION_MAX_LIFETIME = 28800; // 8 horas
+
+    private SecurityConfig $config;
+
+    public function __construct(?SecurityConfig $config = null)
+    {
+        $this->config = $config ?? new SecurityConfig();
+    }
 
     public function login(string $email, string $password): bool
     {
         $normalizedEmail = strtolower(trim($email));
+        $adminEmail = strtolower($this->config->getAdminEmail());
+        $passwordHash = $this->config->getAdminPasswordHash();
 
-        if ($normalizedEmail !== self::ADMIN_EMAIL) {
+        if ($normalizedEmail !== $adminEmail) {
             $this->logout();
             return false;
         }
 
-        if (!password_verify($password, self::PASSWORD_HASH)) {
+        if (!password_verify($password, $passwordHash)) {
             $this->logout();
             return false;
         }
@@ -33,12 +42,12 @@ final class AuthService
         $_SESSION['session_created_at'] = time();
 
         $_SESSION['user_id'] = self::ADMIN_ID;
-        $_SESSION['user_email'] = self::ADMIN_EMAIL;
+        $_SESSION['user_email'] = $this->config->getAdminEmail();
         $_SESSION['user_role'] = self::ADMIN_ROLE;
         $_SESSION['auth'] = [
             'user_id' => self::ADMIN_ID,
             'role' => self::ADMIN_ROLE,
-            'email' => self::ADMIN_EMAIL,
+            'email' => $this->config->getAdminEmail(),
             'last_activity' => time(),
         ];
 
