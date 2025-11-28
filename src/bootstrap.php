@@ -210,6 +210,10 @@ return (static function (): array {
 
     $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus);
 
+    $securityLogger = new SecurityLogger();
+    $authService = new AuthService(config: null, logger: $securityLogger);
+    $authService->enforceSessionSecurity();
+
     $container = [
         'albumRepository'      => $albumRepository,
         'heroRepository'       => $heroRepository,
@@ -245,7 +249,6 @@ return (static function (): array {
         ],
     ];
 
-    $authService = new AuthService();
     $csrfTokenManager = new CsrfTokenManager($appEnvironment);
     $envInternalKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY');
     $internalApiKey = is_string($envInternalKey) ? trim($envInternalKey) : '';
@@ -280,7 +283,6 @@ return (static function (): array {
         routeLimits: $routeLimits
     );
 
-    $securityLogger = new SecurityLogger();
     $loginAttemptService = new LoginAttemptService($securityLogger);
     $ipBlockerService = new IpBlockerService($loginAttemptService, $securityLogger);
 

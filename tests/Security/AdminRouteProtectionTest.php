@@ -71,10 +71,13 @@ final class AdminRouteProtectionTest extends TestCase
             'email' => 'user@example.com',
             'last_activity' => time(),
         ];
+        $_SESSION['session_ip_hash'] = hash('sha256', '127.0.0.1');
+        $_SESSION['session_ua_hash'] = hash('sha256', 'PHPUnit Agent');
 
         $_SERVER['HTTP_ACCEPT'] = 'text/html';
         $_SERVER['REQUEST_URI'] = '/secret/sonar';
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $_SERVER['HTTP_USER_AGENT'] = 'PHPUnit Agent';
 
         ob_start();
         $this->router()->handle('GET', '/secret/sonar');
@@ -94,10 +97,13 @@ final class AdminRouteProtectionTest extends TestCase
             'email' => 'seguridadmarvel@gmail.com',
             'last_activity' => time(),
         ];
+        $_SESSION['session_ip_hash'] = hash('sha256', '127.0.0.1');
+        $_SESSION['session_ua_hash'] = hash('sha256', 'PHPUnit Agent');
 
         $_SERVER['HTTP_ACCEPT'] = 'text/html';
         $_SERVER['REQUEST_URI'] = '/secret/sonar';
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $_SERVER['HTTP_USER_AGENT'] = 'PHPUnit Agent';
 
         ob_start();
         $this->router()->handle('GET', '/secret/sonar');

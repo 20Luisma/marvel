@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Auth;
 
 use App\Config\SecurityConfig;
+use App\Security\Logging\SecurityLogger;
 
 final class AuthService
 {
@@ -14,10 +15,12 @@ final class AuthService
     private const SESSION_MAX_LIFETIME = 28800; // 8 horas
 
     private SecurityConfig $config;
+    private ?SecurityLogger $logger;
 
-    public function __construct(?SecurityConfig $config = null)
+    public function __construct(?SecurityConfig $config = null, ?SecurityLogger $logger = null)
     {
         $this->config = $config ?? new SecurityConfig();
+        $this->logger = $logger;
     }
 
     public function login(string $email, string $password): bool
@@ -44,6 +47,8 @@ final class AuthService
         $_SESSION['user_id'] = self::ADMIN_ID;
         $_SESSION['user_email'] = $this->config->getAdminEmail();
         $_SESSION['user_role'] = self::ADMIN_ROLE;
+        $_SESSION['session_ip_hash'] = $this->hashIp($this->clientIp());
+        $_SESSION['session_ua_hash'] = $this->hashUserAgent($this->userAgent());
         $_SESSION['auth'] = [
             'user_id' => self::ADMIN_ID,
             'role' => self::ADMIN_ROLE,
@@ -99,19 +104,31 @@ final class AuthService
             return false;
         }
 
+        $now = time();
         $lastActivity = isset($user['last_activity']) ? (int)$user['last_activity'] : 0;
-        if ($lastActivity > 0 && (time() - $lastActivity) > self::SESSION_TTL_SECONDS) {
-            $this->logout();
+        if ($lastActivity > 0 && ($now - $lastActivity) > self::SESSION_TTL_SECONDS) {
+            $this->logEvent('session_expired_ttl');
+            $this->invalidateSession();
             return false;
         }
 
         $createdAt = isset($_SESSION['session_created_at']) ? (int) $_SESSION['session_created_at'] : 0;
-        if ($createdAt > 0 && (time() - $createdAt) > self::SESSION_MAX_LIFETIME) {
-            $this->logout();
+        if ($createdAt > 0 && ($now - $createdAt) > self::SESSION_MAX_LIFETIME) {
+            $this->logEvent('session_expired_lifetime');
+            $this->invalidateSession();
             return false;
         }
 
-        $_SESSION['auth']['last_activity'] = time();
+        $ipHash = $_SESSION['session_ip_hash'] ?? null;
+        $uaHash = $_SESSION['session_ua_hash'] ?? null;
+        if (!is_string($ipHash) || $ipHash !== $this->hashIp($this->clientIp())
+            || !is_string($uaHash) || $uaHash !== $this->hashUserAgent($this->userAgent())) {
+            $this->logEvent('session_hijack_detected');
+            $this->invalidateSession();
+            return false;
+        }
+
+        $_SESSION['auth']['last_activity'] = $now;
 
         return true;
     }
@@ -138,10 +155,70 @@ final class AuthService
         return $this->isAdmin();
     }
 
+    public function enforceSessionSecurity(): void
+    {
+        $this->ensureSession();
+
+        if (!isset($_SESSION['auth']) || !is_array($_SESSION['auth'])) {
+            return;
+        }
+
+        // isAuthenticated ya actualizará last_activity si es válida.
+        $this->isAuthenticated();
+    }
+
     private function ensureSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+    }
+
+    private function invalidateSession(): void
+    {
+        $this->logout();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        session_regenerate_id(true);
+    }
+
+    private function clientIp(): string
+    {
+        $remote = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        return is_string($remote) && $remote !== '' ? $remote : 'unknown';
+    }
+
+    private function userAgent(): string
+    {
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ua = is_string($ua) ? $ua : '';
+        $ua = preg_replace('/[\x00-\x1F\x7F]/', '', $ua) ?? '';
+        return substr($ua, 0, 200);
+    }
+
+    private function hashIp(string $ip): string
+    {
+        return hash('sha256', $ip);
+    }
+
+    private function hashUserAgent(string $ua): string
+    {
+        return hash('sha256', $ua);
+    }
+
+    private function logEvent(string $event): void
+    {
+        if ($this->logger === null) {
+            return;
+        }
+
+        $this->logger->logEvent($event, [
+            'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
+            'ip' => $this->clientIp(),
+            'user_agent' => $this->userAgent(),
+            'path' => $_SERVER['REQUEST_URI'] ?? 'unknown',
+            'timestamp' => time(),
+        ]);
     }
 }
