@@ -51,7 +51,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
         <div class="flex flex-col gap-3 items-center text-center">
           <button id="btn-accessibility-run" class="btn btn-primary inline-flex items-center gap-2">
-            Analizar accesibilidad
+            Actualizar
           </button>
           <p class="text-[0.65rem] uppercase tracking-[0.3em] text-slate-500">
             Protegido por WAVE API Key

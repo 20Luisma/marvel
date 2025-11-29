@@ -41,7 +41,7 @@ require_once __DIR__ . '/../layouts/header.php';
             <option value="">Cargando…</option>
           </select>
         </div>
-        <button id="heatmap-refresh" class="btn btn-primary">Actualizar heatmap</button>
+        <button id="heatmap-refresh" class="btn btn-primary">Actualizar</button>
       </div>
 
       <div id="heatmap-status" class="heatmap-status">
