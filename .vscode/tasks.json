@@ -2,7 +2,7 @@
   "version": "2.0.0",
 
   /* ======================
-     📝 INPUTS (para pedir nombres de ramas/tags)
+     📝 INPUTS (para pedir nombres de ramas/tags/commits)
      ====================== */
   "inputs": [
     {
@@ -49,6 +49,12 @@
       "id": "nombreRama",
       "type": "promptString",
       "description": "Nombre de la rama (ej: accesibilidad-aa)"
+    },
+    {
+      "id": "commitMessage",
+      "type": "promptString",
+      "description": "Mensaje del commit (ej: fix: video seguridad secret room)",
+      "default": "chore: actualización rápida"
     }
   ],
 
@@ -113,7 +119,6 @@
       "problemMatcher": []
     },
 
-    /* ➕ NUEVA TAREA: solo tests + coverage (SIN sonar) */
     {
       "label": "🧪 Tests + Coverage",
       "type": "shell",
@@ -127,7 +132,6 @@
       "problemMatcher": []
     },
 
-    /* ➕ TAREA SEPARADA: solo sonar-scanner */
     {
       "label": "🔎 Ejecutar SonarScanner",
       "type": "shell",
@@ -146,7 +150,6 @@
       "problemMatcher": []
     },
 
-    /* ➕ NUEVA TAREA: análisis de accesibilidad con Pa11y (todas las páginas) */
     {
       "label": "♿ Analizar accesibilidad (Pa11y all)",
       "type": "shell",
@@ -161,7 +164,7 @@
     },
 
     /* =========================================================
-       🧩 GIT COMMANDS (todos juntos y ordenados)
+       🧩 GIT COMMANDS
        ========================================================= */
 
     {
@@ -186,7 +189,6 @@
       "problemMatcher": []
     },
 
-    /* 🔁 NUEVA VERSIÓN: crear rama feature/hotfix/release automáticamente */
     {
       "label": "Git | crear nueva rama (feature/hotfix/release)",
       "type": "shell",
@@ -238,7 +240,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"commit rápido desde VS Code\"; else echo \"🔹 No hay cambios para commitear\"; fi"
+        "if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"${input:commitMessage}\"; else echo \"🔹 No hay cambios para commitear\"; fi"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -250,7 +252,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"sync desde local\"; fi; git push origin \"$branch\""
+        "branch=$(git rev-parse --abbrev-ref HEAD); if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m \"${input:commitMessage}\"; fi; git push origin \"$branch\""
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -306,7 +308,6 @@
       "problemMatcher": []
     },
 
-    /* 🆕 NUEVA TAREA: creador de versiones completo */
     {
       "label": "Git | crear versión (push main + tag + push tag)",
       "type": "shell",
@@ -320,19 +321,18 @@
       "problemMatcher": []
     },
 
-    /* 🆕 NUEVA TAREA: ver versiones (tags) */
-   {
-  "label": "Git | ver versiones (tags)",
-  "type": "shell",
-  "command": "bash",
-  "args": [
-    "-c",
-    "echo \"🏷  Tags ordenados por fecha reciente:\" && git tag --sort=-creatordate --format=\"%(refname:short) %(creatordate:short)\""
-  ],
-  "options": { "cwd": "${workspaceFolder}" },
-  "presentation": { "reveal": "always", "panel": "shared" },
-  "problemMatcher": []
-},
+    {
+      "label": "Git | ver versiones (tags)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo \"🏷  Tags ordenados por fecha reciente:\" && git tag --sort=-creatordate --format=\"%(refname:short) %(creatordate:short)\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
     {
       "label": "Git | limpiar archivos sin seguimiento (basura) ⚠️",
@@ -349,7 +349,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "git add -A && git commit -m \"subida limpia desde local\" || true; git push --force origin main"
+        "git add -A && git commit -m \"${input:commitMessage}\" || true; git push --force origin main"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -357,7 +357,7 @@
     },
 
     /* =========================================================
-       🟣 SERVICIOS LOCALES (los tuyos)
+       🟣 SERVICIOS LOCALES
        ========================================================= */
     {
       "label": "🤖 Run OpenAI Service (8081)",
@@ -391,15 +391,14 @@
       "group": { "kind": "build", "isDefault": true }
     },
     {
-  "label": "SSH: VM Heatmap",
-  "type": "shell",
-  "command": "gcloud compute ssh headmap --zone=us-east1-b",
-  "problemMatcher": []
-},
-
+      "label": "SSH: VM Heatmap",
+      "type": "shell",
+      "command": "gcloud compute ssh headmap --zone=us-east1-b",
+      "problemMatcher": []
+    },
 
     /* =========================================================
-       🤖 CLI CODEX (lo tuyo)
+       🤖 CLI CODEX
        ========================================================= */
     {
       "label": "🤖 Abrir CLI Codex (agent.md)",
