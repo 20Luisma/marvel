@@ -105,9 +105,9 @@
 }
 .sonar-alert {
   border-radius: 1.25rem;
-  border: 1px solid #f87171;
-  background: #5f1d22;
-  color: #ffe4e6;
+  border: 1px solid #3b82f6;
+  background: #1e3a8a;
+  color: #dbeafe;
   padding: 1rem 1.25rem;
   display: none;
 }

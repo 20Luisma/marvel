@@ -10,7 +10,7 @@ AuthGuards::requireAdmin();
 $pageTitle = 'Clean Marvel Album — Accesibilidad';
 $activeTopAction = 'accessibility';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-accessibility-page';
-$additionalStyles = ['/assets/css/panel-accessibility.css'];
+$additionalStyles = ['/assets/css/panel-accessibility.css', '/assets/css/sonar.css'];
 
 require_once __DIR__ . '/../layouts/header.php';
 ?>
@@ -37,7 +37,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
 <main id="main-content" tabindex="-1" role="main" class="site-main panel-accessibility">
   <div class="max-w-6xl mx-auto py-10 px-4">
-    <section class="sonar-panel space-y-8 rounded-3xl border border-slate-700/60 bg-[#050814] px-6 py-7 shadow-xl shadow-black/40" aria-live="polite">
+    <section class="sonar-panel space-y-8" aria-live="polite">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div class="space-y-1">
           <h2 class="text-2xl font-semibold text-white">
@@ -61,6 +61,16 @@ require_once __DIR__ . '/../layouts/header.php';
 
       <!-- Aquí el JS inyecta el resumen y la tabla -->
       <div id="accessibility-result" class="space-y-4"></div>
+      
+      <!-- Loader moderno azul -->
+      <div id="accessibility-loader" class="panel-loader hidden" role="status" aria-live="polite" aria-atomic="true">
+        <div class="panel-loader__dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="panel-loader__text">Analizando accesibilidad...</span>
+      </div>
     </section>
   </div>
 </main>

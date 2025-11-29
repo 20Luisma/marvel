@@ -257,81 +257,21 @@ require_once __DIR__ . '/../layouts/header.php';
         </p>
       <?php endif; ?>
 
-      <div id="panel-github-loader" class="panel-github__loader hidden" role="status" aria-live="polite" aria-atomic="true">
-        <span class="perf-loader" aria-hidden="true"><span></span><span></span><span></span></span>
-        <span class="panel-github__loader-text">Consultando GitHub…</span>
+
+      <!-- Loader moderno azul -->
+      <div id="panel-github-loader" class="panel-loader hidden" role="status" aria-live="polite" aria-atomic="true">
+        <div class="panel-loader__dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="panel-loader__text">Consultando GitHub...</span>
       </div>
     </section>
   </div>
 </main>
 
-<!-- 🔥 JS INLINE SOLO PARA ESTE PANEL -->
-<script>
-  // Helpers
-  const enableGithubButton = (button) => {
-    if (!button) return;
-    button.disabled = false;
-    button.classList.remove('is-disabled');
-    const fallbackLabel = button.dataset.originalLabel || 'Ver PRs';
-    button.textContent = fallbackLabel;
-  };
-
-  const disableGithubButton = (button) => {
-    if (!button) return;
-    if (!button.dataset.originalLabel) {
-      button.dataset.originalLabel = (button.textContent || 'Ver PRs').trim();
-    }
-    button.disabled = true;
-    button.classList.add('is-disabled');
-    button.textContent = 'Cargando…';
-  };
-
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('🔥 JS inline del panel GitHub cargado');
-
-    const filterForm = document.querySelector('.panel-github__filters');
-    if (!filterForm) {
-      console.warn('No se encontró .panel-github__filters');
-      return;
-    }
-
-    const submitButton = filterForm.querySelector('button[type="submit"]');
-    const dateInputs = filterForm.querySelectorAll('input[type="date"]');
-    const loader = document.getElementById('panel-github-loader');
-    const loaderText = loader ? loader.querySelector('.panel-github__loader-text') : null;
-
-    filterForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-
-      disableGithubButton(submitButton);
-
-      if (loader) {
-        if (loaderText) {
-          loaderText.textContent = 'Consultando GitHub…';
-        }
-        loader.classList.remove('hidden');
-        loader.style.display = 'flex';
-        loader.scrollIntoView({
-          behavior: 'smooth',
-          block: 'end'
-        });
-      }
-
-      window.requestAnimationFrame(() => {
-        setTimeout(() => {
-          filterForm.submit();
-        }, 80);
-      });
-    });
-
-    dateInputs.forEach((input) => {
-      input.addEventListener('input', () => {
-        if (submitButton && submitButton.disabled) {
-          enableGithubButton(submitButton);
-        }
-      });
-    });
-  });
-</script>
-
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+<?php
+$scripts = ['/assets/js/panel-github.js'];
+require_once __DIR__ . '/../layouts/footer.php';
+?>

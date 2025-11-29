@@ -8,6 +8,7 @@ AuthGuards::requireAuth();
 AuthGuards::requireAdmin();
 
 $pageTitle = 'Clean Marvel Album — Repo Marvel';
+$additionalStyles = ['/assets/css/sonar.css'];
 $activeTopAction = 'repo-marvel';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-github-page';
 
