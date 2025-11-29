@@ -49,7 +49,7 @@ $activeTopAction = 'security';
       <section class="security-panel section-lined space-y-10" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div class="space-y-2">
-            <h2 class="text-4xl text-white">Marvel Security Board</h2>
+            <h2 class="sonar-hero-title text-4xl text-white">Marvel Security Board</h2>
             <p class="text-slate-300 text-sm" id="last-scan">Cargando...</p>
           </div>
           <div class="flex flex-col items-center gap-4 text-center">

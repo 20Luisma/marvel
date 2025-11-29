@@ -37,7 +37,7 @@ require_once __DIR__ . '/../layouts/header.php';
     <section class="sonar-panel space-y-8" aria-live="polite">
       <div class="space-y-4">
         <div class="flex items-center justify-between gap-4">
-          <h2 class="text-3xl text-white sonar-hero-title">Panel de rendimiento</h2>
+          <h2 class="sonar-hero-title text-4xl text-white">Panel de rendimiento</h2>
         </div>
         <div id="performance-state" class="sonar-alert" role="status" aria-live="polite" aria-atomic="true"></div>
         <div id="performance-result" class="space-y-6" aria-live="polite"></div>

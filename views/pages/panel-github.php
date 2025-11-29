@@ -149,7 +149,7 @@ require_once __DIR__ . '/../layouts/header.php';
   <div class="panel-github__wrap">
     <section class="panel-github__card section-lined space-y-4 tech-panel">
       <header class="space-y-1">
-        <h2>Reporte de Pull Requests</h2>
+        <h2 class="sonar-hero-title text-4xl text-white">Reporte de Pull Requests</h2>
         <p class="text-slate-300 text-base">
           Consulta PRs abiertos, mergeados o cerrados con estadísticas de commits, reviews y reviewers.
         </p>

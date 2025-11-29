@@ -40,7 +40,7 @@ require_once __DIR__ . '/../layouts/header.php';
     <section class="sonar-panel space-y-8" aria-live="polite">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div class="space-y-1">
-          <h2 class="text-2xl font-semibold text-white">
+          <h2 class="sonar-hero-title text-4xl text-white">
             Panel de resultados de accesibilidad
           </h2>
           <p class="text-sm text-slate-300 max-w-xl">

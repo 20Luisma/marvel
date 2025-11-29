@@ -25,6 +25,7 @@ final class PageController
         '/panel-performance' => 'pages/performance',
         '/accessibility' => 'pages/panel-accessibility',
         '/panel-accessibility' => 'pages/panel-accessibility',
+        '/snyk' => 'pages/snyk',
         '/seccion' => 'pages/seccion',
         '/secret-heatmap' => 'pages/secret-heatmap',
         '/secret/heatmap' => 'pages/secret-heatmap',
