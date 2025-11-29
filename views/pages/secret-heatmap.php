@@ -33,7 +33,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
 <main id="main-content" tabindex="-1" role="main" class="site-main seccion-main">
   <div class="max-w-6xl mx-auto py-10 px-4 space-y-8">
-    <section class="heatmap-panel">
+    <section class="heatmap-panel section-lined">
       <div class="heatmap-controls">
         <div class="flex flex-col gap-2">
           <label for="heatmap-page" class="text-xs uppercase tracking-[0.4em] text-slate-400">Página</label>
