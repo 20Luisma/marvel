@@ -68,6 +68,13 @@ $sections = [
         'cta' => 'Abrir panel',
     ],
     [
+        'title' => 'Snyk Code Audit',
+        'tag' => 'Seguridad de Código',
+        'description' => 'Análisis de vulnerabilidades en dependencias y código usando Snyk.',
+        'href' => '/snyk',
+        'cta' => 'Ver vulnerabilidades',
+    ],
+    [
         'title' => 'README',
         'tag' => 'Documentación',
         'description' => 'Lee el README vivo con arquitectura, comandos y tareas recomendadas del proyecto.',

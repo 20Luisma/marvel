@@ -49,7 +49,6 @@ $activeTopAction = 'sonar';
       <section class="sonar-panel section-lined space-y-10" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div class="space-y-2">
-            <p class="uppercase tracking-[0.3em] text-sm text-slate-400">SonarCloud</p>
             <h2 class="sonar-hero-title text-4xl text-white" id="sonar-project-name">Marvel Quality Board</h2>
             <p class="text-slate-300 text-sm">Project Key: <span class="font-semibold text-white" id="sonar-project-key">—</span></p>
             <p class="text-slate-300 text-sm">Último análisis: <span class="font-semibold text-white" id="sonar-updated-at">—</span></p>
