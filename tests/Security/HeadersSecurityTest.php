@@ -97,10 +97,16 @@ final class HeadersSecurityTest extends TestCase
     private function assertCsp(string $csp): void
     {
         self::assertStringContainsString("default-src 'self'", $csp);
-        // Se permite unsafe-inline en script-src por compatibilidad actual, pero debe estar explícito.
+        // Se permite unsafe-inline O nonces en script-src. Con nonces es más seguro.
         if (str_contains($csp, 'script-src')) {
             self::assertStringContainsString("script-src 'self'", $csp);
-            self::assertStringContainsString("'unsafe-inline'", $csp);
+            // Acepta tanto unsafe-inline (backward compat) como nonces (CSP estricta)
+            $hasUnsafeInline = str_contains($csp, "'unsafe-inline'");
+            $hasNonce = (bool) preg_match("/'nonce-[A-Za-z0-9+\/=]+'/", $csp);
+            self::assertTrue(
+                $hasUnsafeInline || $hasNonce,
+                "CSP debe contener 'unsafe-inline' o nonces para script-src"
+            );
         }
     }
 
