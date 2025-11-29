@@ -26,6 +26,13 @@ $sections = [
         'cta' => 'Entrar a Sentry',
     ],
     [
+        'title' => 'Seguridad',
+        'tag' => 'Security Headers',
+        'description' => 'Análisis automático de seguridad, cabeceras y configuración del servidor con SecurityHeaders.com y Mozilla Observatory.',
+        'href' => '/seguridad',
+        'cta' => 'Ver seguridad',
+    ],
+    [
         'title' => 'Heatmap',
         'tag' => 'Analítica',
         'description' => 'Explora los clics de cada página y descubre dónde los héroes hacen más clics dentro de la app.',

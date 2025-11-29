@@ -27,6 +27,7 @@ final class AuthMiddleware
         '/panel-performance',
         '/performance',
         '/sonar',
+        '/seguridad',
         '/sentry',
         '/admin',
         '/admin/',
