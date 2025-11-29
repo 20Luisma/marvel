@@ -154,9 +154,16 @@ return (static function (): array {
     }
 
     // Middleware de cabeceras de seguridad para toda la app.
-    SecurityHeaders::apply();
-    // Cabeceras adicionales de protección.
+    // FASE 8.1 — CSP con nonces dinámicos
+    // En test mode, los tests manejan SecurityHeaders manualmente para evitar contaminación
     $isTestEnv = ($appEnvironment === 'test');
+    if (!$isTestEnv) {
+        $cspNonce = \App\Security\Http\CspNonceGenerator::generate();
+        $_SERVER['CSP_NONCE'] = $cspNonce; // Disponible para vistas
+        SecurityHeaders::apply($cspNonce);
+    }
+    
+    // Cabeceras adicionales de protección.
     if ($isTestEnv && !isset($GLOBALS['__test_headers'])) {
         $GLOBALS['__test_headers'] = [];
     }

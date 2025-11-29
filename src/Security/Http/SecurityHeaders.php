@@ -11,16 +11,19 @@ final class SecurityHeaders
 {
     private static bool $applied = false;
 
-    public static function apply(): void
+    public static function apply(?string $nonce = null): void
     {
         $appEnv = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local');
         $isTest = $appEnv === 'test';
 
         // En CLI evitamos duplicar headers salvo en entorno de test, donde se validan con PHPUnit.
-        if (self::$applied || (PHP_SAPI === 'cli' && $appEnv !== 'test') || PHP_SAPI === 'phpdbg' || headers_sent()) {
+        if (!$isTest && (self::$applied || PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' || headers_sent())) {
             self::$applied = true;
             return;
         }
+        
+        // En test mode, permitir múltiples llamadas para testing
+        // The headers_sent check in test mode is removed as per instruction.
 
         $collector = [];
         self::addHeader('X-Frame-Options', 'SAMEORIGIN', $isTest, $collector);
@@ -34,7 +37,7 @@ final class SecurityHeaders
             self::addHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains', $isTest, $collector);
         }
 
-        self::addHeader('Content-Security-Policy', self::buildCsp(), $isTest, $collector);
+        self::addHeader('Content-Security-Policy', self::buildCsp($nonce), $isTest, $collector);
         if ($isTest) {
             // Replica de cabeceras de bootstrap para validación en tests.
             self::addHeader('Cross-Origin-Resource-Policy', 'same-origin', $isTest, $collector);
@@ -46,7 +49,9 @@ final class SecurityHeaders
             $GLOBALS['__test_headers'] = $collector;
         }
 
-        self::$applied = true;
+        if (!$isTest) {
+            self::$applied = true;
+        }
     }
 
     private static function isHttpsRequest(): bool
@@ -58,21 +63,29 @@ final class SecurityHeaders
         return isset($_SERVER['SERVER_PORT']) && (string) $_SERVER['SERVER_PORT'] === '443';
     }
 
-    private static function buildCsp(): string
+    private static function buildCsp(?string $nonce = null): string
     {
+        // Para scripts: nonce estricto (protección XSS) - CRÍTICO para seguridad
+        $scriptDirective = $nonce !== null ? " 'nonce-{$nonce}'" : " 'unsafe-inline'";
+        
+        // Para estilos: SOLO unsafe-inline (Tailwind CDN inyecta estilos dinámicamente)
+        // Nota: Si hay nonce en style-src, unsafe-inline se IGNORA por especificación CSP
+        // Los estilos inline NO son vector de XSS, así que unsafe-inline aquí es aceptable
+        $styleDirective = " 'unsafe-inline'";
+        
         $directives = [
             "default-src 'self'",
             "img-src 'self' data: blob: https:",
             "media-src 'self' data: blob: https:",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com",
+            "style-src 'self'{$styleDirective} https://fonts.googleapis.com https://cdn.tailwindcss.com",
             "font-src 'self' https://fonts.gstatic.com https://r2cdn.perplexity.ai data:",
-            "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
+            "script-src 'self'{$scriptDirective} https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
             "connect-src 'self' https: http://localhost:8080 http://localhost:8081 http://localhost:8082",
             "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
             "frame-ancestors 'self'",
         ];
 
-        // Nota: CSP básica para no romper assets actuales (Tailwind CDN + fuentes). TODO: endurecer con nonce/SRI.
+        // CSP endurecida: nonces SOLO para scripts (anti-XSS), unsafe-inline para estilos (Tailwind).
         return implode('; ', $directives);
     }
 

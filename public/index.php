@@ -9,7 +9,10 @@ use Src\Shared\Http\Router;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Aplica cabeceras de seguridad de forma centralizada.
-SecurityHeaders::apply();
+// FASE 8.1 — CSP con nonces dinámicos
+$cspNonce = \App\Security\Http\CspNonceGenerator::generate();
+$_SERVER['CSP_NONCE'] = $cspNonce;
+SecurityHeaders::apply($cspNonce);
 
 if (!function_exists('route')) {
     /**
@@ -44,7 +47,8 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     <!-- Fuente estilo Marvel -->
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="./assets/css/intro.css">
+    <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
+    <link rel="stylesheet" href="./assets/css/intro.css"<?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
 </head>
 
 <body>
@@ -64,7 +68,8 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
         CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT)
     </p>
 
-    <script src="./assets/js/intro.js" defer></script>
+    <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
+    <script src="./assets/js/intro.js" defer<?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>></script>
 
 </body>
 
