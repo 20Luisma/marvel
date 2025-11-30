@@ -9,9 +9,7 @@ final class ServiceUrlProvider
     /**
      * @param array<string, mixed> $config
      */
-    public function __construct(private readonly array $config)
-    {
-    }
+    public function __construct(private readonly array $config) {}
 
     public function resolveEnvironment(?string $host = null): string
     {
@@ -80,6 +78,15 @@ final class ServiceUrlProvider
 
     public function getRagBaseUrl(?string $environment = null): string
     {
+        // ✅ ZONAR RAG: permitir override por variable de entorno
+        $envBase = getenv('RAG_BASE_URL');
+        if (is_string($envBase)) {
+            $trimmed = trim($envBase);
+            if ($trimmed !== '') {
+                return $trimmed;
+            }
+        }
+
         $env = $this->ensureEnvironment($environment);
 
         return (string) ($this->config['environments'][$env]['rag']['base_url'] ?? '');
@@ -87,6 +94,15 @@ final class ServiceUrlProvider
 
     public function getRagHeroesUrl(?string $environment = null): string
     {
+        // ✅ ZONAR RAG: si hay URL completa en env, usarla directamente
+        $envUrl = getenv('RAG_SERVICE_URL');
+        if (is_string($envUrl)) {
+            $trimmed = trim($envUrl);
+            if ($trimmed !== '') {
+                return $trimmed;
+            }
+        }
+
         $env = $this->ensureEnvironment($environment);
 
         $base = $this->getRagBaseUrl($env);
