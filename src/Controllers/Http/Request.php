@@ -20,23 +20,28 @@ final class Request
      */
     public static function jsonBody(): array
     {
-        $raw = self::$rawInputOverride
-            ?? ($GLOBALS['__raw_input__'] ?? file_get_contents('php://input'));
-
-        self::$rawInputOverride = null;
-
-        if ($raw === false || trim($raw) === '') {
-            return [];
+        if (self::$rawInputOverride !== null) {
+            $raw = self::$rawInputOverride;
+            self::$rawInputOverride = null;
+            $decoded = json_decode($raw, true);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+                JsonResponse::error('JSON inválido', 400);
+                exit;
+            }
+            return $decoded;
         }
 
-        $decoded = json_decode($raw, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+        try {
+            return \Src\Http\RequestBodyReader::getJsonArray();
+        } catch (\RuntimeException $e) {
+            // Si el body está vacío, devolvemos array vacío para compatibilidad
+            if ($e->getMessage() === 'El cuerpo de la petición está vacío') {
+                return [];
+            }
+            // Si es JSON inválido, terminamos con error 400 como hacía antes
             JsonResponse::error('JSON inválido', 400);
             exit;
         }
-
-        return $decoded;
     }
 
     public static function wantsHtml(): bool

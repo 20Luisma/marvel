@@ -80,13 +80,8 @@ final class ApiFirewall
 
     private function readRawInput(): ?string
     {
-        if (isset($GLOBALS['__raw_input__'])) {
-            $raw = $GLOBALS['__raw_input__'];
-            return is_string($raw) ? $raw : null;
-        }
-
-        $raw = file_get_contents('php://input');
-        if ($raw === false) {
+        $raw = \Src\Http\RequestBodyReader::getRawBody();
+        if ($raw === '') {
             return null;
         }
 

@@ -1151,6 +1151,7 @@ async function compareSelectedHeroesRag() {
   const selectedIds = Array.from(heroState.selected.keys());
   if (!ragResultBox) return;
 
+  // 🔹 Validación: exactamente 2 héroes
   if (selectedIds.length !== 2) {
     hideRagResultSection();
     const message = selectedIds.length < 2
@@ -1162,59 +1163,110 @@ async function compareSelectedHeroesRag() {
 
   showHeroSelectionWarning('');
 
-  await ensureServiceConfig();
+  // 🔹 Intentamos cargar config (no rompemos si falla)
+  try {
+    await ensureServiceConfig();
+  } catch (_) {}
+
   const displayLabels = toDisplayLabels();
   const ragHostLabel = displayLabels.rag;
-  const targetEndpoint = getRagEndpoint();
+  const targetEndpoint = getRagEndpoint(); // /api/rag/heroes
 
   setComparingRagState(true);
   updateRagResult('⏳ Comparando héroes con RAG...');
   showRagStatus('⏳ Comparando héroes con RAG...');
+
   if (runtimeWindow?.RAGMSC) {
     runtimeWindow.RAGMSC.showPanel();
     runtimeWindow.RAGMSC.setStep('process');
   }
 
   try {
+    // 🔹 CSRF: intentamos meta y input hidden
+    const csrfToken =
+      document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+      document.querySelector('input[name="csrf_token"]')?.value ||
+      '';
+
+    const finalHeroIds = selectedIds.map(id => String(id));
+
+    const payload = {
+      question: 'Compara sus atributos y resume el resultado',
+      heroIds: finalHeroIds
+    };
+
+    // 🔹 LOG frontal claro
+    console.log('[RAG] selectedIds:', selectedIds);
+    console.log('[RAG] Payload objeto:', payload);
+    console.log('[RAG] JSON.stringify(payload):', JSON.stringify(payload));
+
     const response = await fetch(targetEndpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: 'Compara sus atributos y resume el resultado',
-        heroIds: selectedIds
-      })
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {})
+      },
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
-      throw new Error('RAG request failed');
+      const errorText = await response.text().catch(() => '');
+      console.error('[RAG] Error en /api/rag/heroes', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+
+      let errorMessage = `Error ${response.status}: RAG request failed`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (errorJson.message) errorMessage = errorJson.message;
+        else if (errorJson.error) errorMessage = errorJson.error;
+      } catch (_) {
+        // el cuerpo no era JSON, usamos mensaje genérico
+      }
+
+      throw new Error(errorMessage);
     }
 
     if (runtimeWindow?.RAGMSC) {
       runtimeWindow.RAGMSC.setStep('relay');
     }
 
-    const payload = await response.json().catch(() => null);
-    const answer = typeof payload?.answer === 'string' && payload.answer.trim() !== ''
-      ? payload.answer.trim()
-      : null;
-    const contexts = Array.isArray(payload?.contexts) ? payload.contexts : [];
+    const responsePayload = await response.json().catch(() => null);
+    console.log('[RAG] Respuesta /api/rag/heroes:', responsePayload);
+
+    const rawAnswer =
+      typeof responsePayload?.answer === 'string' && responsePayload.answer.trim() !== ''
+        ? responsePayload.answer.trim()
+        : null;
+
+    const answer = rawAnswer ? cleanRagAnswer(rawAnswer) : null;
+    const contexts = Array.isArray(responsePayload?.contexts) ? responsePayload.contexts : [];
 
     if (!answer) {
       updateRagResult('Sin respuesta del modelo.');
       showRagStatus('Sin respuesta del modelo.');
     } else {
       updateRagResult('');
-      renderRagResult(cleanRagAnswer(answer), contexts, selectedIds);
+      renderRagResult(answer, contexts, selectedIds);
+
       if (runtimeWindow?.RAGMSC) {
         runtimeWindow.RAGMSC.setStep('return');
-        setTimeout(() => runtimeWindow?.RAGMSC?.markSuccess?.(`✅ Comparación lista desde ${ragHostLabel}.`), 350);
+        setTimeout(
+          () => runtimeWindow?.RAGMSC?.markSuccess?.(`✅ Comparación lista desde ${ragHostLabel}.`),
+          350
+        );
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error('[RAG] Excepción en compareSelectedHeroesRag:', error);
     updateRagResult('❌ Error al consultar el RAG.');
     showRagStatus('❌ Error al consultar el RAG.');
     hideRagResultSection();
+
     if (runtimeWindow?.RAGMSC) {
       const message = error instanceof Error ? error.message : undefined;
       const defaultMessage = `❌ Error consultando servicio RAG (${ragHostLabel}).`;
