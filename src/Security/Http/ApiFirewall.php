@@ -16,7 +16,13 @@ final class ApiFirewall
      * Rutas que no deben ser filtradas por el firewall (intro/login/seccion y estáticos).
      * @var array<int, string>
      */
-    private array $allowlist = ['/intro', '/login', '/seccion', '/'];
+    private array $allowlist = [
+        '/intro',
+        '/login',
+        '/seccion',
+        '/',
+        '/api/rag/heroes', // Permitir endpoint RAG sin restricciones
+    ];
 
     public function __construct(private readonly ?\App\Security\Logging\SecurityLogger $logger = null)
     {
@@ -29,6 +35,12 @@ final class ApiFirewall
         }
 
         $rawInput = $this->readRawInput();
+        
+        // Log de depuración para rutas API
+        if (str_starts_with($path, '/api/')) {
+            $this->logDebugInfo($method, $path, $rawInput);
+        }
+
         if ($rawInput !== null) {
             $GLOBALS['__raw_input__'] = $rawInput; // permite reutilizar en Request::jsonBody
         }
@@ -251,5 +263,27 @@ final class ApiFirewall
         );
 
         @file_put_contents($logFile, $line . PHP_EOL, FILE_APPEND);
+    }
+
+    private function logDebugInfo(string $method, string $path, ?string $rawInput): void
+    {
+        $logFile = dirname(__DIR__, 3) . '/storage/logs/debug_rag_proxy.log';
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? 'N/A';
+        $contentLength = $_SERVER['CONTENT_LENGTH'] ?? 'N/A';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'N/A';
+        $bodyLength = $rawInput !== null ? strlen($rawInput) : 0;
+
+        $logEntry = sprintf(
+            "%s [FIREWALL_DEBUG] %s %s | Content-Type: %s | Content-Length: %s | Body Length: %d | UA: %s\n",
+            date('c'),
+            $method,
+            $path,
+            $contentType,
+            $contentLength,
+            $bodyLength,
+            substr($userAgent, 0, 100)
+        );
+
+        @file_put_contents($logFile, $logEntry, FILE_APPEND);
     }
 }
