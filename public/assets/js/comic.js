@@ -1192,23 +1192,29 @@ async function compareSelectedHeroesRag() {
 
     const payload = {
       question: 'Compara sus atributos y resume el resultado',
-      heroIds: finalHeroIds
+      heroIds: JSON.stringify(finalHeroIds) // Convertir array a string para FormData
     };
 
     // 🔹 LOG frontal claro
     console.log('[RAG] selectedIds:', selectedIds);
     console.log('[RAG] Payload objeto:', payload);
-    console.log('[RAG] JSON.stringify(payload):', JSON.stringify(payload));
+    console.log('[RAG] Enviando como FormData');
+
+    // 🔹 SOLUCIÓN AGRESIVA: enviar como FormData
+    const formData = new URLSearchParams();
+    formData.append('question', payload.question);
+    formData.append('heroIds', payload.heroIds);
+    if (csrfToken) formData.append('csrf_token', csrfToken);
 
     const response = await fetch(targetEndpoint, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
         ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {})
       },
-      body: JSON.stringify(payload)
+      body: formData.toString()
     });
 
     if (!response.ok) {
