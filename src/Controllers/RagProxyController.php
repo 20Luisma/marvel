@@ -6,10 +6,6 @@ namespace Src\Controllers;
 
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
-use App\Security\Sanitizer;
-use App\Security\Validation\InputSanitizer;
-use App\Security\Validation\JsonValidator;
-use Src\Controllers\Http\Request;
 
 final class RagProxyController
 {
@@ -31,128 +27,88 @@ final class RagProxyController
 
     public function forwardHeroesComparison(): void
     {
-        $payload = Request::jsonBody();
-        $sanitizer = new Sanitizer();
-        $inputSanitizer = new InputSanitizer();
-        $validator = new JsonValidator();
+        $logFile = __DIR__ . '/../../storage/logs/debug_rag_proxy.log';
+        
         try {
-            $validator->validate($payload, [
-                'heroIds' => ['type' => 'array', 'required' => true],
-                'question' => ['type' => 'string', 'required' => false],
-            ], allowEmpty: false);
+            // 1. Leer body usando el lector centralizado
+            $rawBody = \Src\Http\RequestBodyReader::getRawBody();
 
-            if (!is_array($payload['heroIds'] ?? null)) {
-                throw new \InvalidArgumentException('El campo heroIds es obligatorio.');
-            }
-            $heroIds = $payload['heroIds'];
-            if (count($heroIds) < 2) {
-                throw new \InvalidArgumentException('Debes enviar al menos dos héroes.');
-            }
-            foreach ($heroIds as $idx => $value) {
-                if (!is_string($value)) {
-                    throw new \InvalidArgumentException('heroIds debe ser arreglo de strings.');
-                }
-                $heroIds[$idx] = $inputSanitizer->sanitizeString($value, 255);
-            }
-            $payload['heroIds'] = $heroIds;
-        } catch (\InvalidArgumentException $exception) {
-            http_response_code(400);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => $exception->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            return;
-        }
+            if ($rawBody === '') {
+                // LOG de depuración claro
+                error_log('[RAG_DEBUG] Raw Body está vacío en RagProxyController');
+                file_put_contents($logFile, date('c') . " [RAG_DEBUG] Raw Body está vacío en RagProxyController\n", FILE_APPEND);
 
-        $sanitizer = new Sanitizer();
-        if (isset($payload['question']) && is_string($payload['question'])) {
-            $originalQuestion = $payload['question'];
-            $payload['question'] = $inputSanitizer->sanitizeString($originalQuestion, 1000);
-            if ($payload['question'] === '' || strlen($payload['question']) > 1000) {
-                http_response_code(400);
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(['error' => 'La pregunta es demasiado larga.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                return;
+                throw new \RuntimeException('El cuerpo de la petición está vacío');
             }
-            if ($inputSanitizer->isSuspicious($originalQuestion)) {
-                $this->logSuspicious('question');
+
+            // Log de depuración (longitud)
+            error_log('[RAG_DEBUG] Raw Body length: ' . strlen($rawBody));
+            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Raw Body length: " . strlen($rawBody) . "\n", FILE_APPEND);
+
+            // 2. Decodificar JSON
+            $payload = json_decode($rawBody, true);
+            if (!is_array($payload)) {
+                throw new \RuntimeException('El cuerpo no es un JSON válido');
             }
-        }
-        $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($encodedPayload === false) {
-            http_response_code(400);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => 'Payload inválido.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            return;
-        }
 
-        $headers = $this->signer !== null
-            ? $this->signer->sign('POST', $this->ragServiceUrl, $encodedPayload)
-            : [];
+            // Log headers
+            $headers = function_exists('getallheaders') ? getallheaders() : [];
+            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Headers: " . json_encode($headers) . "\n", FILE_APPEND);
 
-        $start = microtime(true);
-        try {
+            // 3. Extraer y normalizar datos (sin validación estricta)
+            $question = $payload['question'] ?? '';
+            $heroIdsRaw = $payload['heroIds'] ?? [];
+            
+            if (!is_array($heroIdsRaw)) {
+                 // Si no es array, intentamos convertirlo o fallamos suavemente
+                 $heroIdsRaw = [];
+            }
+
+            $heroIds = [];
+            foreach ($heroIdsRaw as $id) {
+                $heroIds[] = (string) $id;
+            }
+
+            // Reconstruir payload limpio
+            $cleanPayload = [
+                'question' => (string) $question,
+                'heroIds' => $heroIds
+            ];
+
+            $encodedPayload = json_encode($cleanPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            
+            // 4. Preparar headers internos
+            $requestHeaders = $this->signer !== null
+                ? $this->signer->sign('POST', $this->ragServiceUrl, $encodedPayload)
+                : [];
+
+            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Forwarding to: " . $this->ragServiceUrl . "\n", FILE_APPEND);
+
+            // 5. Enviar al microservicio
             $response = $this->httpClient->postJson(
                 $this->ragServiceUrl,
                 $encodedPayload,
-                $headers,
+                $requestHeaders,
                 timeoutSeconds: self::DEFAULT_TIMEOUT,
                 retries: self::DEFAULT_RETRIES
             );
-            $this->logCall($response->statusCode, $start);
-        } catch (\Throwable $exception) {
-            $this->logCall(502, $start, $exception->getMessage());
-            http_response_code(502);
+
+            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Upstream Response: " . $response->statusCode . " Body: " . $response->body . "\n", FILE_APPEND);
+
+            // 6. Devolver respuesta tal cual
+            http_response_code($response->statusCode);
+            header('Content-Type: application/json; charset=utf-8');
+            echo $response->body;
+
+        } catch (\Throwable $e) {
+            file_put_contents($logFile, date('c') . " [RAG_DEBUG] EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
+            
+            http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode([
-                'error' => 'Error al contactar el microservicio RAG.',
-                'message' => $exception->getMessage(),
-            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            return;
-        }
-
-        http_response_code($response->statusCode);
-        header('Content-Type: application/json; charset=utf-8');
-        echo $response->body;
-    }
-
-    private function logCall(int $statusCode, float $startTime, ?string $error = null): void
-    {
-        $durationMs = (int) round((microtime(true) - $startTime) * 1000);
-        $logFile = dirname(__DIR__, 2) . '/storage/logs/microservice_calls.log';
-        $directory = dirname($logFile);
-        if (!is_dir($directory)) {
-            @mkdir($directory, 0775, true);
-        }
-
-        $entry = [
-            'timestamp' => date('c'),
-            'target' => $this->ragServiceUrl,
-            'status' => $statusCode,
-            'duration_ms' => $durationMs,
-            'remote_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
-            'caller' => $_SERVER['HTTP_HOST'] ?? null,
-            'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
-        ];
-
-        if ($error !== null) {
-            $entry['error'] = substr($error, 0, 400);
-        }
-
-        $encoded = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        if ($encoded !== false) {
-            @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
-        }
-    }
-
-    private function logSuspicious(string $field): void
-    {
-        $logger = $GLOBALS['__clean_marvel_container']['security']['logger'] ?? null;
-        if ($logger instanceof \App\Security\Logging\SecurityLogger) {
-            $logger->logEvent('payload_suspicious', [
-                'trace_id' => $_SERVER['X_TRACE_ID'] ?? null,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                'path' => '/api/rag/heroes',
-                'field' => $field,
-            ]);
+                'estado' => 'error',
+                'message' => 'Error interno en el proxy RAG: ' . $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE);
         }
     }
 }
