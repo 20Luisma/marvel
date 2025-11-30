@@ -30,6 +30,7 @@ use Src\Controllers\HeroController;
 use Src\Controllers\Http\Request;
 use Src\Controllers\NotificationController;
 use Src\Controllers\PageController;
+use Src\Controllers\RagProxyController;
 use RuntimeException;
 use Throwable;
 
@@ -210,6 +211,11 @@ final class Router
 
         if (preg_match('#^/albums/([A-Za-z0-9\-]+)/heroes$#', $path, $matches) === 1) {
             $this->heroController()->store($matches[1]);
+            return true;
+        }
+
+        if ($path === '/api/rag/heroes') {
+            $this->ragProxyController()->forwardHeroesComparison();
             return true;
         }
 
@@ -470,21 +476,47 @@ final class Router
 
     private ?PageController $pageController = null;
 
+    private ?RagProxyController $ragProxyController = null;
+
+    private function ragProxyController(): RagProxyController
+    {
+        if ($this->ragProxyController === null) {
+            $provider = $this->serviceUrlProvider();
+            $ragUrl = $provider->getRagHeroesUrl();
+            
+            $security = $this->container['security'] ?? [];
+            $internalKey = is_array($security) ? ($security['internal_api_key'] ?? null) : null;
+
+            $this->ragProxyController = new RagProxyController(
+                new \App\Shared\Infrastructure\Http\CurlHttpClient(),
+                $ragUrl,
+                is_string($internalKey) ? $internalKey : null
+            );
+        }
+
+        return $this->ragProxyController;
+    }
+
     private ?ConfigController $configController = null;
 
     private function configController(): ConfigController
     {
         if ($this->configController === null) {
-            $provider = $this->container['services']['urlProvider'] ?? null;
-            if (!$provider instanceof ServiceUrlProvider) {
-                $config = $this->container['config']['services'] ?? [];
-                $provider = new ServiceUrlProvider(is_array($config) ? $config : []);
-            }
-
+            $provider = $this->serviceUrlProvider();
             $this->configController = new ConfigController($provider);
         }
 
         return $this->configController;
+    }
+
+    private function serviceUrlProvider(): ServiceUrlProvider
+    {
+        $provider = $this->container['services']['urlProvider'] ?? null;
+        if (!$provider instanceof ServiceUrlProvider) {
+            $config = $this->container['config']['services'] ?? [];
+            $provider = new ServiceUrlProvider(is_array($config) ? $config : []);
+        }
+        return $provider;
     }
 
     private function pageController(): PageController
