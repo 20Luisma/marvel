@@ -2,20 +2,20 @@
  * Panel GitHub helpers.
  * Añade pequeñas mejoras UX sin alterar el flujo actual del formulario.
  */
-const enableButton = (button) => {
-  if (!button) return;
 
+// Helpers
+const enableGithubButton = (button) => {
+  if (!button) return;
   button.disabled = false;
   button.classList.remove('is-disabled');
   const fallbackLabel = button.dataset.originalLabel || 'Ver PRs';
   button.textContent = fallbackLabel;
 };
 
-const disableButton = (button) => {
+const disableGithubButton = (button) => {
   if (!button) return;
-
   if (!button.dataset.originalLabel) {
-    button.dataset.originalLabel = button.textContent?.trim() ?? 'Ver PRs';
+    button.dataset.originalLabel = (button.textContent || 'Ver PRs').trim();
   }
   button.disabled = true;
   button.classList.add('is-disabled');
@@ -23,7 +23,7 @@ const disableButton = (button) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🔥 panel-github.js cargado');
+  console.log('🔥 JS inline del panel GitHub cargado');
 
   const filterForm = document.querySelector('.panel-github__filters');
   if (!filterForm) {
@@ -34,20 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitButton = filterForm.querySelector('button[type="submit"]');
   const dateInputs = filterForm.querySelectorAll('input[type="date"]');
   const loader = document.getElementById('panel-github-loader');
-  const loaderText = loader?.querySelector('.panel-github__loader-text');
+  const loaderText = loader ? loader.querySelector('.panel-loader__text') : null;
 
   filterForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    disableButton(submitButton);
+    disableGithubButton(submitButton);
 
     if (loader) {
       if (loaderText) {
         loaderText.textContent = 'Consultando GitHub…';
       }
       loader.classList.remove('hidden');
-      loader.style.display = 'flex';
-      loader.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      loader.style.display = 'inline-flex';
+      loader.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      });
     }
 
     window.requestAnimationFrame(() => {
@@ -59,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   dateInputs.forEach((input) => {
     input.addEventListener('input', () => {
-      if (submitButton?.disabled) {
-        enableButton(submitButton);
+      if (submitButton && submitButton.disabled) {
+        enableGithubButton(submitButton);
       }
     });
   });

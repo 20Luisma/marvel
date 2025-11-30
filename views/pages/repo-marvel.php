@@ -8,6 +8,7 @@ AuthGuards::requireAuth();
 AuthGuards::requireAdmin();
 
 $pageTitle = 'Clean Marvel Album — Repo Marvel';
+$additionalStyles = ['/assets/css/sonar.css'];
 $activeTopAction = 'repo-marvel';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-github-page';
 
@@ -36,7 +37,7 @@ require_once __DIR__ . '/../layouts/header.php';
     <section class="sonar-panel space-y-8" aria-live="polite">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 class="sonar-hero-title text-3xl text-white">Clean Marvel Album</h2>
+          <h2 class="sonar-hero-title text-4xl text-white">Clean Marvel Album</h2>
           <p class="text-slate-300 text-sm">Contenido sincronizado en tiempo real con GitHub.</p>
         </div>
       </div>

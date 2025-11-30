@@ -1,4 +1,21 @@
-ø
+â	
+)app\services\security\securityscanserviceE
+__construct6app\services\security\securityscanservice::__construct[
+analyzesecurityheadersAapp\services\security\securityscanservice::analyzesecurityheadersC
+
+analyzessl5app\services\security\securityscanservice::analyzessl[
+calculatesecuritygradeAapp\services\security\securityscanservice::calculatesecuritygradeQ
+calculatesslscore<app\services\security\securityscanservice::calculatesslscoreW
+detectenvironmenturl?app\services\security\securityscanservice::detectenvironmenturlG
+iscachefresh7app\services\security\securityscanservice::iscachefreshA
+	loadcache4app\services\security\securityscanservice::loadcacheE
+runssltests6app\services\security\securityscanservice::runssltestsA
+	savecache4app\services\security\securityscanservice::savecache7
+scan/app\services\security\securityscanservice::scan[
+scanmozillaobservatoryAapp\services\security\securityscanservice::scanmozillaobservatoryU
+scansecurityheaders>app\services\security\securityscanservice::scansecurityheadersG
+scoretograde7app\services\security\securityscanservice::scoretograde"	targetUrl*
+	targetUrlstringø
 app\security\auth\authservice9
 __construct*app\security\auth\authservice::__construct3
 clientip'app\security\auth\authservice::clientipO
@@ -476,7 +493,9 @@ deleteHero0app\heroes\application\usecase\deleteherousecase*:
 
 listHeroes0app\heroes\application\usecase\listheroesusecase*>
 
-updateHero0app\heroes\application\usecase\updateherousecaseå
+updateHero0app\heroes\application\usecase\updateherousecase`
+#app\security\http\cspnoncegenerator9
+generate-app\security\http\cspnoncegenerator::generateå
 app\shared\domain\bus\eventbus2
 publish'app\shared\domain\bus\eventbus::publish6
 	subscribe)app\shared\domain\bus\eventbus::subscribeº

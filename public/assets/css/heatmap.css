@@ -8,11 +8,30 @@
 }
 
 .heatmap-panel {
-  background: linear-gradient(135deg, rgba(9, 12, 23, 0.95), rgba(15, 23, 42, 0.9));
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: linear-gradient(135deg, rgba(13, 20, 40, 0.95), rgba(9, 13, 26, 0.85));
+  border: 2px solid #2563eb;
   border-radius: 2rem;
-  padding: 2rem;
-  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.8);
+  box-shadow: 0 22px 52px rgba(37, 99, 235, 0.18), 0 0 22px rgba(37, 99, 235, 0.28);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.heatmap-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 25% 15%, rgba(255, 255, 255, 0.06), transparent 45%);
+  pointer-events: none;
+}
+
+.heatmap-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.heatmap-panel.section-lined {
+  border-top: 3px solid #2563eb;
 }
 
 .heatmap-controls {

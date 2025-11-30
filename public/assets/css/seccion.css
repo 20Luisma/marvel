@@ -75,9 +75,12 @@
 }
 
 .seccion-card__title {
-  font-size: 1.75rem;
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
   color: #f8fafc;
   margin: 0;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
 }
 
 .seccion-card__description {

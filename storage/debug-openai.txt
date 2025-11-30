@@ -1,0 +1,5 @@
+Para debuggear, agrega esto temporalmente en OpenAIComicGenerator.php línea 270:
+
+file_put_contents(__DIR__ . '/../../storage/debug-response.json', json_encode($decoded, JSON_PRETTY_PRINT));
+
+Esto te mostrará exactamente qué está devolviendo el microservicio.
