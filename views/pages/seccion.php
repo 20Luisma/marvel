@@ -75,6 +75,13 @@ $sections = [
         'cta' => 'Ver vulnerabilidades',
     ],
     [
+        'title' => 'Token & Cost',
+        'tag' => 'Monitoreo de IA',
+        'description' => 'Panel completo de consumo de IA: tokens, llamadas, coste, latencia y eficiencia del Marvel Agent.',
+        'href' => '/secret-ai-metrics',
+        'cta' => 'Ver métricas',
+    ],
+    [
         'title' => 'README',
         'tag' => 'Documentación',
         'description' => 'Lee el README vivo con arquitectura, comandos y tareas recomendadas del proyecto.',

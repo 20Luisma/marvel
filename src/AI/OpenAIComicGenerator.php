@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\AI;
 
+use App\Monitoring\TokenLogger;
 use InvalidArgumentException;
 use JsonException;
 use RuntimeException;
@@ -175,6 +176,7 @@ PROMPT,
         $payload = [
             'messages' => $messages,
         ];
+        $startedAt = microtime(true);
 
         if ($model !== null) {
             $payload['model'] = $model;
@@ -238,6 +240,8 @@ PROMPT,
             throw new RuntimeException('Respuesta no válida del microservicio de OpenAI.' . $details, 0, $exception);
         }
 
+        $this->logUsageIfAvailable($decoded, $model, $startedAt);
+
         if (isset($decoded['error'])) {
             $error = $decoded['error'];
 
@@ -283,6 +287,8 @@ PROMPT,
                                 ],
                             ],
                         ],
+                        'usage' => $decoded['usage'] ?? null,
+                        'model' => $decoded['model'] ?? null,
                     ];
                 }
             }
@@ -308,5 +314,96 @@ PROMPT,
             'X-Internal-Timestamp: ' . $timestamp,
             'X-Internal-Caller: ' . $this->internalCaller,
         ];
+    }
+
+    /**
+     * Registra uso de tokens siempre que el microservicio u OpenAI devuelvan la métrica.
+     *
+     * @param array<string, mixed> $decoded
+     */
+    private function logUsageIfAvailable(array $decoded, ?string $fallbackModel, float $startedAt): void
+    {
+        $latency = max(0, (int) round((microtime(true) - $startedAt) * 1000));
+
+        $usage = $this->extractUsage($decoded);
+        $model = $this->extractModel($decoded, $fallbackModel);
+        $success = isset($decoded['ok']) ? (bool) $decoded['ok'] : true;
+        $error = null;
+        if (isset($decoded['error']) && is_string($decoded['error'])) {
+            $error = $decoded['error'];
+            $success = false;
+        }
+
+        try {
+            TokenLogger::log([
+                'feature' => 'comic_generator',
+                'model' => $model,
+                'endpoint' => 'chat.completions',
+                'prompt_tokens' => (int)($usage['prompt_tokens'] ?? 0),
+                'completion_tokens' => (int)($usage['completion_tokens'] ?? 0),
+                'total_tokens' => (int)($usage['total_tokens'] ?? 0),
+                'latency_ms' => $latency,
+                'tools_used' => (int)($usage['tools_calls'] ?? 0),
+                'success' => $success,
+                'error' => $error,
+                'user_id' => 'demo',
+                'context_size' => 0,
+            ]);
+        } catch (\Throwable) {
+            // No interrumpir el flujo si el log falla.
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $decoded
+     * @return array<string, mixed>
+     */
+    private function extractUsage(array $decoded): array
+    {
+        if (isset($decoded['usage']) && is_array($decoded['usage'])) {
+            return $decoded['usage'];
+        }
+
+        if (isset($decoded['raw']['usage']) && is_array($decoded['raw']['usage'])) {
+            return $decoded['raw']['usage'];
+        }
+
+        if (isset($decoded['data']['usage']) && is_array($decoded['data']['usage'])) {
+            return $decoded['data']['usage'];
+        }
+
+        if (isset($decoded['data']['raw']['usage']) && is_array($decoded['data']['raw']['usage'])) {
+            return $decoded['data']['raw']['usage'];
+        }
+
+        // Sin métricas explícitas, devolvemos estructura vacía para forzar creación de tokens.log
+        return [
+            'prompt_tokens' => 0,
+            'completion_tokens' => 0,
+            'total_tokens' => 0,
+            'tools_calls' => 0,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $decoded
+     */
+    private function extractModel(array $decoded, ?string $fallbackModel): string
+    {
+        $candidates = [
+            $decoded['model'] ?? null,
+            $decoded['raw']['model'] ?? null,
+            $decoded['data']['model'] ?? null,
+            $decoded['data']['raw']['model'] ?? null,
+            $fallbackModel,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && trim($candidate) !== '') {
+                return trim($candidate);
+            }
+        }
+
+        return 'unknown';
     }
 }
