@@ -32,8 +32,7 @@ require_once __DIR__ . '/../layouts/header.php';
   <div class="max-w-5xl mx-auto py-8 px-4 space-y-8">
     <section class="card section-lined rounded-2xl p-6 shadow-xl tech-panel">
       <header class="space-y-2 mb-6">
-        <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Documentación</p>
-        <h2 class="text-3xl text-white">README del proyecto</h2>
+        <h2 class="sonar-hero-title text-4xl text-white">README del proyecto</h2>
       </header>
 
       <article class="readme-content readme-content--page rounded-2xl space-y-6 leading-relaxed text-slate-100">

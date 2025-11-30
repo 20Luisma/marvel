@@ -49,7 +49,6 @@ $activeTopAction = 'sonar';
       <section class="sonar-panel section-lined space-y-10" aria-live="polite">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div class="space-y-2">
-            <p class="uppercase tracking-[0.3em] text-sm text-slate-400">SonarCloud</p>
             <h2 class="sonar-hero-title text-4xl text-white" id="sonar-project-name">Marvel Quality Board</h2>
             <p class="text-slate-300 text-sm">Project Key: <span class="font-semibold text-white" id="sonar-project-key">—</span></p>
             <p class="text-slate-300 text-sm">Último análisis: <span class="font-semibold text-white" id="sonar-updated-at">—</span></p>
@@ -58,7 +57,7 @@ $activeTopAction = 'sonar';
             <span id="sonar-status-pill" class="sonar-status-pill" data-level="alert">Esperando datos</span>
             <div class="flex flex-wrap justify-center gap-3">
               <button id="sonar-refresh-button" class="btn btn-primary inline-flex items-center gap-2 mx-auto">
-                <span>Actualizar análisis</span>
+                <span>Actualizar</span>
               </button>
             </div>
             <!-- Indicador de sincronización: reemplaza el texto por 3 bolitas centradas y fijas bajo el botón -->
@@ -120,6 +119,16 @@ $activeTopAction = 'sonar';
             <canvas id="sonar-coverage-chart"></canvas>
             <p id="sonar-coverage-warning" class="text-amber-200 hidden">Cobertura no disponible todavía.</p>
           </article>
+        </div>
+
+        <!-- Coverage transparency note -->
+        <div class="mt-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50">
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <span class="text-cyan-400 font-bold text-base">*</span> <span class="text-white font-semibold">Cobertura de backend PHP</span> (directorio <code class="text-cyan-400 bg-slate-900 px-2 py-0.5 rounded">src/</code>).
+            Frontend (<code class="text-slate-500 bg-slate-900 px-2 py-0.5 rounded">public/</code>, <code class="text-slate-500 bg-slate-900 px-2 py-0.5 rounded">views/</code>) se testea con herramientas especializadas (Jest, Cypress).
+            <br>
+            <span class="text-slate-400 text-xs mt-1 inline-block">Siguiendo estándares de Laravel/Symfony. Ver <a href="/readme" class="text-cyan-400 hover:underline font-medium">COVERAGE.md</a> para detalles completos.</span>
+          </p>
         </div>
       </section>
     </div>

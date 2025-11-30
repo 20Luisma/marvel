@@ -217,11 +217,26 @@
   };
 
   const setLoading = (isLoading) => {
+    const loader = document.getElementById('performance-loader');
+    
     if (refreshButton) {
       refreshButton.disabled = isLoading;
       refreshButton.textContent = isLoading ? 'Analizando…' : 'Actualizar análisis';
     }
-    setState(isLoading ? 'Cargando rendimiento...' : '', false, isLoading);
+    
+    // Mostrar/ocultar loader del HTML
+    if (loader) {
+      if (isLoading) {
+        loader.classList.remove('hidden');
+      } else {
+        loader.classList.add('hidden');
+      }
+    }
+    
+    // Ocultar mensajes de estado cuando está cargando
+    if (stateContainer) {
+      stateContainer.style.display = isLoading ? 'none' : '';
+    }
   };
 
   const loadData = async () => {

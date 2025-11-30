@@ -26,6 +26,13 @@ $sections = [
         'cta' => 'Entrar a Sentry',
     ],
     [
+        'title' => 'Seguridad',
+        'tag' => 'Security Headers',
+        'description' => 'Análisis automático de seguridad, cabeceras y configuración del servidor con SecurityHeaders.com y Mozilla Observatory.',
+        'href' => '/seguridad',
+        'cta' => 'Ver seguridad',
+    ],
+    [
         'title' => 'Heatmap',
         'tag' => 'Analítica',
         'description' => 'Explora los clics de cada página y descubre dónde los héroes hacen más clics dentro de la app.',
@@ -59,6 +66,20 @@ $sections = [
         'description' => 'Ejecuta la API de accesibilidad de WebAIM contra las páginas clave del proyecto y revisa errores/contrast en un panel dedicado.',
         'href' => '/accessibility',
         'cta' => 'Abrir panel',
+    ],
+    [
+        'title' => 'Snyk Code Audit',
+        'tag' => 'Seguridad de Código',
+        'description' => 'Análisis de vulnerabilidades en dependencias y código usando Snyk.',
+        'href' => '/snyk',
+        'cta' => 'Ver vulnerabilidades',
+    ],
+    [
+        'title' => 'Token & Cost',
+        'tag' => 'Monitoreo de IA',
+        'description' => 'Panel completo de consumo de IA: tokens, llamadas, coste, latencia y eficiencia del Marvel Agent.',
+        'href' => '/secret-ai-metrics',
+        'cta' => 'Ver métricas',
     ],
     [
         'title' => 'README',

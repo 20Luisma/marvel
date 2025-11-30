@@ -15,8 +15,9 @@ final class OpenAiHttpClient implements LlmClientInterface
     private readonly string $openAiEndpoint;
     private readonly ?string $internalApiKey;
     private readonly string $internalCaller;
+    private readonly string $feature;
 
-    public function __construct(?string $openAiEndpoint = null)
+    public function __construct(?string $openAiEndpoint = null, string $feature = 'rag_service')
     {
         $endpoint = $openAiEndpoint ?? $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: 'http://localhost:8081/v1/chat';
         $this->openAiEndpoint = rtrim($endpoint, '/');
@@ -29,6 +30,7 @@ final class OpenAiHttpClient implements LlmClientInterface
             $callerCandidate = is_string($parsed) ? $parsed : '';
         }
         $this->internalCaller = $callerCandidate !== '' ? $callerCandidate : 'localhost:8082';
+        $this->feature = $feature;
     }
 
     public function ask(string $prompt): string
@@ -134,6 +136,8 @@ final class OpenAiHttpClient implements LlmClientInterface
                 throw new RuntimeException('Microservicio OpenAI no disponible: ' . $message);
             }
 
+            $this->logUsage($decoded);
+
             $contentKeys = ['content', 'answer', 'text'];
             foreach ($contentKeys as $key) {
                 $value = $decoded[$key] ?? null;
@@ -159,6 +163,51 @@ final class OpenAiHttpClient implements LlmClientInterface
         }
 
         return trim($content);
+    }
+
+    /**
+     * @param array<string, mixed> $decoded
+     */
+    private function logUsage(array $decoded): void
+    {
+        $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
+        if (!is_array($usage)) {
+            return;
+        }
+
+        $model = $decoded['model'] ?? $decoded['raw']['model'] ?? self::DEFAULT_MODEL;
+
+        $entry = [
+            'ts' => date('c'),
+            'feature' => $this->feature,
+            'model' => $model,
+            'endpoint' => 'chat.completions',
+            'prompt_tokens' => (int)($usage['prompt_tokens'] ?? 0),
+            'completion_tokens' => (int)($usage['completion_tokens'] ?? 0),
+            'total_tokens' => (int)($usage['total_tokens'] ?? 0),
+            'latency_ms' => 0, // We don't track latency here yet, could add it
+            'tools_used' => 0,
+            'success' => true,
+            'error' => null,
+            'user_id' => 'system',
+            'context_size' => 0,
+        ];
+
+        // Use rag-service's own storage directory
+        $logFile = __DIR__ . '/../../../storage/ai/tokens.log';
+        $logDir = dirname($logFile);
+        
+        if (!is_dir($logDir)) {
+            if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
+                // Silently fail if we can't create the directory
+                return;
+            }
+        }
+
+        $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json !== false) {
+            file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
     }
 
     /**

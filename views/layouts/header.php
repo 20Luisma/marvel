@@ -14,7 +14,8 @@ require_once __DIR__ . '/../helpers.php';
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><?= e($pageTitle) ?></title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
+  <script src="https://cdn.tailwindcss.com"<?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
