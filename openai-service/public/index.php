@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+// Disable opcache to ensure code changes are reflected immediately
+ini_set('opcache.enable', '0');
+ini_set('opcache.enable_cli', '0');
+
 use Creawebes\OpenAI\Http\Router;
 
 $baseDir  = dirname(__DIR__);

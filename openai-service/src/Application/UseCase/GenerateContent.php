@@ -15,23 +15,39 @@ final class GenerateContent
 
     /**
      * @param array<int, array<string, mixed>> $messages
+     * @return array{content: string, usage: array<string, int>|null, model: string|null}
      */
-    public function handle(array $messages): string
+    public function handle(array $messages): array
     {
         try {
             $response = $this->client->chat($messages);
             $content = $this->extractContent($response);
 
             if ($content === null) {
-                return $this->buildFallbackStory('⚠️ OpenAI devolvió un formato inesperado.');
+                return [
+                    'content' => $this->buildFallbackStory('⚠️ OpenAI devolvió un formato inesperado.'),
+                    'usage' => null,
+                    'model' => null,
+                    'raw' => $response,
+                ];
             }
 
-            return $this->stripCodeFence($content);
+            return [
+                'content' => $this->stripCodeFence($content),
+                'usage' => $response['usage'] ?? null,
+                'model' => $response['model'] ?? null,
+                'raw' => $response,
+            ];
         } catch (Throwable $exception) {
             $message = $exception->getMessage();
             $summary = $message !== '' ? $message : '⚠️ No se pudo generar el cómic';
 
-            return $this->buildFallbackStory($summary);
+            return [
+                'content' => $this->buildFallbackStory($summary),
+                'usage' => null,
+                'model' => null,
+                'raw' => null,
+            ];
         }
     }
 

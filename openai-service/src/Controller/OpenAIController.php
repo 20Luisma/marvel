@@ -28,12 +28,15 @@ final class OpenAIController
         }
 
         try {
-            $story = $this->generateContent->handle($messages);
+            $result = $this->generateContent->handle($messages);
 
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode([
                 'ok' => true,
-                'content' => $story,
+                'content' => $result['content'],
+                'usage' => $result['usage'],
+                'model' => $result['model'],
+                'raw' => $result['raw'],
             ], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $exception) {
             http_response_code(500);

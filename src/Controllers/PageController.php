@@ -26,6 +26,7 @@ final class PageController
         '/accessibility' => 'pages/panel-accessibility',
         '/panel-accessibility' => 'pages/panel-accessibility',
         '/snyk' => 'pages/snyk',
+        '/secret-ai-metrics' => 'pages/secret-ai-metrics',
         '/seccion' => 'pages/seccion',
         '/secret-heatmap' => 'pages/secret-heatmap',
         '/secret/heatmap' => 'pages/secret-heatmap',
