@@ -30,37 +30,40 @@ final class RagProxyController
         $logFile = __DIR__ . '/../../storage/logs/debug_rag_proxy.log';
         
         try {
-            // 1. Leer body usando el lector centralizado
-            $rawBody = \Src\Http\RequestBodyReader::getRawBody();
+            // LEER DIRECTAMENTE DESDE $_POST (solución definitiva)
+            $payload = [];
+            
+            if (!empty($_POST)) {
+                // Viene como FormData
+                $heroIds = isset($_POST['heroIds']) ? json_decode($_POST['heroIds'], true) : [];
+                if (!is_array($heroIds)) {
+                    $heroIds = [];
+                }
+                
+                $payload = [
+                    'question' => $_POST['question'] ?? '',
+                    'heroIds' => $heroIds
+                ];
+                
+                file_put_contents($logFile, date('c') . " [RAG] Leído desde POST\n", FILE_APPEND);
+            } else {
+                // Intentar desde php://input como fallback
+                $rawBody = file_get_contents('php://input');
+                if ($rawBody !== false && $rawBody !== '') {
+                    $payload = json_decode($rawBody, true);
+                    file_put_contents($logFile, date('c') . " [RAG] Leído desde php://input\n", FILE_APPEND);
+                }
+            }
 
-            if ($rawBody === '') {
-                // LOG de depuración claro
-                error_log('[RAG_DEBUG] Raw Body está vacío en RagProxyController');
-                file_put_contents($logFile, date('c') . " [RAG_DEBUG] Raw Body está vacío en RagProxyController\n", FILE_APPEND);
-
+            if (empty($payload) || !is_array($payload)) {
+                file_put_contents($logFile, date('c') . " [RAG] ERROR: Payload vacío\n", FILE_APPEND);
                 throw new \RuntimeException('El cuerpo de la petición está vacío');
             }
 
-            // Log de depuración (longitud)
-            error_log('[RAG_DEBUG] Raw Body length: ' . strlen($rawBody));
-            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Raw Body length: " . strlen($rawBody) . "\n", FILE_APPEND);
-
-            // 2. Decodificar JSON
-            $payload = json_decode($rawBody, true);
-            if (!is_array($payload)) {
-                throw new \RuntimeException('El cuerpo no es un JSON válido');
-            }
-
-            // Log headers
-            $headers = function_exists('getallheaders') ? getallheaders() : [];
-            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Headers: " . json_encode($headers) . "\n", FILE_APPEND);
-
-            // 3. Extraer y normalizar datos (sin validación estricta)
             $question = $payload['question'] ?? '';
             $heroIdsRaw = $payload['heroIds'] ?? [];
             
             if (!is_array($heroIdsRaw)) {
-                 // Si no es array, intentamos convertirlo o fallamos suavemente
                  $heroIdsRaw = [];
             }
 
@@ -69,7 +72,6 @@ final class RagProxyController
                 $heroIds[] = (string) $id;
             }
 
-            // Reconstruir payload limpio
             $cleanPayload = [
                 'question' => (string) $question,
                 'heroIds' => $heroIds
@@ -77,14 +79,12 @@ final class RagProxyController
 
             $encodedPayload = json_encode($cleanPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             
-            // 4. Preparar headers internos
+            file_put_contents($logFile, date('c') . " [RAG] Payload: $encodedPayload\n", FILE_APPEND);
+
             $requestHeaders = $this->signer !== null
                 ? $this->signer->sign('POST', $this->ragServiceUrl, $encodedPayload)
                 : [];
 
-            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Forwarding to: " . $this->ragServiceUrl . "\n", FILE_APPEND);
-
-            // 5. Enviar al microservicio
             $response = $this->httpClient->postJson(
                 $this->ragServiceUrl,
                 $encodedPayload,
@@ -93,15 +93,14 @@ final class RagProxyController
                 retries: self::DEFAULT_RETRIES
             );
 
-            file_put_contents($logFile, date('c') . " [RAG_DEBUG] Upstream Response: " . $response->statusCode . " Body: " . $response->body . "\n", FILE_APPEND);
+            file_put_contents($logFile, date('c') . " [RAG] Respuesta: " . $response->statusCode . "\n", FILE_APPEND);
 
-            // 6. Devolver respuesta tal cual
             http_response_code($response->statusCode);
             header('Content-Type: application/json; charset=utf-8');
             echo $response->body;
 
         } catch (\Throwable $e) {
-            file_put_contents($logFile, date('c') . " [RAG_DEBUG] EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
+            file_put_contents($logFile, date('c') . " [RAG] EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
             
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
