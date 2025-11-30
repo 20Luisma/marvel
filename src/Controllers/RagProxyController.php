@@ -6,6 +6,7 @@ namespace Src\Controllers;
 
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
+use Src\Http\RequestBodyReader;
 
 final class RagProxyController
 {
@@ -30,34 +31,48 @@ final class RagProxyController
         $logFile = __DIR__ . '/../../storage/logs/debug_rag_proxy.log';
         
         try {
-            // LEER DIRECTAMENTE DESDE $_POST (solución definitiva)
-            $payload = [];
+            // BEGIN ZONAR FIX DEFINITIVO - Leer JSON puro directamente
+            $rawBody = RequestBodyReader::getRawBody();
             
-            if (!empty($_POST)) {
-                // Viene como FormData
-                $heroIds = isset($_POST['heroIds']) ? json_decode($_POST['heroIds'], true) : [];
-                if (!is_array($heroIds)) {
-                    $heroIds = [];
-                }
-                
-                $payload = [
-                    'question' => $_POST['question'] ?? '',
-                    'heroIds' => $heroIds
-                ];
-                
-                file_put_contents($logFile, date('c') . " [RAG] Leído desde POST\n", FILE_APPEND);
-            } else {
-                // Intentar desde php://input como fallback
-                $rawBody = file_get_contents('php://input');
-                if ($rawBody !== false && $rawBody !== '') {
-                    $payload = json_decode($rawBody, true);
-                    file_put_contents($logFile, date('c') . " [RAG] Leído desde php://input\n", FILE_APPEND);
-                }
+            file_put_contents($logFile, date('c') . " [RAG] Raw body length: " . strlen($rawBody) . "\n", FILE_APPEND);
+            
+            if ($rawBody === '') {
+                file_put_contents($logFile, date('c') . " [RAG] ERROR: Body vacío\n", FILE_APPEND);
+                http_response_code(400);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'estado' => 'error',
+                    'message' => 'El cuerpo de la petición está vacío'
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                return;
             }
+            
+            $payload = json_decode($rawBody, true);
+            
+            if (!is_array($payload)) {
+                file_put_contents($logFile, date('c') . " [RAG] ERROR: JSON inválido\n", FILE_APPEND);
+                http_response_code(400);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'estado' => 'error',
+                    'message' => 'El cuerpo no es un JSON válido'
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                return;
+            }
+            
+            file_put_contents($logFile, date('c') . " [RAG] Payload recibido correctamente\n", FILE_APPEND);
+            // END ZONAR FIX DEFINITIVO
+
 
             if (empty($payload) || !is_array($payload)) {
                 file_put_contents($logFile, date('c') . " [RAG] ERROR: Payload vacío\n", FILE_APPEND);
-                throw new \RuntimeException('El cuerpo de la petición está vacío');
+                http_response_code(400);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'estado' => 'error',
+                    'message' => 'El cuerpo de la petición está vacío'
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                return;
             }
 
             $question = $payload['question'] ?? '';

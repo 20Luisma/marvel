@@ -30,9 +30,11 @@ final class ApiFirewall
 
     public function handle(string $method, string $path): bool
     {
-        if ($this->shouldSkip($path)) {
-            return true;
+        // BEGIN ZONAR FIX 1.1 - Evitar consumir php://input para rutas en whitelist
+        if ($this->shouldSkip($method, $path)) {
+            return true; // Salir ANTES de leer el body
         }
+        // END ZONAR FIX 1.1
 
         $rawInput = $this->readRawInput();
         
@@ -76,7 +78,7 @@ final class ApiFirewall
         return true;
     }
 
-    private function shouldSkip(string $path): bool
+    private function shouldSkip(string $method, string $path): bool
     {
         if (in_array($path, $this->allowlist, true)) {
             return true;

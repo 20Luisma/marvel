@@ -11,6 +11,7 @@ use RuntimeException;
 final class OpenAiHttpClient implements LlmClientInterface
 {
     private const DEFAULT_MODEL = 'gpt-4o-mini';
+    private const TOKENS_LOG_PATH = __DIR__ . '/../../../storage/ai/tokens.log';
 
     private readonly string $openAiEndpoint;
     private readonly ?string $internalApiKey;
@@ -170,8 +171,12 @@ final class OpenAiHttpClient implements LlmClientInterface
      */
     private function logUsage(array $decoded): void
     {
+        // BEGIN ZONAR FIX 1.3 + 1.4 - Logging mejorado con diagnóstico
         $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
+        
+        // Diagnóstico: registrar si no hay usage
         if (!is_array($usage)) {
+            error_log("[TOKENS] No usage found for feature={$this->feature}");
             return;
         }
 
@@ -194,20 +199,31 @@ final class OpenAiHttpClient implements LlmClientInterface
         ];
 
         // Use rag-service's own storage directory
-        $logFile = __DIR__ . '/../../../storage/ai/tokens.log';
+        $logFile = self::TOKENS_LOG_PATH;
         $logDir = dirname($logFile);
         
-        if (!is_dir($logDir)) {
-            if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
-                // Silently fail if we can't create the directory
-                return;
-            }
+        // Asegurar que el directorio existe
+        if (!is_dir($logDir) && !@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
+            error_log("[TOKENS] Failed to create directory: {$logDir}");
+            return;
+        }
+
+        // Verificar permisos de escritura
+        if (!is_writable($logDir)) {
+            error_log("[TOKENS] Directory not writable: {$logDir}");
+            return;
         }
 
         $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($json !== false) {
-            file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+            $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+            if ($result === false) {
+                error_log("[TOKENS] Failed to write to log file: {$logFile}");
+            } else {
+                error_log("[TOKENS] Successfully logged {$entry['total_tokens']} tokens for feature={$this->feature}");
+            }
         }
+        // END ZONAR FIX 1.3 + 1.4
     }
 
     /**

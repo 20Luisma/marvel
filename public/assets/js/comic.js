@@ -1190,32 +1190,26 @@ async function compareSelectedHeroesRag() {
 
     const finalHeroIds = selectedIds.map(id => String(id));
 
+    // BEGIN ZONAR FIX DEFINITIVO - Enviar JSON puro, no FormData
     const payload = {
       question: 'Compara sus atributos y resume el resultado',
-      heroIds: JSON.stringify(finalHeroIds) // Convertir array a string para FormData
+      heroIds: finalHeroIds // Array directo, NO string
     };
 
-    // 🔹 LOG frontal claro
-    console.log('[RAG] selectedIds:', selectedIds);
-    console.log('[RAG] Payload objeto:', payload);
-    console.log('[RAG] Enviando como FormData');
-
-    // 🔹 SOLUCIÓN AGRESIVA: enviar como FormData
-    const formData = new URLSearchParams();
-    formData.append('question', payload.question);
-    formData.append('heroIds', payload.heroIds);
-    if (csrfToken) formData.append('csrf_token', csrfToken);
+    console.log('[RAG] Payload JSON:', payload);
 
     const response = await fetch(targetEndpoint, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
         ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {})
       },
-      body: formData.toString()
+      body: JSON.stringify(payload)
     });
+    // END ZONAR FIX DEFINITIVO
+
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
