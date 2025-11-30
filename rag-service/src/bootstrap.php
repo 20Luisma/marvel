@@ -87,8 +87,10 @@ return (static function (): array {
             : 'http://localhost:8081/v1/chat';
     }
 
-    $llmClient = new OpenAiHttpClient($openAiEndpoint);
-    $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClient);
+    $llmClientForCompare = new OpenAiHttpClient($openAiEndpoint, 'compare_heroes');
+    $llmClientForAgent = new OpenAiHttpClient($openAiEndpoint, 'marvel_agent');
+    
+    $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClientForCompare);
     $agentKb = new MarvelAgentKnowledgeBase($rootPath . '/storage/marvel_agent_kb.json');
     $agentLexicalRetriever = new MarvelAgentRetriever($agentKb);
     $agentEmbeddingStore = new EmbeddingStore($rootPath . '/storage/marvel_agent_embeddings.json');
@@ -106,7 +108,7 @@ return (static function (): array {
         )
         : $agentLexicalRetriever;
 
-    $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClient);
+    $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClientForAgent);
 
     return [
         'ragController' => new RagController($ragService),

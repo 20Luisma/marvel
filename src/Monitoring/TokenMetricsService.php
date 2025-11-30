@@ -19,20 +19,32 @@ class TokenMetricsService
      */
     public function getMetrics(): array
     {
-        if (!file_exists(self::LOG_FILE)) {
-            return $this->emptyMetrics();
-        }
-
-        $lines = file(self::LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if ($lines === false || empty($lines)) {
-            return $this->emptyMetrics();
-        }
-
         $entries = [];
-        foreach ($lines as $line) {
-            $data = json_decode($line, true);
-            if (is_array($data)) {
-                $entries[] = $data;
+
+        // Read from main log file
+        if (file_exists(self::LOG_FILE)) {
+            $lines = file(self::LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if ($lines !== false) {
+                foreach ($lines as $line) {
+                    $data = json_decode($line, true);
+                    if (is_array($data)) {
+                        $entries[] = $data;
+                    }
+                }
+            }
+        }
+
+        // Read from RAG service log file (if it exists)
+        $ragLogFile = __DIR__ . '/../../rag-service/storage/ai/tokens.log';
+        if (file_exists($ragLogFile)) {
+            $lines = file($ragLogFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if ($lines !== false) {
+                foreach ($lines as $line) {
+                    $data = json_decode($line, true);
+                    if (is_array($data)) {
+                        $entries[] = $data;
+                    }
+                }
             }
         }
 

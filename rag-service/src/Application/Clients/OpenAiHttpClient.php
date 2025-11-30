@@ -15,8 +15,9 @@ final class OpenAiHttpClient implements LlmClientInterface
     private readonly string $openAiEndpoint;
     private readonly ?string $internalApiKey;
     private readonly string $internalCaller;
+    private readonly string $feature;
 
-    public function __construct(?string $openAiEndpoint = null)
+    public function __construct(?string $openAiEndpoint = null, string $feature = 'rag_service')
     {
         $endpoint = $openAiEndpoint ?? $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: 'http://localhost:8081/v1/chat';
         $this->openAiEndpoint = rtrim($endpoint, '/');
@@ -29,6 +30,7 @@ final class OpenAiHttpClient implements LlmClientInterface
             $callerCandidate = is_string($parsed) ? $parsed : '';
         }
         $this->internalCaller = $callerCandidate !== '' ? $callerCandidate : 'localhost:8082';
+        $this->feature = $feature;
     }
 
     public function ask(string $prompt): string
@@ -174,16 +176,10 @@ final class OpenAiHttpClient implements LlmClientInterface
         }
 
         $model = $decoded['model'] ?? $decoded['raw']['model'] ?? self::DEFAULT_MODEL;
-        
-        // Determine feature based on caller or context
-        // Since this is the RAG service, it handles both 'compare_heroes' and 'marvel_agent'
-        // We can't easily distinguish here without passing context, so we'll default to 'rag_service'
-        // or try to guess based on prompt content if needed, but 'rag_service' is safer.
-        $feature = 'rag_service';
 
         $entry = [
             'ts' => date('c'),
-            'feature' => $feature,
+            'feature' => $this->feature,
             'model' => $model,
             'endpoint' => 'chat.completions',
             'prompt_tokens' => (int)($usage['prompt_tokens'] ?? 0),
@@ -197,16 +193,20 @@ final class OpenAiHttpClient implements LlmClientInterface
             'context_size' => 0,
         ];
 
-        $logFile = __DIR__ . '/../../../../storage/ai/tokens.log';
+        // Use rag-service's own storage directory
+        $logFile = __DIR__ . '/../../../storage/ai/tokens.log';
         $logDir = dirname($logFile);
         
         if (!is_dir($logDir)) {
-             @mkdir($logDir, 0755, true);
+            if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
+                // Silently fail if we can't create the directory
+                return;
+            }
         }
 
         $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($json !== false) {
-            @file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
     }
 
