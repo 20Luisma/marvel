@@ -175,8 +175,8 @@ class TokenMetricsService
 
         $result = [];
         foreach ($byModel as $data) {
-            $avgTokens = $data['calls'] > 0 ? round($data['total_tokens'] / $data['calls'], 2) : 0;
-            $avgLatency = $data['calls'] > 0 ? round($data['total_latency'] / $data['calls'], 2) : 0;
+            $avgTokens = round($data['total_tokens'] / $data['calls'], 2);
+            $avgLatency = round($data['total_latency'] / $data['calls'], 2);
 
             $result[] = [
                 'model' => $data['model'],
@@ -214,7 +214,7 @@ class TokenMetricsService
 
         $result = [];
         foreach ($byFeature as $data) {
-            $avgTokens = $data['calls'] > 0 ? round($data['total_tokens'] / $data['calls'], 2) : 0;
+            $avgTokens = round($data['total_tokens'] / $data['calls'], 2);
 
             $result[] = [
                 'feature' => $data['feature'],
