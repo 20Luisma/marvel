@@ -1229,32 +1229,28 @@ async function compareSelectedHeroesRag() {
     });
     // END ZONAR FIX DEFINITIVO
 
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = null;
+    }
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      console.error('[RAG] Error en /api/rag/heroes', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText
-      });
+      const backendMessage =
+        (data && (data.mensaje || data.error || data.message)) ||
+        'Error al comparar héroes con RAG';
 
-      let errorMessage = `Error ${response.status}: RAG request failed`;
-      try {
-        const errorJson = JSON.parse(errorText);
-        if (errorJson.message) errorMessage = errorJson.message;
-        else if (errorJson.error) errorMessage = errorJson.error;
-      } catch (_) {
-        // el cuerpo no era JSON, usamos mensaje genérico
-      }
-
-      throw new Error(errorMessage);
+      showRagStatus(backendMessage);
+      updateRagResult(backendMessage);
+      throw new Error(backendMessage);
     }
 
     if (runtimeWindow?.RAGMSC) {
       runtimeWindow.RAGMSC.setStep('relay');
     }
 
-    const responsePayload = await response.json().catch(() => null);
+    const responsePayload = data;
     console.log('[RAG] Respuesta /api/rag/heroes:', responsePayload);
 
     const rawAnswer =
@@ -1266,8 +1262,9 @@ async function compareSelectedHeroesRag() {
     const contexts = Array.isArray(responsePayload?.contexts) ? responsePayload.contexts : [];
 
     if (!answer) {
-      updateRagResult('Sin respuesta del modelo.');
-      showRagStatus('Sin respuesta del modelo.');
+      const fallback = 'No se recibió una respuesta válida de RAG.';
+      updateRagResult(fallback);
+      showRagStatus(fallback);
     } else {
       updateRagResult('');
       renderRagResult(answer, contexts, selectedIds);

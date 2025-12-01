@@ -15,9 +15,27 @@ class RequestBodyReader
     public static function getRawBody(): string
     {
         if (self::$cachedRaw === null) {
-            $input = file_get_contents('php://input');
-            self::$cachedRaw = $input !== false ? $input : '';
+            $raw = $_SERVER['MARVEL_RAW_BODY'] ?? null;
+
+            if (!is_string($raw)) {
+                $input = file_get_contents('php://input');
+                $raw = $input !== false ? $input : '';
+                $_SERVER['MARVEL_RAW_BODY'] = $raw;
+            }
+
+            self::$cachedRaw = $raw;
+
+            if ((int) ($_ENV['DEBUG_RAW_BODY'] ?? 0) === 1) {
+                $log = __DIR__ . '/../../storage/logs/raw_body_debug.log';
+                $prefix = substr($raw, 0, 200);
+                @file_put_contents(
+                    $log,
+                    sprintf("[%s] len=%d preview=%s\n", date('c'), strlen($raw), $prefix),
+                    FILE_APPEND
+                );
+            }
         }
+
         return self::$cachedRaw;
     }
 

@@ -32,7 +32,8 @@ final class RagProxyController
         
         try {
             // BEGIN ZONAR FIX DEFINITIVO - Leer JSON puro directamente
-            $rawBody = RequestBodyReader::getRawBody();
+            $rawBody = $_SERVER['MARVEL_RAW_BODY'] ?? RequestBodyReader::getRawBody();
+            $rawBody = is_string($rawBody) ? $rawBody : '';
             
             file_put_contents($logFile, date('c') . " [RAG] Raw body length: " . strlen($rawBody) . "\n", FILE_APPEND);
             
