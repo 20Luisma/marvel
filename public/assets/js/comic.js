@@ -932,6 +932,20 @@ activityClearButton.addEventListener('click', async () => {
   }
 });
 
+function mapSelectedEntriesToHeroes(entries) {
+  return entries.map(([heroIdFromMap, hero]) => {
+    const card = heroGrid.querySelector(`[data-hero-id="${escapeSelector(heroIdFromMap)}"]`);
+    const dataset = card?.dataset ?? {};
+    const resolvedHeroId = dataset.heroId || hero.heroId || hero.id || hero.uuid || heroIdFromMap;
+
+    return {
+      heroId: resolvedHeroId,
+      nombre: dataset.heroName || hero.nombre || '',
+      slug: dataset.heroSlug || hero.slug || ''
+    };
+  });
+}
+
 function updateSelectedHeroesUI() {
   const entries = Array.from(heroState.selected.entries());
   selectedHeroesList.innerHTML = '';
@@ -952,10 +966,11 @@ function updateSelectedHeroesUI() {
   }
 
   selectedHeroesCount.textContent = entries.length.toString();
-  const heroIds = entries.map(([heroId]) => heroId);
+  const selectedHeroes = mapSelectedEntriesToHeroes(entries);
+  const heroIds = selectedHeroes.map(hero => hero.heroId);
   selectedHeroesInput.value = JSON.stringify(heroIds);
   if (runtimeWindow) {
-    runtimeWindow.selectedHeroes = heroIds;
+    runtimeWindow.selectedHeroes = selectedHeroes;
   }
 }
 
@@ -999,6 +1014,8 @@ function buildHeroCard(hero) {
   const card = document.createElement('label');
   card.className = `hero-card cursor-pointer ${isSelected ? 'is-selected' : ''}`;
   card.dataset.heroId = heroId;
+  card.dataset.heroName = hero.nombre || '';
+  card.dataset.heroSlug = hero.slug || '';
   card.innerHTML = `
     <input type="checkbox" class="hero-card-checkbox" data-hero-id="${heroId}" ${isSelected ? 'checked' : ''} aria-label="Seleccionar ${hero.nombre}">
     <img src="${hero.imagen || ''}" alt="${hero.nombre || 'Héroe Marvel'}" class="hero-card-image">
@@ -1148,7 +1165,9 @@ comicForm.addEventListener('submit', async (event) => {
 async function compareSelectedHeroesRag() {
   if (isComparingRag) return;
 
-  const selectedIds = Array.from(heroState.selected.keys());
+  const selectedEntries = Array.from(heroState.selected.entries());
+  const selectedHeroes = mapSelectedEntriesToHeroes(selectedEntries);
+  const selectedIds = selectedHeroes.map(hero => hero.heroId);
   if (!ragResultBox) return;
 
   // 🔹 Validación: exactamente 2 héroes
