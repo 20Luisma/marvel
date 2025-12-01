@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+if (!array_key_exists('MARVEL_RAW_BODY', $_SERVER)) {
+    $raw = file_get_contents('php://input');
+    $_SERVER['MARVEL_RAW_BODY'] = $raw === false ? '' : $raw;
+}
+
 use App\Config\ServiceUrlProvider;
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Security\RateLimit\RateLimiter;

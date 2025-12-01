@@ -6,6 +6,11 @@ declare(strict_types=1);
 ini_set('opcache.enable', '0');
 ini_set('opcache.enable_cli', '0');
 
+if (!array_key_exists('MARVEL_RAW_BODY', $_SERVER)) {
+    $raw = file_get_contents('php://input');
+    $_SERVER['MARVEL_RAW_BODY'] = $raw === false ? '' : $raw;
+}
+
 use App\Security\Http\SecurityHeaders;
 use App\Security\Http\CsrfMiddleware;
 use Src\Shared\Http\Router;
