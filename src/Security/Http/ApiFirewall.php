@@ -36,8 +36,13 @@ final class ApiFirewall
         }
         // END ZONAR FIX 1.1
 
-        $rawInput = $this->readRawInput();
-        
+        return $this->isRequestAllowed($method, $path);
+    }
+
+    private function isRequestAllowed(string $method, string $path): bool
+    {
+        $rawInput = $this->readRawBody();
+
         // Log de depuración para rutas API
         if (str_starts_with($path, '/api/')) {
             $this->logDebugInfo($method, $path, $rawInput);
@@ -92,14 +97,22 @@ final class ApiFirewall
         return false;
     }
 
-    private function readRawInput(): ?string
+    private function readRawBody(): ?string
     {
-        $raw = \Src\Http\RequestBodyReader::getRawBody();
-        if ($raw === '') {
-            return null;
+        // Producción/local: el front controller deja el body en MARVEL_RAW_BODY
+        $rawFromServer = $_SERVER['MARVEL_RAW_BODY'] ?? null;
+        if (is_string($rawFromServer) && $rawFromServer !== '') {
+            return $rawFromServer;
         }
 
-        return $raw;
+        // Tests/PSR-7: usamos el body real del ServerRequest si está disponible
+        $rawFromGlobals = $GLOBALS['__raw_input__'] ?? null;
+        if (is_string($rawFromGlobals) && $rawFromGlobals !== '') {
+            return $rawFromGlobals;
+        }
+
+        $raw = \Src\Http\RequestBodyReader::getRawBody();
+        return $raw === '' ? null : $raw;
     }
 
     private function checkBodySize(?string $raw): bool
