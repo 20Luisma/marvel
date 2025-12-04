@@ -11,8 +11,7 @@ use RuntimeException;
 final class OpenAiHttpClient implements LlmClientInterface
 {
     private const DEFAULT_MODEL = 'gpt-4o-mini';
-    private const TOKENS_LOG_PATH = __DIR__ . '/../../../storage/ai/tokens.log';
-
+    private string $tokensLogPath;
     private readonly string $openAiEndpoint;
     private readonly ?string $internalApiKey;
     private readonly string $internalCaller;
@@ -20,6 +19,7 @@ final class OpenAiHttpClient implements LlmClientInterface
 
     public function __construct(?string $openAiEndpoint = null, string $feature = 'rag_service')
     {
+        $this->resolveLogPath();
         $endpoint = $openAiEndpoint ?? $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: 'http://localhost:8081/v1/chat';
         $this->openAiEndpoint = rtrim($endpoint, '/');
         $key = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
@@ -32,6 +32,27 @@ final class OpenAiHttpClient implements LlmClientInterface
         }
         $this->internalCaller = $callerCandidate !== '' ? $callerCandidate : 'localhost:8082';
         $this->feature = $feature;
+    }
+
+    private function resolveLogPath(): void
+    {
+        // 1. Prioridad: Variable de entorno
+        $envPath = getenv('TOKENS_LOG_PATH');
+        if (is_string($envPath) && $envPath !== '') {
+            $this->tokensLogPath = $envPath;
+            return;
+        }
+
+        // 2. Prioridad: Ruta absoluta de hosting detectada (subdominio rag-service)
+        $hostingPath = '/home/REDACTED_SSH_USER/domains/contenido.creawebes.com/public_html/rag-service/storage/ai/tokens.log';
+        // Verificar si la carpeta padre existe para confirmar que estamos en ese entorno
+        if (is_dir(dirname($hostingPath))) {
+            $this->tokensLogPath = $hostingPath;
+            return;
+        }
+
+        // 3. Fallback: Ruta relativa local
+        $this->tokensLogPath = __DIR__ . '/../../../storage/ai/tokens.log';
     }
 
     public function ask(string $prompt): string
@@ -158,10 +179,14 @@ final class OpenAiHttpClient implements LlmClientInterface
             throw new RuntimeException('Respuesta del microservicio no contenía datos de comparación.');
         }
 
+        // Formato directo de OpenAI (sin campo 'ok')
         $content = $decoded['choices'][0]['message']['content'] ?? null;
         if (!is_string($content) || trim($content) === '') {
             throw new RuntimeException('La respuesta del modelo no contenía comparación.');
         }
+
+        // Registrar uso también para formato directo
+        $this->logUsage($decoded);
 
         return trim($content);
     }
@@ -171,6 +196,13 @@ final class OpenAiHttpClient implements LlmClientInterface
      */
     private function logUsage(array $decoded): void
     {
+        // DEBUG DIRECTO: Escribir en archivo de depuración
+        $debugFile = '/home/REDACTED_SSH_USER/rag-debug.txt';
+        @file_put_contents($debugFile, date('c') . " - Entrando a logUsage() para feature: {$this->feature}\n", FILE_APPEND);
+
+        // DEBUG: Trazar inicio de logUsage
+        error_log("[RAG-DEBUG] Iniciando logUsage para feature: {$this->feature}");
+
         // BEGIN ZONAR FIX 1.3 + 1.4 - Logging mejorado con diagnóstico
         $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
         
@@ -198,10 +230,12 @@ final class OpenAiHttpClient implements LlmClientInterface
             'context_size' => 0,
         ];
 
-        // Use rag-service's own storage directory
-        $logFile = self::TOKENS_LOG_PATH;
+        // Use resolved path
+        $logFile = $this->tokensLogPath;
         $logDir = dirname($logFile);
         
+        error_log("[RAG-DEBUG] Intentando escribir en: {$logFile}");
+
         // Asegurar que el directorio existe
         if (!is_dir($logDir) && !@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
             error_log("[TOKENS] Failed to create directory: {$logDir}");
@@ -211,16 +245,21 @@ final class OpenAiHttpClient implements LlmClientInterface
         // Verificar permisos de escritura
         if (!is_writable($logDir)) {
             error_log("[TOKENS] Directory not writable: {$logDir}");
-            return;
+            // Intentar escribir de todos modos para ver si salta error
         }
 
         $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($json !== false) {
-            $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
-            if ($result === false) {
-                error_log("[TOKENS] Failed to write to log file: {$logFile}");
-            } else {
-                error_log("[TOKENS] Successfully logged {$entry['total_tokens']} tokens for feature={$this->feature}");
+            try {
+                $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+                if ($result === false) {
+                    $error = error_get_last();
+                    error_log("[TOKENS] Failed to write to log file: {$logFile}. Error: " . ($error['message'] ?? 'Unknown'));
+                } else {
+                    error_log("[TOKENS] Successfully logged {$entry['total_tokens']} tokens for feature={$this->feature}");
+                }
+            } catch (\Throwable $e) {
+                error_log("[TOKENS] Exception writing log: " . $e->getMessage());
             }
         }
         // END ZONAR FIX 1.3 + 1.4

@@ -138,6 +138,7 @@ Al hacer deploy:
 2. ✅ Los permisos de escritura deben estar correctos (755)
 3. ✅ Cada servicio escribirá en su propio log
 4. ✅ El dashboard agregará todos los logs correctamente
+5. ✅ En hosting, `rag-service/` en el proyecto principal es un symlink a `/home/REDACTED_SSH_USER/rag-service`, para que `TokenMetricsService` lea `rag-service/storage/ai/tokens.log` igual que en local.
 
 ## Resultado Esperado
 
