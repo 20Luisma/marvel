@@ -12,6 +12,7 @@ final class OpenAiHttpClient implements LlmClientInterface
 {
     private const DEFAULT_MODEL = 'gpt-4o-mini';
     private string $tokensLogPath;
+    private string $logFile;
     private readonly string $openAiEndpoint;
     private readonly ?string $internalApiKey;
     private readonly string $internalCaller;
@@ -20,6 +21,7 @@ final class OpenAiHttpClient implements LlmClientInterface
     public function __construct(?string $openAiEndpoint = null, string $feature = 'rag_service')
     {
         $this->resolveLogPath();
+        $this->resolveCentralLogPath();
         $endpoint = $openAiEndpoint ?? $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: 'http://localhost:8081/v1/chat';
         $this->openAiEndpoint = rtrim($endpoint, '/');
         $key = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
@@ -53,6 +55,18 @@ final class OpenAiHttpClient implements LlmClientInterface
 
         // 3. Fallback: Ruta relativa local
         $this->tokensLogPath = __DIR__ . '/../../../storage/ai/tokens.log';
+    }
+
+    private function resolveCentralLogPath(): void
+    {
+        $envPath = getenv('AI_TOKENS_LOG_PATH') ?: '';
+        if ($envPath !== '' && is_writable(dirname($envPath))) {
+            $this->logFile = $envPath;
+            return;
+        }
+
+        // Fallback: log central del proyecto principal (storage/ai/tokens.log)
+        $this->logFile = __DIR__ . '/../../../../storage/ai/tokens.log';
     }
 
     public function ask(string $prompt): string
@@ -231,7 +245,7 @@ final class OpenAiHttpClient implements LlmClientInterface
         ];
 
         // Use resolved path
-        $logFile = $this->tokensLogPath;
+        $logFile = $this->logFile;
         $logDir = dirname($logFile);
         
         error_log("[RAG-DEBUG] Intentando escribir en: {$logFile}");

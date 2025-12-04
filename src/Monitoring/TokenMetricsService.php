@@ -7,14 +7,8 @@ namespace App\Monitoring;
 /**
  * Agrega métricas de tokens para el panel /secret-ai-metrics.
  *
- * Lee dos archivos de log:
- * - storage/ai/tokens.log            → comic_generator (app principal)
- * - rag-service/storage/ai/tokens.log → compare_heroes y marvel_agent (RAG)
- *
- * El servicio detecta automáticamente la ruta correcta del log RAG:
- * - En LOCAL: usa la ruta relativa (rag-service/ es un directorio)
- * - En HOSTING: usa la ruta absoluta (rag-service/ es un symlink)
- * - También soporta configuración manual vía variable RAG_LOG_PATH
+ * Lee un único archivo de log central: storage/ai/tokens.log
+ * (RAG también escribe allí vía AI_TOKENS_LOG_PATH).
  *
  * Solo se contabilizan las features permitidas en ALLOWED_FEATURES y no se
  * toca el formato JSON esperado por el dashboard.
@@ -36,34 +30,7 @@ class TokenMetricsService
      */
     public function getMetrics(): array
     {
-        $entries = [];
-
-        // Read from main log file
-        if (file_exists(self::LOG_FILE)) {
-            $lines = file(self::LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            if ($lines !== false) {
-                foreach ($lines as $line) {
-                    $data = json_decode($line, true);
-                    if (is_array($data)) {
-                        $entries[] = $data;
-                    }
-                }
-            }
-        }
-
-        // Read from RAG service log file (with intelligent path resolution)
-        $ragLogFile = $this->resolveRagLogPath();
-        if ($ragLogFile !== null && file_exists($ragLogFile)) {
-            $lines = file($ragLogFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            if ($lines !== false) {
-                foreach ($lines as $line) {
-                    $data = json_decode($line, true);
-                    if (is_array($data)) {
-                        $entries[] = $data;
-                    }
-                }
-            }
-        }
+        $entries = $this->loadEventsFromFile(self::LOG_FILE);
 
         // Filtrar solo las features soportadas por el dashboard
         $entries = array_values(array_filter(
@@ -264,12 +231,39 @@ class TokenMetricsService
     }
 
     /**
+     * @param string $path
+     * @return array<int, array<string, mixed>>
+     */
+    private function loadEventsFromFile(string $path): array
+    {
+        $events = [];
+
+        if (!file_exists($path)) {
+            return $events;
+        }
+
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($lines === false) {
+            return $events;
+        }
+
+        foreach ($lines as $line) {
+            $data = json_decode($line, true);
+            if (is_array($data)) {
+                $events[] = $data;
+            }
+        }
+
+        return $events;
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $entries
      * @return array<int, array<string, mixed>>
      */
     private function getRecentCalls(array $entries, int $limit = 10): array
     {
-        // Ordenar por fecha descendente (más reciente primero)
+        // Mezclar app + RAG y ordenar por fecha descendente (más reciente primero)
         usort($entries, static fn (array $a, array $b) => strcmp($b['ts'] ?? '', $a['ts'] ?? ''));
 
         $recent = array_slice($entries, 0, $limit);
@@ -288,53 +282,6 @@ class TokenMetricsService
         }
 
         return $result;
-    }
-
-    /**
-     * Resuelve la ruta del archivo de log del RAG service de forma inteligente.
-     *
-     * Estrategia de resolución:
-     * 1. Variable de entorno RAG_LOG_PATH (configuración explícita)
-     * 2. Ruta relativa desde proyecto principal (funciona en local)
-     * 3. Ruta absoluta hardcoded (fallback para hosting conocido)
-     *
-     * @return string|null Ruta absoluta al archivo de log, o null si no se puede resolver
-     */
-    private function resolveRagLogPath(): ?string
-    {
-        // 1. Intentar variable de entorno (máxima prioridad)
-        $envPath = getenv('RAG_LOG_PATH');
-        if (is_string($envPath) && $envPath !== '' && file_exists($envPath)) {
-            return $envPath;
-        }
-
-        // 2. Ruta relativa (funciona en entorno local)
-        $relativePath = __DIR__ . '/../../rag-service/storage/ai/tokens.log';
-        if (file_exists($relativePath)) {
-            return $relativePath;
-        }
-
-        // 3. Ruta absoluta para hosting (Basada en hallazgos SSH)
-        // La estructura real es: .../public_html/rag-service/storage/ai/tokens.log (subdominio rag-service)
-        $hostingPath = '/home/REDACTED_SSH_USER/domains/contenido.creawebes.com/public_html/rag-service/storage/ai/tokens.log';
-        if (file_exists($hostingPath)) {
-            return $hostingPath;
-        }
-
-        // 4. Intentar buscar como hermano del directorio raíz del proyecto (Fallback genérico)
-        $siblingPath = dirname(__DIR__, 3) . '/rag-service/storage/ai/tokens.log';
-        if (file_exists($siblingPath)) {
-            return $siblingPath;
-        }
-
-        // 5. Intentar ruta relativa interna (si rag-service está DENTRO del proyecto)
-        $internalPath = __DIR__ . '/../../rag-service/storage/ai/tokens.log';
-        if (file_exists($internalPath)) {
-            return $internalPath;
-        }
-
-        // Si ninguna ruta funciona, devolver null (no hay log RAG disponible)
-        return null;
     }
 
     /**
@@ -372,15 +319,9 @@ class TokenMetricsService
     private function getDebugInfo(): array
     {
         return [
-            'rag_log_path_resolution' => [
-                'env_var' => getenv('RAG_LOG_PATH'),
-                'hosting_path' => '/home/REDACTED_SSH_USER/domains/contenido.creawebes.com/public_html/iamasterbigschool/rag-service/storage/ai/tokens.log',
-                'hosting_exists' => file_exists('/home/REDACTED_SSH_USER/domains/contenido.creawebes.com/public_html/iamasterbigschool/rag-service/storage/ai/tokens.log'),
-                'sibling_path' => dirname(__DIR__, 3) . '/rag-service/storage/ai/tokens.log',
-                'sibling_exists' => file_exists(dirname(__DIR__, 3) . '/rag-service/storage/ai/tokens.log'),
-                'internal_path' => __DIR__ . '/../../rag-service/storage/ai/tokens.log',
-                'internal_exists' => file_exists(__DIR__ . '/../../rag-service/storage/ai/tokens.log'),
-                'resolved_path' => $this->resolveRagLogPath(),
+            'log_path_resolution' => [
+                'central_path' => self::LOG_FILE,
+                'central_exists' => file_exists(self::LOG_FILE),
             ]
         ];
     }
