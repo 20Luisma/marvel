@@ -164,6 +164,6 @@ require_once __DIR__ . '/../layouts/header.php';
 
 
 <?php
-$scripts = ['/assets/js/ai-metrics.js'];
+$scripts = ['/assets/js/ai-metrics.js?v=' . time()];
 require_once __DIR__ . '/../layouts/footer.php';
 ?>

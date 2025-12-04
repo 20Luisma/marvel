@@ -196,15 +196,18 @@
   };
 
   const loadData = async () => {
+    console.log('[AI-Metrics] Reload metrics at', new Date().toISOString());
     showLoader();
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${endpoint}?t=${Date.now()}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          'Cache-Control': 'no-cache',
         },
         credentials: 'same-origin',
+        cache: 'no-store',
       });
 
       if (!response.ok) {
@@ -235,6 +238,7 @@
   // Event listeners
   if (refreshButton) {
     refreshButton.addEventListener('click', () => {
+      console.log('[AI-Metrics] Manual refresh click');
       loadData();
     });
   }
