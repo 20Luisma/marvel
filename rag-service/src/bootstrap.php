@@ -87,8 +87,14 @@ return (static function (): array {
             : 'http://localhost:8081/v1/chat';
     }
 
-    $llmClientForCompare = new OpenAiHttpClient($openAiEndpoint, 'compare_heroes');
-    $llmClientForAgent = new OpenAiHttpClient($openAiEndpoint, 'marvel_agent');
+    $llmClientForCompare = new OpenAiHttpClient(
+        openAiEndpoint: $openAiEndpoint,
+        feature: 'compare_heroes'
+    );
+    $llmClientForAgent = new OpenAiHttpClient(
+        openAiEndpoint: $openAiEndpoint,
+        feature: 'marvel_agent'
+    );
     
     $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClientForCompare);
     $agentKb = new MarvelAgentKnowledgeBase($rootPath . '/storage/marvel_agent_kb.json');

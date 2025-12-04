@@ -35,23 +35,67 @@
     }
   };
 
-  const updateGlobalMetrics = (global) => {
-    document.getElementById('metric-total-calls').textContent = global.total_calls || 0;
-    document.getElementById('metric-total-tokens').textContent = (global.total_tokens || 0).toLocaleString();
-    document.getElementById('metric-tokens-today').textContent = (global.tokens_today || 0).toLocaleString();
-    document.getElementById('metric-tokens-7days').textContent = (global.tokens_last_7_days || 0).toLocaleString();
-    document.getElementById('metric-avg-tokens').textContent = global.avg_tokens_per_call || 0;
-    document.getElementById('metric-avg-latency').textContent = (global.avg_latency_ms || 0) + ' ms';
-    document.getElementById('metric-failed-calls').textContent = global.failed_calls || 0;
+  const updateGlobalMetrics = (global, byFeature) => {
+    const totalCallsFromFeatures = (byFeature || []).reduce(
+      (acc, feature) => acc + (feature.calls || 0),
+      0
+    );
+
+    const totalCalls = global.total_calls || totalCallsFromFeatures || 0;
+
+    console.debug('[AI-Metrics] totalCalls', {
+      fromGlobal: global.total_calls,
+      fromFeatures: totalCallsFromFeatures,
+      final: totalCalls,
+    });
+
+    const elTotalCalls = document.getElementById('metric-total-calls');
+    if (elTotalCalls) {
+      elTotalCalls.textContent = totalCalls;
+    }
+
+    const elTotalTokens = document.getElementById('metric-total-tokens');
+    if (elTotalTokens) {
+      elTotalTokens.textContent = (global.total_tokens || 0).toLocaleString();
+    }
+
+    const elTokensToday = document.getElementById('metric-tokens-today');
+    if (elTokensToday) {
+      elTokensToday.textContent = (global.tokens_today || 0).toLocaleString();
+    }
+
+    const elTokens7Days = document.getElementById('metric-tokens-7days');
+    if (elTokens7Days) {
+      elTokens7Days.textContent = (global.tokens_last_7_days || 0).toLocaleString();
+    }
+
+    const elAvgTokens = document.getElementById('metric-avg-tokens');
+    if (elAvgTokens) {
+      elAvgTokens.textContent = global.avg_tokens_per_call || 0;
+    }
+
+    const elAvgLatency = document.getElementById('metric-avg-latency');
+    if (elAvgLatency) {
+      elAvgLatency.textContent = (global.avg_latency_ms || 0) + ' ms';
+    }
+
+    const elFailedCalls = document.getElementById('metric-failed-calls');
+    if (elFailedCalls) {
+      elFailedCalls.textContent = global.failed_calls || 0;
+    }
 
     // Show cost cards if available
     if (global.estimated_cost_total !== undefined) {
-      document.getElementById('cost-card').style.display = 'block';
-      document.getElementById('metric-cost-total').textContent = `$${global.estimated_cost_total}`;
+      const costCard = document.getElementById('cost-card');
+      const elCostTotal = document.getElementById('metric-cost-total');
+      if (costCard) costCard.style.display = 'block';
+      if (elCostTotal) elCostTotal.textContent = `$${global.estimated_cost_total}`;
     }
     if (global.estimated_cost_total_eur !== undefined) {
-      document.getElementById('cost-eur-card').style.display = 'block';
-      document.getElementById('metric-cost-total-eur').textContent = `€${global.estimated_cost_total_eur}`;
+      const costEurCard = document.getElementById('cost-eur-card');
+      const elCostTotalEur = document.getElementById('metric-cost-total-eur');
+      if (costEurCard) costEurCard.style.display = 'block';
+      if (elCostTotalEur) elCostTotalEur.textContent = `€${global.estimated_cost_total_eur}`;
     }
   };
 
@@ -173,7 +217,7 @@
         throw new Error(data.error || 'Error desconocido al cargar métricas');
       }
 
-      updateGlobalMetrics(data.global || {});
+      updateGlobalMetrics(data.global || {}, data.by_feature || []);
       updateByModel(data.by_model || []);
       updateByFeature(data.by_feature || []);
       updateRecentCalls(data.recent_calls || []);
