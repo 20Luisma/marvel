@@ -236,12 +236,25 @@ return (static function (): array {
     $heatmapApiToken = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
 
     // --- JSON vs DB ----------------------------------------------------------
-    // Persistencia adaptativa:
-    // - En local (APP_ENV=local) siempre usamos los repositorios JSON en storage/.
-    // - En hosting intentamos abrir PDO (MySQL) y usar Db*Repository.
-    // - Si PDO falla (credenciales/servicio caído), registramos el error y
-    //   volvemos a JSON para no romper el arranque.
-    $useDatabase = ($appEnvironment === 'hosting');
+    // Persistencia adaptativa configurable por driver:
+    // - Por defecto usamos DB para álbumes/héroes/actividad.
+    // - En test o si el driver es "file", usamos JSON.
+    // - Si falla la conexión PDO, caemos a JSON sin romper el arranque.
+    $resolveDriver = static function (string $key, string $appEnv, string $default = 'db'): string {
+        $raw = $_ENV[$key] ?? getenv($key);
+        if (is_string($raw) && trim($raw) !== '') {
+            $normalized = strtolower(trim($raw));
+            return in_array($normalized, ['db', 'file'], true) ? $normalized : $default;
+        }
+
+        return $appEnv === 'test' ? 'file' : $default;
+    };
+
+    $albumDriver = $resolveDriver('ALBUMS_DRIVER', $appEnvironment);
+    $heroDriver = $resolveDriver('HEROES_DRIVER', $appEnvironment);
+    $activityDriver = $resolveDriver('ACTIVITY_DRIVER', $appEnvironment);
+
+    $useDatabase = in_array('db', [$albumDriver, $heroDriver, $activityDriver], true);
 
     $pdo = null;
 
@@ -250,19 +263,32 @@ return (static function (): array {
             $pdo = PdoConnectionFactory::fromEnvironment();
         } catch (Throwable $e) {
             error_log('Fallo al abrir conexión PDO, se usará JSON: ' . $e->getMessage());
-            $useDatabase = false;
+            $pdo = null;
+            if ($albumDriver === 'db') {
+                $albumDriver = 'file';
+            }
+            if ($heroDriver === 'db') {
+                $heroDriver = 'file';
+            }
+            if ($activityDriver === 'db') {
+                $activityDriver = 'file';
+            }
         }
     }
 
-    if ($useDatabase && $pdo !== null) {
-        $albumRepository    = new DbAlbumRepository($pdo);
-        $heroRepository     = new DbHeroRepository($pdo);
-        $activityRepository = new DbActivityLogRepository($pdo);
-    } else {
-        $albumRepository    = new FileAlbumRepository($rootPath . '/storage/albums.json');
-        $heroRepository     = new FileHeroRepository($rootPath . '/storage/heroes.json');
-        $activityRepository = new FileActivityLogRepository($rootPath . '/storage/actividad');
-    }
+    $storagePath = $rootPath . '/storage';
+
+    $albumRepository = ($albumDriver === 'db' && $pdo !== null)
+        ? new DbAlbumRepository($pdo)
+        : new FileAlbumRepository($storagePath . '/albums.json');
+
+    $heroRepository = ($heroDriver === 'db' && $pdo !== null)
+        ? new DbHeroRepository($pdo)
+        : new FileHeroRepository($storagePath . '/heroes.json');
+
+    $activityRepository = ($activityDriver === 'db' && $pdo !== null)
+        ? new DbActivityLogRepository($pdo)
+        : new FileActivityLogRepository($storagePath . '/actividad');
     // -------------------------------------------------------------------------
 
     $eventBus = new InMemoryEventBus();
