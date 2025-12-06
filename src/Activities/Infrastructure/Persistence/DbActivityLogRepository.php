@@ -12,10 +12,16 @@ use PDO;
 
 final class DbActivityLogRepository implements ActivityLogRepository
 {
+    private string $tablePrefix;
+    private string $tableActivity;
+
     public function __construct(
         private readonly PDO $pdo,
-        private readonly int $maxEntries = 100
+        private readonly int $maxEntries = 100,
+        ?string $tablePrefix = null
     ) {
+        $this->tablePrefix = $this->sanitizePrefix($tablePrefix);
+        $this->tableActivity = sprintf('`%sactivity_logs`', $this->tablePrefix);
     }
 
     /**
@@ -23,7 +29,7 @@ final class DbActivityLogRepository implements ActivityLogRepository
      */
     public function all(string $scope, ?string $contextId = null): array
     {
-        $sql = 'SELECT scope, context_id, action, title, occurred_at FROM activity_logs WHERE scope = :scope';
+        $sql = "SELECT scope, context_id, action, title, occurred_at FROM {$this->tableActivity} WHERE scope = :scope";
         $params = ['scope' => $scope];
 
         if ($contextId !== null) {
@@ -59,7 +65,7 @@ final class DbActivityLogRepository implements ActivityLogRepository
     public function append(ActivityEntry $entry): void
     {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO activity_logs (scope, context_id, action, title, occurred_at, created_at) VALUES (:scope, :context_id, :action, :title, :occurred_at, :created_at)'
+            "INSERT INTO {$this->tableActivity} (scope, context_id, action, title, occurred_at, created_at) VALUES (:scope, :context_id, :action, :title, :occurred_at, :created_at)"
         );
 
         $stmt->execute([
@@ -74,7 +80,7 @@ final class DbActivityLogRepository implements ActivityLogRepository
 
     public function clear(string $scope, ?string $contextId = null): void
     {
-        $sql = 'DELETE FROM activity_logs WHERE scope = :scope';
+        $sql = "DELETE FROM {$this->tableActivity} WHERE scope = :scope";
         $params = ['scope' => $scope];
 
         if ($contextId !== null) {
@@ -91,5 +97,19 @@ final class DbActivityLogRepository implements ActivityLogRepository
     private function formatDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s.u');
+    }
+
+    private function sanitizePrefix(?string $prefix): string
+    {
+        $source = $prefix;
+
+        if ($source === null) {
+            $envPrefix = $_ENV['DB_TABLE_PREFIX'] ?? getenv('DB_TABLE_PREFIX');
+            $source = is_string($envPrefix) ? $envPrefix : '';
+        }
+
+        $clean = preg_replace('/[^A-Za-z0-9_]/', '', (string) $source) ?? '';
+
+        return $clean;
     }
 }
