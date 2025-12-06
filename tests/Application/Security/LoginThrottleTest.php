@@ -16,8 +16,9 @@ final class LoginThrottleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->attemptsFile = dirname(__DIR__, 2) . '/storage/security/login_attempts.json';
-        $this->logFile = dirname(__DIR__, 2) . '/storage/logs/security_throttle_test.log';
+        $root = dirname(__DIR__, 3);
+        $this->attemptsFile = $root . '/storage/security/login_attempts.json';
+        $this->logFile = $root . '/storage/logs/security_throttle_test.log';
 
         if (is_file($this->attemptsFile)) {
             @unlink($this->attemptsFile);
