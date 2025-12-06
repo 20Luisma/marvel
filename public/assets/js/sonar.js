@@ -288,11 +288,30 @@
     bundleError.classList.add('hidden');
     bundleError.textContent = '';
     try {
-      const res = await fetch('assets/bundle-size.json', { cache: 'no-store' });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+      const basePath = typeof window !== 'undefined' && window.BUNDLE_BASE_PATH
+        ? String(window.BUNDLE_BASE_PATH).replace(/\/$/, '')
+        : '';
+      const candidates = [
+        `${basePath}/assets/bundle-size.json`,
+        '/assets/bundle-size.json',
+        'assets/bundle-size.json',
+      ];
+      let payload = null;
+      let lastStatus = '';
+
+      for (const url of candidates) {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (res.ok) {
+          payload = await res.json();
+          break;
+        }
+        lastStatus = `HTTP ${res.status}`;
       }
-      const payload = await res.json();
+
+      if (!payload) {
+        throw new Error(lastStatus || 'No encontrado');
+      }
+
       renderBundleSize(payload);
     } catch (err) {
       bundleError.textContent = `Bundle size no disponible: ${err instanceof Error ? err.message : 'error desconocido'}`;

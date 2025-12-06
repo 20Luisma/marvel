@@ -6,6 +6,7 @@ AuthGuards::requireAuth();
 AuthGuards::requireAdmin();
 
 $activeTopAction = 'sonar';
+$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -171,6 +172,9 @@ $activeTopAction = 'sonar';
     <small>© creawebes 2025 · Clean Marvel Album</small>
   </footer>
 
+  <script>
+    window.BUNDLE_BASE_PATH = "<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>";
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="/assets/js/sonar.js" defer></script>
 </body>
