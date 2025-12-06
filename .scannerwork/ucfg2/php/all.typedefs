@@ -90,7 +90,11 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 store)src\controllers\activitycontroller::store"clearActivity"listActivity"recordActivity*K
 clearActivity:app\activities\application\usecase\clearactivitylogusecase*I
 listActivity9app\activities\application\usecase\listactivitylogusecase*J
-recordActivity8app\activities\application\usecase\recordactivityusecase∏
+recordActivity8app\activities\application\usecase\recordactivityusecaseå
+src\http\requestbodyreader8
+getjsonarray(src\http\requestbodyreader::getjsonarray4
+
+getrawbody&src\http\requestbodyreader::getrawbody∏
 &app\security\validation\inputsanitizerD
 issuspicious4app\security\validation\inputsanitizer::issuspiciousH
 sanitizestring6app\security\validation\inputsanitizer::sanitizestringˆ
@@ -128,7 +132,7 @@ logfailure,app\security\http\csrfmiddleware::logfailure"logger"protectedPostR
 protectedPostRoutesarrayù
 app\security\csrf\csrfservice=
 generatetoken,app\security\csrf\csrfservice::generatetoken=
-validatetoken,app\security\csrf\csrfservice::validatetokenÈ
+validatetoken,app\security\csrf\csrfservice::validatetokenª
 src\shared\http\router2
 __construct#src\shared\http\router::__construct@
 activitycontroller*src\shared\http\router::activitycontroller:
@@ -150,10 +154,12 @@ handlepost"src\shared\http\router::handlepost.
 herocontroller&src\shared\http\router::herocontroller<
 methodnotallowed(src\shared\http\router::methodnotallowedH
 notificationcontroller.src\shared\http\router::notificationcontroller8
-pagecontroller&src\shared\http\router::pagecontrollerB
+pagecontroller&src\shared\http\router::pagecontroller@
+ragproxycontroller*src\shared\http\router::ragproxycontrollerB
 ratelimitmiddleware+src\shared\http\router::ratelimitmiddleware<
-readmecontroller(src\shared\http\router::readmecontroller,
-usecases src\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"devController"heroController"notificationController"pageController"rateLimitMiddleware"readmeController*8
+readmecontroller(src\shared\http\router::readmecontroller@
+serviceurlprovider*src\shared\http\router::serviceurlprovider,
+usecases src\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"devController"heroController"notificationController"pageController"ragProxyController"rateLimitMiddleware"readmeController*8
 activityController"src\controllers\activitycontroller*2
 adminControllersrc\controllers\admincontroller*"
 adminControllerInitializedbool*2
@@ -167,14 +173,18 @@ handlepost"src\shared\http\router::handlepost.
 devControllersrc\controllers\devcontroller*0
 heroControllersrc\controllers\herocontroller*@
 notificationController&src\controllers\notificationcontroller*0
-pageControllersrc\controllers\pagecontroller*<
+pageControllersrc\controllers\pagecontroller*8
+ragProxyController"src\controllers\ragproxycontroller*<
 rateLimitMiddleware%app\security\http\ratelimitmiddleware*4
-readmeController src\shared\http\readmecontroller˝
+readmeController src\shared\http\readmecontrollerº
 app\ai\openaicomicgenerator7
-__construct(app\ai\openaicomicgenerator::__construct;
+__construct(app\ai\openaicomicgenerator::__construct9
+extractmodel)app\ai\openaicomicgenerator::extractmodel9
+extractusage)app\ai\openaicomicgenerator::extractusage;
 generatecomic*app\ai\openaicomicgenerator::generatecomic;
 generatestory*app\ai\openaicomicgenerator::generatestory9
-isconfigured)app\ai\openaicomicgenerator::isconfigured7
+isconfigured)app\ai\openaicomicgenerator::isconfiguredG
+logusageifavailable0app\ai\openaicomicgenerator::logusageifavailable7
 requestchat(app\ai\openaicomicgenerator::requestchatA
 signatureheaders-app\ai\openaicomicgenerator::signatureheaders"internalApiKey"internalCaller"
 serviceUrl*
@@ -189,11 +199,24 @@ serviceUrlstringx
 clear>app\notifications\infrastructure\notificationrepository::clearW
 ensurestorageFapp\notifications\infrastructure\notificationrepository::ensurestorage_
 lastnotificationsJapp\notifications\infrastructure\notificationrepository::lastnotifications"filePath*
-filePathstring 
+filePathstringé
+"app\monitoring\tokenmetricsserviceB
+calculatecost1app\monitoring\tokenmetricsservice::calculatecostF
+calculateglobal3app\monitoring\tokenmetricsservice::calculateglobal@
+emptymetrics0app\monitoring\tokenmetricsservice::emptymetrics@
+getdebuginfo0app\monitoring\tokenmetricsservice::getdebuginfo<
+
+getmetrics.app\monitoring\tokenmetricsservice::getmetricsD
+getrecentcalls2app\monitoring\tokenmetricsservice::getrecentcallsD
+groupbyfeature2app\monitoring\tokenmetricsservice::groupbyfeature@
+groupbymodel0app\monitoring\tokenmetricsservice::groupbymodelL
+loadeventsfromfile6app\monitoring\tokenmetricsservice::loadeventsfromfile 
 app\security\logsanitizer;
 issensitivekey)app\security\logsanitizer::issensitivekey1
 	maskvalue$app\security\logsanitizer::maskvalue=
-sanitizecontext*app\security\logsanitizer::sanitizecontext 
+sanitizecontext*app\security\logsanitizer::sanitizecontextD
+app\monitoring\tokenlogger&
+logapp\monitoring\tokenlogger::log 
 8app\shared\infrastructure\security\internalrequestsignerT
 __constructEapp\shared\infrastructure\security\internalrequestsigner::__construct^
 computesignatureJapp\shared\infrastructure\security\internalrequestsigner::computesignatureL
@@ -368,12 +391,10 @@ coverImagestring*
 generateuuidCapp\heroes\application\usecase\seedalbumheroesusecase::generateuuid"albumRepository"eventBus"heroRepository*?
 albumRepository,app\albums\domain\repository\albumrepository**
 eventBusapp\shared\domain\bus\eventbus*=
-heroRepository+app\heroes\domain\repository\herorepository˙
+heroRepository+app\heroes\domain\repository\herorepository˛
 "src\controllers\ragproxycontroller>
 __construct/src\controllers\ragproxycontroller::__constructV
-forwardheroescomparison;src\controllers\ragproxycontroller::forwardheroescomparison6
-logcall+src\controllers\ragproxycontroller::logcallB
-logsuspicious1src\controllers\ragproxycontroller::logsuspicious"
+forwardheroescomparison;src\controllers\ragproxycontroller::forwardheroescomparison"
 httpClient"ragServiceUrl"signer*@
 
 httpClient2app\shared\infrastructure\http\httpclientinterface*
@@ -553,16 +574,18 @@ assertname)app\heroes\domain\entity\hero::assertname9
  src\controllers\configcontroller<
 __construct-src\controllers\configcontroller::__construct6
 services*src\controllers\configcontroller::services"serviceUrlProvider*3
-serviceUrlProviderapp\config\serviceurlproviderŸ
+serviceUrlProviderapp\config\serviceurlproviderŸ
 app\security\http\apifirewall9
 __construct*app\security\http\apifirewall::__construct=
 checkbodysize,app\security\http\apifirewall::checkbodysize+
 deny#app\security\http\apifirewall::denyI
 detectattackpattern2app\security\http\apifirewall::detectattackpattern/
 handle%app\security\http\apifirewall::handleC
-hasduplicatekeys/app\security\http\apifirewall::hasduplicatekeys3
-logevent'app\security\http\apifirewall::logevent;
-readrawinput+app\security\http\apifirewall::readrawinput7
+hasduplicatekeys/app\security\http\apifirewall::hasduplicatekeysC
+isrequestallowed/app\security\http\apifirewall::isrequestallowed;
+logdebuginfo+app\security\http\apifirewall::logdebuginfo3
+logevent'app\security\http\apifirewall::logevent9
+readrawbody*app\security\http\apifirewall::readrawbody7
 
 shouldskip)app\security\http\apifirewall::shouldskipC
 validateformdata/app\security\http\apifirewall::validateformdataI
