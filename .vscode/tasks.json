@@ -396,6 +396,26 @@
       "command": "gcloud compute ssh headmap --zone=us-east1-b",
       "problemMatcher": []
     },
+     /* =========================================================
+       📦 BUNDLE SIZE
+       ========================================================= */
+    {
+      "label": "📦 Medir tamaño de JS/CSS (Bundle Size)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo \"📦 Calculando tamaño de bundles JS/CSS...\"; all_files=$(find public -type f \\( -name \"*.js\" -o -name \"*.css\" \\)); if [ -z \"$all_files\" ]; then echo \"--------------------------------------\"; echo \"No se encontraron archivos JS/CSS en public/\"; exit 0; fi; js_files=$(find public -type f -name \"*.js\"); css_files=$(find public -type f -name \"*.css\"); js_size=$( [ -n \"$js_files\" ] && du -ch $js_files 2>/dev/null | tail -n 1 | awk \"{print \\$1}\" || echo \"0\" ); css_size=$( [ -n \"$css_files\" ] && du -ch $css_files 2>/dev/null | tail -n 1 | awk \"{print \\$1}\" || echo \"0\" ); echo \"--------------------------------------\"; echo \"JS total: $js_size\"; echo \"CSS total: $css_size\"; echo \"--------------------------------------\"; echo \"📌 Archivos más pesados:\"; find public -type f \\( -name \"*.js\" -o -name \"*.css\" \\) -print0 | xargs -0 du -h 2>/dev/null | sort -hr | head -n 5; echo \"--------------------------------------\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
 
     /* =========================================================
        🤖 CLI CODEX

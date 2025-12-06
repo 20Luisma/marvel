@@ -1,0 +1,47 @@
+{
+    "generatedAt": "2025-12-06T21:24:31+00:00",
+    "totals": {
+        "js": {
+            "bytes": 212173,
+            "human": "207.2 KB",
+            "count": 21
+        },
+        "css": {
+            "bytes": 65245,
+            "human": "63.7 KB",
+            "count": 20
+        }
+    },
+    "top": [
+        {
+            "path": "public/assets/js/comic.js",
+            "bytes": 46881,
+            "human": "45.8 KB",
+            "type": "js"
+        },
+        {
+            "path": "public/assets/js/albums.js",
+            "bytes": 32629,
+            "human": "31.9 KB",
+            "type": "js"
+        },
+        {
+            "path": "public/assets/js/heroes.js",
+            "bytes": 23918,
+            "human": "23.4 KB",
+            "type": "js"
+        },
+        {
+            "path": "public/assets/js/heatmap-viewer.js",
+            "bytes": 13405,
+            "human": "13.1 KB",
+            "type": "js"
+        },
+        {
+            "path": "public/assets/js/sonar.js",
+            "bytes": 10808,
+            "human": "10.6 KB",
+            "type": "js"
+        }
+    ]
+}

@@ -221,6 +221,19 @@ require_once __DIR__ . '/../layouts/header.php';
           </p>
         </section>
 
+        <!-- BUNDLE SIZE -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">📦 Bundle Size (JS/CSS)</h3>
+          <p>
+            El pipeline de CI (job <code>sonarcloud</code>) ejecuta <code>php bin/generate-bundle-size.php</code> y publica
+            <code>public/assets/bundle-size.json</code>. La vista <code>/sonar</code> consume ese JSON para mostrar totales y el top 5 de archivos más pesados sin ejecutar comandos en hosting.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-200">
+            <li>Regenera el JSON en local con <code>php bin/generate-bundle-size.php</code> antes de subir cambios si no usas CI.</li>
+            <li>El bloque de métricas de bundle en <code>/sonar</code> se actualiza con cada deploy que incluya el JSON.</li>
+          </ul>
+        </section>
+
         <!-- COMANDOS ÚTILES -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">⚙️ Comandos útiles</h3>

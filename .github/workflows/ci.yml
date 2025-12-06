@@ -86,6 +86,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Generar bundle size (JS/CSS)
+        run: php bin/generate-bundle-size.php
+
       - name: Run PHPUnit with coverage
         run: |
           vendor/bin/phpunit \
