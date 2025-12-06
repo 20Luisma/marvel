@@ -161,7 +161,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
             <span class="text-cyan-400 font-bold text-base">*</span> <span class="text-white font-semibold">Cobertura de backend PHP</span> (directorio <code class="text-cyan-400 bg-slate-900 px-2 py-0.5 rounded">src/</code>).
             Frontend (<code class="text-slate-500 bg-slate-900 px-2 py-0.5 rounded">public/</code>, <code class="text-slate-500 bg-slate-900 px-2 py-0.5 rounded">views/</code>) se testea con herramientas especializadas (Jest, Cypress).
             <br>
-            <span class="text-slate-400 text-xs mt-1 inline-block">Siguiendo estándares de Laravel/Symfony. Ver <a href="/readme" class="text-cyan-400 hover:underline font-medium">COVERAGE.md</a> para detalles completos.</span>
+            <span class="text-slate-400 text-xs mt-1 inline-block">SSiguiendo estándares de Laravel/Symfony. Ver <a href="/readme" class="text-cyan-400 hover:underline font-medium">COVERAGE.md</a> para detalles completos.</span>
           </p>
         </div>
       </section>
