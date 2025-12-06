@@ -1,12 +1,5 @@
 <main id="main-content" tabindex="-1" role="main" class="site-main">
   <div class="max-w-7xl mx-auto py-8 px-4 space-y-8">
-    <?php if (!empty($_SESSION['flash_message'])): ?>
-      <div class="alert alert-success">
-        <?= htmlspecialchars($_SESSION['flash_message'], ENT_QUOTES, 'UTF-8') ?>
-      </div>
-      <?php unset($_SESSION['flash_message']); ?>
-    <?php endif; ?>
-
     <div id="focus-edit-backdrop" class="focus-edit-backdrop hidden"></div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <aside class="lg:col-span-1 self-start space-y-6">
@@ -40,13 +33,6 @@
               </div>
               <button id="refresh-albums" class="hidden">Refrescar</button>
             </div>
-            <?php if (getenv('DEMO_MODE')): ?>
-              <form method="post" action="/admin/reset_demo.php"
-                onsubmit="return confirm('¿Restaurar toda la demo? Esta acción borrará álbumes, héroes y actividad.');"
-                class="mt-3 sm:mt-0 sm:ml-auto">
-                <button class="btn btn-danger">🔁 Restaurar demo completa</button>
-              </form>
-            <?php endif; ?>
           </div>
 
           <div id="albums-grid" class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"></div>

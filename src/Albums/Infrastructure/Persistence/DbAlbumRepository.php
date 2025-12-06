@@ -11,19 +11,14 @@ use PDO;
 
 final class DbAlbumRepository implements AlbumRepository
 {
-    private string $tablePrefix;
-    private string $tableAlbums;
-
-    public function __construct(private readonly PDO $pdo, ?string $tablePrefix = null)
+    public function __construct(private readonly PDO $pdo)
     {
-        $this->tablePrefix = $this->sanitizePrefix($tablePrefix);
-        $this->tableAlbums = sprintf('`%salbums`', $this->tablePrefix);
     }
 
     public function save(Album $album): void
     {
         $sql = <<<SQL
-            INSERT INTO {$this->tableAlbums} (album_id, nombre, cover_image, created_at, updated_at)
+            INSERT INTO albums (album_id, nombre, cover_image, created_at, updated_at)
             VALUES (:album_id, :nombre, :cover_image, :created_at, :updated_at)
             ON DUPLICATE KEY UPDATE
                 nombre = VALUES(nombre),
@@ -46,7 +41,7 @@ final class DbAlbumRepository implements AlbumRepository
      */
     public function all(): array
     {
-        $stmt = $this->pdo->query("SELECT album_id, nombre, cover_image, created_at, updated_at FROM {$this->tableAlbums} ORDER BY created_at ASC");
+        $stmt = $this->pdo->query('SELECT album_id, nombre, cover_image, created_at, updated_at FROM albums ORDER BY created_at ASC');
 
         $rows = $stmt->fetchAll();
 
@@ -55,7 +50,7 @@ final class DbAlbumRepository implements AlbumRepository
 
     public function find(string $albumId): ?Album
     {
-        $stmt = $this->pdo->prepare("SELECT album_id, nombre, cover_image, created_at, updated_at FROM {$this->tableAlbums} WHERE album_id = :album_id LIMIT 1");
+        $stmt = $this->pdo->prepare('SELECT album_id, nombre, cover_image, created_at, updated_at FROM albums WHERE album_id = :album_id LIMIT 1');
         $stmt->execute(['album_id' => $albumId]);
 
         $row = $stmt->fetch();
@@ -65,7 +60,7 @@ final class DbAlbumRepository implements AlbumRepository
 
     public function delete(string $albumId): void
     {
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->tableAlbums} WHERE album_id = :album_id");
+        $stmt = $this->pdo->prepare('DELETE FROM albums WHERE album_id = :album_id');
         $stmt->execute(['album_id' => $albumId]);
     }
 
@@ -86,19 +81,5 @@ final class DbAlbumRepository implements AlbumRepository
     private function formatDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s.u');
-    }
-
-    private function sanitizePrefix(?string $prefix): string
-    {
-        $source = $prefix;
-
-        if ($source === null) {
-            $envPrefix = $_ENV['DB_TABLE_PREFIX'] ?? getenv('DB_TABLE_PREFIX');
-            $source = is_string($envPrefix) ? $envPrefix : '';
-        }
-
-        $clean = preg_replace('/[^A-Za-z0-9_]/', '', (string) $source) ?? '';
-
-        return $clean;
     }
 }
