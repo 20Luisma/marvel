@@ -288,14 +288,28 @@
     bundleError.classList.add('hidden');
     bundleError.textContent = '';
     try {
-      const basePath = typeof window !== 'undefined' && window.BUNDLE_BASE_PATH
+      const pageUrl = typeof window !== 'undefined' ? new URL(window.location.href) : null;
+      const basePath = (typeof window !== 'undefined' && window.BUNDLE_BASE_PATH)
         ? String(window.BUNDLE_BASE_PATH).replace(/\/$/, '')
         : '';
-      const candidates = [
-        `${basePath}/assets/bundle-size.json`,
-        '/assets/bundle-size.json',
-        'assets/bundle-size.json',
-      ];
+
+      const pathSegments = (typeof window !== 'undefined' ? window.location.pathname.split('/') : []).filter(Boolean);
+      const prefix = pathSegments.length > 0 ? `/${pathSegments[0]}` : '';
+
+      const candidates = new Set();
+      if (pageUrl) {
+        candidates.add(new URL('assets/bundle-size.json', pageUrl).toString());
+        candidates.add(new URL('/assets/bundle-size.json', pageUrl.origin).toString());
+      }
+      if (prefix) {
+        candidates.add(`${prefix}/assets/bundle-size.json`);
+        candidates.add(`${prefix}/public/assets/bundle-size.json`);
+      }
+      candidates.add(`${basePath}/assets/bundle-size.json`);
+      candidates.add('/public/assets/bundle-size.json');
+      candidates.add('/assets/bundle-size.json');
+      candidates.add('assets/bundle-size.json');
+
       let payload = null;
       let lastStatus = '';
 
