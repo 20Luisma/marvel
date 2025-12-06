@@ -3,7 +3,7 @@
 ## Test Coverage Metrics
 
 ### Backend Coverage (Business Logic)
-**71.51%** - PHP backend code in `src/` directory
+**71.51%**- PHP backend code in `src/` directory
 - ✅ 191 tests passing
 - ✅ 593 assertions
 - ✅ Covers: Domain logic, services, controllers, security
@@ -18,7 +18,7 @@ Following industry standards (Laravel, Symfony, WordPress), we analyze **only ba
 ❌ Excluded:  views/         (Templates - tested with E2E tools)
 ```
 
-### Full Project Breakdown
+### Full Project Breakdown.
 
 | Directory | Lines | Coverage | Tool |
 |-----------|-------|----------|------|
