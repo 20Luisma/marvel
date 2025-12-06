@@ -288,7 +288,6 @@
     bundleError.classList.add('hidden');
     bundleError.textContent = '';
     try {
-<<<<<<< ours
       const pageUrl = typeof window !== 'undefined' ? new URL(window.location.href) : null;
       const basePath = (typeof window !== 'undefined' && window.BUNDLE_BASE_PATH)
         ? String(window.BUNDLE_BASE_PATH).replace(/\/$/, '')
@@ -321,11 +320,6 @@
           break;
         }
         lastStatus = `HTTP ${res.status}`;
-=======
-      const res = await fetch('/assets/bundle-size.json', { cache: 'no-store' });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
->>>>>>> theirs
       }
 
       if (!payload) {
