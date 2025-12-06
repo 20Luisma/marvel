@@ -35,6 +35,12 @@
   let isSyncing = false;
   let isSynced = false;
 
+  const ensureChartAvailable = () => {
+    if (typeof Chart === 'undefined') {
+      throw new Error('Chart.js no está disponible (bloqueado o no cargado).');
+    }
+  };
+
   const formatNumber = (value) => {
     if (value === null || value === undefined) return '—';
     return new Intl.NumberFormat('es-MX').format(value);
@@ -60,6 +66,7 @@
   };
 
   const renderCharts = (payload) => {
+    ensureChartAvailable();
     const metrics = payload.metrics ?? {};
 
     if (scoreChart) scoreChart.destroy();
