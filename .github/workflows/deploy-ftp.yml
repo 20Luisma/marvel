@@ -19,6 +19,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Generar bundle size (JS/CSS)
+        run: php bin/generate-bundle-size.php
+
       ####################################################################
       # 1) Deploy APP PRINCIPAL (toda la carpeta iamasterbigschool)
       ####################################################################
