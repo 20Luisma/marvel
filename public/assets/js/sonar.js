@@ -288,7 +288,7 @@
     bundleError.classList.add('hidden');
     bundleError.textContent = '';
     try {
-      const res = await fetch('/assets/bundle-size.json', { cache: 'no-store' });
+      const res = await fetch('assets/bundle-size.json', { cache: 'no-store' });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
