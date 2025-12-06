@@ -31,9 +31,19 @@ final class SqliteMySqlUpsertPdo extends PDO
 
     private function rewriteMySqlUpsert(string $sql): string
     {
-        if (str_contains($sql, 'INSERT INTO albums') && str_contains($sql, 'ON DUPLICATE KEY')) {
+        if (!str_contains($sql, 'ON DUPLICATE KEY')) {
+            return $sql;
+        }
+
+        if (preg_match('/INSERT\\s+INTO\\s+`?([A-Za-z0-9_]+)`?\\s*\\(/i', $sql, $matches) !== 1) {
+            return $sql;
+        }
+
+        $table = $matches[1];
+
+        if (str_ends_with($table, 'albums')) {
             return <<<SQL
-INSERT INTO albums (album_id, nombre, cover_image, created_at, updated_at)
+INSERT INTO `{$table}` (album_id, nombre, cover_image, created_at, updated_at)
 VALUES (:album_id, :nombre, :cover_image, :created_at, :updated_at)
 ON CONFLICT(album_id) DO UPDATE SET
     nombre = excluded.nombre,
@@ -42,9 +52,9 @@ ON CONFLICT(album_id) DO UPDATE SET
 SQL;
         }
 
-        if (str_contains($sql, 'INSERT INTO heroes') && str_contains($sql, 'ON DUPLICATE KEY')) {
+        if (str_ends_with($table, 'heroes')) {
             return <<<SQL
-INSERT INTO heroes (hero_id, album_id, nombre, slug, contenido, imagen, created_at, updated_at)
+INSERT INTO `{$table}` (hero_id, album_id, nombre, slug, contenido, imagen, created_at, updated_at)
 VALUES (:hero_id, :album_id, :nombre, :slug, :contenido, :imagen, :created_at, :updated_at)
 ON CONFLICT(hero_id) DO UPDATE SET
     nombre = excluded.nombre,
