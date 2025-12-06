@@ -5,6 +5,7 @@
 ![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=20Luisma_marvel&metric=sqale_rating)
 ![Pa11y](https://img.shields.io/badge/Pa11y-enabled-brightgreen)
 ![Playwright E2E](https://img.shields.io/badge/Playwright%20E2E-passing-brightgreen)
+![Bundle Size](https://img.shields.io/badge/Bundle%20Size-static-blue)
 
 **Clean Marvel Album** es una demo/producto educativo en **PHP 8.2+** que aplica **Arquitectura Limpia** para gestionar álbumes y héroes Marvel. Orquesta un backend modular y varios paneles de observabilidad conectados a microservicios de IA y utilidades externas.
 
@@ -80,7 +81,9 @@ php bin/migrar-json-a-db.php
 
 ## ⚙️ CI/CD – GitHub Actions
 
-Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud), `deploy-ftp.yml` (deploy automático si todo pasa), `rollback-ftp.yml` (rollback).
+Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), `deploy-ftp.yml` (deploy automático si todo pasa), `rollback-ftp.yml` (rollback).
+
+- **Bundle size (JS/CSS)**: el job `sonarcloud` ejecuta `php bin/generate-bundle-size.php` y publica `public/assets/bundle-size.json`. La vista `/sonar` consume ese JSON para mostrar totales y top 5 sin necesitar `exec` en hosting.
 
 ---
 

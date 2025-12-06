@@ -11,6 +11,13 @@
   const qualityScoreEl = document.getElementById('sonar-quality-score');
   const statusPill = document.getElementById('sonar-status-pill');
   const coverageWarning = document.getElementById('sonar-coverage-warning');
+  const bundleJsTotalEl = document.getElementById('bundle-js-total');
+  const bundleCssTotalEl = document.getElementById('bundle-css-total');
+  const bundleJsCountEl = document.getElementById('bundle-js-count');
+  const bundleCssCountEl = document.getElementById('bundle-css-count');
+  const bundleGeneratedAtEl = document.getElementById('bundle-generated-at');
+  const bundleTopList = document.getElementById('bundle-top-list');
+  const bundleError = document.getElementById('bundle-error');
 
   const metricEls = {
     ncloc: document.getElementById('metric-ncloc'),
@@ -240,9 +247,63 @@
     }
   };
 
+  const renderBundleSize = (data) => {
+    if (!bundleJsTotalEl || !bundleCssTotalEl || !bundleTopList || !bundleGeneratedAtEl) {
+      return;
+    }
+
+    const totals = data?.totals ?? {};
+    const top = Array.isArray(data?.top) ? data.top : [];
+
+    bundleGeneratedAtEl.textContent = formatDate(data?.generatedAt ?? data?.generated_at ?? null);
+    bundleJsTotalEl.textContent = totals.js?.human ?? '—';
+    bundleCssTotalEl.textContent = totals.css?.human ?? '—';
+    bundleJsCountEl.textContent = `${totals.js?.count ?? 0} archivos`;
+    bundleCssCountEl.textContent = `${totals.css?.count ?? 0} archivos`;
+
+    bundleTopList.innerHTML = '';
+    if (top.length === 0) {
+      const li = document.createElement('li');
+      li.textContent = 'No hay archivos JS/CSS registrados.';
+      li.className = 'text-slate-500';
+      bundleTopList.appendChild(li);
+    } else {
+      top.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between gap-2 border-b border-slate-800/60 pb-1 last:border-none';
+        const name = document.createElement('span');
+        name.textContent = item.path || '—';
+        const size = document.createElement('span');
+        size.className = 'text-slate-300 font-semibold';
+        size.textContent = item.human || `${item.bytes ?? 0} B`;
+        li.append(name, size);
+        bundleTopList.appendChild(li);
+      });
+    }
+  };
+
+  const loadBundleSize = async () => {
+    if (!bundleTopList || !bundleError) return;
+
+    bundleError.classList.add('hidden');
+    bundleError.textContent = '';
+    try {
+      const res = await fetch('/assets/bundle-size.json', { cache: 'no-store' });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const payload = await res.json();
+      renderBundleSize(payload);
+    } catch (err) {
+      bundleError.textContent = `Bundle size no disponible: ${err instanceof Error ? err.message : 'error desconocido'}`;
+      bundleError.classList.remove('hidden');
+    }
+  };
+
   refreshButton.addEventListener('click', fetchMetrics);
   document.addEventListener('DOMContentLoaded', () => {
     setSyncState('idle');
     fetchMetrics().catch(() => setSyncState('idle'));
+    loadBundleSize().catch(() => {});
   });
 })();

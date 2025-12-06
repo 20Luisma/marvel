@@ -121,6 +121,37 @@ $activeTopAction = 'sonar';
           </article>
         </div>
 
+        <section class="sonar-card space-y-4" aria-labelledby="bundle-size-heading">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 id="bundle-size-heading" class="text-xl font-semibold text-white">Bundle Size (public/)</h3>
+              <p class="text-sm text-slate-400">Totales y top 5 archivos más pesados (JS/CSS).</p>
+              <p class="text-xs text-slate-500">Generado: <span id="bundle-generated-at">—</span></p>
+            </div>
+            <div id="bundle-error" class="sonar-alert hidden" role="alert" aria-live="assertive"></div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700/60">
+              <p class="text-slate-400 text-sm mb-1">JS total</p>
+              <p class="text-2xl font-semibold text-white" id="bundle-js-total">—</p>
+              <p class="text-xs text-slate-500" id="bundle-js-count">— archivos</p>
+            </div>
+            <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700/60">
+              <p class="text-slate-400 text-sm mb-1">CSS total</p>
+              <p class="text-2xl font-semibold text-white" id="bundle-css-total">—</p>
+              <p class="text-xs text-slate-500" id="bundle-css-count">— archivos</p>
+            </div>
+          </div>
+
+          <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700/60">
+            <p class="text-slate-400 text-sm mb-2">📌 Archivos más pesados</p>
+            <ul id="bundle-top-list" class="space-y-2 text-sm text-slate-200">
+              <li class="text-slate-500">Cargando…</li>
+            </ul>
+          </div>
+        </section>
+
         <!-- Coverage transparency note -->
         <div class="mt-6 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50">
           <p class="text-sm text-slate-300 leading-relaxed">
