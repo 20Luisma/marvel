@@ -942,7 +942,7 @@ composer security:audit
 
 2. **Calidad de Código**
    - Cobertura de tests completa
-   - PHPStan nivel 6
+   - PHPStan nivel 7 (ignoreErrors comentado)
    - CI/CD robusto
    - SonarCloud integrado
 

@@ -98,8 +98,8 @@ return (static function (): array {
 
         session_set_cookie_params([
             'lifetime' => 0,
-            'path' => $cookieParams['path'] ?? '/',
-            'domain' => $cookieParams['domain'] ?? '',
+            'path' => $cookieParams['path'],
+            'domain' => $cookieParams['domain'],
             'secure' => $isSecure,
             'httponly' => true,
             'samesite' => 'Lax',

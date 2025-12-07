@@ -9,6 +9,7 @@ use App\Security\Logging\SecurityLogger;
 
 final class CsrfMiddleware
 {
+    /** @var array<int, string> */
     private array $protectedPostRoutes = [
         '/login',
         '/logout',

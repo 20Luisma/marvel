@@ -146,6 +146,11 @@ PROMPT,
             throw new RuntimeException('La IA devolvió una estructura inesperada al generar la historia.');
         }
 
+        $panels = $decoded['panels'] ?? [];
+        if (!is_array($panels)) {
+            $panels = [];
+        }
+
         return [
             'title' => (string) ($decoded['title'] ?? ''),
             'summary' => (string) ($decoded['summary'] ?? ''),
@@ -155,14 +160,7 @@ PROMPT,
                     'description' => (string) ($panel['description'] ?? ''),
                     'caption' => (string) ($panel['caption'] ?? ''),
                 ],
-                array_slice(
-                    array_filter(
-                        $decoded['panels'] ?? [],
-                        static fn ($panel): bool => is_array($panel)
-                    ),
-                    0,
-                    3
-                )
+                array_slice($panels, 0, 3)
             ),
         ];
     }
@@ -229,6 +227,10 @@ PROMPT,
 
         if ($response === false || $httpCode >= 500) {
             throw new RuntimeException('Microservicio OpenAI no disponible' . ($error !== '' ? ': ' . $error : ''));
+        }
+
+        if (!is_string($response)) {
+            throw new RuntimeException('Microservicio OpenAI devolvió una respuesta vacía o inesperada.');
         }
 
         try {

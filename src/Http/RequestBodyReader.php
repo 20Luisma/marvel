@@ -43,6 +43,7 @@ class RequestBodyReader
      * Devuelve el body decodificado como array asociativo.
      * Lanza RuntimeException si el body no es un JSON válido.
      */
+    /** @return array<string, mixed> */
     public static function getJsonArray(): array
     {
         $raw = self::getRawBody();

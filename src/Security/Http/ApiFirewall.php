@@ -169,7 +169,7 @@ final class ApiFirewall
     {
         $matches = [];
         preg_match_all('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"\\s*:/', $raw, $matches);
-        if (!isset($matches[1]) || $matches[1] === []) {
+        if ($matches[1] === []) {
             return false;
         }
 

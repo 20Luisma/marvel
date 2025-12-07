@@ -42,8 +42,11 @@ final class DbAlbumRepository implements AlbumRepository
     public function all(): array
     {
         $stmt = $this->pdo->query('SELECT album_id, nombre, cover_image, created_at, updated_at FROM albums ORDER BY created_at ASC');
+        if ($stmt === false) {
+            return [];
+        }
 
-        $rows = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map(fn (array $row): Album => $this->hydrate($row), $rows);
     }
@@ -51,6 +54,9 @@ final class DbAlbumRepository implements AlbumRepository
     public function find(string $albumId): ?Album
     {
         $stmt = $this->pdo->prepare('SELECT album_id, nombre, cover_image, created_at, updated_at FROM albums WHERE album_id = :album_id LIMIT 1');
+        if ($stmt === false) {
+            return null;
+        }
         $stmt->execute(['album_id' => $albumId]);
 
         $row = $stmt->fetch();
@@ -61,6 +67,9 @@ final class DbAlbumRepository implements AlbumRepository
     public function delete(string $albumId): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM albums WHERE album_id = :album_id');
+        if ($stmt === false) {
+            return;
+        }
         $stmt->execute(['album_id' => $albumId]);
     }
 

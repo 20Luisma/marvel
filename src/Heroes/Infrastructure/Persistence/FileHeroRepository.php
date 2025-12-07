@@ -20,14 +20,14 @@ final class FileHeroRepository implements HeroRepository
         $records = $this->loadRecords();
         $records = array_values(array_filter(
             $records,
-            static fn (array $data): bool => ($data['heroId'] ?? null) !== $hero->heroId()
+            static fn (array $data): bool => $data['heroId'] !== $hero->heroId()
         ));
 
         $records[] = $hero->toPrimitives();
 
         usort(
             $records,
-            static fn (array $a, array $b): int => strcmp($a['createdAt'] ?? '', $b['createdAt'] ?? '')
+            static fn (array $a, array $b): int => strcmp($a['createdAt'], $b['createdAt'])
         );
 
         $this->persistRecords($records);
@@ -40,7 +40,7 @@ final class FileHeroRepository implements HeroRepository
     {
         $records = array_values(array_filter(
             $this->loadRecords(),
-            static fn (array $data): bool => ($data['albumId'] ?? null) === $albumId
+            static fn (array $data): bool => $data['albumId'] === $albumId
         ));
 
         return array_map(
@@ -63,7 +63,7 @@ final class FileHeroRepository implements HeroRepository
     public function find(string $heroId): ?Hero
     {
         foreach ($this->loadRecords() as $data) {
-            if (($data['heroId'] ?? null) === $heroId) {
+            if ($data['heroId'] === $heroId) {
                 return Hero::fromPrimitives($data);
             }
         }
@@ -76,7 +76,7 @@ final class FileHeroRepository implements HeroRepository
         $records = $this->loadRecords();
         $filtered = array_values(array_filter(
             $records,
-            static fn (array $data): bool => ($data['heroId'] ?? null) !== $heroId
+            static fn (array $data): bool => $data['heroId'] !== $heroId
         ));
 
         if (count($filtered) !== count($records)) {
@@ -89,7 +89,7 @@ final class FileHeroRepository implements HeroRepository
         $records = $this->loadRecords();
         $filtered = array_values(array_filter(
             $records,
-            static fn (array $data): bool => ($data['albumId'] ?? null) !== $albumId
+            static fn (array $data): bool => $data['albumId'] !== $albumId
         ));
 
         if (count($filtered) !== count($records)) {

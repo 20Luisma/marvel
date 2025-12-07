@@ -10,7 +10,7 @@ final class SecurityConfig
     {
         $envEmail = getenv('ADMIN_EMAIL') ?: null;
 
-        return $envEmail !== null && $envEmail !== ''
+        return $envEmail !== null
             ? $envEmail
             : 'seguridadmarvel@gmail.com';
     }
@@ -31,6 +31,6 @@ final class SecurityConfig
     {
         $key = getenv('INTERNAL_API_KEY') ?: null;
 
-        return $key !== null && $key !== '' ? $key : null;
+        return $key !== null ? $key : null;
     }
 }

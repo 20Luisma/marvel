@@ -98,13 +98,13 @@ final class AuthService
         );
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', [
+            setcookie((string) session_name(), '', [
                 'expires' => time() - 42000,
-                'path' => $params['path'] ?? '/',
-                'domain' => $params['domain'] ?? '',
-                'secure' => (bool)($params['secure'] ?? false),
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => (bool) $params['secure'],
                 'httponly' => true,
-                'samesite' => $params['samesite'] ?? 'Lax',
+                'samesite' => $params['samesite'],
             ]);
         }
         if (session_status() === PHP_SESSION_ACTIVE) {

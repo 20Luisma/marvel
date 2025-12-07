@@ -8,14 +8,10 @@ use InvalidArgumentException;
 
 final class SonarMetricsService
 {
-    private object $client;
+    private SonarMetricsClient $client;
 
-    public function __construct(object $client)
+    public function __construct(SonarMetricsClient $client)
     {
-        if (!method_exists($client, 'fetchMetrics')) {
-            throw new InvalidArgumentException('Client must define a fetchMetrics method.');
-        }
-
         $this->client = $client;
     }
 

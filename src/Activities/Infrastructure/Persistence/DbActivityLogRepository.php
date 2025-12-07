@@ -9,6 +9,7 @@ use App\Activities\Domain\ActivityLogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use PDO;
+use RuntimeException;
 
 final class DbActivityLogRepository implements ActivityLogRepository
 {
@@ -36,13 +37,20 @@ final class DbActivityLogRepository implements ActivityLogRepository
         $sql .= ' ORDER BY occurred_at DESC, id DESC LIMIT :limit';
 
         $stmt = $this->pdo->prepare($sql);
+        if ($stmt === false) {
+            throw new RuntimeException('No se pudo preparar la consulta de activity logs.');
+        }
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         $stmt->bindValue('limit', $this->maxEntries, PDO::PARAM_INT);
         $stmt->execute();
 
-        $rows = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows === false) {
+            throw new RuntimeException('No se pudieron leer los activity logs.');
+        }
+        $rows = array_values($rows);
 
         return array_map(
             static fn (array $row): ActivityEntry => ActivityEntry::fromPrimitives([

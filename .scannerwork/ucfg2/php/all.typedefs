@@ -515,6 +515,8 @@ deleteHero0app\heroes\application\usecase\deleteherousecase*:
 listHeroes0app\heroes\application\usecase\listheroesusecase*>
 
 updateHero0app\heroes\application\usecase\updateherousecase`
+app\services\sonarmetricsclient=
+fetchmetrics-app\services\sonarmetricsclient::fetchmetrics`
 #app\security\http\cspnoncegenerator9
 generate-app\security\http\cspnoncegenerator::generateå
 app\shared\domain\bus\eventbus2
@@ -837,12 +839,12 @@ formatdateCapp\albums\infrastructure\persistence\dbalbumrepository::formatdate
 hydrate@app\albums\infrastructure\persistence\dbalbumrepository::hydrateE
 save=app\albums\infrastructure\persistence\dbalbumrepository::save"pdo*
 
-pdopdo∂
+pdopdoœ
  app\services\sonarmetricsservice<
 __construct-app\services\sonarmetricsservice::__construct:
 
-getmetrics,app\services\sonarmetricsservice::getmetrics"client*
-clientobject˘
+getmetrics,app\services\sonarmetricsservice::getmetrics"client*)
+clientapp\services\sonarmetricsclient˘
 app\dev\seed\seedheroesservice:
 __construct+app\dev\seed\seedheroesservice::__construct,
 seed$app\dev\seed\seedheroesservice::seed6
