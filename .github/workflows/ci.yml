@@ -95,11 +95,29 @@ jobs:
             --configuration phpunit.xml.dist \
             --coverage-clover=coverage.xml
 
+      - name: Assert coverage report exists
+        run: |
+          test -f coverage.xml
+          ls -lh coverage.xml
+          python3 - <<'PY'
+import xml.etree.ElementTree as ET
+root = ET.parse('coverage.xml').getroot()
+statements = covered = 0
+for m in root.findall('.//metrics'):
+    statements += int(m.get('statements', 0))
+    covered += int(m.get('coveredstatements', 0))
+percent = (covered / statements * 100) if statements else 0
+print(f"Coverage summary: covered {covered}/{statements} statements = {percent:.2f}%")
+PY
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >
+            -Dsonar.php.coverage.reportPaths=coverage.xml
 
   # 🟦 PA11Y (ACCESIBILIDAD AA)
   pa11y:
