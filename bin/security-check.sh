@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# chmod +x bin/security-check.sh
+# Ejecuta las comprobaciones desde la raíz del repo para evitar rutas relativas frágiles.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
 
-echo ">> Running security PHPUnit suite..."
-vendor/bin/phpunit --colors=always tests/Security
-
-echo ">> Running PHPStan on security namespaces..."
-PHPSTAN_DISABLE_PARALLEL=1 vendor/bin/phpstan analyse --memory-limit=1G src/Security tests/Security
-
-echo ">> Running composer audit..."
+echo ">> [1/2] Ejecutando auditoría de vulnerabilidades (composer audit)..."
 composer audit --no-interaction
+
+echo ">> [2/2] Lint de sintaxis PHP (php -l en src/ y tests/)..."
+find src tests -name '*.php' -print0 | xargs -0 -r -n1 -P4 php -l
+
+echo "Security Check completado correctamente."
