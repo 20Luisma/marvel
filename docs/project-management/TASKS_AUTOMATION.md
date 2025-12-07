@@ -10,7 +10,7 @@ php -S localhost:8080 -t public
 
 ### 🧪 Ejecutar tests
 ```bash
-vendor/bin/phpunit --colors=always --testdox
+XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml
 ```
 
 ### 🔍 PHPStan

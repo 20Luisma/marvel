@@ -28,6 +28,6 @@
 - En producción usa `APP_DEBUG=0`. HSTS forzado y cookies más estrictas son mejoras enterprise futuras.
 
 ## Comprobaciones rápidas post-deploy
-- `vendor/bin/phpunit --colors=always --testdox` en CI/local.
+- `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` en CI/local (genera coverage.xml consumido por Sonar).
 - Cabeceras de seguridad: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php`.
 - Acceso básico: curl a `/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes` con las cabeceras adecuadas.
