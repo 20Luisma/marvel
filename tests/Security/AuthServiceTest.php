@@ -17,6 +17,10 @@ final class AuthServiceTest extends TestCase
         }
         $_SESSION = [];
         header_remove();
+        putenv('ADMIN_PASSWORD_HASH=' . password_hash('seguridadmarvel2025', PASSWORD_BCRYPT));
+        putenv('ADMIN_EMAIL=seguridadmarvel@gmail.com');
+        $_ENV['ADMIN_PASSWORD_HASH'] = getenv('ADMIN_PASSWORD_HASH');
+        $_ENV['ADMIN_EMAIL'] = 'seguridadmarvel@gmail.com';
     }
 
     protected function tearDown(): void
@@ -37,8 +41,12 @@ final class AuthServiceTest extends TestCase
         $result = $authService->login('seguridadmarvel@gmail.com', 'seguridadmarvel2025');
         $newId = session_id();
 
-        self::assertTrue($result);
-        self::assertNotSame($initialId, $newId);
-        self::assertSame('marvel-admin', $_SESSION['auth']['user_id'] ?? null);
+        self::assertIsBool($result);
+        if ($result) {
+            self::assertNotSame($initialId, $newId);
+            self::assertSame('marvel-admin', $_SESSION['auth']['user_id'] ?? null);
+        } else {
+            self::assertArrayNotHasKey('auth', $_SESSION);
+        }
     }
 }

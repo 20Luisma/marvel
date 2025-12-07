@@ -451,9 +451,10 @@ loglimited1app\security\http\ratelimitmiddleware::loglimitedG
 registerfailedattempt@app\application\security\ipblockerservice::registerfailedattempt]
 registersuccessfulloginBapp\application\security\ipblockerservice::registersuccessfullogin"logger"loginAttemptService*-
 logger#app\security\logging\securitylogger*C
-loginAttemptService,app\application\security\loginattemptserviceª
+loginAttemptService,app\application\security\loginattemptserviceä
 app\shared\http\jsonresponse,
-error#app\shared\http\jsonresponse::error*
+error#app\shared\http\jsonresponse::error8
+lastpayload)app\shared\http\jsonresponse::lastpayload*
 send"app\shared\http\jsonresponse::send0
 success%app\shared\http\jsonresponse::successâ
 1app\albums\application\usecase\createalbumusecaseM

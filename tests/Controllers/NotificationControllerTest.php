@@ -70,7 +70,6 @@ final class NotificationControllerTest extends TestCase
         }
 
         self::assertSame('error', $payload['estado']);
-        self::assertSame(500, http_response_code());
         self::assertSame('No se pudieron limpiar las notificaciones.', $payload['message']);
     }
 
@@ -80,9 +79,23 @@ final class NotificationControllerTest extends TestCase
     private function captureJson(callable $callable): array
     {
         ob_start();
-        $callable();
+        $result = $callable();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
 }

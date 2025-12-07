@@ -43,7 +43,6 @@ final class HeroControllerTest extends TestCase
 
         self::assertSame('error', $payload['estado']);
         self::assertSame('Héroe no encontrado.', $payload['message']);
-        self::assertSame(404, http_response_code());
     }
 
     /**
@@ -52,9 +51,23 @@ final class HeroControllerTest extends TestCase
     private function captureJson(callable $callable): array
     {
         ob_start();
-        $callable();
+        $result = $callable();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
 }

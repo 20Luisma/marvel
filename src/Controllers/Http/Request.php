@@ -25,8 +25,11 @@ final class Request
             self::$rawInputOverride = null;
             $decoded = json_decode($raw, true);
             if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
-                JsonResponse::error('JSON inválido', 400);
-                exit;
+                $response = JsonResponse::error('JSON inválido', 400);
+                if (PHP_SAPI !== 'cli') {
+                    exit;
+                }
+                return $response;
             }
             return $decoded;
         }
@@ -39,8 +42,11 @@ final class Request
                 return [];
             }
             // Si es JSON inválido, terminamos con error 400 como hacía antes
-            JsonResponse::error('JSON inválido', 400);
-            exit;
+            $response = JsonResponse::error('JSON inválido', 400);
+            if (PHP_SAPI !== 'cli') {
+                exit;
+            }
+            return $response;
         }
     }
 

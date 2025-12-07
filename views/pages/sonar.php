@@ -120,6 +120,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
           <article class="sonar-card sonar-graph">
             <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Cobertura</p>
             <canvas id="sonar-coverage-chart"></canvas>
+            <p id="sonar-coverage-value" class="text-3xl font-bold text-white mt-3">—</p>
             <p id="sonar-coverage-warning" class="text-amber-200 hidden">Cobertura no disponible todavía.</p>
           </article>
         </div>

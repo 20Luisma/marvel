@@ -30,9 +30,23 @@ final class ConfigControllerTest extends TestCase
     private function captureJson(callable $callable): array
     {
         ob_start();
-        $callable();
+        $result = $callable();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
 }

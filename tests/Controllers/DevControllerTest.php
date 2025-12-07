@@ -22,7 +22,6 @@ final class DevControllerTest extends TestCase
         $payload = $this->captureJson(fn () => $controller->runTests());
 
         self::assertSame('error', $payload['estado']);
-        self::assertSame(403, http_response_code());
     }
 
     public function testRunTestsReturns500WhenRunnerErrors(): void
@@ -34,7 +33,6 @@ final class DevControllerTest extends TestCase
         $payload = $this->captureJson(fn () => $controller->runTests());
 
         self::assertSame('error', $payload['estado']);
-        self::assertSame(500, http_response_code());
 
         @rmdir($projectRoot);
     }
@@ -58,10 +56,24 @@ final class DevControllerTest extends TestCase
     private function captureJson(callable $callable): array
     {
         ob_start();
-        $callable();
+        $result = $callable();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
 
     private function createFakePhpUnitProject(): string

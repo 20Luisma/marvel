@@ -19,11 +19,12 @@ final class RagProxyControllerTest extends TestCase
         $client->body = json_encode(['answer' => 'ok']);
 
         $controller = new RagProxyController($client, 'http://rag-service/rag/heroes', 'secret-token');
-        Request::withJsonBody(json_encode(['heroIds' => ['a', 'b']]));
+        $_SERVER['MARVEL_RAW_BODY'] = json_encode(['heroIds' => ['a', 'b']]);
 
         ob_start();
         $controller->forwardHeroesComparison();
         ob_end_clean();
+        unset($_SERVER['MARVEL_RAW_BODY']);
 
         self::assertCount(1, $client->requests);
         $headers = $client->requests[0]['headers'] ?? [];

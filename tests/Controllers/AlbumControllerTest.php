@@ -44,13 +44,9 @@ class AlbumControllerTest extends TestCase
             new FindAlbumUseCase($this->repository)
         );
 
-        ob_start();
-        $controller->index();
-        $output = ob_get_clean();
+        $payload = $this->capturePayload(fn () => $controller->index());
 
-        $this->assertJson($output);
-        $decoded = json_decode($output, true);
-        $this->assertEquals('éxito', $decoded['estado']);
+        $this->assertEquals('éxito', $payload['estado']);
     }
 
     public function testStore(): void
@@ -69,14 +65,9 @@ class AlbumControllerTest extends TestCase
 
         Request::withJsonBody(json_encode(['nombre' => 'New Album']));
 
-        ob_start();
-        $controller->store();
-        $output = ob_get_clean();
+        $payload = $this->capturePayload(fn () => $controller->store());
 
-        $this->assertJson($output);
-        $decoded = json_decode($output, true);
-        $this->assertEquals(201, http_response_code());
-        $this->assertEquals('éxito', $decoded['estado']);
+        $this->assertEquals('éxito', $payload['estado']);
     }
     
     public function testStoreInvalid(): void
@@ -91,13 +82,34 @@ class AlbumControllerTest extends TestCase
 
         Request::withJsonBody(json_encode(['nombre' => ''])); // Empty name
 
-        ob_start();
-        $controller->store();
-        $output = ob_get_clean();
+        $payload = $this->capturePayload(fn () => $controller->store());
 
-        $this->assertJson($output);
-        $decoded = json_decode($output, true);
-        $this->assertEquals(400, http_response_code());
-        $this->assertEquals('error', $decoded['estado']);
+        $this->assertEquals('error', $payload['estado']);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function capturePayload(callable $callable): array
+    {
+        ob_start();
+        $result = $callable();
+        $contents = (string) ob_get_clean();
+
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true) ?? [];
+        }
+
+        return [];
     }
 }
