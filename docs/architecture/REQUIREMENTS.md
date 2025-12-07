@@ -184,7 +184,7 @@ Para ejecutarlo:
 
 ## 6. Checks de calidad y seguridad mínimos
 
-- Tests completos: `vendor/bin/phpunit --colors=always --testdox` (raíz).
+- Tests completos (con cobertura clover para Sonar): `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` (raíz).
 - Security check local: `bash bin/security-check.sh` (ejecuta PHPUnit de seguridad, PHPStan sobre `src/Security` + `tests/Security` y `composer audit`).
 - Análisis estático general: `vendor/bin/phpstan analyse --memory-limit=512M`.
 - Auditoría de dependencias: `composer audit --no-interaction`.

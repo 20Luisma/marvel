@@ -178,7 +178,7 @@ curl -X POST http://localhost:8080/api/albums \
 ### Ejecutar Suite de Tests
 ```bash
 cd /Users/admin/Desktop/Proyecto\ Marvel\ local\ y\ Hosting/clean-marvel
-vendor/bin/phpunit --colors=always --testdox
+XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml
 ```
 
 ### Resultado Esperado

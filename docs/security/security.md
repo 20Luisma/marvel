@@ -101,7 +101,7 @@ Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver
   Hecho: cabeceras endurecidas (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Content-Security-Policy y X-Content-Security-Policy, X-Download-Options, X-Permitted-Cross-Domain-Policies, Cross-Origin-Resource-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy) activas en HTML y APIs; cookies de sesión con HttpOnly + SameSite=Lax. Tests automáticos (`tests/Security/HeadersSecurityTest.php`) validan rutas clave (`/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes`) y la suite completa está verde.
 
 ### Validación Fase 8 (real)
-- Automática: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php` y la suite completa `vendor/bin/phpunit --colors=always --testdox`.
+- Automática: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php` y la suite completa `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` para que Sonar lea la cobertura real.
 - Manual (curl):
   - Home: `curl -i http://localhost:8080/ -H "Accept: text/html"`
   - Login: `curl -i http://localhost:8080/login -H "Accept: text/html"`
