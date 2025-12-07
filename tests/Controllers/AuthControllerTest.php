@@ -87,6 +87,9 @@ use App\Application\Security\LoginAttemptService;
 use App\Config\SecurityConfig;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class AuthControllerTest extends TestCase
 {
     private $authService;
@@ -185,5 +188,43 @@ class AuthControllerTest extends TestCase
 
         $this->assertEquals(429, $GLOBALS['response_code']);
         $this->assertJson($output);
+    }
+
+    public function testLoginFailsWithInvalidCsrf(): void
+    {
+        $_POST['_token'] = 'invalid';
+        $_POST['email'] = 'user@example.com';
+        $_POST['password'] = 'pass';
+
+        $this->controller->login();
+
+        $this->assertContains('Location: /login', $GLOBALS['headers']);
+        $this->assertArrayHasKey('auth_error', $_SESSION);
+        $this->assertStringContainsString('Token de seguridad inválido', $_SESSION['auth_error']);
+    }
+
+    public function testLogoutSuccess(): void
+    {
+        $_POST['_token'] = 'valid';
+        
+        $this->controller->logout();
+
+        $this->assertContains('Location: /', $GLOBALS['headers']);
+        $this->assertFalse($this->authService->isAuthenticated());
+    }
+
+    public function testLogoutFailsWithInvalidCsrf(): void
+    {
+        $_POST['_token'] = 'invalid';
+        
+        // Simulate logged in
+        $this->authService->login('user@example.com', 'pass');
+        
+        $this->controller->logout();
+
+        $this->assertContains('Location: /', $GLOBALS['headers']);
+        // Should still be authenticated? The controller redirects but doesn't call logout() if token invalid.
+        // Let's check implementation: yes, returns early.
+        $this->assertTrue($this->authService->isAuthenticated());
     }
 }

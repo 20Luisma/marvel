@@ -43,6 +43,21 @@ final class DirectoryHelperTest extends TestCase
         DirectoryHelper::ensure($filePath);
     }
 
+    public function testEnsureDoesNothingWhenDirectoryAlreadyExists(): void
+    {
+        $existingDir = $this->basePath . '/already-exists';
+        mkdir($existingDir, 0777, true);
+        
+        // Ensure it exists before calling
+        self::assertDirectoryExists($existingDir);
+        
+        // Should not throw and just return early
+        DirectoryHelper::ensure($existingDir);
+        
+        // Directory should still exist
+        self::assertDirectoryExists($existingDir);
+    }
+
     private function removeDirectory(string $path): void
     {
         if (!is_dir($path)) {

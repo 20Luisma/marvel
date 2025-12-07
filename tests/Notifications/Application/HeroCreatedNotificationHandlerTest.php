@@ -40,6 +40,28 @@ final class HeroCreatedNotificationHandlerTest extends TestCase
         self::assertStringContainsString('Nuevo héroe creado: Hulk (álbum: Avengers)', $lines[0]);
     }
 
+    public function testSubscribedToReturnsHeroCreatedEventName(): void
+    {
+        $eventName = HeroCreatedNotificationHandler::subscribedTo();
+
+        self::assertSame('hero.created', $eventName);
+    }
+
+    public function testItIgnoresNonHeroCreatedEvents(): void
+    {
+        $sender = new FileNotificationSender($this->filePath);
+        $handler = new HeroCreatedNotificationHandler($sender);
+
+        // Use AlbumCreated instead of HeroCreated
+        $event = new \App\Albums\Domain\Event\AlbumCreated('album-1', 'Test Album');
+
+        $handler($event);
+
+        // File should be empty or contain nothing related to this event
+        $contents = file_get_contents($this->filePath);
+        self::assertStringNotContainsString('Test Album', $contents);
+    }
+
     protected function tearDown(): void
     {
         if (is_file($this->filePath)) {
