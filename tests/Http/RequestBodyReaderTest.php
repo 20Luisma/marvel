@@ -58,4 +58,48 @@ final class RequestBodyReaderTest extends TestCase
         $prop->setAccessible(true);
         $prop->setValue(null, null);
     }
+
+    public function testGetRawBodyWithDebugEnabled(): void
+    {
+        $this->resetCache();
+        $_ENV['DEBUG_RAW_BODY'] = 1;
+        $_SERVER['MARVEL_RAW_BODY'] = 'debug test body';
+        
+        $result = RequestBodyReader::getRawBody();
+        
+        self::assertSame('debug test body', $result);
+        
+        unset($_ENV['DEBUG_RAW_BODY']);
+    }
+
+    public function testGetJsonArrayWithNestedData(): void
+    {
+        $this->resetCache();
+        $data = ['level1' => ['level2' => ['key' => 'value']]];
+        $_SERVER['MARVEL_RAW_BODY'] = json_encode($data);
+        
+        self::assertSame($data, RequestBodyReader::getJsonArray());
+    }
+
+    public function testGetRawBodyWithNonStringServerValue(): void
+    {
+        $this->resetCache();
+        $_SERVER['MARVEL_RAW_BODY'] = 12345; // Non-string value
+        
+        // Should fall back to php://input or empty string
+        $result = RequestBodyReader::getRawBody();
+        
+        self::assertIsString($result);
+    }
+
+    public function testGetRawBodyWithNullServerValue(): void
+    {
+        $this->resetCache();
+        $_SERVER['MARVEL_RAW_BODY'] = null;
+        
+        $result = RequestBodyReader::getRawBody();
+        
+        self::assertIsString($result);
+    }
 }
+

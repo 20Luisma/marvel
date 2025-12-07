@@ -350,7 +350,33 @@ coverImagestring*
 actionstring*
 	contextIdstring*
 scopestring*
-titlestring¸
+titlestring³
+app\services\githubclient5
+__construct&app\services\githubclient::__constructG
+buildactivitypayload/app\services\githubclient::buildactivitypayload;
+builddaterange)app\services\githubclient::builddaterange7
+builddetails'app\services\githubclient::builddetails7
+buildentries'app\services\githubclient::buildentries9
+buildmetaline(app\services\githubclient::buildmetalineA
+countcommitsforpr,app\services\githubclient::countcommitsforprS
+createentryfrompullrequest5app\services\githubclient::createentryfrompullrequest1
+	ensureenv$app\services\githubclient::ensureenv'
+envvapp\services\githubclient::envvO
+errorpayloadfromresponse3app\services\githubclient::errorpayloadfromresponse9
+extractlabels(app\services\githubclient::extractlabels9
+fetchactivity(app\services\githubclient::fetchactivityC
+guardmissingapikey-app\services\githubclient::guardmissingapikeyE
+invalidrangepayload.app\services\githubclient::invalidrangepayloadO
+issuccessfullistresponse3app\services\githubclient::issuccessfullistresponseK
+listrepositorycontents1app\services\githubclient::listrepositorycontents;
+parsecreatedat)app\services\githubclient::parsecreatedat9
+requestgithub(app\services\githubclient::requestgithubI
+summarizereviewsforpr0app\services\githubclient::summarizereviewsforpr"apiKey"
+httpClient"rootPath*
+apiKeystring*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterface*
+rootPathstring¸
 *app\shared\domain\event\domaineventhandler@
 __invoke4app\shared\domain\event\domaineventhandler::__invokeH
 subscribedto8app\shared\domain\event\domaineventhandler::subscribedtoX
@@ -408,8 +434,9 @@ httpClient2app\shared\infrastructure\http\httpclientinterface*
 app\config\securityconfig9
 getadminemail(app\config\securityconfig::getadminemailG
 getadminpasswordhash/app\config\securityconfig::getadminpasswordhashA
-getinternalapikey,app\config\securityconfig::getinternalapikey~
-2app\shared\infrastructure\http\httpclientinterfaceH
+getinternalapikey,app\config\securityconfig::getinternalapikey¾
+2app\shared\infrastructure\http\httpclientinterface>
+get7app\shared\infrastructure\http\httpclientinterface::getH
 postjson<app\shared\infrastructure\http\httpclientinterface::postjson
 <app\notifications\application\herocreatednotificationhandlerX
 __constructIapp\notifications\application\herocreatednotificationhandler::__constructR
@@ -720,10 +747,12 @@ coverimage0app\albums\domain\event\albumupdated::coverimage<
 coverImage"nombre*
 
 coverImagestring*
-nombrestringƒ
+nombrestring
 -app\shared\infrastructure\http\curlhttpclientI
-__construct:app\shared\infrastructure\http\curlhttpclient::__constructM
-formatheaders<app\shared\infrastructure\http\curlhttpclient::formatheadersC
+__construct:app\shared\infrastructure\http\curlhttpclient::__constructO
+executerequest=app\shared\infrastructure\http\curlhttpclient::executerequestM
+formatheaders<app\shared\infrastructure\http\curlhttpclient::formatheaders9
+get2app\shared\infrastructure\http\curlhttpclient::getC
 postjson7app\shared\infrastructure\http\curlhttpclient::postjsonK
 sleepbackoff;app\shared\infrastructure\http\curlhttpclient::sleepbackoff"internalToken*
 internalTokenstringÉ

@@ -109,4 +109,95 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->assertEquals(200, $GLOBALS['response_code']);
     }
+
+    public function testHandleWithTokenFromHeader(): void
+    {
+        $_SESSION['_csrf_token'] = 'valid_header_token';
+        $_POST = [];
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'valid_header_token';
+        
+        $this->middleware->expects($this->never())->method('terminate');
+        
+        $this->middleware->handle('/login');
+        
+        $this->assertEquals(200, $GLOBALS['response_code']);
+    }
+
+    public function testHandleWithTokenFromAltField(): void
+    {
+        $_SESSION['_csrf_token'] = 'valid_alt_token';
+        $_POST['_token'] = 'valid_alt_token';
+        
+        $this->middleware->expects($this->never())->method('terminate');
+        
+        $this->middleware->handle('/login');
+        
+        $this->assertEquals(200, $GLOBALS['response_code']);
+    }
+
+    public function testHandleFailureWithMissingToken(): void
+    {
+        $_SESSION['_csrf_token'] = 'valid_token';
+        $_POST = [];
+        
+        $this->middleware->expects($this->once())->method('terminate');
+        
+        ob_start();
+        $this->middleware->handle('/login');
+        ob_get_clean();
+        
+        $this->assertEquals(403, $GLOBALS['response_code']);
+    }
+
+    public function testHandleLogsWhenTokenPresentButInvalid(): void
+    {
+        $_SESSION['_csrf_token'] = 'expected_token';
+        $_POST['csrf_token'] = 'wrong_token_value';
+        
+        $this->middleware->expects($this->once())->method('terminate');
+        
+        ob_start();
+        $this->middleware->handle('/login');
+        ob_get_clean();
+        
+        $this->assertEquals(403, $GLOBALS['response_code']);
+        
+        // Verify log was created
+        $this->assertFileExists($this->logFile);
+        $logContent = file_get_contents($this->logFile);
+        $this->assertStringContainsString('csrf_failed', $logContent);
+        $this->assertStringContainsString('token_state=present', $logContent);
+    }
+
+    public function testHandleLogsWhenNoLogger(): void
+    {
+        // Create middleware without logger
+        $middlewareNoLogger = $this->getMockBuilder(CsrfMiddleware::class)
+            ->setConstructorArgs([null])
+            ->onlyMethods(['terminate'])
+            ->getMock();
+        
+        $_SESSION['_csrf_token'] = 'expected_token';
+        $_POST = [];
+        
+        $middlewareNoLogger->expects($this->once())->method('terminate');
+        
+        ob_start();
+        $middlewareNoLogger->handle('/login');
+        ob_get_clean();
+        
+        $this->assertEquals(403, $GLOBALS['response_code']);
+    }
+
+    public function testHandleProtectedApiRoute(): void
+    {
+        $_SESSION['_csrf_token'] = 'api_token';
+        $_POST['csrf_token'] = 'api_token';
+        
+        $this->middleware->expects($this->never())->method('terminate');
+        
+        $this->middleware->handle('/api/rag/heroes');
+        
+        $this->assertEquals(200, $GLOBALS['response_code']);
+    }
 }

@@ -85,4 +85,35 @@ final class DomainEventTest extends TestCase
         $this->assertSame($occurredOn, $event->occurredOn());
         $this->assertSame('Reconstructed Album', $event->name());
     }
+
+    public function test_base_from_primitives_throws_logic_exception(): void
+    {
+        // We need to test the base DomainEvent::fromPrimitives which throws LogicException
+        // Create a concrete test class that doesn't override fromPrimitives
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('fromPrimitives() must be implemented');
+
+        // Using reflection to call the base method
+        // AlbumCreated overrides it, so we need a class that doesn't
+        // Let's use the base class directly via the child that calls parent
+        $occurredOn = new DateTimeImmutable();
+        
+        // Create an anonymous class that extends DomainEvent but uses parent fromPrimitives
+        $anonymousEvent = new class('aggregate-id') extends \App\Shared\Domain\Bus\DomainEvent {
+            public static function eventName(): string
+            {
+                return 'test.event';
+            }
+
+            public function toPrimitives(): array
+            {
+                return [];
+            }
+        };
+
+        // Call the static fromPrimitives on the anonymous class (which will call parent's implementation)
+        $class = get_class($anonymousEvent);
+        $class::fromPrimitives('aggregate-id', [], null, null);
+    }
 }
+

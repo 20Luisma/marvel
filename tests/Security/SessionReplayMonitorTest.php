@@ -90,4 +90,96 @@ final class SessionReplayMonitorTest extends TestCase
         self::assertStringContainsString('session_replay_suspected', $log);
         self::assertStringContainsString('session_id_changed', $log);
     }
+
+    public function testGetTokenReturnsTokenWhenSet(): void
+    {
+        $monitor = new SessionReplayMonitor(new SecurityLogger($this->logFile));
+        $monitor->initReplayToken();
+
+        $token = $monitor->getToken();
+
+        self::assertNotNull($token);
+        self::assertIsString($token);
+        self::assertNotEmpty($token);
+    }
+
+    public function testGetTokenReturnsNullWhenSessionNotActive(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+        
+        $monitor = new SessionReplayMonitor();
+        
+        $token = $monitor->getToken();
+
+        self::assertNull($token);
+    }
+
+    public function testGetTokenReturnsNullWhenTokenNotSet(): void
+    {
+        $monitor = new SessionReplayMonitor();
+        
+        // Token not set
+        unset($_SESSION['security_replay_token']);
+        
+        $token = $monitor->getToken();
+
+        self::assertNull($token);
+    }
+
+    public function testDetectReplayDoesNothingWhenSessionNotActive(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+        
+        $monitor = new SessionReplayMonitor(new SecurityLogger($this->logFile));
+        $monitor->detectReplayAttack();
+
+        self::assertFileDoesNotExist($this->logFile);
+    }
+
+    public function testMonitorWithoutLoggerDoesNotFail(): void
+    {
+        $monitor = new SessionReplayMonitor(null);
+        $monitor->initReplayToken();
+
+        self::assertArrayHasKey('security_replay_token', $_SESSION);
+    }
+
+    public function testDetectReplayDoesNotLogWhenUserAgentMatches(): void
+    {
+        $monitor = new SessionReplayMonitor(new SecurityLogger($this->logFile));
+        $monitor->initReplayToken();
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        // User agent matches - no change
+
+        // Clear the log file after init
+        file_put_contents($this->logFile, '');
+        
+        $monitor->detectReplayAttack();
+
+        $log = (string) file_get_contents($this->logFile);
+        self::assertStringNotContainsString('session_replay_suspected', $log);
+    }
+
+    public function testDetectReplaySkipsUserAgentCheckOnGet(): void
+    {
+        $monitor = new SessionReplayMonitor(new SecurityLogger($this->logFile));
+        $monitor->initReplayToken();
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['HTTP_USER_AGENT'] = 'Different Agent';
+
+        // Clear the log file after init
+        file_put_contents($this->logFile, '');
+        
+        $monitor->detectReplayAttack();
+
+        $log = (string) file_get_contents($this->logFile);
+        self::assertStringNotContainsString('user_agent_mismatch', $log);
+    }
 }
+

@@ -46,4 +46,60 @@ final class RequestTest extends TestCase
 
         self::assertFalse(Request::wantsHtml());
     }
+
+    public function testWantsHtmlReturnsFalseWhenOnlyJson(): void
+    {
+        $_SERVER['HTTP_ACCEPT'] = 'application/json';
+
+        self::assertFalse(Request::wantsHtml());
+    }
+
+    public function testJsonBodyHandlesNestedArrays(): void
+    {
+        $data = [
+            'level1' => [
+                'level2' => [
+                    'level3' => 'value',
+                ],
+            ],
+        ];
+        
+        Request::withJsonBody(json_encode($data, JSON_THROW_ON_ERROR));
+
+        self::assertSame($data, Request::jsonBody());
+    }
+
+    public function testJsonBodyHandlesSpecialCharacters(): void
+    {
+        $data = ['message' => 'Hola ñ áéíóú'];
+        
+        Request::withJsonBody(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+
+        self::assertSame($data, Request::jsonBody());
+    }
+
+    public function testJsonBodyHandlesMalformedJson(): void
+    {
+        Request::withJsonBody('{"incomplete":');
+
+        $result = Request::jsonBody();
+        
+        self::assertSame('error', $result['estado'] ?? null);
+    }
+
+    public function testJsonBodyClearsOverrideAfterUse(): void
+    {
+        $first = ['call' => '1'];
+        $second = ['call' => '2'];
+        
+        Request::withJsonBody(json_encode($first, JSON_THROW_ON_ERROR));
+        $result1 = Request::jsonBody();
+        
+        Request::withJsonBody(json_encode($second, JSON_THROW_ON_ERROR));
+        $result2 = Request::jsonBody();
+
+        self::assertSame($first, $result1);
+        self::assertSame($second, $result2);
+    }
 }
+
