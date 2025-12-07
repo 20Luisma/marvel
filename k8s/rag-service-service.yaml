@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-service
+  labels:
+    app: rag-service
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: rag-service
+    tier: backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

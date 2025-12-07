@@ -118,6 +118,10 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 - `docs/microservicioheatmap/README.md`: integración del heatmap.
 - `AGENTS.md` / `docs/agent.md`: roles y pautas para agentes de IA.
 - UML completo
+
+## 🏗️ Despliegue en Kubernetes (visión general)
+
+El proyecto incorpora manifiestos en `k8s/` para la aplicación principal y los microservicios de IA (OpenAI, RAG), junto con una guía detallada en `docs/DEPLOY_K8S.md`. La solución está preparada para contenedorización y orquestación con Kubernetes mediante Deployments, Services `ClusterIP` e Ingress NGINX con reglas diferenciadas. El uso de ConfigMaps/Secrets permite portar la configuración entre entornos; el despliegue K8S es opcional y complementa los flujos local/hosting existentes.
 - Microservicio Heatmap → `/docs/microservicioheatmap/README.md`
 
 ---

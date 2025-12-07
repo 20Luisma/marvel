@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clean-marvel-config
+  labels:
+    app: clean-marvel
+    tier: frontend
+data:
+  APP_ENV: "production"
+  APP_DEBUG: "0"
+  APP_URL: "https://clean-marvel.local"
+  APP_PUBLIC_URL: "https://clean-marvel.local"
+  APP_ORIGIN: "https://clean-marvel.local"
+  OPENAI_SERVICE_URL: "http://openai-service:8081/v1/chat"
+  RAG_SERVICE_URL: "http://rag-service/rag/heroes"
+  HEATMAP_API_BASE_URL: "http://heatmap-service:8080"
+  ELEVENLABS_VOICE_ID: "EXAVITQu4vr4xnSDxMaL"
+  ELEVENLABS_MODEL_ID: "eleven_multilingual_v2"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: clean-marvel-secrets
+  labels:
+    app: clean-marvel
+    tier: frontend
+type: Opaque
+stringData:
+  INTERNAL_API_KEY: "CHANGEME-STRONG-RANDOM"
+  OPENAI_API_KEY: "CHANGEME-OPENAI-KEY"
+  ELEVENLABS_API_KEY: "CHANGEME-ELEVENLABS-KEY"
+  TTS_INTERNAL_TOKEN: "CHANGEME-TTS-INTERNAL"
+  GOOGLE_YT_API_KEY: "CHANGEME-YT-KEY"
+  MARVEL_UPDATE_TOKEN: "CHANGEME-MARVEL-TOKEN"
+  WAVE_API_KEY: "CHANGEME-WAVE-KEY"
+  PSI_API_KEY: "CHANGEME-PSI-KEY"
+  GITHUB_API_KEY: "CHANGEME-GH-KEY"
+  SENTRY_DSN: "CHANGEME-SENTRY-DSN"
+  SENTRY_API_TOKEN: "CHANGEME-SENTRY-API"
+  SENTRY_ORG_SLUG: "CHANGEME-SENTRY-ORG"
+  SENTRY_PROJECT_SLUG: "CHANGEME-SENTRY-PROJECT"
+  HEATMAP_API_TOKEN: "CHANGEME-HEATMAP-TOKEN"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clean-marvel
+  labels:
+    app: clean-marvel
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clean-marvel
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: clean-marvel
+        tier: frontend
+    spec:
+      containers:
+        - name: clean-marvel
+          image: 20luisma/clean-marvel:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: clean-marvel-config
+            - secretRef:
+                name: clean-marvel-secrets
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

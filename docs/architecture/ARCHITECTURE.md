@@ -57,3 +57,7 @@ Dependencias siempre fluyen hacia el dominio. `App\Config\ServiceUrlProvider` re
 - **Calificación**: 9.5/10 (nivel enterprise)
 
 Ver [docs/security/](../security/) para más detalles.
+
+## Despliegue en Kubernetes (visión general)
+
+La aplicación está preparada para ser orquestada en Kubernetes mediante los manifiestos del directorio `k8s/`, que definen Deployments escalables, Services `ClusterIP` e Ingress NGINX para la web y los microservicios (OpenAI, RAG). ConfigMaps encapsulan parámetros no sensibles y Secrets concentran credenciales, manteniendo la inversión de dependencias y la separación de responsabilidades. El despliegue K8S es opcional y complementa los escenarios local/hosting; la guía operativa se detalla en `docs/DEPLOY_K8S.md`.
