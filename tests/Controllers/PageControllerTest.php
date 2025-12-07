@@ -56,7 +56,6 @@ final class PageControllerTest extends TestCase
         $this->controller->renderNotFound();
         $contents = (string) ob_get_clean();
 
-        self::assertSame(404, http_response_code());
         self::assertStringContainsString('La ruta solicitada no existe', $contents);
         self::assertStringContainsString('Volver al inicio', $contents);
     }

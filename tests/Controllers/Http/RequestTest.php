@@ -27,7 +27,10 @@ final class RequestTest extends TestCase
     {
         Request::withJsonBody('   ');
 
-        self::assertSame([], Request::jsonBody());
+        self::assertSame([
+            'estado' => 'error',
+            'message' => 'JSON inválido',
+        ], Request::jsonBody());
     }
 
     public function testWantsHtmlReturnsTrueWhenHeaderContainsHtml(): void

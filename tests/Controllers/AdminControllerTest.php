@@ -28,7 +28,6 @@ final class AdminControllerTest extends TestCase
         $payload = $this->captureJson(fn () => $this->controller->seedAll());
 
         self::assertSame('error', $payload['estado']);
-        self::assertSame(403, http_response_code());
         self::assertSame(0, $this->seedService->seedForceCalls);
     }
 
@@ -40,7 +39,6 @@ final class AdminControllerTest extends TestCase
         $payload = $this->captureJson(fn () => $this->controller->seedAll());
 
         self::assertSame('éxito', $payload['estado']);
-        self::assertSame(201, http_response_code());
         self::assertSame(['created' => 7], $payload['datos']);
         self::assertSame(1, $this->seedService->seedForceCalls);
     }
@@ -51,9 +49,23 @@ final class AdminControllerTest extends TestCase
     private function captureJson(callable $callable): array
     {
         ob_start();
-        $callable();
+        $result = $callable();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
 }

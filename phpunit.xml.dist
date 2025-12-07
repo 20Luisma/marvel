@@ -9,11 +9,13 @@
         </testsuite>
     </testsuites>
     <coverage>
+        <report>
+            <clover outputFile="coverage.xml"/>
+        </report>
+    </coverage>
+    <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
-    </coverage>
-    <logging>
-        <log type="coverage-clover" target="coverage.xml"/>
-    </logging>
+    </source>
 </phpunit>

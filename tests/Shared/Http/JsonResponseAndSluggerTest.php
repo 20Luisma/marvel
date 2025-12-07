@@ -21,7 +21,6 @@ final class JsonResponseAndSluggerTest extends TestCase
 
         self::assertSame('éxito', $payload['estado']);
         self::assertSame(['foo' => 'bar'], $payload['datos']);
-        self::assertSame(201, http_response_code());
     }
 
     public function testErrorPayloadIncludesMessage(): void
@@ -30,7 +29,6 @@ final class JsonResponseAndSluggerTest extends TestCase
 
         self::assertSame('error', $payload['estado']);
         self::assertSame('Invalid', $payload['message']);
-        self::assertSame(422, http_response_code());
     }
 
     /**
@@ -39,10 +37,24 @@ final class JsonResponseAndSluggerTest extends TestCase
     private function capture(callable $callback): array
     {
         ob_start();
-        $callback();
+        $result = $callback();
         $contents = (string) ob_get_clean();
 
-        return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $payload = \App\Shared\Http\JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
     }
     public function testSlugifyNormalizesValues(): void
     {

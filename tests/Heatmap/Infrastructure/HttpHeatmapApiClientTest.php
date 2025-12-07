@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Heatmap\Infrastructure;
 
+require_once __DIR__ . '/../HttpHeatmapCurlStubs.php';
+
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
 use App\Heatmap\Infrastructure\HttpHeatmapApiClientTestDoubles;
 use PHPUnit\Framework\TestCase;

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Fakes;
 
-final class FakeSonarCloudClient
+use App\Services\SonarMetricsClient;
+
+final class FakeSonarCloudClient implements SonarMetricsClient
 {
     public function fetchMetrics(): array
     {

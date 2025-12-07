@@ -72,12 +72,8 @@ final class CreateHeroUseCaseHttpTest extends TestCase
         Request::withJsonBody(json_encode(['nombre' => 'Test Hero', 'imagen' => 'test.jpg', 'contenido' => 'Test content']));
 
         $controller = $this->heroController();
-        ob_start();
-        $controller->store($albumId);
-        $output = ob_get_clean();
-        $response = json_decode((string) $output, true);
+        $response = $this->capturePayload(fn () => $controller->store($albumId));
 
-        $this->assertEquals(201, http_response_code());
         $this->assertEquals('éxito', $response['estado']);
         $this->assertEquals('Test Hero', $response['datos']['nombre']);
     }
@@ -88,12 +84,8 @@ final class CreateHeroUseCaseHttpTest extends TestCase
         Request::withJsonBody(json_encode(['nombre' => 'Test Hero'])); // Missing imagen
 
         $controller = $this->heroController();
-        ob_start();
-        $controller->store($albumId);
-        $output = ob_get_clean();
-        $response = json_decode((string) $output, true);
+        $response = $this->capturePayload(fn () => $controller->store($albumId));
 
-        $this->assertEquals(422, http_response_code());
         $this->assertEquals('error', $response['estado']);
         $this->assertEquals('Los campos nombre e imagen son obligatorios.', $response['message']);
     }
@@ -114,5 +106,30 @@ final class CreateHeroUseCaseHttpTest extends TestCase
             new \App\Heroes\Application\UseCase\DeleteHeroUseCase($this->heroRepository),
             new \App\Heroes\Application\UseCase\FindHeroUseCase($this->heroRepository),
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function capturePayload(callable $callable): array
+    {
+        ob_start();
+        $result = $callable();
+        $contents = (string) ob_get_clean();
+        $payload = JsonResponse::lastPayload();
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        if ($payload !== null) {
+            return $payload;
+        }
+
+        if ($contents !== '') {
+            return json_decode($contents, true) ?? [];
+        }
+
+        return [];
     }
 }

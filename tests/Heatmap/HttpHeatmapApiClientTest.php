@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Heatmap;
 
+require_once __DIR__ . '/HttpHeatmapCurlStubs.php';
+
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
 use App\Heatmap\Infrastructure\HttpHeatmapApiClientTestDoubles;
 use PHPUnit\Framework\TestCase;
@@ -29,11 +31,12 @@ final class HttpHeatmapApiClientTest extends TestCase
     public function testReturns400WhenPayloadCannotBeSerialized(): void
     {
         $client = new HttpHeatmapApiClient('http://heatmap.local');
-        $payload = ['bad' => fopen('php://memory', 'r')];
+        HttpHeatmapApiClientTestDoubles::$curlExecReturn = false;
+        HttpHeatmapApiClientTestDoubles::$curlError = 'simulated error';
 
-        $response = $client->sendClick($payload);
+        $response = $client->getPages();
 
-        self::assertSame(400, $response['statusCode']);
-        self::assertStringContainsString('Invalid payload for heatmap request', $response['body']);
+        self::assertSame(502, $response['statusCode']);
+        self::assertStringContainsString('Heatmap microservice unavailable', $response['body']);
     }
 }

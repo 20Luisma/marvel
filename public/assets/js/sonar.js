@@ -11,6 +11,7 @@
   const qualityScoreEl = document.getElementById('sonar-quality-score');
   const statusPill = document.getElementById('sonar-status-pill');
   const coverageWarning = document.getElementById('sonar-coverage-warning');
+  const coverageValueEl = document.getElementById('sonar-coverage-value');
   const bundleJsTotalEl = document.getElementById('bundle-js-total');
   const bundleCssTotalEl = document.getElementById('bundle-css-total');
   const bundleJsCountEl = document.getElementById('bundle-js-count');
@@ -119,9 +120,11 @@
     if (coverageValue === null || coverageValue === undefined || coverageValue === '') {
       coverageCanvas.style.display = 'none';
       coverageWarning.classList.remove('hidden');
+      if (coverageValueEl) coverageValueEl.textContent = '—';
     } else {
       coverageCanvas.style.display = 'block';
       coverageWarning.classList.add('hidden');
+      if (coverageValueEl) coverageValueEl.textContent = `${Number(coverageValue).toFixed(1)}%`;
       coverageChart = new Chart(coverageCanvas, {
         type: 'doughnut',
         data: {

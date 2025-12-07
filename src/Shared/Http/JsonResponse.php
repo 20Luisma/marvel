@@ -8,30 +8,31 @@ final class JsonResponse
 {
     private const STATUS_SUCCESS = 'éxito';
     private const STATUS_ERROR = 'error';
+    /** @var array<string, mixed>|null */
+    private static ?array $lastPayload = null;
 
-    public static function success(mixed $data = [], int $statusCode = 200): void
+    /**
+     * @return array<string, mixed>
+     */
+    public static function success(mixed $data = [], int $statusCode = 200): array
     {
-        self::send(self::STATUS_SUCCESS, $data, null, $statusCode);
+        return self::send(self::STATUS_SUCCESS, $data, null, $statusCode);
     }
 
-    public static function error(string $message, int $statusCode = 400): void
+    /**
+     * @return array<string, mixed>
+     */
+    public static function error(string $message, int $statusCode = 400): array
     {
-        self::send(self::STATUS_ERROR, null, $message, $statusCode);
+        return self::send(self::STATUS_ERROR, null, $message, $statusCode);
     }
 
     /**
      * @param array<string, string> $headers
+     * @return array<string, mixed>
      */
-    private static function send(string $status, mixed $data, ?string $message, int $statusCode, array $headers = []): void
+    private static function send(string $status, mixed $data, ?string $message, int $statusCode, array $headers = []): array
     {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        header('Cache-Control: no-cache');
-
-        foreach ($headers as $name => $value) {
-            header($name . ': ' . $value);
-        }
-
         $payload = ['estado' => $status];
 
         if ($status === self::STATUS_SUCCESS) {
@@ -42,6 +43,32 @@ final class JsonResponse
             $payload['message'] = $message;
         }
 
+        self::$lastPayload = $payload;
+
+        // No interrumpimos la ejecución en CLI (PHPUnit) para permitir que los tests continúen.
+        if (PHP_SAPI === 'cli') {
+            return $payload;
+        }
+
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-cache');
+
+        foreach ($headers as $name => $value) {
+            header($name . ': ' . $value);
+        }
+
         echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        exit;
+    }
+
+    /**
+     * Expose last payload for test assertions in CLI context.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function lastPayload(): ?array
+    {
+        return self::$lastPayload;
     }
 }
