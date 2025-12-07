@@ -58,7 +58,8 @@ final class SessionReplayMonitorTest extends TestCase
         $monitor = new SessionReplayMonitor(new SecurityLogger($this->logFile));
         $monitor->detectReplayAttack();
 
-        self::assertTrue(true, 'No exceptions and flow continues.');
+        self::assertSame([], $_SESSION, 'Session stays untouched when no anomalies are detected.');
+        self::assertFileDoesNotExist($this->logFile, 'No log should be generated without anomalies.');
     }
 
     public function testDetectsUserAgentChangeOnPost(): void
