@@ -2,56 +2,29 @@
 
 declare(strict_types=1);
 
-namespace App\Heatmap\Infrastructure;
-
-// Mocks for global functions
-function curl_init(?string $url = null) { 
-    return new \stdClass(); 
-}
-
-function curl_setopt($handle, int $option, $value): bool { 
-    return true; 
-}
-
-function curl_exec($handle): string|bool {
-    if (isset($GLOBALS['curl_exec_return'])) {
-        return $GLOBALS['curl_exec_return'];
-    }
-    return '{"status":"ok"}';
-}
-
-function curl_getinfo($handle, int $option = 0) {
-    if (isset($GLOBALS['curl_getinfo_return'])) {
-        return $GLOBALS['curl_getinfo_return'];
-    }
-    return 200;
-}
-
-function curl_close($handle): void {}
-
-function curl_error($handle): string { 
-    return $GLOBALS['curl_error_return'] ?? ''; 
-}
-
 namespace Tests\Heatmap\Infrastructure;
 
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
+use App\Heatmap\Infrastructure\HttpHeatmapApiClientTestDoubles;
 use PHPUnit\Framework\TestCase;
 
 class HttpHeatmapApiClientTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        HttpHeatmapApiClientTestDoubles::reset();
+    }
+
     protected function tearDown(): void
     {
-        unset($GLOBALS['curl_exec_return']);
-        unset($GLOBALS['curl_getinfo_return']);
-        unset($GLOBALS['curl_error_return']);
+        HttpHeatmapApiClientTestDoubles::reset();
     }
 
     public function testSendClickHappyPath(): void
     {
         $client = new HttpHeatmapApiClient('https://api.example.com', 'token');
-        $GLOBALS['curl_exec_return'] = '{"status":"saved"}';
-        $GLOBALS['curl_getinfo_return'] = 201;
+        HttpHeatmapApiClientTestDoubles::$curlExecReturn = '{"status":"saved"}';
+        HttpHeatmapApiClientTestDoubles::$curlInfoStatus = 201;
 
         $result = $client->sendClick(['x' => 10, 'y' => 20, 'page' => '/home']);
 
@@ -62,8 +35,8 @@ class HttpHeatmapApiClientTest extends TestCase
     public function testGetSummaryError(): void
     {
         $client = new HttpHeatmapApiClient('https://api.example.com');
-        $GLOBALS['curl_exec_return'] = false; // Simulate failure
-        $GLOBALS['curl_error_return'] = 'Connection refused';
+        HttpHeatmapApiClientTestDoubles::$curlExecReturn = false; // Simulate failure
+        HttpHeatmapApiClientTestDoubles::$curlError = 'Connection refused';
 
         $result = $client->getSummary([]);
 
