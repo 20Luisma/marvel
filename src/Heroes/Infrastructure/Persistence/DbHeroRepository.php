@@ -47,9 +47,12 @@ final class DbHeroRepository implements HeroRepository
     public function byAlbum(string $albumId): array
     {
         $stmt = $this->pdo->prepare('SELECT hero_id, album_id, nombre, slug, contenido, imagen, created_at, updated_at FROM heroes WHERE album_id = :album_id ORDER BY created_at ASC');
+        if ($stmt === false) {
+            return [];
+        }
         $stmt->execute(['album_id' => $albumId]);
 
-        $rows = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map(fn (array $row): Hero => $this->hydrate($row), $rows);
     }
@@ -60,7 +63,10 @@ final class DbHeroRepository implements HeroRepository
     public function all(): array
     {
         $stmt = $this->pdo->query('SELECT hero_id, album_id, nombre, slug, contenido, imagen, created_at, updated_at FROM heroes ORDER BY created_at ASC');
-        $rows = $stmt->fetchAll();
+        if ($stmt === false) {
+            return [];
+        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map(fn (array $row): Hero => $this->hydrate($row), $rows);
     }
@@ -68,6 +74,9 @@ final class DbHeroRepository implements HeroRepository
     public function find(string $heroId): ?Hero
     {
         $stmt = $this->pdo->prepare('SELECT hero_id, album_id, nombre, slug, contenido, imagen, created_at, updated_at FROM heroes WHERE hero_id = :hero_id LIMIT 1');
+        if ($stmt === false) {
+            return null;
+        }
         $stmt->execute(['hero_id' => $heroId]);
 
         $row = $stmt->fetch();
@@ -78,12 +87,18 @@ final class DbHeroRepository implements HeroRepository
     public function delete(string $heroId): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM heroes WHERE hero_id = :hero_id');
+        if ($stmt === false) {
+            return;
+        }
         $stmt->execute(['hero_id' => $heroId]);
     }
 
     public function deleteByAlbum(string $albumId): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM heroes WHERE album_id = :album_id');
+        if ($stmt === false) {
+            return;
+        }
         $stmt->execute(['album_id' => $albumId]);
     }
 

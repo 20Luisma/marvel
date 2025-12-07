@@ -316,7 +316,7 @@ vendor/bin/phpunit tests/Security/ --testdox
     - `cd rag-service && ../vendor/bin/phpunit`
     - `cd openai-service && ../vendor/bin/phpunit`
 
-- **PHPStan**: `vendor/bin/phpstan analyse --memory-limit=512M` (config en `phpstan.neon`, nivel 8, excluye `src/Dev`).
+- **PHPStan**: `vendor/bin/phpstan analyse --memory-limit=1G` (config en `phpstan.neon`, nivel 7, excluye `src/Dev`; bloque `ignoreErrors` comentado).
 
 - **QA frontend**: Playwright (`playwright.config.cjs`), Pa11y (`pa11y-all.sh`), Lighthouse (`lighthouserc.json`), SonarCloud (ver ADR-003).
 

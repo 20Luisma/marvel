@@ -1,9 +1,9 @@
 {
-    "generatedAt": "2025-12-06T21:24:31+00:00",
+    "generatedAt": "2025-12-06T22:55:03+00:00",
     "totals": {
         "js": {
-            "bytes": 212173,
-            "human": "207.2 KB",
+            "bytes": 213607,
+            "human": "208.6 KB",
             "count": 21
         },
         "css": {
@@ -39,8 +39,8 @@
         },
         {
             "path": "public/assets/js/sonar.js",
-            "bytes": 10808,
-            "human": "10.6 KB",
+            "bytes": 12242,
+            "human": "12.0 KB",
             "type": "js"
         }
     ]

@@ -19,14 +19,14 @@ final class FileAlbumRepository implements AlbumRepository
         $records = $this->loadRecords();
         $records = array_values(array_filter(
             $records,
-            static fn (array $data): bool => ($data['albumId'] ?? null) !== $album->albumId()
+            static fn (array $data): bool => $data['albumId'] !== $album->albumId()
         ));
 
         $records[] = $album->toPrimitives();
 
         usort(
             $records,
-            static fn (array $a, array $b): int => strcmp($a['createdAt'] ?? '', $b['createdAt'] ?? '')
+            static fn (array $a, array $b): int => strcmp($a['createdAt'], $b['createdAt'])
         );
 
         $this->persistRecords($records);
@@ -46,7 +46,7 @@ final class FileAlbumRepository implements AlbumRepository
     public function find(string $albumId): ?Album
     {
         foreach ($this->loadRecords() as $data) {
-            if (($data['albumId'] ?? null) === $albumId) {
+            if ($data['albumId'] === $albumId) {
                 return Album::fromPrimitives($data);
             }
         }
@@ -59,7 +59,7 @@ final class FileAlbumRepository implements AlbumRepository
         $records = $this->loadRecords();
         $filtered = array_values(array_filter(
             $records,
-            static fn (array $data): bool => ($data['albumId'] ?? null) !== $albumId
+            static fn (array $data): bool => $data['albumId'] !== $albumId
         ));
 
         if (count($filtered) !== count($records)) {

@@ -89,6 +89,9 @@ final class SecurityHeaders
         return implode('; ', $directives);
     }
 
+    /**
+     * @param array<int, string> $collector
+     */
     private static function addHeader(string $name, string $value, bool $isTest, array &$collector): void
     {
         header($name . ': ' . $value);

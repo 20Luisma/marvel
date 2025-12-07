@@ -14,6 +14,9 @@ final class FindHeroUseCase
     {
     }
 
+    /**
+     * @return array{heroId: string, albumId: string, nombre: string, slug: string, contenido: string, imagen: string, createdAt: string, updatedAt: string}
+     */
     public function execute(string $heroId): array
     {
         $hero = $this->repository->find($heroId);

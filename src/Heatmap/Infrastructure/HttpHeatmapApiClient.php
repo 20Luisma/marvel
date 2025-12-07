@@ -16,22 +16,34 @@ final class HttpHeatmapApiClient implements HeatmapApiClient
         $this->apiToken = $apiToken !== null && $apiToken !== '' ? $apiToken : null;
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     * @return array{statusCode: int, body: string}
+     */
     public function sendClick(array $payload): array
     {
         return $this->request('POST', '/track', $this->mapClickPayload($payload));
     }
 
+    /**
+     * @param array<string, string> $query
+     * @return array{statusCode: int, body: string}
+     */
     public function getSummary(array $query): array
     {
         return $this->request('GET', '/events', null, $query);
     }
 
+    /**
+     * @return array{statusCode: int, body: string}
+     */
     public function getPages(): array
     {
         return $this->request('GET', '/events');
     }
 
     /**
+     * @param non-empty-string $method
      * @param array<string,mixed>|null $payload
      * @param array<string,string> $query
      * @return array{statusCode:int,body:string}
@@ -47,7 +59,7 @@ final class HttpHeatmapApiClient implements HeatmapApiClient
         if ($ch === false) {
             return [
                 'statusCode' => 502,
-                'body' => json_encode([
+                'body' => (string) json_encode([
                     'status' => 'error',
                     'message' => 'Heatmap microservice unavailable',
                     'detail' => 'cURL init failed',
@@ -60,39 +72,37 @@ final class HttpHeatmapApiClient implements HeatmapApiClient
             $headers[] = 'X-API-Token: ' . $this->apiToken;
         }
 
-        $options = [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_TIMEOUT => self::DEFAULT_TIMEOUT,
-        ];
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
 
         if ($payload !== null) {
             $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
             if ($json === false) {
+                curl_close($ch);
                 return [
                     'statusCode' => 400,
-                    'body' => json_encode([
+                    'body' => (string) json_encode([
                         'status' => 'error',
                         'message' => 'Invalid payload for heatmap request',
                     ], JSON_UNESCAPED_UNICODE),
                 ];
             }
-            $options[CURLOPT_POSTFIELDS] = $json;
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
             $headers[] = 'Content-Type: application/json';
-            $options[CURLOPT_HTTPHEADER] = $headers;
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
 
-        curl_setopt_array($ch, $options);
         $responseBody = curl_exec($ch);
 
-        if ($responseBody === false) {
+        if ($responseBody === false || !is_string($responseBody)) {
             $error = curl_error($ch);
             curl_close($ch);
             return [
                 'statusCode' => 502,
-                'body' => json_encode([
+                'body' => (string) json_encode([
                     'status' => 'error',
                     'message' => 'Heatmap microservice unavailable',
                     'detail' => $error,

@@ -10,6 +10,7 @@ final class JsonValidator
 {
     /**
      * @param array<string, array{type: string, required?: bool}> $schema
+     * @param array<string, mixed> $payload
      */
     public function validate(array $payload, array $schema, bool $allowEmpty = false): void
     {

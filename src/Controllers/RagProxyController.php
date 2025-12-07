@@ -65,7 +65,7 @@ final class RagProxyController
             // END ZONAR FIX DEFINITIVO
 
 
-            if (empty($payload) || !is_array($payload)) {
+            if ($payload === []) {
                 file_put_contents($logFile, date('c') . " [RAG] ERROR: Payload vacío\n", FILE_APPEND);
                 http_response_code(400);
                 header('Content-Type: application/json; charset=utf-8');
@@ -94,6 +94,9 @@ final class RagProxyController
             ];
 
             $encodedPayload = json_encode($cleanPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            if ($encodedPayload === false) {
+                throw new \RuntimeException('No se pudo serializar el payload para RAG.');
+            }
             
             file_put_contents($logFile, date('c') . " [RAG] Payload: $encodedPayload\n", FILE_APPEND);
 

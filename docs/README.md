@@ -116,7 +116,7 @@ curl -I http://localhost:8080/ | grep -i content-security-policy
 - Tests E2E con Playwright
 
 ### ✅ Calidad de Código
-- PHPStan nivel 8
+- PHPStan nivel 7 (bloque `ignoreErrors` comentado)
 - SonarCloud: A+ en seguridad
 - PSR-12 compliant
 - Documentación completa
@@ -131,7 +131,7 @@ curl -I http://localhost:8080/ | grep -i content-security-policy
 | **Assertions** | 593 |
 | **Líneas de Código** | ~15,000 |
 | **Cobertura** | >80% |
-| **PHPStan** | Nivel 8 |
+| **PHPStan** | Nivel 7 |
 | **Calificación Seguridad** | 9.5/10 |
 
 ---

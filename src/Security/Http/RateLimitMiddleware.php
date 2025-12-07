@@ -11,6 +11,9 @@ use Src\Controllers\Http\Request;
 
 final class RateLimitMiddleware
 {
+    /**
+     * @param array<string, array{max: int, window: int}> $routeLimits
+     */
     public function __construct(
         private readonly RateLimiter $limiter,
         private readonly array $routeLimits = [],

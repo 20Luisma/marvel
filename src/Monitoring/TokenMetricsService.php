@@ -316,6 +316,9 @@ class TokenMetricsService
         ];
     }
 
+    /**
+     * @return array{log_path_resolution: array{central_path: string, central_exists: bool}}
+     */
     private function getDebugInfo(): array
     {
         return [

@@ -54,7 +54,7 @@ Las dependencias fluyen de Presentación → Aplicación → Dominio, e Infraest
 ## 🧪 Auditoría de calidad y configuración PHPUnit
 - **PHPUnit:** definido en `phpunit.xml.dist` (bootstrap `tests/bootstrap.php`, cache `.phpunit.cache`). Ejecutar `vendor/bin/phpunit --colors=always` para la suite completa; usar `composer test:cov` para generar `build/coverage.xml`.
 - **Escopos de prueba:** carpetas `tests/Albums`, `tests/Heroes`, `tests/Notifications`, `tests/Shared` y `tests/Unit`. Mantener la paridad con `src/`.
-- **Herramientas auxiliares:** `vendor/bin/phpstan analyse --memory-limit=512M` (config `phpstan.neon` nivel 6, excluyendo `src/Dev`). Añadir reglas personalizadas allí en lugar de ignorar alertas sin justificación.
+- **Herramientas auxiliares:** `vendor/bin/phpstan analyse --memory-limit=1G` (config `phpstan.neon` nivel 7, excluyendo `src/Dev`; bloque `ignoreErrors` comentado). Añadir reglas personalizadas allí en lugar de ignorar alertas sin justificación.
 - **Logging QA:** conservar artefactos de fallos (salida PHPUnit/PHPStan, `storage/logs/*`) en la descripción del PR; no subir `vendor/` ni archivos generados salvo `build/coverage.xml` si se solicita.
 - **Microservicios:** antes de test funcional, confirmar que `openai-service` y `rag-service` responden (`curl -X POST http://localhost:8081/v1/chat`, `curl -X POST http://localhost:8082/rag/heroes`) usando payloads de ejemplo almacenados en `docs/API_REFERENCE.md`.
 
@@ -70,7 +70,7 @@ Las dependencias fluyen de Presentación → Aplicación → Dominio, e Infraest
 | Instalar dependencias principales | `["bash","-lc","composer install"]` |
 | Levantar servidor HTTP | `["bash","-lc","composer serve"]` |
 | Ejecutar PHPUnit completo | `["bash","-lc","vendor/bin/phpunit --colors=always"]` |
-| Analizar con PHPStan | `["bash","-lc","vendor/bin/phpstan analyse --memory-limit=512M"]` |
+| Analizar con PHPStan | `["bash","-lc","vendor/bin/phpstan analyse --memory-limit=1G"]` |
 | Servir microservicio OpenAI | `["bash","-lc","php -S localhost:8081 -t public","workdir":"openai-service"]` |
 | Servir microservicio RAG | `["bash","-lc","php -S localhost:8082 -t public","workdir":"rag-service"]` |
 | Comparar ambientes configurados | `["bash","-lc","php -r 'var_export((new App\\Config\\ServiceUrlProvider(require \"config/services.php\"))->toArrayForFrontend());'"]` |

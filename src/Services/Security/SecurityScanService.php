@@ -43,6 +43,16 @@ final class SecurityScanService
     /**
      * Analiza headers de seguridad REALES del servidor
      */
+    /**
+     * @return array{
+     *   grade?: string,
+     *   headers?: array<string, string>,
+     *   missing?: array<int, string>,
+     *   scanDate: string,
+     *   real?: bool,
+     *   error?: string
+     * }
+     */
     public function scanSecurityHeaders(): array
     {
         // Obtener headers REALES del servidor
@@ -73,6 +83,10 @@ final class SecurityScanService
 
     /**
      * Analiza headers de seguridad del servidor
+     */
+    /**
+     * @param array<string|int, mixed> $headers
+     * @return array{present: array<string, string>, missing: array<int, string>}
      */
     private function analyzeSecurityHeaders(array $headers): array
     {
@@ -118,6 +132,9 @@ final class SecurityScanService
     /**
      * Calcula grade basado en headers presentes
      */
+    /**
+     * @param array{present: array<string, string>, missing: array<int, string>} $analysis
+     */
     private function calculateSecurityGrade(array $analysis): string
     {
         $presentCount = count($analysis['present']);
@@ -139,9 +156,29 @@ final class SecurityScanService
     /**
      * Analiza SSL/TLS y configuración HTTPS REAL del servidor
      */
+    /**
+     * @return array{
+     *   error?: string,
+     *   score: int,
+     *   grade: string,
+     *   tests_passed?: int,
+     *   tests_failed?: int,
+     *   tests_quantity?: int,
+     *   scanDate: string,
+     *   real?: bool
+     * }
+     */
     public function scanMozillaObservatory(): array
     {
         $host = parse_url($this->targetUrl, PHP_URL_HOST);
+        if (!is_string($host) || $host === '') {
+            return [
+                'error' => 'Host inválido para análisis SSL',
+                'score' => 0,
+                'grade' => 'N/A',
+                'scanDate' => date('c'),
+            ];
+        }
         
         // Analizar SSL/TLS real
         $sslInfo = $this->analyzeSSL($host);
@@ -172,6 +209,14 @@ final class SecurityScanService
 
     /**
      * Analiza configuración SSL/TLS real
+     */
+    /**
+     * @return array{
+     *   tests_passed: int,
+     *   tests_failed: int,
+     *   tests_quantity: int,
+     *   cert_info: array<string, mixed>
+     * }|null
      */
     private function analyzeSSL(string $host): ?array
     {
@@ -205,6 +250,9 @@ final class SecurityScanService
         }
 
         $cert = openssl_x509_parse($params['options']['ssl']['peer_certificate']);
+        if ($cert === false) {
+            return null;
+        }
         
         // Analizar certificado y configuración
         $tests = $this->runSSLTests($cert, $host);
@@ -219,6 +267,10 @@ final class SecurityScanService
 
     /**
      * Ejecuta tests de seguridad SSL/TLS
+     */
+    /**
+     * @param array<string, mixed> $cert
+     * @return array{passed: int, failed: int, total: int}
      */
     private function runSSLTests(array $cert, string $host): array
     {
@@ -273,6 +325,9 @@ final class SecurityScanService
     /**
      * Calcula score SSL basado en tests
      */
+    /**
+     * @param array{tests_passed: int, tests_quantity: int} $sslInfo
+     */
     private function calculateSSLScore(array $sslInfo): int
     {
         if ($sslInfo['tests_quantity'] === 0) {
@@ -298,6 +353,9 @@ final class SecurityScanService
     /**
      * Carga datos desde cache
      */
+    /**
+     * @return array<string, mixed>|null
+     */
     public function loadCache(): ?array
     {
         if (!file_exists(self::CACHE_FILE)) {
@@ -319,6 +377,9 @@ final class SecurityScanService
 
     /**
      * Guarda datos en cache
+     */
+    /**
+     * @param array<string, mixed> $data
      */
     public function saveCache(array $data): void
     {
@@ -352,6 +413,14 @@ final class SecurityScanService
 
     /**
      * Ejecuta escaneo completo
+     */
+    /**
+     * @return array{
+     *   securityHeaders: array<string, mixed>,
+     *   mozillaObservatory: array<string, mixed>,
+     *   lastScan: string,
+     *   fromCache: bool
+     * }
      */
     public function scan(): array
     {
