@@ -43,7 +43,8 @@ final class RateLimitMiddlewareTest extends TestCase
         $output = ob_get_clean();
 
         self::assertFalse($result);
-        self::assertStringContainsString('"error":"rate_limited"', $output ?? '');
+        self::assertIsString($output);
+        self::assertStringContainsString('"error":"rate_limited"', $output);
         self::assertFileExists($this->logFile);
     }
 
@@ -61,6 +62,7 @@ final class RateLimitMiddlewareTest extends TestCase
         $output = ob_get_clean();
 
         self::assertFalse($result);
-        self::assertStringContainsString('Demasiadas peticiones', $output ?? '');
+        self::assertIsString($output);
+        self::assertStringContainsString('Demasiadas peticiones', $output);
     }
 }

@@ -11,6 +11,7 @@ use Src\Controllers\Http\Request;
 final class HeadersSecurityTest extends TestCase
 {
     private string $root;
+    /** @var array<string, mixed>|null */
     private static ?array $bootstrapContainer = null;
 
     protected function setUp(): void
@@ -136,6 +137,7 @@ final class HeadersSecurityTest extends TestCase
     }
 
     /**
+     * @param array<int, string> $headers
      * @return array<string, string>
      */
     private function headersToMap(array $headers): array
@@ -207,7 +209,7 @@ final class HeadersSecurityTest extends TestCase
         (new Router($container))->handle($method, $path);
         $output = (string) ob_get_clean();
         $headers = headers_list();
-        $status = http_response_code();
+        $status = http_response_code() ?: 200;
 
         return [
             'headers' => $headers,

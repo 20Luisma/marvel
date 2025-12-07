@@ -22,7 +22,7 @@ final class LogSanitizerTest extends TestCase
 
         $sanitized = LogSanitizer::sanitizeContext($context);
 
-        self::assertIsArray($sanitized);
+        self::assertSame(array_keys($context), array_keys($sanitized));
         self::assertArrayHasKey('password', $sanitized);
         self::assertArrayHasKey('token', $sanitized);
         self::assertStringNotContainsString('SuperSecreta123', (string) $sanitized['password']);
