@@ -88,7 +88,6 @@ final class AuthController
     private function redirect(string $path): void
     {
         header('Location: ' . $path, true, 302);
-        exit;
     }
 
     private function flashError(string $message): void

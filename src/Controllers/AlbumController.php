@@ -66,8 +66,12 @@ final class AlbumController
         }
         $coverImage = array_key_exists('coverImage', $payload) ? $sanitizer->sanitizeString((string)$payload['coverImage']) : null;
 
-        $response = $this->createAlbum->execute(new CreateAlbumRequest($nombre, $coverImage));
-        JsonResponse::success($response->toArray(), 201);
+        try {
+            $response = $this->createAlbum->execute(new CreateAlbumRequest($nombre, $coverImage));
+            JsonResponse::success($response->toArray(), 201);
+        } catch (InvalidArgumentException $exception) {
+            JsonResponse::error($exception->getMessage(), 400);
+        }
     }
 
     public function update(string $albumId): void

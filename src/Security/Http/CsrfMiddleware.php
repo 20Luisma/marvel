@@ -7,7 +7,7 @@ namespace App\Security\Http;
 use App\Security\Csrf\CsrfService;
 use App\Security\Logging\SecurityLogger;
 
-final class CsrfMiddleware
+class CsrfMiddleware
 {
     /** @var array<int, string> */
     private array $protectedPostRoutes = [
@@ -48,8 +48,13 @@ final class CsrfMiddleware
             http_response_code(403);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['error' => 'Invalid CSRF token'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            exit;
+            $this->terminate();
         }
+    }
+
+    protected function terminate(): void
+    {
+        exit;
     }
 
     private function logFailure(string $path, mixed $token): void
