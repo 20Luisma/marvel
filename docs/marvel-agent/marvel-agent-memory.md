@@ -194,7 +194,7 @@ Automatización n8n: un workflow (`n8n/Daily Marvel YouTube Video Fetcher and Ba
 
 ### 2.6 Infraestructura, despliegue y hosting de microservicios
 
-Clean Marvel Album está pensado para moverse entre local y producción sin cambiar código: basta con ajustar URLs de servicio y flags en `.env`. Así, el mismo código sirve tanto en localhost como en hosting, y los microservicios pueden vivir en subdominios o en una VM dockerizada.
+Clean Marvel Album está pensado para moverse entre local y producción sin cambiar código: basta con ajustar URLs de servicio y flags en `.env`. Así, el mismo código sirve tanto en localhost como en hosting, puede orquestarse en Kubernetes y los microservicios pueden vivir en subdominios o en una VM dockerizada.
 
 - **Mapa de despliegue (local)**:
   - App principal (PHP): `localhost:8080` (también `docker-compose.yml` expone 8080). El dev levanta `php -S ...` o el contenedor de compose.
@@ -208,8 +208,15 @@ Clean Marvel Album está pensado para moverse entre local y producción sin camb
   - `heatmap-service`: dockerizado en VM (Google Cloud, según docs) accesible en `http://34.74.102.123:8080`.
 - **Docker e imágenes**:
   - `docker-compose.yml` (raíz): levanta la app principal PHP con servidor embebido en 8080 para desarrollo rápido.
-  - `heatmap-service`: tiene Dockerfile; se construye como imagen `heatmap-service` y se ejecuta en contenedor (`docker run -p 8080:8080 ...`). Volumen montado para `heatmap.db`.
-  - No hay Dockerfiles visibles para `rag-service` u `openai-service` en el repo; se sirven con `php -S` en local/hosting. Se configuran por `.env` y subdominios.
+  - App principal: Dockerfile de referencia en `docs/DEPLOY_K8S.md` (php:8.2-apache, sirve `public/`); imagen sugerida `20luisma/clean-marvel:latest`.
+  - `openai-service` y `rag-service`: tienen Dockerfile en cada carpeta; imágenes por defecto `20luisma/openai-service:latest` y `20luisma/rag-service:latest`.
+  - `heatmap-service`: Dockerfile propio; se construye como imagen `heatmap-service` y se ejecuta en contenedor (`docker run -p 8080:8080 ...`). Volumen montado para `heatmap.db`.
+- **Kubernetes (nuevo)**:
+  - Manifiestos en `k8s/*.yaml` definen Deployments (2 réplicas) + Services `ClusterIP` para `clean-marvel`, `rag-service`, `openai-service` y un Ingress NGINX con host `clean-marvel.local`.
+  - Ingress: `/` apunta a la app principal; `/api/rag/*` se reescribe a `/rag/$2` hacia `rag-service`; `/api/openai/*` se reescribe a `/$2` hacia `openai-service` (puerto 8081).
+  - ConfigMaps: `clean-marvel-config`, `rag-service-config`, `openai-service-config` (URLs internas, flags como `RAG_USE_EMBEDDINGS=0`, CORS y voz ElevenLabs). Secrets `clean-marvel-secrets` agrupa `INTERNAL_API_KEY`, `OPENAI_API_KEY`, `ELEVENLABS_API_KEY` y tokens externos con placeholders `CHANGEME`.
+  - Pipeline: tests + análisis → `docker build`/`docker push` (`20luisma/clean-marvel|openai-service|rag-service:latest`) → `kubectl apply -f k8s/` → `kubectl rollout status deploy/<name>` y `kubectl get svc,ing`.
+  - Debug: `kubectl port-forward svc/clean-marvel 8080:80`, `svc/rag-service 8082:80`, `svc/openai-service 8081:8081`. Host Ingress `clean-marvel.local` es placeholder; ajustar DNS/TLS reales.
 - **Subdominios y hosting**:
   - Los microservicios PHP resuelven su URL vía `.env` (`OPENAI_SERVICE_URL`, `RAG_SERVICE_URL`), con fallback a subdominios `openai-service.contenido.creawebes.com` y `rag-service.contenido.creawebes.com` cuando están en hosting.
   - La app principal consume microservicios vía HTTP; proxies PHP (`public/api/*.php`) ocultan tokens y orquestan llamadas externas (heatmap, etc.).
@@ -341,7 +348,7 @@ En conjunto, PHPUnit + PHPStan cubren la solidez del backend; Playwright, Pa11y 
 - **Gestión de proyecto**: `docs/project-management/` con CHANGELOG.md (v1.2.0), ROADMAP.md, CONTRIBUTING.md, TASKS_AUTOMATION.md.
 - **Desarrollo**: `docs/development/` con agent.md, analisis_estructura.md.
 - **Guías**: `docs/guides/getting-started.md`, `docs/guides/testing.md`, `docs/guides/authentication.md`.
-- **Otros**: `docs/architecture/USE_CASES.md`, `docs/architecture/REQUIREMENTS.md`, `docs/deployment/deploy.md`.
+- **Otros**: `docs/architecture/USE_CASES.md`, `docs/architecture/REQUIREMENTS.md`, `docs/deployment/deploy.md`, `docs/DEPLOY_K8S.md` (guía de despliegue en Kubernetes y manifiestos en `k8s/`).
 
 ---
 
