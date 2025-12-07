@@ -28,4 +28,20 @@ final class HttpClientStub implements HttpClientInterface
 
         return new HttpResponse($this->statusCode, $this->body);
     }
+
+    /**
+     * @param array<string, string> $headers
+     */
+    public function get(string $url, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+    {
+        $this->requests[] = [
+            'method' => 'GET',
+            'url' => $url,
+            'headers' => $headers,
+            'timeout' => $timeoutSeconds,
+            'retries' => $retries,
+        ];
+
+        return new HttpResponse($this->statusCode, $this->body);
+    }
 }

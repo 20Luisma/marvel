@@ -11,4 +11,9 @@ interface HttpClientInterface
      * @param array<string, mixed>|string $payload
      */
     public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse;
+
+    /**
+     * @param array<string, string> $headers
+     */
+    public function get(string $url, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse;
 }

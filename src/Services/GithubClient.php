@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Shared\Infrastructure\Http\CurlHttpClient;
+use App\Shared\Infrastructure\Http\HttpClientInterface;
 use DateTimeImmutable;
 use DateTimeZone;
 
@@ -21,14 +23,16 @@ final class GithubClient
 
     private string $apiKey;
     private string $rootPath;
+    private HttpClientInterface $httpClient;
 
-    public function __construct(string $rootPath)
+    public function __construct(string $rootPath, ?HttpClientInterface $httpClient = null)
     {
         $this->rootPath = rtrim($rootPath, '/\\');
         $envFile        = $this->rootPath . '/.env';
 
         self::ensureEnv($envFile);
         $this->apiKey = (string) self::envv('GITHUB_API_KEY', '');
+        $this->httpClient = $httpClient ?? new CurlHttpClient();
     }
 
     public static function ensureEnv(string $envFile): void
@@ -65,7 +69,7 @@ final class GithubClient
     }
 
     /**
-     * @return array{status:int,data?:array<int,array<string,mixed>>,error?:string,detail?:string,body?:mixed}
+     * @return array<string, mixed>
      */
     public function fetchActivity(string $from, string $to): array
     {
@@ -100,6 +104,7 @@ final class GithubClient
     }
 
     /**
+     * @param array<string, mixed> $pr
      * @return array<int,string>
      */
     private function extractLabels(array $pr): array
@@ -118,6 +123,9 @@ final class GithubClient
         return $labels;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function guardMissingApiKey(): ?array
     {
         if ($this->apiKey !== '') {
@@ -130,6 +138,9 @@ final class GithubClient
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function invalidRangePayload(): array
     {
         return [
@@ -138,6 +149,9 @@ final class GithubClient
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function buildActivityPayload(DateTimeImmutable $fromDate, DateTimeImmutable $toDate): array
     {
         $url      = sprintf(self::BASE_URL . self::PULLS_PATH, self::OWNER, self::REPO);
@@ -188,6 +202,7 @@ final class GithubClient
     }
 
     /**
+     * @param array<string, mixed> $pr
      * @return array<string,mixed>|null
      */
     private function createEntryFromPullRequest(array $pr, DateTimeImmutable $fromDate, DateTimeImmutable $toDate): ?array
@@ -221,6 +236,7 @@ final class GithubClient
     }
 
     /**
+     * @param array<string, mixed> $pr
      * @return array{raw:string,date:DateTimeImmutable}|null
      */
     private function parseCreatedAt(array $pr): ?array
@@ -260,6 +276,7 @@ final class GithubClient
     }
 
     /**
+     * @param array<string, mixed> $pr
      * @param array<int,string> $reviewers
      * @return array<string,mixed>
      */
@@ -350,6 +367,9 @@ final class GithubClient
         return [$reviewCount, $reviewers];
     }
 
+    /**
+     * @return array{ok:bool,status:int,body:string,decoded:mixed,error?:string}
+     */
     public function listRepositoryContents(string $path = ''): array
     {
         $trimmed = trim((string) $path, '/');
@@ -371,82 +391,47 @@ final class GithubClient
     }
 
     /**
-     * @return array{ok:bool,status:int,body:string,decoded:mixed,error?:string}
+     * @return array{ok:bool,status:int,body:string,decoded:mixed,error?:string|null}
      */
     private function requestGithub(string $url): array
     {
         $headers = [
-            'accept: application/vnd.github+json',
-            'user-agent: clean-marvel-app',
+            'accept' => 'application/vnd.github+json',
+            'user-agent' => 'clean-marvel-app',
         ];
 
         if ($this->apiKey !== '') {
-            $headers[] = 'Authorization: token ' . $this->apiKey;
+            $headers['Authorization'] = 'token ' . $this->apiKey;
         }
 
-        $options = [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 60,
-            CURLOPT_CONNECTTIMEOUT => 15,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS      => 3,
-            CURLOPT_HTTPHEADER     => $headers,
-        ];
+        try {
+            $response = $this->httpClient->get($url, $headers, 60, 2);
+            $body = $response->body;
+            $status = $response->statusCode;
 
-        $attempt = 0;
-        $maxAttempts = 2;
-        $lastError = null;
-        $lastStatus = 0;
-        $lastBody = '';
+            $decoded = json_decode($body, true);
 
-        while ($attempt < $maxAttempts) {
-            $ch = curl_init($url);
-            if ($ch === false) {
-                $lastError = 'No se pudo iniciar cURL.';
-                $attempt++;
-                usleep(150_000);
-                continue;
-            }
-
-            curl_setopt_array($ch, $options);
-
-            $body   = curl_exec($ch);
-            $error  = curl_error($ch);
-            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 0;
-
-            curl_close($ch);
-
-            if ($body !== false && $status >= 200 && $status < 300) {
-                $decoded = json_decode($body, true);
-
-                return [
-                    'ok'      => true,
-                    'status'  => $status,
-                    'body'    => $body,
-                    'decoded' => $decoded,
-                    'error'   => $error ?: null,
-                ];
-            }
-
-            $lastError = $error ?: ($status ? 'HTTP ' . $status : 'Error desconocido');
-            $lastStatus = $status;
-            $lastBody = $body === false ? '' : (string) $body;
-            $attempt++;
-            usleep(150_000);
+            return [
+                'ok'      => $status >= 200 && $status < 300,
+                'status'  => $status,
+                'body'    => $body,
+                'decoded' => $decoded,
+                'error'   => null,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'ok'      => false,
+                'status'  => 0,
+                'body'    => '',
+                'decoded' => null,
+                'error'   => $e->getMessage(),
+            ];
         }
-
-        return [
-            'ok'      => false,
-            'status'  => $lastStatus,
-            'body'    => $lastBody,
-            'decoded' => null,
-            'error'   => $lastError,
-        ];
     }
 
     /**
      * @param array{status:int,body:string,decoded:mixed,error?:string} $response
-     * @return array{status:int,error:string,detail?:string,body?:mixed}
+     * @return array<string, mixed>
      */
     private function errorPayloadFromResponse(array $response, string $message): array
     {

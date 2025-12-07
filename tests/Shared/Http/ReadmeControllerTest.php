@@ -79,4 +79,64 @@ final class ReadmeControllerTest extends TestCase
 
         rmdir($path);
     }
+
+    public function testItHandlesEmptyMarkdown(): void
+    {
+        file_put_contents($this->tempDir . '/README.md', '');
+
+        $controller = new ReadmeController($this->tempDir);
+
+        ob_start();
+        $controller();
+        $output = ob_get_clean();
+
+        self::assertIsString($output);
+    }
+
+    public function testItHandlesMarkdownWithOnlyHeadings(): void
+    {
+        $markdown = "# Heading 1\n## Heading 2\n### Heading 3";
+        file_put_contents($this->tempDir . '/README.md', $markdown);
+
+        $controller = new ReadmeController($this->tempDir);
+
+        ob_start();
+        $controller();
+        $output = ob_get_clean();
+
+        self::assertStringContainsString('<h1>Heading 1</h1>', $output);
+        self::assertStringContainsString('<h2>Heading 2</h2>', $output);
+        self::assertStringContainsString('<h3>Heading 3</h3>', $output);
+    }
+
+    public function testItHandlesMarkdownWithLinks(): void
+    {
+        $markdown = "[Click here](https://example.com)";
+        file_put_contents($this->tempDir . '/README.md', $markdown);
+
+        $controller = new ReadmeController($this->tempDir);
+
+        ob_start();
+        $controller();
+        $output = ob_get_clean();
+
+        self::assertStringContainsString('href="https://example.com"', $output);
+        self::assertStringContainsString('Click here', $output);
+    }
+
+    public function testItHandlesMarkdownWithUnicode(): void
+    {
+        $markdown = "# Título con ñ\n\nContenido con áéíóú y 中文";
+        file_put_contents($this->tempDir . '/README.md', $markdown);
+
+        $controller = new ReadmeController($this->tempDir);
+
+        ob_start();
+        $controller();
+        $output = ob_get_clean();
+
+        self::assertStringContainsString('Título con ñ', $output);
+        self::assertStringContainsString('áéíóú', $output);
+    }
 }
+
