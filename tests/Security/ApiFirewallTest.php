@@ -34,6 +34,7 @@ final class ApiFirewallTest extends TestCase
         $output = ob_get_clean();
 
         self::assertFalse($result);
+        self::assertIsString($output);
         self::assertStringContainsString('"estado":"error"', $output);
         $this->assertLogExists();
     }
@@ -51,6 +52,7 @@ final class ApiFirewallTest extends TestCase
         $output = ob_get_clean();
 
         self::assertFalse($result);
+        self::assertIsString($output);
         self::assertStringContainsString('Petición inválida', $output);
         $this->assertLogExists();
     }
