@@ -122,12 +122,13 @@ repository*E
 
 repository7app\notifications\infrastructure\notificationrepositoryF
 app\shared\util\slugger+
-slugify app\shared\util\slugger::slugifyº
+slugify app\shared\util\slugger::slugifyô
  app\security\http\csrfmiddleware<
 __construct-app\security\http\csrfmiddleware::__construct2
 handle(app\security\http\csrfmiddleware::handle:
 
-logfailure,app\security\http\csrfmiddleware::logfailure"logger"protectedPostRoutes*-
+logfailure,app\security\http\csrfmiddleware::logfailure8
+	terminate+app\security\http\csrfmiddleware::terminate"logger"protectedPostRoutes*-
 logger#app\security\logging\securitylogger*
 protectedPostRoutesarray
 app\security\csrf\csrfservice=

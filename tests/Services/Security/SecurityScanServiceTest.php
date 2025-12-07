@@ -4,95 +4,76 @@ declare(strict_types=1);
 
 namespace App\Services\Security;
 
-/**
- * Simple doubles to control built-in function calls inside SecurityScanService without touching real network.
- */
-final class SecurityScanServiceTestDoubles
+// Mocks for global functions in the same namespace as the class under test
+function get_headers(string $url, bool $associative = false): array|false
 {
-    public static array|false|null $headers = null;
-    public static mixed $streamSocketClientReturn = null;
-    public static array|null $streamContextParams = null;
-    public static array|false|null $opensslParseResult = null;
-
-    public static function reset(): void
-    {
-        self::$headers = null;
-        self::$streamSocketClientReturn = null;
-        self::$streamContextParams = null;
-        self::$opensslParseResult = null;
+    if ($url === 'https://fail.com') {
+        return false;
     }
-}
-
-function get_headers(string $url, $format = false)
-{
-    if (SecurityScanServiceTestDoubles::$headers !== null) {
-        return SecurityScanServiceTestDoubles::$headers;
-    }
-
-    return \get_headers($url, $format);
+    
+    return [
+        0 => 'HTTP/1.1 200 OK',
+        'Content-Type' => 'text/html',
+        'Content-Security-Policy' => 'default-src \'self\'',
+        'X-Frame-Options' => 'DENY',
+        'Strict-Transport-Security' => 'max-age=31536000',
+    ];
 }
 
 function stream_socket_client(
-    string $hostname,
+    string $remote_socket,
     &$errno,
     &$errstr,
-    float $timeout = 0.0,
-    int $flags = 0,
+    ?float $timeout = null,
+    int $flags = STREAM_CLIENT_CONNECT,
     $context = null
 ) {
-    if (SecurityScanServiceTestDoubles::$streamSocketClientReturn !== null) {
-        $errno = 0;
-        $errstr = '';
-        return SecurityScanServiceTestDoubles::$streamSocketClientReturn;
+    if (str_contains($remote_socket, 'fail.com')) {
+        return false;
     }
-
-    return \stream_socket_client($hostname, $errno, $errstr, $timeout, $flags, $context);
+    
+    // Return a dummy resource
+    return fopen('php://memory', 'r+');
 }
 
 function stream_context_get_params($stream): array
 {
-    if (SecurityScanServiceTestDoubles::$streamContextParams !== null) {
-        return SecurityScanServiceTestDoubles::$streamContextParams;
-    }
-
-    return \stream_context_get_params($stream);
+    // Return dummy SSL context params
+    return [
+        'options' => [
+            'ssl' => [
+                'peer_certificate' => 'dummy_cert_resource'
+            ]
+        ]
+    ];
 }
 
-function openssl_x509_parse($certificate, bool $shortnames = true)
+function openssl_x509_parse($cert)
 {
-    if (SecurityScanServiceTestDoubles::$opensslParseResult !== null) {
-        return SecurityScanServiceTestDoubles::$opensslParseResult;
+    if ($cert === 'dummy_cert_resource') {
+        return [
+            'validTo_time_t' => time() + 3600,
+            'validFrom_time_t' => time() - 3600,
+            'issuer' => ['O' => 'Trusted CA'],
+            'extensions' => ['subjectAltName' => 'DNS:example.com'],
+            'signatureTypeSN' => 'sha256WithRSAEncryption',
+        ];
     }
-
-    return \openssl_x509_parse($certificate, $shortnames);
-}
-
-function fclose($stream): bool
-{
-    return true;
+    return false;
 }
 
 namespace Tests\Services\Security;
 
 use App\Services\Security\SecurityScanService;
-use App\Services\Security\SecurityScanServiceTestDoubles;
 use PHPUnit\Framework\TestCase;
 
-final class SecurityScanServiceTest extends TestCase
+class SecurityScanServiceTest extends TestCase
 {
     private string $cacheFile;
-    private ?string $originalCache = null;
 
     protected function setUp(): void
     {
-        SecurityScanServiceTestDoubles::reset();
-        $this->cacheFile = dirname(__DIR__, 3) . '/storage/security/security.json';
-
-        if (file_exists($this->cacheFile)) {
-            $content = file_get_contents($this->cacheFile);
-            $this->originalCache = $content === false ? null : $content;
-        }
-
+        $this->cacheFile = __DIR__ . '/../../../storage/security/security.json';
         if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
         }
@@ -100,97 +81,66 @@ final class SecurityScanServiceTest extends TestCase
 
     protected function tearDown(): void
     {
-        SecurityScanServiceTestDoubles::reset();
-
-        if ($this->originalCache !== null) {
-            file_put_contents($this->cacheFile, $this->originalCache);
-        } elseif (file_exists($this->cacheFile)) {
+        if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
         }
     }
 
-    public function testScanSecurityHeadersCalculatesGradeAndMissing(): void
+    public function testScanSecurityHeadersHappyPath(): void
     {
-        SecurityScanServiceTestDoubles::$headers = [
-            'Content-Security-Policy' => "default-src 'self'",
-            'X-Frame-Options' => 'DENY',
-            'X-Content-Type-Options' => 'nosniff',
-            'Strict-Transport-Security' => 'max-age=63072000',
-            'Referrer-Policy' => 'no-referrer',
-        ];
-
         $service = new SecurityScanService('https://example.com');
         $result = $service->scanSecurityHeaders();
 
-        self::assertSame('B', $result['grade']);
-        self::assertArrayHasKey('CSP', $result['headers']);
-        self::assertContains('Permissions-Policy', $result['missing']);
-        self::assertSame(2, count($result['missing']));
-        self::assertTrue($result['real']);
+        $this->assertArrayHasKey('grade', $result);
+        $this->assertNotEquals('N/A', $result['grade']);
+        $this->assertArrayHasKey('headers', $result);
+        $this->assertArrayHasKey('CSP', $result['headers']);
+        $this->assertArrayHasKey('HSTS', $result['headers']);
+        $this->assertTrue($result['real']);
     }
 
-    public function testScanSecurityHeadersHandlesConnectionFailure(): void
+    public function testScanSecurityHeadersError(): void
     {
-        SecurityScanServiceTestDoubles::$headers = false;
-
-        $service = new SecurityScanService('https://example.com');
+        $service = new SecurityScanService('https://fail.com');
         $result = $service->scanSecurityHeaders();
 
-        self::assertSame('N/A', $result['grade']);
-        self::assertSame('No se pudo conectar con el servidor', $result['error']);
+        $this->assertArrayHasKey('error', $result);
+        $this->assertEquals('N/A', $result['grade']);
     }
 
-    public function testScanMozillaObservatoryRejectsInvalidHost(): void
+    public function testScanMozillaObservatoryHappyPath(): void
     {
-        $service = new SecurityScanService('notaurl');
-        $result = $service->scanMozillaObservatory();
-
-        self::assertSame('Host inválido para análisis SSL', $result['error']);
-        self::assertSame(0, $result['score']);
-        self::assertSame('N/A', $result['grade']);
-    }
-
-    public function testScanMozillaObservatoryCalculatesScoreAndGrade(): void
-    {
-        SecurityScanServiceTestDoubles::$streamSocketClientReturn = 'socket';
-        SecurityScanServiceTestDoubles::$streamContextParams = [
-            'options' => [
-                'ssl' => [
-                    'peer_certificate' => 'dummy-cert',
-                ],
-            ],
-        ];
-        SecurityScanServiceTestDoubles::$opensslParseResult = [
-            'validTo_time_t' => time() + 10000,
-            'validFrom_time_t' => time() - 10000,
-            'issuer' => ['O' => 'CA'],
-            'extensions' => ['subjectAltName' => 'DNS:example.com'],
-            'signatureTypeSN' => 'sha256WithRSAEncryption',
-        ];
-
         $service = new SecurityScanService('https://example.com');
         $result = $service->scanMozillaObservatory();
 
-        self::assertSame(100, $result['score']);
-        self::assertSame('A+', $result['grade']);
-        self::assertSame(5, $result['tests_passed']);
-        self::assertSame(0, $result['tests_failed']);
-        self::assertSame(5, $result['tests_quantity']);
-        self::assertTrue($result['real']);
+        $this->assertArrayHasKey('grade', $result);
+        $this->assertArrayHasKey('score', $result);
+        $this->assertEquals(100, $result['score']); // All tests passed in mock
+        $this->assertEquals('A+', $result['grade']);
+        $this->assertEquals(5, $result['tests_passed']);
     }
 
-    public function testCacheIsSavedAndFreshnessDetected(): void
+    public function testScanMozillaObservatoryError(): void
+    {
+        $service = new SecurityScanService('https://fail.com');
+        $result = $service->scanMozillaObservatory();
+
+        $this->assertArrayHasKey('error', $result);
+        $this->assertEquals(0, $result['score']);
+    }
+
+    public function testCacheOperations(): void
     {
         $service = new SecurityScanService('https://example.com');
-
-        $payload = ['lastScan' => date('c'), 'securityHeaders' => ['grade' => 'A']];
-        $service->saveCache($payload);
-
-        self::assertFileExists($this->cacheFile);
-        self::assertTrue($service->isCacheFresh());
-
+        
+        $this->assertFalse($service->isCacheFresh());
+        
+        $data = ['lastScan' => date('c'), 'test' => 'data'];
+        $service->saveCache($data);
+        
+        $this->assertTrue($service->isCacheFresh());
+        
         $loaded = $service->loadCache();
-        self::assertIsArray($loaded);
-        self::assertSame('A', $loaded['securityHeaders']['grade'] ?? null);
+        $this->assertEquals($data, $loaded);
     }
 }

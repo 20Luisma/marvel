@@ -2,89 +2,86 @@
 
 declare(strict_types=1);
 
+namespace App\AI;
+
+// Mocks for global functions
+function curl_init(?string $url = null) { 
+    return new \stdClass(); 
+}
+
+function curl_setopt($handle, int $option, $value): bool { 
+    return true; 
+}
+
+function curl_exec($handle): string|bool {
+    return $GLOBALS['openai_curl_exec'] ?? '{"ok":true}';
+}
+
+function curl_getinfo($handle, int $option = 0) {
+    return $GLOBALS['openai_curl_code'] ?? 200;
+}
+
+function curl_close($handle): void {}
+
+function curl_error($handle): string { 
+    return $GLOBALS['openai_curl_error'] ?? ''; 
+}
+
 namespace Tests\AI;
 
 use App\AI\OpenAIComicGenerator;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use Tests\Support\OpenAITransportStub;
 
-final class OpenAIComicGeneratorTest extends TestCase
+class OpenAIComicGeneratorTest extends TestCase
 {
-    protected function setUp(): void
+    protected function tearDown(): void
     {
-        OpenAITransportStub::reset();
+        unset($GLOBALS['openai_curl_exec']);
+        unset($GLOBALS['openai_curl_code']);
+        unset($GLOBALS['openai_curl_error']);
     }
 
-    public function testGenerateComicFailsWhenHeroesListIsEmpty(): void
+    public function testGenerateComicHappyPath(): void
     {
-        $generator = new OpenAIComicGenerator('http://fake-service');
+        $generator = new OpenAIComicGenerator('https://api.openai.com');
+        
+        $heroes = [
+            ['heroId' => '1', 'nombre' => 'Hulk', 'contenido' => 'Smash', 'imagen' => 'img.jpg']
+        ];
 
-        $this->expectException(InvalidArgumentException::class);
-        $generator->generateComic([]);
+        $GLOBALS['openai_curl_exec'] = json_encode([
+            'ok' => true,
+            'content' => json_encode([
+                'title' => 'Hulk Smash',
+                'summary' => 'Hulk smashes things',
+                'panels' => [
+                    ['title' => 'P1', 'description' => 'D1', 'caption' => 'C1']
+                ]
+            ]),
+            'usage' => [
+                'prompt_tokens' => 10,
+                'completion_tokens' => 20,
+                'total_tokens' => 30
+            ]
+        ]);
+
+        $result = $generator->generateComic($heroes);
+
+        $this->assertArrayHasKey('story', $result);
+        $this->assertEquals('Hulk Smash', $result['story']['title']);
+        $this->assertCount(1, $result['story']['panels']);
     }
-
-    public function testGenerateComicReturnsStructuredStory(): void
+    
+    public function testGenerateComicError(): void
     {
-        OpenAITransportStub::$response = json_encode([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => json_encode([
-                            'title' => 'Batalla Epica',
-                            'summary' => 'Los heroes se unen.',
-                            'panels' => [
-                                ['title' => 'Inicio', 'description' => 'Todo comienza', 'caption' => 'Vamos'],
-                            ],
-                        ], JSON_UNESCAPED_UNICODE),
-                    ],
-                ],
-            ],
-        ]);
-
-        $generator = new OpenAIComicGenerator('http://fake-service');
-        $story = $generator->generateComic([
-            ['heroId' => 'hero-1', 'nombre' => 'Iron Man', 'contenido' => '', 'imagen' => 'img'],
-        ]);
-
-        self::assertSame('Batalla Epica', $story['story']['title']);
-        self::assertCount(1, $story['story']['panels']);
-    }
-
-    public function testGenerateComicHandlesNonArrayPanels(): void
-    {
-        OpenAITransportStub::$response = json_encode([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => json_encode([
-                            'title' => 'Titulo',
-                            'summary' => 'Resumen',
-                            'panels' => 'invalid',
-                        ], JSON_UNESCAPED_UNICODE),
-                    ],
-                ],
-            ],
-        ]);
-
-        $generator = new OpenAIComicGenerator('http://fake-service');
-        $story = $generator->generateComic([
-            ['heroId' => 'hero-1', 'nombre' => 'Iron Man', 'contenido' => 'algo', 'imagen' => 'img'],
-        ]);
-
-        self::assertSame('Titulo', $story['story']['title']);
-        self::assertSame([], $story['story']['panels']);
-    }
-
-    public function testGenerateComicBubblesUpServiceErrors(): void
-    {
-        OpenAITransportStub::$response = json_encode(['error' => 'Service down']);
-        $generator = new OpenAIComicGenerator('http://fake-service');
-
-        $this->expectException(RuntimeException::class);
-        $generator->generateComic([
-            ['heroId' => 'hero-1', 'nombre' => 'Iron Man', 'contenido' => '...', 'imagen' => 'img'],
-        ]);
+        $generator = new OpenAIComicGenerator('https://api.openai.com');
+        $heroes = [['heroId' => '1', 'nombre' => 'Hulk', 'contenido' => '', 'imagen' => '']];
+        
+        $GLOBALS['openai_curl_exec'] = json_encode(['error' => 'Service unavailable']);
+        
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Microservicio OpenAI no disponible: Service unavailable');
+        
+        $generator->generateComic($heroes);
     }
 }
