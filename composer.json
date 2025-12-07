@@ -25,8 +25,8 @@
     },
     "scripts": {
         "serve": "php -S localhost:8080 -t public",
-        "test": "phpunit",
-        "test:coverage": "phpunit --coverage-clover coverage.xml",
+        "test": "XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover coverage.xml",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover coverage.xml",
         "security:audit": "composer audit --no-dev"
     }
 }

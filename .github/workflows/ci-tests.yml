@@ -22,12 +22,13 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          coverage: xdebug
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPUnit tests
-        run: ./vendor/bin/phpunit --colors=always --testdox
+        run: XDEBUG_MODE=coverage ./vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml
 
   php-ci:
     runs-on: ubuntu-latest
@@ -40,13 +41,13 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, pdo, pdo_mysql, json
-          coverage: none
+          coverage: xdebug
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --colors=always --testdox
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=1G
