@@ -52,6 +52,31 @@ final class OpenAIComicGeneratorTest extends TestCase
         self::assertCount(1, $story['story']['panels']);
     }
 
+    public function testGenerateComicHandlesNonArrayPanels(): void
+    {
+        OpenAITransportStub::$response = json_encode([
+            'choices' => [
+                [
+                    'message' => [
+                        'content' => json_encode([
+                            'title' => 'Titulo',
+                            'summary' => 'Resumen',
+                            'panels' => 'invalid',
+                        ], JSON_UNESCAPED_UNICODE),
+                    ],
+                ],
+            ],
+        ]);
+
+        $generator = new OpenAIComicGenerator('http://fake-service');
+        $story = $generator->generateComic([
+            ['heroId' => 'hero-1', 'nombre' => 'Iron Man', 'contenido' => 'algo', 'imagen' => 'img'],
+        ]);
+
+        self::assertSame('Titulo', $story['story']['title']);
+        self::assertSame([], $story['story']['panels']);
+    }
+
     public function testGenerateComicBubblesUpServiceErrors(): void
     {
         OpenAITransportStub::$response = json_encode(['error' => 'Service down']);
