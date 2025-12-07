@@ -59,7 +59,7 @@ final class HeadersSecurityTest extends TestCase
     }
 
     /**
-     * @param array<int, string> $headers
+     * @param list<non-empty-string> $headers
      */
     private function assertSecurityHeaders(array $headers): void
     {
@@ -112,7 +112,7 @@ final class HeadersSecurityTest extends TestCase
     }
 
     /**
-     * @param array<int, string> $headers
+     * @param list<non-empty-string> $headers
      */
     private function assertSessionCookieFlags(array $headers): void
     {
@@ -137,7 +137,7 @@ final class HeadersSecurityTest extends TestCase
     }
 
     /**
-     * @param array<int, string> $headers
+     * @param list<non-empty-string> $headers
      * @return array<string, string>
      */
     private function headersToMap(array $headers): array
@@ -161,7 +161,7 @@ final class HeadersSecurityTest extends TestCase
     }
 
     /**
-     * @return array{headers: array<int, string>, output: string, status: int}
+     * @return array{headers: list<non-empty-string>, output: string, status: int}
      */
     private function dispatch(string $method, string $path, bool $asAdmin = false): array
     {
@@ -209,7 +209,8 @@ final class HeadersSecurityTest extends TestCase
         (new Router($container))->handle($method, $path);
         $output = (string) ob_get_clean();
         $headers = headers_list();
-        $status = http_response_code() ?: 200;
+        $statusCode = http_response_code();
+        $status = is_int($statusCode) ? $statusCode : 200;
 
         return [
             'headers' => $headers,
