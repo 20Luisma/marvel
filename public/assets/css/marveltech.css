@@ -1,0 +1,190 @@
+/* MARVEL TECH Page Styling */
+
+/* Override del borde rojo a azul para coherencia con Secret Room */
+.section-lined {
+  border-top-color: #2563eb !important;
+}
+
+.marvel-tech-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.carousel-track {
+  position: relative;
+  flex: 1;
+  max-width: 1400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(5, 10, 26, 0.96), rgba(15, 23, 42, 0.8));
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.25), 0 0 20px rgba(5, 15, 35, 0.8);
+}
+
+.carousel-slide {
+  display: none;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-slide.is-active {
+  display: block;
+  opacity: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.75rem;
+}
+
+.carousel-arrow {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(37, 99, 235, 0.25));
+  border: 2px solid rgba(59, 130, 246, 0.6);
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  flex-shrink: 0;
+}
+
+.carousel-arrow:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.55), rgba(37, 99, 235, 0.45));
+  border-color: rgba(59, 130, 246, 0.9);
+  transform: scale(1.1);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.5), 0 0 15px rgba(59, 130, 246, 0.6);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.95);
+}
+
+.carousel-arrow:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 3px;
+}
+
+.carousel-prev {
+  margin-right: 0.5rem;
+}
+
+.carousel-next {
+  margin-left: 0.5rem;
+}
+
+/* Indicadores de navegación */
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.carousel-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  border: 2px solid rgba(59, 130, 246, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicator:hover {
+  background: rgba(59, 130, 246, 0.5);
+  border-color: rgba(59, 130, 246, 0.7);
+  transform: scale(1.2);
+}
+
+.carousel-indicator.is-active {
+  background: rgba(59, 130, 246, 0.9);
+  border-color: rgba(59, 130, 246, 1);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+  transform: scale(1.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .marvel-tech-carousel {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0.5rem;
+  }
+
+  .carousel-arrow {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+  }
+
+  .carousel-prev,
+  .carousel-next {
+    margin: 0;
+  }
+
+  .carousel-track {
+    max-width: 100%;
+  }
+
+  /* Flechas en layout vertical para mobile */
+  .marvel-tech-carousel {
+    position: relative;
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    z-index: 10;
+  }
+
+  .carousel-prev {
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .carousel-next {
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .carousel-arrow:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-prev:active,
+  .carousel-next:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-arrow {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+  }
+
+  .carousel-indicator {
+    width: 10px;
+    height: 10px;
+  }
+}

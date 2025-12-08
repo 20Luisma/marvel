@@ -35,6 +35,7 @@ final class PageController
         '/secret' => 'pages/seccion',
         '/movies' => 'pages/movies',
         '/agentia' => 'pages/agentia',
+        '/marveltech' => 'pages/marveltech',
     ];
 
     public function renderIfHtmlRoute(string $method, string $path): bool

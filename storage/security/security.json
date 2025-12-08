@@ -1,0 +1,29 @@
+{
+    "securityHeaders": {
+        "grade": "A",
+        "headers": {
+            "CSP": "upgrade-insecure-requests",
+            "X-Frame-Options": "SAMEORIGIN",
+            "X-Content-Type-Options": "nosniff",
+            "HSTS": "max-age=63072000; includeSubDomains",
+            "Referrer-Policy": "no-referrer-when-downgrade",
+            "Permissions-Policy": "geolocation=(), microphone=(), camera=()"
+        },
+        "missing": [
+            "X-XSS-Protection"
+        ],
+        "scanDate": "2025-12-08T17:43:10+00:00",
+        "real": true
+    },
+    "mozillaObservatory": {
+        "score": 80,
+        "grade": "A",
+        "tests_passed": 4,
+        "tests_failed": 1,
+        "tests_quantity": 5,
+        "scanDate": "2025-12-08T17:43:10+00:00",
+        "real": true
+    },
+    "lastScan": "2025-12-08T17:43:10+00:00",
+    "fromCache": false
+}

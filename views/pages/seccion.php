@@ -12,6 +12,13 @@ $activeTopAction = 'secret';
 
 $sections = [
     [
+        'title' => 'README',
+        'tag' => 'Documentación',
+        'description' => 'Lee el README vivo con arquitectura, comandos y tareas recomendadas del proyecto.',
+        'href' => '/readme',
+        'cta' => 'Leer README',
+    ],
+    [
         'title' => 'SonarCloud',
         'tag' => 'Calidad del código',
         'description' => 'Explora bugs, vulnerabilities, code smells y duplicación de código directamente desde SonarCloud.',
@@ -82,11 +89,11 @@ $sections = [
         'cta' => 'Ver métricas',
     ],
     [
-        'title' => 'README',
-        'tag' => 'Documentación',
-        'description' => 'Lee el README vivo con arquitectura, comandos y tareas recomendadas del proyecto.',
-        'href' => '/readme',
-        'cta' => 'Leer README',
+        'title' => 'MARVEL TECH',
+        'tag' => 'MARVEL TECH',
+        'description' => 'Visión completa de seguridad, arquitectura y buenas prácticas del Clean Marvel Album.',
+        'href' => '/marveltech',
+        'cta' => 'Abrir sección',
     ],
 ];
 
