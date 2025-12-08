@@ -22,7 +22,9 @@ Un *Architectural Decision Record (ADR)* documenta decisiones técnicas que afec
 - [ADR-002: Persistencia dual JSON + Database fallback](ADR-002-persistencia.md)  
 - [ADR-003: Integración con SonarCloud](ADR-003-sonarcloud.md)  
 - [ADR-004: Integración con Sentry](ADR-004-sentry.md)  
-- [ADR-005: Elección de microservicios para OpenAI y RAG](ADR-005-microservicios-openai-rag.md)
+- [ADR-005: Elección de microservicios para OpenAI y RAG](ADR-005-microservicios-openai-rag.md)  
+- [ADR-006: Seguridad Fase 2 - Anti-replay, Rate Limit y Auth](ADR-006-seguridad-fase2.md)  
+- [ADR-007: Modularización del Sistema de Bootstrap](ADR-007-bootstrap-modularization.md)
 
 ### Supersede ADR
 
