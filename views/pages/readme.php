@@ -168,6 +168,41 @@ require_once __DIR__ . '/../layouts/header.php';
           <p class="text-sm text-gray-300">Detalle completo y roadmap (Máster vs Enterprise) en <code>docs/security.md</code>.</p>
         </section>
 
+        <!-- REFACTOR ESTRUCTURAL v2.0 -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🔧 Refactor Estructural v2.0 (Diciembre 2025)</h3>
+          <p>Consolidación de la arquitectura como referencia educativa de Clean Architecture.</p>
+          
+          <div class="grid gap-3 md:grid-cols-2">
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-widest text-gray-400 mb-2">Namespace y Autoload</p>
+              <ul class="space-y-1 text-sm text-gray-200">
+                <li>• Migración de <code>Src\</code> → <code>App\</code></li>
+                <li>• PSR-4 estándar en <code>composer.json</code></li>
+                <li>• 191 tests migrados a namespace <code>Tests\</code></li>
+              </ul>
+            </div>
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-widest text-gray-400 mb-2">Mejoras Técnicas</p>
+              <ul class="space-y-1 text-sm text-gray-200">
+                <li>• <code>RequestBodyReader</code>: lectura única con caché</li>
+                <li>• <code>ApiFirewall</code>: whitelist antes de leer body</li>
+                <li>• Corrección del bug "body vacío" en endpoints POST</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-cyan-700/50 bg-cyan-900/20 p-4 mt-3">
+            <p class="text-cyan-300 font-semibold mb-2">🐛 Variables DEBUG (solo producción)</p>
+            <p class="text-sm text-gray-300 mb-2">En <code>APP_ENV=local/dev</code> los logs están siempre activos. En producción, usa:</p>
+            <ul class="text-sm text-gray-200 space-y-1">
+              <li><code>DEBUG_API_FIREWALL=1</code> → Logs del firewall de payloads</li>
+              <li><code>DEBUG_RAG_PROXY=1</code> → Logs del proxy RAG</li>
+              <li><code>DEBUG_RAW_BODY=1</code> → Logs del lector de body HTTP</li>
+            </ul>
+          </div>
+        </section>
+
         <!-- CALIDAD Y TESTS -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🧪 Calidad y tipos de tests</h3>

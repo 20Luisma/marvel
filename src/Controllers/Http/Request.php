@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers\Http;
+namespace App\Controllers\Http;
 
 use App\Shared\Http\JsonResponse;
 
@@ -35,7 +35,7 @@ final class Request
         }
 
         try {
-            return \Src\Http\RequestBodyReader::getJsonArray();
+            return \App\Http\RequestBodyReader::getJsonArray();
         } catch (\RuntimeException $e) {
             // Si el body está vacío, devolvemos array vacío para compatibilidad
             if ($e->getMessage() === 'El cuerpo de la petición está vacío') {

@@ -9,7 +9,7 @@ use App\Notifications\Application\ListNotificationsUseCase;
 use App\Notifications\Infrastructure\NotificationRepository;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Src\Controllers\NotificationController;
+use App\Controllers\NotificationController;
 
 final class NotificationControllerTest extends TestCase
 {

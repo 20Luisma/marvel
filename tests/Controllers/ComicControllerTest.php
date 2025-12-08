@@ -8,8 +8,8 @@ use App\AI\OpenAIComicGenerator;
 use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Heroes\Domain\Entity\Hero;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\ComicController;
-use Src\Controllers\Http\Request;
+use App\Controllers\ComicController;
+use App\Controllers\Http\Request;
 use Tests\Doubles\InMemoryHeroRepository;
 use Tests\Support\OpenAITransportStub;
 
@@ -197,4 +197,3 @@ final class ComicControllerTest extends TestCase
         self::assertSame('Historia con Thor', $payload['datos']['story']['title']);
     }
 }
-

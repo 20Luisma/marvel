@@ -7,8 +7,8 @@ namespace Tests\Controllers;
 use App\Shared\Infrastructure\Http\HttpResponse;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\RagProxyController;
-use Src\Controllers\Http\Request;
+use App\Controllers\RagProxyController;
+use App\Controllers\Http\Request;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerTest extends TestCase

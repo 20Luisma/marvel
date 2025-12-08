@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Markdown;
+namespace App\Shared\Markdown;
 
 final class MarkdownRenderer
 {

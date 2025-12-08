@@ -83,18 +83,18 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 heroIdstring*
 imagenstring*
 nombrestringë
-"src\controllers\activitycontroller>
-__construct/src\controllers\activitycontroller::__construct2
-clear)src\controllers\activitycontroller::clear2
-index)src\controllers\activitycontroller::index2
-store)src\controllers\activitycontroller::store"clearActivity"listActivity"recordActivity*K
+"app\controllers\activitycontroller>
+__construct/app\controllers\activitycontroller::__construct2
+clear)app\controllers\activitycontroller::clear2
+index)app\controllers\activitycontroller::index2
+store)app\controllers\activitycontroller::store"clearActivity"listActivity"recordActivity*K
 clearActivity:app\activities\application\usecase\clearactivitylogusecase*I
 listActivity9app\activities\application\usecase\listactivitylogusecase*J
 recordActivity8app\activities\application\usecase\recordactivityusecaseå
-src\http\requestbodyreader8
-getjsonarray(src\http\requestbodyreader::getjsonarray4
+app\http\requestbodyreader8
+getjsonarray(app\http\requestbodyreader::getjsonarray4
 
-getrawbody&src\http\requestbodyreader::getrawbody∏
+getrawbody&app\http\requestbodyreader::getrawbody∏
 &app\security\validation\inputsanitizerD
 issuspicious4app\security\validation\inputsanitizer::issuspiciousH
 sanitizestring6app\security\validation\inputsanitizer::sanitizestringˆ
@@ -105,9 +105,9 @@ statusCode*
 bodystring*
 
 statusCodeintê
-src\controllers\comiccontroller;
-__construct,src\controllers\comiccontroller::__construct5
-generate)src\controllers\comiccontroller::generate"findHero"	generator*:
+app\controllers\comiccontroller;
+__construct,app\controllers\comiccontroller::__construct5
+generate)app\controllers\comiccontroller::generate"findHero"	generator*:
 findHero.app\heroes\application\usecase\findherousecase*(
 	generatorapp\ai\openaicomicgenerator†
 ,app\albums\domain\repository\albumrepository8
@@ -134,50 +134,50 @@ logfailure,app\security\http\csrfmiddleware::logfailure8
 app\security\csrf\csrfservice=
 generatetoken,app\security\csrf\csrfservice::generatetoken=
 validatetoken,app\security\csrf\csrfservice::validatetokenª
-src\shared\http\router2
-__construct#src\shared\http\router::__construct@
-activitycontroller*src\shared\http\router::activitycontroller:
-admincontroller'src\shared\http\router::admincontroller:
-albumcontroller'src\shared\http\router::albumcontroller2
-apifirewall#src\shared\http\router::apifirewall8
-authcontroller&src\shared\http\router::authcontroller8
-authmiddleware&src\shared\http\router::authmiddleware:
-comiccontroller'src\shared\http\router::comiccontroller<
-configcontroller(src\shared\http\router::configcontroller6
-devcontroller%src\shared\http\router::devcontroller,
-dispatch src\shared\http\router::dispatch(
-handlesrc\shared\http\router::handle4
-handledelete$src\shared\http\router::handledelete.
-	handleget!src\shared\http\router::handleget0
+app\shared\http\router2
+__construct#app\shared\http\router::__construct@
+activitycontroller*app\shared\http\router::activitycontroller:
+admincontroller'app\shared\http\router::admincontroller:
+albumcontroller'app\shared\http\router::albumcontroller2
+apifirewall#app\shared\http\router::apifirewall8
+authcontroller&app\shared\http\router::authcontroller8
+authmiddleware&app\shared\http\router::authmiddleware:
+comiccontroller'app\shared\http\router::comiccontroller<
+configcontroller(app\shared\http\router::configcontroller6
+devcontroller%app\shared\http\router::devcontroller,
+dispatch app\shared\http\router::dispatch(
+handleapp\shared\http\router::handle4
+handledelete$app\shared\http\router::handledelete.
+	handleget!app\shared\http\router::handleget0
 
-handlepost"src\shared\http\router::handlepost.
-	handleput!src\shared\http\router::handleput8
-herocontroller&src\shared\http\router::herocontroller<
-methodnotallowed(src\shared\http\router::methodnotallowedH
-notificationcontroller.src\shared\http\router::notificationcontroller8
-pagecontroller&src\shared\http\router::pagecontroller@
-ragproxycontroller*src\shared\http\router::ragproxycontrollerB
-ratelimitmiddleware+src\shared\http\router::ratelimitmiddleware<
-readmecontroller(src\shared\http\router::readmecontroller@
-serviceurlprovider*src\shared\http\router::serviceurlprovider,
-usecases src\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"devController"heroController"notificationController"pageController"ragProxyController"rateLimitMiddleware"readmeController*8
-activityController"src\controllers\activitycontroller*2
-adminControllersrc\controllers\admincontroller*"
+handlepost"app\shared\http\router::handlepost.
+	handleput!app\shared\http\router::handleput8
+herocontroller&app\shared\http\router::herocontroller<
+methodnotallowed(app\shared\http\router::methodnotallowedH
+notificationcontroller.app\shared\http\router::notificationcontroller8
+pagecontroller&app\shared\http\router::pagecontroller@
+ragproxycontroller*app\shared\http\router::ragproxycontrollerB
+ratelimitmiddleware+app\shared\http\router::ratelimitmiddleware<
+readmecontroller(app\shared\http\router::readmecontroller@
+serviceurlprovider*app\shared\http\router::serviceurlprovider,
+usecases app\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"devController"heroController"notificationController"pageController"ragProxyController"rateLimitMiddleware"readmeController*8
+activityController"app\controllers\activitycontroller*2
+adminControllerapp\controllers\admincontroller*"
 adminControllerInitializedbool*2
-albumControllersrc\controllers\albumcontroller*,
+albumControllerapp\controllers\albumcontroller*,
 apiFirewallapp\security\http\apifirewall*0
-authControllersrc\controllers\authcontroller*2
+authControllerapp\controllers\authcontroller*2
 authMiddleware app\security\http\authmiddleware*2
-comicControllersrc\controllers\comiccontroller*4
-configController src\controllers\configcontroller*
+comicControllerapp\controllers\comiccontroller*4
+configController app\controllers\configcontroller*
 	containerarray*.
-devControllersrc\controllers\devcontroller*0
-heroControllersrc\controllers\herocontroller*@
-notificationController&src\controllers\notificationcontroller*0
-pageControllersrc\controllers\pagecontroller*8
-ragProxyController"src\controllers\ragproxycontroller*<
+devControllerapp\controllers\devcontroller*0
+heroControllerapp\controllers\herocontroller*@
+notificationController&app\controllers\notificationcontroller*0
+pageControllerapp\controllers\pagecontroller*8
+ragProxyController"app\controllers\ragproxycontroller*<
 rateLimitMiddleware%app\security\http\ratelimitmiddleware*4
-readmeController src\shared\http\readmecontrollerº
+readmeController app\shared\http\readmecontrollerº
 app\ai\openaicomicgenerator7
 __construct(app\ai\openaicomicgenerator::__construct9
 extractmodel)app\ai\openaicomicgenerator::extractmodel9
@@ -298,18 +298,18 @@ repository+app\activities\domain\activitylogrepositoryß
 log.app\security\session\sessionreplaymonitor::logA
 	useragent4app\security\session\sessionreplaymonitor::useragent"logger*-
 logger#app\security\logging\securitylogger^
-$src\shared\markdown\markdownrenderer6
-render,src\shared\markdown\markdownrenderer::renderƒ
-src\controllers\albumcontroller;
-__construct,src\controllers\albumcontroller::__constructI
-albumcovermaxbytes3src\controllers\albumcontroller::albumcovermaxbytesA
-albumuploaddir/src\controllers\albumcontroller::albumuploaddirM
-albumuploadurlprefix5src\controllers\albumcontroller::albumuploadurlprefix3
-destroy(src\controllers\albumcontroller::destroy/
-index&src\controllers\albumcontroller::index/
-store&src\controllers\albumcontroller::store1
-update'src\controllers\albumcontroller::update;
-uploadcover,src\controllers\albumcontroller::uploadcover"createAlbum"deleteAlbum"	findAlbum"
+$app\shared\markdown\markdownrenderer6
+render,app\shared\markdown\markdownrenderer::renderƒ
+app\controllers\albumcontroller;
+__construct,app\controllers\albumcontroller::__constructI
+albumcovermaxbytes3app\controllers\albumcontroller::albumcovermaxbytesA
+albumuploaddir/app\controllers\albumcontroller::albumuploaddirM
+albumuploadurlprefix5app\controllers\albumcontroller::albumuploadurlprefix3
+destroy(app\controllers\albumcontroller::destroy/
+index&app\controllers\albumcontroller::index/
+store&app\controllers\albumcontroller::store1
+update'app\controllers\albumcontroller::update;
+uploadcover,app\controllers\albumcontroller::uploadcover"createAlbum"deleteAlbum"	findAlbum"
 listAlbums"updateAlbum*@
 createAlbum1app\albums\application\usecase\createalbumusecase*@
 deleteAlbum1app\albums\application\usecase\deletealbumusecase*<
@@ -418,10 +418,11 @@ coverImagestring*
 generateuuidCapp\heroes\application\usecase\seedalbumheroesusecase::generateuuid"albumRepository"eventBus"heroRepository*?
 albumRepository,app\albums\domain\repository\albumrepository**
 eventBusapp\shared\domain\bus\eventbus*=
-heroRepository+app\heroes\domain\repository\herorepository˛
-"src\controllers\ragproxycontroller>
-__construct/src\controllers\ragproxycontroller::__constructV
-forwardheroescomparison;src\controllers\ragproxycontroller::forwardheroescomparison"
+heroRepository+app\heroes\domain\repository\herorepository“
+"app\controllers\ragproxycontroller>
+__construct/app\controllers\ragproxycontroller::__constructV
+forwardheroescomparison;app\controllers\ragproxycontroller::forwardheroescomparisonR
+isdebugloggingenabled9app\controllers\ragproxycontroller::isdebugloggingenabled"
 httpClient"ragServiceUrl"signer*@
 
 httpClient2app\shared\infrastructure\http\httpclientinterface*
@@ -523,14 +524,14 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 formatcontext2app\security\logging\securitylogger::formatcontext9
 logevent-app\security\logging\securitylogger::logevent"logFile*
 logFilestringÇ
-src\controllers\herocontroller:
-__construct+src\controllers\herocontroller::__construct2
-destroy'src\controllers\herocontroller::destroy.
-index%src\controllers\herocontroller::index:
-listbyalbum+src\controllers\herocontroller::listbyalbum,
-show$src\controllers\herocontroller::show.
-store%src\controllers\herocontroller::store0
-update&src\controllers\herocontroller::update"
+app\controllers\herocontroller:
+__construct+app\controllers\herocontroller::__construct2
+destroy'app\controllers\herocontroller::destroy.
+index%app\controllers\herocontroller::index:
+listbyalbum+app\controllers\herocontroller::listbyalbum,
+show$app\controllers\herocontroller::show.
+store%app\controllers\herocontroller::store0
+update&app\controllers\herocontroller::update"
 createHero"
 deleteHero"findHero"
 listHeroes"
@@ -551,14 +552,14 @@ updateHero0app\heroes\application\usecase\updateherousecase`
 app\shared\domain\bus\eventbus2
 publish'app\shared\domain\bus\eventbus::publish6
 	subscribe)app\shared\domain\bus\eventbus::subscribeº
-src\controllers\authcontroller:
-__construct+src\controllers\authcontroller::__construct8
+app\controllers\authcontroller:
+__construct+app\controllers\authcontroller::__construct8
 
-flasherror*src\controllers\authcontroller::flasherror.
-login%src\controllers\authcontroller::login0
-logout&src\controllers\authcontroller::logout4
-redirect(src\controllers\authcontroller::redirect6
-	showlogin)src\controllers\authcontroller::showlogin"authService"csrfTokenManager"ipBlockerService*,
+flasherror*app\controllers\authcontroller::flasherror.
+login%app\controllers\authcontroller::login0
+logout&app\controllers\authcontroller::logout4
+redirect(app\controllers\authcontroller::redirect6
+	showlogin)app\controllers\authcontroller::showlogin"authService"csrfTokenManager"ipBlockerService*,
 authServiceapp\security\auth\authservice*6
 csrfTokenManager"app\security\http\csrftokenmanager*=
 ipBlockerService)app\application\security\ipblockerserviceï
@@ -602,17 +603,18 @@ assertname)app\heroes\domain\entity\hero::assertname9
 namestring*
 slugstring*
 	updatedAtdatetimeimmutable·
- src\controllers\configcontroller<
-__construct-src\controllers\configcontroller::__construct6
-services*src\controllers\configcontroller::services"serviceUrlProvider*3
-serviceUrlProviderapp\config\serviceurlproviderŸ
+ app\controllers\configcontroller<
+__construct-app\controllers\configcontroller::__construct6
+services*app\controllers\configcontroller::services"serviceUrlProvider*3
+serviceUrlProviderapp\config\serviceurlprovider®
 app\security\http\apifirewall9
 __construct*app\security\http\apifirewall::__construct=
 checkbodysize,app\security\http\apifirewall::checkbodysize+
 deny#app\security\http\apifirewall::denyI
 detectattackpattern2app\security\http\apifirewall::detectattackpattern/
 handle%app\security\http\apifirewall::handleC
-hasduplicatekeys/app\security\http\apifirewall::hasduplicatekeysC
+hasduplicatekeys/app\security\http\apifirewall::hasduplicatekeysM
+isdebugloggingenabled4app\security\http\apifirewall::isdebugloggingenabledC
 isrequestallowed/app\security\http\apifirewall::isrequestallowed;
 logdebuginfo+app\security\http\apifirewall::logdebuginfo3
 logevent'app\security\http\apifirewall::logevent9
@@ -629,9 +631,9 @@ shouldskip)app\security\http\apifirewall::shouldskipC
 __invokeGapp\notifications\application\albumupdatednotificationhandler::__invoke[
 subscribedtoKapp\notifications\application\albumupdatednotificationhandler::subscribedto"sender*=
 sender3app\notifications\domain\service\notificationsender€
-src\controllers\admincontroller;
-__construct,src\controllers\admincontroller::__construct3
-seedall(src\controllers\admincontroller::seedall"seedHeroesService*3
+app\controllers\admincontroller;
+__construct,app\controllers\admincontroller::__construct3
+seedall(app\controllers\admincontroller::seedall"seedHeroesService*3
 seedHeroesServiceapp\dev\seed\seedheroesservice¿
 -app\albums\application\dto\createalbumrequestI
 __construct:app\albums\application\dto\createalbumrequest::__constructG
@@ -689,20 +691,20 @@ occurredOn*
 eventIdstring*
 
 occurredOndatetimeimmutableº
- src\shared\http\readmecontroller<
-__construct-src\shared\http\readmecontroller::__construct6
-__invoke*src\shared\http\readmecontroller::__invoke"projectRoot*
+ app\shared\http\readmecontroller<
+__construct-app\shared\http\readmecontroller::__construct6
+__invoke*app\shared\http\readmecontroller::__invoke"projectRoot*
 projectRootstring¸
 +app\heatmap\infrastructure\heatmapapiclientA
 getpages5app\heatmap\infrastructure\heatmapapiclient::getpagesE
 
 getsummary7app\heatmap\infrastructure\heatmapapiclient::getsummaryC
 	sendclick6app\heatmap\infrastructure\heatmapapiclient::sendclickí
-src\controllers\pagecontroller0
-render&src\controllers\pagecontroller::renderF
-renderifhtmlroute1src\controllers\pagecontroller::renderifhtmlroute@
-rendernotfound.src\controllers\pagecontroller::rendernotfound4
-viewpath(src\controllers\pagecontroller::viewpath”
+app\controllers\pagecontroller0
+render&app\controllers\pagecontroller::renderF
+renderifhtmlroute1app\controllers\pagecontroller::renderifhtmlroute@
+rendernotfound.app\controllers\pagecontroller::rendernotfound4
+viewpath(app\controllers\pagecontroller::viewpath”
 #app\activities\domain\activityentry?
 __construct0app\activities\domain\activityentry::__construct5
 action+app\activities\domain\activityentry::action;
@@ -756,9 +758,9 @@ coverImagestring*
 postjson7app\shared\infrastructure\http\curlhttpclient::postjsonK
 sleepbackoff;app\shared\infrastructure\http\curlhttpclient::sleepbackoff"internalToken*
 internalTokenstring…
-src\controllers\devcontroller9
-__construct*src\controllers\devcontroller::__construct3
-runtests'src\controllers\devcontroller::runtests"
+app\controllers\devcontroller9
+__construct*app\controllers\devcontroller::__construct3
+runtests'app\controllers\devcontroller::runtests"
 testRunner*,
 
 testRunnerapp\dev\test\phpunittestrunner˙	
@@ -813,10 +815,10 @@ repository+app\heroes\domain\repository\herorepository
 	contenidostring*
 imagenstring*
 nombrestringü
-&src\controllers\notificationcontrollerB
-__construct3src\controllers\notificationcontroller::__construct6
-clear-src\controllers\notificationcontroller::clear6
-index-src\controllers\notificationcontroller::index"clearNotifications"listNotifications*M
+&app\controllers\notificationcontrollerB
+__construct3app\controllers\notificationcontroller::__construct6
+clear-app\controllers\notificationcontroller::clear6
+index-app\controllers\notificationcontroller::index"clearNotifications"listNotifications*M
 clearNotifications7app\notifications\application\clearnotificationsusecase*K
 listNotifications6app\notifications\application\listnotificationsusecaseÎ
 9app\albums\infrastructure\persistence\filealbumrepositoryU
@@ -904,12 +906,12 @@ getsummary;app\heatmap\infrastructure\httpheatmapapiclient::getsummaryS
 	sendclick:app\heatmap\infrastructure\httpheatmapapiclient::sendclick"apiToken"baseUrl*
 apiTokenstring*
 baseUrlstringƒ
-src\controllers\http\request2
-jsonbody&src\controllers\http\request::jsonbody4
-	wantshtml'src\controllers\http\request::wantshtml:
-withjsonbody*src\controllers\http\request::withjsonbodyd
-'src\controllers\helpers\directoryhelper9
-ensure/src\controllers\helpers\directoryhelper::ensure≤
+app\controllers\http\request2
+jsonbody&app\controllers\http\request::jsonbody4
+	wantshtml'app\controllers\http\request::wantshtml:
+withjsonbody*app\controllers\http\request::withjsonbodyd
+'app\controllers\helpers\directoryhelper9
+ensure/app\controllers\helpers\directoryhelper::ensure≤
 appenditeratoriteratoriterator*
 __constructappenditerator::__construct 
 appendappenditerator::append"

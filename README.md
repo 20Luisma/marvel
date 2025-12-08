@@ -136,6 +136,40 @@ El proyecto incorpora manifiestos en `k8s/` para la aplicación principal y los 
 
 ---
 
+## 🔧 Refactor Estructural v2.0 (Diciembre 2025)
+
+Este refactor consolida la arquitectura del proyecto como referencia educativa de Clean Architecture.
+
+### Cambios principales
+
+| Área | Cambio | Impacto |
+|------|--------|---------|
+| **Namespace** | Migración de `Src\` → `App\` | PSR-4 estándar, compatibilidad con IDEs y PHPStan |
+| **Autoload** | `"App\\": "src/"` en `composer.json` | Eliminación de ambigüedad en imports |
+| **Tests** | Migración completa a namespace `Tests\` | 191 tests pasando sin referencias antiguas |
+| **RequestBodyReader** | Lectura única de `php://input` con caché | Evita bug "body vacío" en endpoints POST |
+| **ApiFirewall** | Whitelist evaluada antes de leer body | Rutas RAG no consumen el stream |
+| **Logging DEBUG** | Variables `DEBUG_API_FIREWALL`, `DEBUG_RAG_PROXY`, `DEBUG_RAW_BODY` | Logs condicionados: activos en dev, opcionales en prod |
+
+### Variables de depuración (`.env`)
+
+```env
+# Solo aplican en APP_ENV=prod; en local/dev siempre están activos
+DEBUG_API_FIREWALL=0   # Logs del firewall de payloads
+DEBUG_RAG_PROXY=0      # Logs del proxy RAG
+DEBUG_RAW_BODY=0       # Logs del lector de body HTTP
+```
+
+### Verificación post-refactor
+
+```bash
+composer dump-autoload -o
+vendor/bin/phpunit --colors=always
+vendor/bin/phpstan analyse
+```
+
+---
+
 ## 👤 Créditos
 
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  

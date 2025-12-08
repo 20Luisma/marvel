@@ -11,7 +11,7 @@ use App\Config\ServiceUrlProvider;
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Security\RateLimit\RateLimiter;
 use App\Security\Logging\SecurityLogger;
-use Src\Controllers\RagProxyController;
+use App\Controllers\RagProxyController;
 
 require_once dirname(__DIR__, 4) . '/vendor/autoload.php';
 

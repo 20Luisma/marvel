@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Config\ServiceUrlProvider;
 use App\Shared\Http\JsonResponse;

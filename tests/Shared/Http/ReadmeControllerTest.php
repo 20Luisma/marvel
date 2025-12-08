@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Shared\Http;
 
 use PHPUnit\Framework\TestCase;
-use Src\Shared\Http\ReadmeController;
+use App\Shared\Http\ReadmeController;
 
 final class ReadmeControllerTest extends TestCase
 {
@@ -139,4 +139,3 @@ final class ReadmeControllerTest extends TestCase
         self::assertStringContainsString('áéíóú', $output);
     }
 }
-

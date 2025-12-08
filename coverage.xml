@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1765199296">
-  <project timestamp="1765199296">
+<coverage generated="1765203752">
+  <project timestamp="1765203752">
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/AI/OpenAIComicGenerator.php">
       <class name="App\AI\OpenAIComicGenerator" namespace="global">
         <metrics complexity="70" methods="9" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="218" coveredstatements="179" elements="227" coveredelements="180"/>
@@ -1204,7 +1204,7 @@
       <metrics loc="271" ncloc="260" classes="1" methods="18" coveredmethods="13" conditionals="0" coveredconditionals="0" statements="120" coveredstatements="114" elements="138" coveredelements="127"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ActivityController.php">
-      <class name="Src\Controllers\ActivityController" namespace="global">
+      <class name="App\Controllers\ActivityController" namespace="global">
         <metrics complexity="8" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="18" elements="25" coveredelements="20"/>
       </class>
       <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
@@ -1235,7 +1235,7 @@
       <metrics loc="65" ncloc="65" classes="1" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="18" elements="25" coveredelements="20"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/AdminController.php">
-      <class name="Src\Controllers\AdminController" namespace="global">
+      <class name="App\Controllers\AdminController" namespace="global">
         <metrics complexity="3" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="8" coveredelements="8"/>
       </class>
       <line num="12" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="2"/>
@@ -1249,7 +1249,7 @@
       <metrics loc="27" ncloc="27" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="8" coveredelements="8"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/AlbumController.php">
-      <class name="Src\Controllers\AlbumController" namespace="global">
+      <class name="App\Controllers\AlbumController" namespace="global">
         <metrics complexity="44" methods="9" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="116" coveredstatements="74" elements="125" coveredelements="79"/>
       </class>
       <line num="27" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="32"/>
@@ -1380,7 +1380,7 @@
       <metrics loc="250" ncloc="239" classes="1" methods="9" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="116" coveredstatements="74" elements="125" coveredelements="79"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/AuthController.php">
-      <class name="Src\Controllers\AuthController" namespace="global">
+      <class name="App\Controllers\AuthController" namespace="global">
         <metrics complexity="19" methods="6" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="42" elements="52" coveredelements="45"/>
       </class>
       <line num="13" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
@@ -1438,7 +1438,7 @@
       <metrics loc="101" ncloc="101" classes="1" methods="6" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="42" elements="52" coveredelements="45"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ComicController.php">
-      <class name="Src\Controllers\ComicController" namespace="global">
+      <class name="App\Controllers\ComicController" namespace="global">
         <metrics complexity="13" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="30" elements="35" coveredelements="31"/>
       </class>
       <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="8"/>
@@ -1479,7 +1479,7 @@
       <metrics loc="77" ncloc="76" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="30" elements="35" coveredelements="31"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/ConfigController.php">
-      <class name="Src\Controllers\ConfigController" namespace="global">
+      <class name="App\Controllers\ConfigController" namespace="global">
         <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="5" coveredelements="5"/>
       </class>
       <line num="12" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
@@ -1490,7 +1490,7 @@
       <metrics loc="22" ncloc="22" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="5" coveredelements="5"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/DevController.php">
-      <class name="Src\Controllers\DevController" namespace="global">
+      <class name="App\Controllers\DevController" namespace="global">
         <metrics complexity="4" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="11" coveredelements="11"/>
       </class>
       <line num="12" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
@@ -1507,7 +1507,7 @@
       <metrics loc="33" ncloc="33" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="11" coveredelements="11"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/Helpers/DirectoryHelper.php">
-      <class name="Src\Controllers\Helpers\DirectoryHelper" namespace="global">
+      <class name="App\Controllers\Helpers\DirectoryHelper" namespace="global">
         <metrics complexity="5" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="5" elements="7" coveredelements="5"/>
       </class>
       <line num="11" type="method" name="ensure" visibility="public" complexity="5" crap="5.12" count="3"/>
@@ -1520,7 +1520,7 @@
       <metrics loc="26" ncloc="26" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="5" elements="7" coveredelements="5"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/HeroController.php">
-      <class name="Src\Controllers\HeroController" namespace="global">
+      <class name="App\Controllers\HeroController" namespace="global">
         <metrics complexity="14" methods="7" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="29" elements="37" coveredelements="35"/>
       </class>
       <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="11"/>
@@ -1563,7 +1563,7 @@
       <metrics loc="91" ncloc="91" classes="1" methods="7" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="29" elements="37" coveredelements="35"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/Http/Request.php">
-      <class name="Src\Controllers\Http\Request" namespace="global">
+      <class name="App\Controllers\Http\Request" namespace="global">
         <metrics complexity="10" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="12" elements="24" coveredelements="14"/>
       </class>
       <line num="13" type="method" name="withJsonBody" visibility="public" complexity="1" crap="1" count="57"/>
@@ -1593,7 +1593,7 @@
       <metrics loc="60" ncloc="55" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="12" elements="24" coveredelements="14"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/NotificationController.php">
-      <class name="Src\Controllers\NotificationController" namespace="global">
+      <class name="App\Controllers\NotificationController" namespace="global">
         <metrics complexity="4" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="7" elements="10" coveredelements="10"/>
       </class>
       <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
@@ -1609,7 +1609,7 @@
       <metrics loc="36" ncloc="36" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="7" elements="10" coveredelements="10"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/PageController.php">
-      <class name="Src\Controllers\PageController" namespace="global">
+      <class name="App\Controllers\PageController" namespace="global">
         <metrics complexity="10" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="28" elements="35" coveredelements="31"/>
       </class>
       <line num="40" type="method" name="renderIfHtmlRoute" visibility="public" complexity="6" crap="6" count="8"/>
@@ -1650,86 +1650,100 @@
       <metrics loc="98" ncloc="98" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="28" elements="35" coveredelements="31"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Controllers/RagProxyController.php">
-      <class name="Src\Controllers\RagProxyController" namespace="global">
-        <metrics complexity="15" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="74" coveredstatements="65" elements="76" coveredelements="66"/>
+      <class name="App\Controllers\RagProxyController" namespace="global">
+        <metrics complexity="25" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="87" coveredstatements="76" elements="90" coveredelements="77"/>
       </class>
       <line num="18" type="method" name="__construct" visibility="public" complexity="5" crap="5" count="14"/>
       <line num="23" type="stmt" count="14"/>
       <line num="24" type="stmt" count="14"/>
       <line num="25" type="stmt" count="12"/>
       <line num="26" type="stmt" count="4"/>
-      <line num="29" type="method" name="forwardHeroesComparison" visibility="public" complexity="10" crap="10.21" count="14"/>
+      <line num="29" type="method" name="forwardHeroesComparison" visibility="public" complexity="18" crap="18.66" count="14"/>
       <line num="31" type="stmt" count="14"/>
-      <line num="35" type="stmt" count="14"/>
+      <line num="32" type="stmt" count="14"/>
       <line num="36" type="stmt" count="14"/>
-      <line num="38" type="stmt" count="14"/>
+      <line num="37" type="stmt" count="14"/>
+      <line num="39" type="stmt" count="14"/>
       <line num="40" type="stmt" count="14"/>
-      <line num="41" type="stmt" count="3"/>
-      <line num="42" type="stmt" count="3"/>
-      <line num="43" type="stmt" count="3"/>
+      <line num="43" type="stmt" count="14"/>
       <line num="44" type="stmt" count="3"/>
       <line num="45" type="stmt" count="3"/>
-      <line num="46" type="stmt" count="3"/>
       <line num="47" type="stmt" count="3"/>
       <line num="48" type="stmt" count="3"/>
-      <line num="51" type="stmt" count="11"/>
-      <line num="53" type="stmt" count="11"/>
-      <line num="54" type="stmt" count="1"/>
-      <line num="55" type="stmt" count="1"/>
-      <line num="56" type="stmt" count="1"/>
-      <line num="57" type="stmt" count="1"/>
-      <line num="58" type="stmt" count="1"/>
+      <line num="49" type="stmt" count="3"/>
+      <line num="50" type="stmt" count="3"/>
+      <line num="51" type="stmt" count="3"/>
+      <line num="52" type="stmt" count="3"/>
+      <line num="53" type="stmt" count="3"/>
+      <line num="56" type="stmt" count="11"/>
+      <line num="58" type="stmt" count="11"/>
       <line num="59" type="stmt" count="1"/>
       <line num="60" type="stmt" count="1"/>
-      <line num="61" type="stmt" count="1"/>
-      <line num="64" type="stmt" count="10"/>
-      <line num="68" type="stmt" count="10"/>
-      <line num="69" type="stmt" count="1"/>
-      <line num="70" type="stmt" count="1"/>
-      <line num="71" type="stmt" count="1"/>
-      <line num="72" type="stmt" count="1"/>
-      <line num="73" type="stmt" count="1"/>
-      <line num="74" type="stmt" count="1"/>
-      <line num="75" type="stmt" count="1"/>
-      <line num="76" type="stmt" count="1"/>
-      <line num="79" type="stmt" count="9"/>
-      <line num="80" type="stmt" count="9"/>
-      <line num="82" type="stmt" count="9"/>
+      <line num="62" type="stmt" count="1"/>
+      <line num="63" type="stmt" count="1"/>
+      <line num="64" type="stmt" count="1"/>
+      <line num="65" type="stmt" count="1"/>
+      <line num="66" type="stmt" count="1"/>
+      <line num="67" type="stmt" count="1"/>
+      <line num="68" type="stmt" count="1"/>
+      <line num="71" type="stmt" count="10"/>
+      <line num="72" type="stmt" count="10"/>
+      <line num="77" type="stmt" count="10"/>
+      <line num="78" type="stmt" count="1"/>
+      <line num="79" type="stmt" count="1"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="82" type="stmt" count="1"/>
       <line num="83" type="stmt" count="1"/>
-      <line num="86" type="stmt" count="9"/>
-      <line num="87" type="stmt" count="9"/>
-      <line num="88" type="stmt" count="7"/>
+      <line num="84" type="stmt" count="1"/>
+      <line num="85" type="stmt" count="1"/>
+      <line num="86" type="stmt" count="1"/>
+      <line num="87" type="stmt" count="1"/>
+      <line num="90" type="stmt" count="9"/>
       <line num="91" type="stmt" count="9"/>
-      <line num="92" type="stmt" count="9"/>
       <line num="93" type="stmt" count="9"/>
-      <line num="94" type="stmt" count="9"/>
-      <line num="96" type="stmt" count="9"/>
+      <line num="94" type="stmt" count="1"/>
       <line num="97" type="stmt" count="9"/>
-      <line num="98" type="stmt" count="0"/>
-      <line num="101" type="stmt" count="9"/>
+      <line num="98" type="stmt" count="9"/>
+      <line num="99" type="stmt" count="7"/>
+      <line num="102" type="stmt" count="9"/>
       <line num="103" type="stmt" count="9"/>
-      <line num="104" type="stmt" count="7"/>
-      <line num="105" type="stmt" count="2"/>
+      <line num="104" type="stmt" count="9"/>
+      <line num="105" type="stmt" count="9"/>
       <line num="107" type="stmt" count="9"/>
       <line num="108" type="stmt" count="9"/>
-      <line num="109" type="stmt" count="9"/>
-      <line num="110" type="stmt" count="9"/>
-      <line num="111" type="stmt" count="9"/>
+      <line num="109" type="stmt" count="0"/>
       <line num="112" type="stmt" count="9"/>
       <line num="113" type="stmt" count="9"/>
-      <line num="115" type="stmt" count="9"/>
-      <line num="117" type="stmt" count="9"/>
-      <line num="118" type="stmt" count="9"/>
-      <line num="119" type="stmt" count="9"/>
-      <line num="121" type="stmt" count="0"/>
-      <line num="122" type="stmt" count="0"/>
-      <line num="124" type="stmt" count="0"/>
-      <line num="125" type="stmt" count="0"/>
-      <line num="126" type="stmt" count="0"/>
-      <line num="127" type="stmt" count="0"/>
-      <line num="128" type="stmt" count="0"/>
-      <line num="129" type="stmt" count="0"/>
-      <metrics loc="133" ncloc="131" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="74" coveredstatements="65" elements="76" coveredelements="66"/>
+      <line num="116" type="stmt" count="9"/>
+      <line num="117" type="stmt" count="7"/>
+      <line num="118" type="stmt" count="2"/>
+      <line num="120" type="stmt" count="9"/>
+      <line num="121" type="stmt" count="9"/>
+      <line num="122" type="stmt" count="9"/>
+      <line num="123" type="stmt" count="9"/>
+      <line num="124" type="stmt" count="9"/>
+      <line num="125" type="stmt" count="9"/>
+      <line num="126" type="stmt" count="9"/>
+      <line num="128" type="stmt" count="9"/>
+      <line num="129" type="stmt" count="9"/>
+      <line num="132" type="stmt" count="9"/>
+      <line num="133" type="stmt" count="9"/>
+      <line num="134" type="stmt" count="9"/>
+      <line num="136" type="stmt" count="0"/>
+      <line num="137" type="stmt" count="0"/>
+      <line num="138" type="stmt" count="0"/>
+      <line num="141" type="stmt" count="0"/>
+      <line num="142" type="stmt" count="0"/>
+      <line num="143" type="stmt" count="0"/>
+      <line num="144" type="stmt" count="0"/>
+      <line num="145" type="stmt" count="0"/>
+      <line num="146" type="stmt" count="0"/>
+      <line num="150" type="method" name="isDebugLoggingEnabled" visibility="private" complexity="2" crap="2.06" count="14"/>
+      <line num="152" type="stmt" count="14"/>
+      <line num="153" type="stmt" count="14"/>
+      <line num="154" type="stmt" count="0"/>
+      <line num="157" type="stmt" count="14"/>
+      <metrics loc="160" ncloc="158" classes="1" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="87" coveredstatements="76" elements="90" coveredelements="77"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Dev/Seed/SeedHeroesService.php">
       <class name="App\Dev\Seed\SeedHeroesService" namespace="global">
@@ -2551,7 +2565,7 @@
       <metrics loc="174" ncloc="162" classes="1" methods="10" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="82" coveredstatements="71" elements="92" coveredelements="78"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Http/RequestBodyReader.php">
-      <class name="Src\Http\RequestBodyReader" namespace="global">
+      <class name="App\Http\RequestBodyReader" namespace="global">
         <metrics complexity="8" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="23" elements="25" coveredelements="25"/>
       </class>
       <line num="15" type="method" name="getRawBody" visibility="public" complexity="5" crap="5" count="10"/>
@@ -3167,7 +3181,7 @@
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Security/Http/ApiFirewall.php">
       <class name="App\Security\Http\ApiFirewall" namespace="global">
-        <metrics complexity="63" methods="14" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="145" coveredstatements="118" elements="159" coveredelements="123"/>
+        <metrics complexity="66" methods="15" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="122" elements="166" coveredelements="126"/>
       </class>
       <line num="27" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="8"/>
       <line num="29" type="stmt" count="8"/>
@@ -3311,24 +3325,31 @@
       <line num="277" type="stmt" count="2"/>
       <line num="278" type="stmt" count="2"/>
       <line num="280" type="stmt" count="2"/>
-      <line num="283" type="method" name="logDebugInfo" visibility="private" complexity="2" crap="2" count="4"/>
+      <line num="283" type="method" name="logDebugInfo" visibility="private" complexity="3" crap="3.00" count="4"/>
       <line num="285" type="stmt" count="4"/>
-      <line num="286" type="stmt" count="4"/>
-      <line num="287" type="stmt" count="4"/>
-      <line num="288" type="stmt" count="4"/>
+      <line num="286" type="stmt" count="0"/>
       <line num="289" type="stmt" count="4"/>
+      <line num="290" type="stmt" count="4"/>
       <line num="291" type="stmt" count="4"/>
       <line num="292" type="stmt" count="4"/>
       <line num="293" type="stmt" count="4"/>
-      <line num="294" type="stmt" count="4"/>
       <line num="295" type="stmt" count="4"/>
       <line num="296" type="stmt" count="4"/>
       <line num="297" type="stmt" count="4"/>
       <line num="298" type="stmt" count="4"/>
       <line num="299" type="stmt" count="4"/>
       <line num="300" type="stmt" count="4"/>
+      <line num="301" type="stmt" count="4"/>
       <line num="302" type="stmt" count="4"/>
-      <metrics loc="305" ncloc="287" classes="1" methods="14" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="145" coveredstatements="118" elements="159" coveredelements="123"/>
+      <line num="303" type="stmt" count="4"/>
+      <line num="304" type="stmt" count="4"/>
+      <line num="306" type="stmt" count="4"/>
+      <line num="309" type="method" name="isDebugLoggingEnabled" visibility="private" complexity="2" crap="2.06" count="4"/>
+      <line num="311" type="stmt" count="4"/>
+      <line num="312" type="stmt" count="4"/>
+      <line num="313" type="stmt" count="0"/>
+      <line num="316" type="stmt" count="4"/>
+      <metrics loc="319" ncloc="301" classes="1" methods="15" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="122" elements="166" coveredelements="126"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Security/Http/AuthMiddleware.php">
       <class name="App\Security\Http\AuthMiddleware" namespace="global">
@@ -4340,7 +4361,7 @@
       <metrics loc="75" ncloc="58" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="11" elements="22" coveredelements="14"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Http/ReadmeController.php">
-      <class name="Src\Shared\Http\ReadmeController" namespace="global">
+      <class name="App\Shared\Http\ReadmeController" namespace="global">
         <metrics complexity="4" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="11" elements="16" coveredelements="12"/>
       </class>
       <line num="11" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
@@ -4362,7 +4383,7 @@
       <metrics loc="38" ncloc="38" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="11" elements="16" coveredelements="12"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Http/Router.php">
-      <class name="Src\Shared\Http\Router" namespace="global">
+      <class name="App\Shared\Http\Router" namespace="global">
         <metrics complexity="109" methods="25" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="251" coveredstatements="94" elements="276" coveredelements="100"/>
       </class>
       <line num="42" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="9"/>
@@ -4787,7 +4808,7 @@
       <metrics loc="56" ncloc="52" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="17" elements="21" coveredelements="21"/>
     </file>
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/Shared/Markdown/MarkdownRenderer.php">
-      <class name="Src\Shared\Markdown\MarkdownRenderer" namespace="global">
+      <class name="App\Shared\Markdown\MarkdownRenderer" namespace="global">
         <metrics complexity="9" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="36" elements="39" coveredelements="36"/>
       </class>
       <line num="9" type="method" name="render" visibility="public" complexity="9" crap="9.01" count="8"/>
@@ -5118,6 +5139,6 @@
       <line num="443" type="stmt" count="2"/>
       <metrics loc="470" ncloc="425" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="272" coveredstatements="233" elements="272" coveredelements="233"/>
     </file>
-    <metrics files="108" loc="10029" ncloc="9273" classes="98" methods="494" coveredmethods="355" conditionals="0" coveredconditionals="0" statements="4006" coveredstatements="3466" elements="4500" coveredelements="3821"/>
+    <metrics files="108" loc="10070" ncloc="9314" classes="98" methods="496" coveredmethods="354" conditionals="0" coveredconditionals="0" statements="4025" coveredstatements="3481" elements="4521" coveredelements="3835"/>
   </project>
 </coverage>

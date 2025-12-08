@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\AI\OpenAIComicGenerator;
 use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Shared\Http\JsonResponse;
 use InvalidArgumentException;
 use RuntimeException;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 use Throwable;
 
 final class ComicController

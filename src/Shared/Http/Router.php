@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Http;
+namespace App\Shared\Http;
 
 use App\AI\OpenAIComicGenerator;
 use App\Config\ServiceUrlProvider;
@@ -19,18 +19,18 @@ use App\Security\Http\AuthMiddleware;
 use App\Security\Http\CsrfTokenManager;
 use App\Security\Http\RateLimitMiddleware;
 use App\Security\Http\ApiFirewall;
-use Src\Controllers\ActivityController;
-use Src\Controllers\AdminController;
-use Src\Controllers\AlbumController;
-use Src\Controllers\AuthController;
-use Src\Controllers\ConfigController;
-use Src\Controllers\ComicController;
-use Src\Controllers\DevController;
-use Src\Controllers\HeroController;
-use Src\Controllers\Http\Request;
-use Src\Controllers\NotificationController;
-use Src\Controllers\PageController;
-use Src\Controllers\RagProxyController;
+use App\Controllers\ActivityController;
+use App\Controllers\AdminController;
+use App\Controllers\AlbumController;
+use App\Controllers\AuthController;
+use App\Controllers\ConfigController;
+use App\Controllers\ComicController;
+use App\Controllers\DevController;
+use App\Controllers\HeroController;
+use App\Controllers\Http\Request;
+use App\Controllers\NotificationController;
+use App\Controllers\PageController;
+use App\Controllers\RagProxyController;
 use RuntimeException;
 use Throwable;
 

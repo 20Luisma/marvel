@@ -13,7 +13,7 @@ if (!array_key_exists('MARVEL_RAW_BODY', $_SERVER)) {
 
 use App\Security\Http\SecurityHeaders;
 use App\Security\Http\CsrfMiddleware;
-use Src\Shared\Http\Router;
+use App\Shared\Http\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

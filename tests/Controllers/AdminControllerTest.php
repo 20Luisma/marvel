@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\AdminController;
+use App\Controllers\AdminController;
 use Tests\Doubles\SeedHeroesServiceStub;
 
 final class AdminControllerTest extends TestCase

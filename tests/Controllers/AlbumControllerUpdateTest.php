@@ -14,8 +14,8 @@ use App\Albums\Domain\Repository\AlbumRepository;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Shared\Domain\Bus\EventBus;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\AlbumController;
-use Src\Controllers\Http\Request;
+use App\Controllers\AlbumController;
+use App\Controllers\Http\Request;
 
 final class AlbumControllerUpdateTest extends TestCase
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Controllers;
 
-use Src\Controllers\AlbumController;
-use Src\Controllers\Http\Request;
+use App\Controllers\AlbumController;
+use App\Controllers\Http\Request;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\CreateAlbumUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;

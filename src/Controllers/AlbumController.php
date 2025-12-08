@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Albums\Application\DTO\CreateAlbumRequest;
 use App\Albums\Application\DTO\UpdateAlbumRequest;
@@ -18,8 +18,8 @@ use App\Security\Logging\SecurityLogger;
 use App\Security\Validation\JsonValidator;
 use InvalidArgumentException;
 use RuntimeException;
-use Src\Controllers\Helpers\DirectoryHelper;
-use Src\Controllers\Http\Request;
+use App\Controllers\Helpers\DirectoryHelper;
+use App\Controllers\Http\Request;
 use Throwable;
 
 final class AlbumController

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Src\Shared\Http\Router;
+use App\Shared\Http\Router;
 use App\Security\Http\SecurityHeaders;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 final class HeadersSecurityTest extends TestCase
 {
     private string $root;

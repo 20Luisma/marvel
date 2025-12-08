@@ -52,7 +52,7 @@ use App\Monitoring\TraceIdGenerator;
 use Sentry\ClientBuilder;
 use Sentry\SentrySdk;
 use Sentry\State\Hub;
-use Src\Shared\Http\ReadmeController;
+use App\Shared\Http\ReadmeController;
 
 return (static function (): array {
     $rootPath = dirname(__DIR__);
