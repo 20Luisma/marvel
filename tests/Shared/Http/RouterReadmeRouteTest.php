@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Shared\Http;
 
 use PHPUnit\Framework\TestCase;
-use Src\Shared\Http\ReadmeController;
-use Src\Shared\Http\Router;
+use App\Shared\Http\ReadmeController;
+use App\Shared\Http\Router;
 
 final class RouterReadmeRouteTest extends TestCase
 {

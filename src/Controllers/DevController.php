@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Shared\Http\JsonResponse;

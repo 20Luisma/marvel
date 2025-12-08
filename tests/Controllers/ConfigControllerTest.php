@@ -6,7 +6,7 @@ namespace Tests\Controllers;
 
 use App\Config\ServiceUrlProvider;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\ConfigController;
+use App\Controllers\ConfigController;
 
 final class ConfigControllerTest extends TestCase
 {

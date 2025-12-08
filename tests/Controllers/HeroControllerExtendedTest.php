@@ -12,8 +12,8 @@ use App\Heroes\Application\UseCase\ListHeroesUseCase;
 use App\Heroes\Application\UseCase\UpdateHeroUseCase;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\HeroController;
-use Src\Controllers\Http\Request;
+use App\Controllers\HeroController;
+use App\Controllers\Http\Request;
 use Tests\Doubles\InMemoryAlbumRepository;
 use Tests\Doubles\InMemoryHeroRepository;
 

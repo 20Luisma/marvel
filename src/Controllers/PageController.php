@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 
 final class PageController
 {

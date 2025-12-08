@@ -6,8 +6,8 @@ namespace Tests\Controllers;
 
 use App\Security\Validation\InputSanitizer;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\RagProxyController;
-use Src\Controllers\Http\Request;
+use App\Controllers\RagProxyController;
+use App\Controllers\Http\Request;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerSecurityTest extends TestCase

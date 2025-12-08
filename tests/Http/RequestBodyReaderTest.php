@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Http;
 
 use PHPUnit\Framework\TestCase;
-use Src\Http\RequestBodyReader;
+use App\Http\RequestBodyReader;
 
 final class RequestBodyReaderTest extends TestCase
 {
@@ -102,4 +102,3 @@ final class RequestBodyReaderTest extends TestCase
         self::assertIsString($result);
     }
 }
-

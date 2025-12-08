@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Shared\Infrastructure\Security\InternalRequestSigner;
-use Src\Http\RequestBodyReader;
+use App\Http\RequestBodyReader;
 
 final class RagProxyController
 {
@@ -29,16 +29,21 @@ final class RagProxyController
     public function forwardHeroesComparison(): void
     {
         $logFile = __DIR__ . '/../../storage/logs/debug_rag_proxy.log';
+        $debugEnabled = $this->isDebugLoggingEnabled();
         
         try {
             // BEGIN ZONAR FIX DEFINITIVO - Leer JSON puro directamente
             $rawBody = $_SERVER['MARVEL_RAW_BODY'] ?? RequestBodyReader::getRawBody();
             $rawBody = is_string($rawBody) ? $rawBody : '';
             
-            file_put_contents($logFile, date('c') . " [RAG] Raw body length: " . strlen($rawBody) . "\n", FILE_APPEND);
+            if ($debugEnabled) {
+                file_put_contents($logFile, date('c') . " [RAG] Raw body length: " . strlen($rawBody) . "\n", FILE_APPEND);
+            }
             
             if ($rawBody === '') {
-                file_put_contents($logFile, date('c') . " [RAG] ERROR: Body vacío\n", FILE_APPEND);
+                if ($debugEnabled) {
+                    file_put_contents($logFile, date('c') . " [RAG] ERROR: Body vacío\n", FILE_APPEND);
+                }
                 http_response_code(400);
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode([
@@ -51,7 +56,9 @@ final class RagProxyController
             $payload = json_decode($rawBody, true);
             
             if (!is_array($payload)) {
-                file_put_contents($logFile, date('c') . " [RAG] ERROR: JSON inválido\n", FILE_APPEND);
+                if ($debugEnabled) {
+                    file_put_contents($logFile, date('c') . " [RAG] ERROR: JSON inválido\n", FILE_APPEND);
+                }
                 http_response_code(400);
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode([
@@ -61,12 +68,16 @@ final class RagProxyController
                 return;
             }
             
-            file_put_contents($logFile, date('c') . " [RAG] Payload recibido correctamente\n", FILE_APPEND);
+            if ($debugEnabled) {
+                file_put_contents($logFile, date('c') . " [RAG] Payload recibido correctamente\n", FILE_APPEND);
+            }
             // END ZONAR FIX DEFINITIVO
 
 
             if ($payload === []) {
-                file_put_contents($logFile, date('c') . " [RAG] ERROR: Payload vacío\n", FILE_APPEND);
+                if ($debugEnabled) {
+                    file_put_contents($logFile, date('c') . " [RAG] ERROR: Payload vacío\n", FILE_APPEND);
+                }
                 http_response_code(400);
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode([
@@ -98,7 +109,9 @@ final class RagProxyController
                 throw new \RuntimeException('No se pudo serializar el payload para RAG.');
             }
             
-            file_put_contents($logFile, date('c') . " [RAG] Payload: $encodedPayload\n", FILE_APPEND);
+            if ($debugEnabled) {
+                file_put_contents($logFile, date('c') . " [RAG] Payload: $encodedPayload\n", FILE_APPEND);
+            }
 
             $requestHeaders = $this->signer !== null
                 ? $this->signer->sign('POST', $this->ragServiceUrl, $encodedPayload)
@@ -112,14 +125,18 @@ final class RagProxyController
                 retries: self::DEFAULT_RETRIES
             );
 
-            file_put_contents($logFile, date('c') . " [RAG] Respuesta: " . $response->statusCode . "\n", FILE_APPEND);
+            if ($debugEnabled) {
+                file_put_contents($logFile, date('c') . " [RAG] Respuesta: " . $response->statusCode . "\n", FILE_APPEND);
+            }
 
             http_response_code($response->statusCode);
             header('Content-Type: application/json; charset=utf-8');
             echo $response->body;
 
         } catch (\Throwable $e) {
-            file_put_contents($logFile, date('c') . " [RAG] EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
+            if ($debugEnabled) {
+                file_put_contents($logFile, date('c') . " [RAG] EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
+            }
             
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
@@ -128,5 +145,15 @@ final class RagProxyController
                 'message' => 'Error interno en el proxy RAG: ' . $e->getMessage()
             ], JSON_UNESCAPED_UNICODE);
         }
+    }
+
+    private function isDebugLoggingEnabled(): bool
+    {
+        $env = strtolower((string)($_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? ''));
+        if ($env === 'prod') {
+            return (bool)($_ENV['DEBUG_RAG_PROXY'] ?? $_SERVER['DEBUG_RAG_PROXY'] ?? false);
+        }
+
+        return true;
     }
 }

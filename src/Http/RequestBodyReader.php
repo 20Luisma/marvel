@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Http;
+namespace App\Http;
 
 class RequestBodyReader
 {

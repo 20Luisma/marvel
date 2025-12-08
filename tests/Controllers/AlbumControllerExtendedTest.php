@@ -14,8 +14,8 @@ use App\Heroes\Domain\Entity\Hero;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\AlbumController;
-use Src\Controllers\Http\Request;
+use App\Controllers\AlbumController;
+use App\Controllers\Http\Request;
 use Tests\Doubles\InMemoryAlbumRepository;
 
 final class AlbumControllerExtendedTest extends TestCase

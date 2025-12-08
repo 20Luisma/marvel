@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\PageController;
+use App\Controllers\PageController;
 
 final class PageControllerTest extends TestCase
 {

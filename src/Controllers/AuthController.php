@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Security\Auth\AuthService;
 use App\Security\Http\CsrfTokenManager;

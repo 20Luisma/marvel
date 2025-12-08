@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Controllers\Http;
 
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 
 final class RequestExtendedTest extends TestCase
 {

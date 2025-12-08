@@ -6,7 +6,7 @@ namespace Tests\Controllers\Helpers;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Src\Controllers\Helpers\DirectoryHelper;
+use App\Controllers\Helpers\DirectoryHelper;
 
 final class DirectoryHelperTest extends TestCase
 {

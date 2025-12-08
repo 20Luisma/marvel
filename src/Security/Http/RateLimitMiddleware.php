@@ -7,7 +7,7 @@ namespace App\Security\Http;
 use App\Security\Logging\SecurityLogger;
 use App\Security\RateLimit\RateLimitResult;
 use App\Security\RateLimit\RateLimiter;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 
 final class RateLimitMiddleware
 {

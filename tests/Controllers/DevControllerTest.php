@@ -6,7 +6,7 @@ namespace Tests\Controllers;
 
 use App\Dev\Test\PhpUnitTestRunner;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\DevController;
+use App\Controllers\DevController;
 
 final class DevControllerTest extends TestCase
 {

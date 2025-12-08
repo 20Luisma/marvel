@@ -11,7 +11,7 @@ use App\Security\Http\AuthMiddleware;
 use App\Security\Http\CsrfTokenManager;
 use App\Security\Logging\SecurityLogger;
 use PHPUnit\Framework\TestCase;
-use Src\Shared\Http\Router;
+use App\Shared\Http\Router;
 
 final class AdminRouteProtectionTest extends TestCase
 {

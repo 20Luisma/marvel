@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers\Helpers;
+namespace App\Controllers\Helpers;
 
 use RuntimeException;
 

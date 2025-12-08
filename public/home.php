@@ -7,7 +7,7 @@ if (!array_key_exists('MARVEL_RAW_BODY', $_SERVER)) {
     $_SERVER['MARVEL_RAW_BODY'] = $raw === false ? '' : $raw;
 }
 
-use Src\Shared\Http\Router;
+use App\Shared\Http\Router;
 use App\Security\Http\CsrfMiddleware;
 
 require_once __DIR__ . '/../vendor/autoload.php';

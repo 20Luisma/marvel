@@ -12,8 +12,8 @@ use App\Activities\Domain\ActivityEntry;
 use App\Activities\Domain\ActivityLogRepository;
 use App\Activities\Domain\ActivityScope;
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\ActivityController;
-use Src\Controllers\Http\Request;
+use App\Controllers\ActivityController;
+use App\Controllers\Http\Request;
 
 final class ActivityControllerTest extends TestCase
 {

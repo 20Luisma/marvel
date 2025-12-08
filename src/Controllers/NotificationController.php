@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Notifications\Application\ClearNotificationsUseCase;
 use App\Notifications\Application\ListNotificationsUseCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 use App\Heroes\Application\DTO\CreateHeroRequest;
 use App\Heroes\Application\DTO\UpdateHeroRequest;
@@ -14,7 +14,7 @@ use App\Heroes\Application\UseCase\UpdateHeroUseCase;
 use App\Shared\Http\JsonResponse;
 use App\Security\Sanitizer;
 use InvalidArgumentException;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 
 final class HeroController
 {

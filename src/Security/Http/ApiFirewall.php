@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Http;
 
 use App\Security\RateLimit\RateLimitResult;
-use Src\Controllers\Http\Request;
+use App\Controllers\Http\Request;
 
 final class ApiFirewall
 {
@@ -111,7 +111,7 @@ final class ApiFirewall
             return $rawFromGlobals;
         }
 
-        $raw = \Src\Http\RequestBodyReader::getRawBody();
+        $raw = \App\Http\RequestBodyReader::getRawBody();
         return $raw === '' ? null : $raw;
     }
 
@@ -282,6 +282,10 @@ final class ApiFirewall
 
     private function logDebugInfo(string $method, string $path, ?string $rawInput): void
     {
+        if (!$this->isDebugLoggingEnabled()) {
+            return;
+        }
+
         $logFile = dirname(__DIR__, 3) . '/storage/logs/debug_rag_proxy.log';
         $contentType = $_SERVER['CONTENT_TYPE'] ?? 'N/A';
         $contentLength = $_SERVER['CONTENT_LENGTH'] ?? 'N/A';
@@ -300,5 +304,15 @@ final class ApiFirewall
         );
 
         @file_put_contents($logFile, $logEntry, FILE_APPEND);
+    }
+
+    private function isDebugLoggingEnabled(): bool
+    {
+        $env = strtolower((string)($_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? ''));
+        if ($env === 'prod') {
+            return (bool)($_ENV['DEBUG_API_FIREWALL'] ?? $_SERVER['DEBUG_API_FIREWALL'] ?? false);
+        }
+
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Controllers;
+namespace App\Controllers;
 
 function header(string $header, bool $replace = true, int $response_code = 0): void {
     $GLOBALS['headers'][] = $header;
@@ -79,7 +79,7 @@ function session_start(): bool {
 
 namespace Tests\Controllers;
 
-use Src\Controllers\AuthController;
+use App\Controllers\AuthController;
 use App\Security\Auth\AuthService;
 use App\Security\Http\CsrfTokenManager;
 use App\Application\Security\IpBlockerService;

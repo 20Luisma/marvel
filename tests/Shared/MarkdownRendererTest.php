@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Shared;
 
 use PHPUnit\Framework\TestCase;
-use Src\Shared\Markdown\MarkdownRenderer;
+use App\Shared\Markdown\MarkdownRenderer;
 
 final class MarkdownRendererTest extends TestCase
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Src\Shared\Http;
+namespace App\Shared\Http;
 
-use Src\Shared\Markdown\MarkdownRenderer;
+use App\Shared\Markdown\MarkdownRenderer;
 
 final class ReadmeController
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use Src\Controllers\RagProxyController;
-use Src\Controllers\Http\Request;
+use App\Controllers\RagProxyController;
+use App\Controllers\Http\Request;
 use Tests\Support\HttpClientStub;
 
 final class RagProxyControllerExtendedTest extends TestCase
