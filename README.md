@@ -181,15 +181,29 @@ Asistente técnico: **Alfred**, IA desarrollada con ❤️
 
 ---
 
-## 🧩 Nota sobre el archivo `bootstrap.php`
+## 🧩 Arquitectura del Bootstrap (Composition Root)
 
-El archivo `bootstrap.php` actúa como **Composition Root** del proyecto: es el punto donde se inicializan las dependencias, servicios, repositorios, casos de uso, seguridad y observabilidad.
+El archivo `bootstrap.php` actúa como **Composition Root** del proyecto, pero con una arquitectura **modular y escalable** que separa responsabilidades en módulos especializados:
 
-Es intencionadamente un archivo grande porque el proyecto tiene un **objetivo educativo** y esta estructura permite ver de un vistazo cómo se conectan todas las piezas principales del sistema.
+### Módulos Bootstrap
 
-En un entorno empresarial, parte de esta lógica se separaría en módulos más pequeños (por ejemplo: anti-replay, seeding, rate limits o configuración de sesión). Sin embargo, para esta versión didáctica se ha mantenido en un único archivo para favorecer la **claridad de lectura** y facilitar la **comprensión global del wiring** del proyecto.
+| Módulo | Responsabilidad |
+|--------|----------------|
+| **EnvironmentBootstrap** | Carga de `.env`, inicialización de sesión y generación de Trace ID |
+| **PersistenceBootstrap** | Configuración de repositorios (DB/JSON) con fallback automático |
+| **SecurityBootstrap** | Auth, CSRF, Rate Limit, Firewall y Anti-Replay |
+| **EventBootstrap** | EventBus y suscriptores de eventos de dominio |
+| **ObservabilityBootstrap** | Sentry, métricas de tokens y trazabilidad |
+| **AppBootstrap** | Orquestador principal que coordina todos los módulos |
 
-La arquitectura, dependencias y servicios están correctamente ensamblados, y el archivo sirve como referencia transparente de cómo se estructura una aplicación PHP moderna basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+### Beneficios de la Modularización
+
+- **Separación de responsabilidades**: Cada módulo tiene una única razón de cambio.
+- **Mantenibilidad**: Fácil localizar y modificar configuración específica (seguridad, persistencia, etc.).
+- **Testabilidad**: Los módulos pueden probarse de forma aislada.
+- **Escalabilidad**: Permite añadir nuevos módulos (cache, queue, etc.) sin afectar los existentes.
+
+Esta arquitectura combina el objetivo educativo (claridad en el wiring) con las mejores prácticas empresariales (modularización, SRP). El resultado es un sistema que mantiene la **transparencia** del ensamblado completo, pero con una **estructura profesional** basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
 
 ---
 

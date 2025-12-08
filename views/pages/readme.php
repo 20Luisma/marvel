@@ -298,20 +298,65 @@ require_once __DIR__ . '/../layouts/header.php';
           </div>
         </section>
 
-        <!-- NOTA BOOTSTRAP.PHP -->
+        <!-- ARQUITECTURA BOOTSTRAP (COMPOSITION ROOT) -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🧩 Nota sobre el archivo bootstrap.php</h3>
+          <h3 class="text-2xl text-white">🧩 Arquitectura del Bootstrap (Composition Root)</h3>
           <p>
-            El archivo <code>bootstrap.php</code> actúa como <strong>Composition Root</strong> del proyecto: es el punto donde se inicializan las dependencias, servicios, repositorios, casos de uso, seguridad y observabilidad.
+            El archivo <code>bootstrap.php</code> actúa como <strong>Composition Root</strong> del proyecto, pero con una arquitectura <strong>modular y escalable</strong> que separa responsabilidades en módulos especializados:
           </p>
-          <p>
-            Es intencionadamente un archivo grande porque el proyecto tiene un <strong>objetivo educativo</strong> y esta estructura permite ver de un vistazo cómo se conectan todas las piezas principales del sistema.
-          </p>
-          <p>
-            En un entorno empresarial, parte de esta lógica se separaría en módulos más pequeños (por ejemplo: anti-replay, seeding, rate limits o configuración de sesión). Sin embargo, para esta versión didáctica se ha mantenido en un único archivo para favorecer la <strong>claridad de lectura</strong> y facilitar la <strong>comprensión global del wiring</strong> del proyecto.
-          </p>
+
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-5 overflow-x-auto">
+            <p class="text-xs uppercase tracking-widest text-gray-400 mb-4">Módulos Bootstrap</p>
+            <table class="w-full text-sm text-gray-200">
+              <thead>
+                <tr class="border-b border-slate-700">
+                  <th class="text-left py-2 px-3 text-cyan-300">Módulo</th>
+                  <th class="text-left py-2 px-3 text-cyan-300">Responsabilidad</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">EnvironmentBootstrap</td>
+                  <td class="py-2 px-3">Carga de <code>.env</code>, inicialización de sesión y generación de Trace ID</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">PersistenceBootstrap</td>
+                  <td class="py-2 px-3">Configuración de repositorios (DB/JSON) con fallback automático</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">SecurityBootstrap</td>
+                  <td class="py-2 px-3">Auth, CSRF, Rate Limit, Firewall y Anti-Replay</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">EventBootstrap</td>
+                  <td class="py-2 px-3">EventBus y suscriptores de eventos de dominio</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">ObservabilityBootstrap</td>
+                  <td class="py-2 px-3">Sentry, métricas de tokens y trazabilidad</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-mono text-cyan-400">AppBootstrap</td>
+                  <td class="py-2 px-3">Orquestador principal que coordina todos los módulos</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="rounded-xl border border-green-700/50 bg-green-900/20 p-4 mt-3">
+            <p class="text-green-300 font-semibold mb-3">✅ Beneficios de la Modularización</p>
+            <ul class="space-y-2 text-sm text-gray-200">
+              <li><strong>Separación de responsabilidades:</strong> Cada módulo tiene una única razón de cambio.</li>
+              <li><strong>Mantenibilidad:</strong> Fácil localizar y modificar configuración específica (seguridad, persistencia, etc.).</li>
+              <li><strong>Testabilidad:</strong> Los módulos pueden probarse de forma aislada.</li>
+              <li><strong>Escalabilidad:</strong> Permite añadir nuevos módulos (cache, queue, etc.) sin afectar los existentes.</li>
+            </ul>
+          </div>
+
           <p class="text-sm text-gray-300">
-            La arquitectura, dependencias y servicios están correctamente ensamblados, y el archivo sirve como referencia transparente de cómo se estructura una aplicación PHP moderna basada en <strong>Clean Architecture</strong> con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+            Esta arquitectura combina el objetivo educativo (claridad en el wiring) con las mejores prácticas empresariales (modularización, SRP).
+            El resultado es un sistema que mantiene la <strong>transparencia</strong> del ensamblado completo, pero con una <strong>estructura profesional</strong>
+            basada en <strong>Clean Architecture</strong> con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
           </p>
         </section>
 
