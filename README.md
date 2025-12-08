@@ -175,4 +175,22 @@ vendor/bin/phpstan analyse
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  
 Asistente técnico: **Alfred**, IA desarrollada con ❤️
 
-> *“Diseñando tecnología limpia, modular y con propósito.”*
+> *"Diseñando tecnología limpia, modular y con propósito."*
+
+---
+
+## 🧩 Nota sobre el archivo `bootstrap.php`
+
+El archivo `bootstrap.php` actúa como **Composition Root** del proyecto: es el punto donde se inicializan las dependencias, servicios, repositorios, casos de uso, seguridad y observabilidad.
+
+Es intencionadamente un archivo grande porque el proyecto tiene un **objetivo educativo** y esta estructura permite ver de un vistazo cómo se conectan todas las piezas principales del sistema.
+
+En un entorno empresarial, parte de esta lógica se separaría en módulos más pequeños (por ejemplo: anti-replay, seeding, rate limits o configuración de sesión). Sin embargo, para esta versión didáctica se ha mantenido en un único archivo para favorecer la **claridad de lectura** y facilitar la **comprensión global del wiring** del proyecto.
+
+La arquitectura, dependencias y servicios están correctamente ensamblados, y el archivo sirve como referencia transparente de cómo se estructura una aplicación PHP moderna basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+
+---
+
+## 💭 Reflexión Final
+
+> *Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster.*

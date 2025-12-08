@@ -294,15 +294,31 @@ require_once __DIR__ . '/../layouts/header.php';
           </div>
         </section>
 
-        <!-- CIERRE -->
+        <!-- NOTA BOOTSTRAP.PHP -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🚀 ¿Cómo continuar?</h3>
+          <h3 class="text-2xl text-white">🧩 Nota sobre el archivo bootstrap.php</h3>
           <p>
-            Explora la carpeta <code>docs/</code> para conocer más sobre la arquitectura, endpoints y roadmap.
-            Revisa también los microservicios para entender cómo se integran con el backend principal.
-            Todas las vistas comparten la misma cabecera y barra de acciones para que puedas moverte fácil entre álbumes, héroes,
-            cómics, documentación, paneles de calidad y la sección oficial.
+            El archivo <code>bootstrap.php</code> actúa como <strong>Composition Root</strong> del proyecto: es el punto donde se inicializan las dependencias, servicios, repositorios, casos de uso, seguridad y observabilidad.
           </p>
+          <p>
+            Es intencionadamente un archivo grande porque el proyecto tiene un <strong>objetivo educativo</strong> y esta estructura permite ver de un vistazo cómo se conectan todas las piezas principales del sistema.
+          </p>
+          <p>
+            En un entorno empresarial, parte de esta lógica se separaría en módulos más pequeños (por ejemplo: anti-replay, seeding, rate limits o configuración de sesión). Sin embargo, para esta versión didáctica se ha mantenido en un único archivo para favorecer la <strong>claridad de lectura</strong> y facilitar la <strong>comprensión global del wiring</strong> del proyecto.
+          </p>
+          <p class="text-sm text-gray-300">
+            La arquitectura, dependencias y servicios están correctamente ensamblados, y el archivo sirve como referencia transparente de cómo se estructura una aplicación PHP moderna basada en <strong>Clean Architecture</strong> con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+          </p>
+        </section>
+
+        <!-- REFLEXIÓN FINAL -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">💭 Reflexión Final</h3>
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-5">
+            <p class="text-gray-200 italic text-lg leading-relaxed">
+              "Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster."
+            </p>
+          </div>
         </section>
       </article>
     </section>
