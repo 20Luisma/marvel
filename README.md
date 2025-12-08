@@ -7,7 +7,9 @@
 ![Playwright E2E](https://img.shields.io/badge/Playwright%20E2E-passing-brightgreen)
 ![Bundle Size](https://img.shields.io/badge/Bundle%20Size-static-blue)
 
-**Clean Marvel Album** es una demo/producto educativo en **PHP 8.2+** que aplica **Arquitectura Limpia** para gestionar álbumes y héroes Marvel. Orquesta un backend modular y varios paneles de observabilidad conectados a microservicios de IA y utilidades externas.
+**Clean Marvel Album** es un proyecto creado en paralelo a mi formación en el Máster de IA de Big School. Cada módulo del máster inspiró una parte del sistema: arquitectura limpia, seguridad, microservicios, RAG, automatización y buenas prácticas. A medida que avanzaba el curso, fui aplicando lo aprendido directamente en el código, convirtiendo este proyecto en un laboratorio real donde experimentar, equivocarme, mejorar y construir una aplicación profesional de principio a fin.
+
+El resultado es una plataforma completa en **PHP 8.2** con **Arquitectura Limpia**, microservicios IA, métricas, paneles de calidad y un pipeline CI/CD totalmente automatizado. Más que un proyecto, es el reflejo del camino recorrido durante el máster.
 
 > ✅ **Accesibilidad WCAG 2.1 AA**: Pa11y reporta `0 issues` en todas las páginas públicas.
 

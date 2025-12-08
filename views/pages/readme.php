@@ -40,9 +40,13 @@ require_once __DIR__ . '/../layouts/header.php';
           <h2 class="text-3xl text-white">📘 Documentación</h2>
           <p class="text-lg text-gray-300">README del Proyecto</p>
           <p>
-            Clean Marvel Album es una experiencia educativa desarrollada en PHP 8.2 que demuestra cómo se ve una Arquitectura Limpia aplicada a un proyecto real.
-            Toda la aplicación está organizada en capas para mantener orden, claridad y facilidad de evolución. Además, el proyecto incluye un pipeline completo
-            de CI/CD con tests, análisis de calidad, accesibilidad y despliegue automático desde GitHub.
+            Clean Marvel Album es un proyecto creado en paralelo a mi formación en el Máster de IA de Big School. Cada módulo del máster inspiró una parte del sistema:
+            arquitectura limpia, seguridad, microservicios, RAG, automatización y buenas prácticas. A medida que avanzaba el curso, fui aplicando lo aprendido directamente
+            en el código, convirtiendo este proyecto en un laboratorio real donde experimentar, equivocarme, mejorar y construir una aplicación profesional de principio a fin.
+          </p>
+          <p>
+            El resultado es una plataforma completa en PHP 8.2 con Arquitectura Limpia, microservicios IA, métricas, paneles de calidad y un pipeline CI/CD totalmente
+            automatizado. Más que un proyecto, es el reflejo del camino recorrido durante el máster.
           </p>
         </section>
 
