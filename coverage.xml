@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1765143700">
-  <project timestamp="1765143700">
+<coverage generated="1765199296">
+  <project timestamp="1765199296">
     <file name="/Users/admin/Desktop/Proyecto Marvel local y Hosting/clean-marvel/src/AI/OpenAIComicGenerator.php">
       <class name="App\AI\OpenAIComicGenerator" namespace="global">
         <metrics complexity="70" methods="9" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="218" coveredstatements="179" elements="227" coveredelements="180"/>
