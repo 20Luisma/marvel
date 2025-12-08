@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Http\AuthGuards;
+use App\Services\GithubClient;
 
-AuthGuards::requireAuth();
-AuthGuards::requireAdmin();
+if (!defined('PANEL_GITHUB_TEST')) {
+  AuthGuards::requireAuth();
+  AuthGuards::requireAdmin();
+}
 
 @ini_set('max_execution_time', '650');
 @ini_set('default_socket_timeout', '650');
@@ -17,57 +20,60 @@ $activeTopAction = 'github';
 $bodyClass = 'text-gray-200 min-h-screen bg-[#0b0d17] panel-github-page';
 
 $root = dirname(__DIR__, 2);
-require_once $root . '/app/Services/GithubClient.php';
 
-/**
- * Normaliza una fecha proveniente del query string a YYYY-MM-DD.
- *
- * @param array<string, mixed>|null $errorRef
- */
-function normalizeDateParamView(string $param, string $default, ?array &$errorRef): string
-{
-  $raw = $_GET[$param] ?? null;
-  if ($raw === null || trim((string) $raw) === '') {
-    return $default;
+if (!function_exists('normalizeDateParamView')) {
+  /**
+   * Normaliza una fecha proveniente del query string a YYYY-MM-DD.
+   *
+   * @param array<string, mixed>|null $errorRef
+   */
+  function normalizeDateParamView(string $param, string $default, ?array &$errorRef): string
+  {
+    $raw = $_GET[$param] ?? null;
+    if ($raw === null || trim((string) $raw) === '') {
+      return $default;
+    }
+
+    $normalized = normalizeDateView((string) $raw);
+    if ($normalized === null) {
+      $errorRef = [
+        'error' => "Fecha '{$param}' inválida. Usa YYYY-MM-DD o DD/MM/AAAA.",
+        'status' => 400,
+        'detail' => 'Formato de fecha inválido en el panel.',
+      ];
+      return $default;
+    }
+
+    return $normalized;
   }
-
-  $normalized = normalizeDateView((string) $raw);
-  if ($normalized === null) {
-    $errorRef = [
-      'error' => "Fecha '{$param}' inválida. Usa YYYY-MM-DD o DD/MM/AAAA.",
-      'status' => 400,
-      'detail' => 'Formato de fecha inválido en el panel.',
-    ];
-    return $default;
-  }
-
-  return $normalized;
 }
 
-/**
- * @return string|null
- */
-function normalizeDateView(string $value): ?string
-{
-  $value = trim($value);
-  if ($value === '') {
+if (!function_exists('normalizeDateView')) {
+  /**
+   * @return string|null
+   */
+  function normalizeDateView(string $value): ?string
+  {
+    $value = trim($value);
+    if ($value === '') {
+      return null;
+    }
+
+    $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
+    foreach ($formats as $format) {
+      $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
+      if ($dt instanceof DateTimeImmutable) {
+        return $dt->format('Y-m-d');
+      }
+    }
+
+    $timestamp = strtotime($value);
+    if ($timestamp !== false) {
+      return gmdate('Y-m-d', $timestamp);
+    }
+
     return null;
   }
-
-  $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y'];
-  foreach ($formats as $format) {
-    $dt = DateTimeImmutable::createFromFormat('!' . $format, $value);
-    if ($dt instanceof DateTimeImmutable) {
-      return $dt->format('Y-m-d');
-    }
-  }
-
-  $timestamp = strtotime($value);
-  if ($timestamp !== false) {
-    return gmdate('Y-m-d', $timestamp);
-  }
-
-  return null;
 }
 
 $lazyMode = isset($_GET['lazy']) && $_GET['lazy'] === '1';
@@ -79,35 +85,38 @@ $to   = normalizeDateParamView('to', date('Y-m-d'), $dateError);
 if ($lazyMode) {
   $data = ['lazy' => true];
 } else {
-  $client = new \App\Services\GithubClient($root);
+  $clientFactory = $GLOBALS['__github_client_factory'] ?? null;
+  $client = is_callable($clientFactory) ? $clientFactory() : new GithubClient($root);
   $data = $dateError !== null
     ? $dateError
     : $client->fetchActivity($from, $to);
 }
 
-/**
- * @param array<string, mixed>|array<int, mixed>|null $payload
- * @return array<int, array<string, mixed>>
- */
-function extract_activity_entries($payload): array
-{
-  if (!is_array($payload)) {
+if (!function_exists('extract_activity_entries')) {
+  /**
+   * @param array<string, mixed>|array<int, mixed>|null $payload
+   * @return array<int, array<string, mixed>>
+   */
+  function extract_activity_entries($payload): array
+  {
+    if (!is_array($payload)) {
+      return [];
+    }
+
+    if (isset($payload['error'])) {
+      return [];
+    }
+
+    if (isset($payload['data']) && is_array($payload['data'])) {
+      return $payload['data'];
+    }
+
+    if (array_is_list($payload)) {
+      return $payload;
+    }
+
     return [];
   }
-
-  if (isset($payload['error'])) {
-    return [];
-  }
-
-  if (isset($payload['data']) && is_array($payload['data'])) {
-    return $payload['data'];
-  }
-
-  if (array_is_list($payload)) {
-    return $payload;
-  }
-
-  return [];
 }
 
 $blocks = [];
@@ -120,8 +129,8 @@ if (is_array($data) && ($data['lazy'] ?? false) === true) {
   $blocks = extract_activity_entries($data);
   $hasError = !is_array($data) || isset($data['error']);
 }
-$repoOwner = \App\Services\GithubClient::OWNER;
-$repoName = \App\Services\GithubClient::REPO;
+$repoOwner = GithubClient::OWNER;
+$repoName = GithubClient::REPO;
 
 require_once __DIR__ . '/../layouts/header.php';
 ?>

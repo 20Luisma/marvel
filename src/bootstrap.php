@@ -254,6 +254,10 @@ return (static function (): array {
     $heroDriver = $resolveDriver('HEROES_DRIVER', $appEnvironment);
     $activityDriver = $resolveDriver('ACTIVITY_DRIVER', $appEnvironment);
 
+    if (defined('PHPUNIT_RUNNING')) {
+        $albumDriver = $heroDriver = $activityDriver = 'file';
+    }
+
     $useDatabase = in_array('db', [$albumDriver, $heroDriver, $activityDriver], true);
 
     $pdo = null;
@@ -262,7 +266,10 @@ return (static function (): array {
         try {
             $pdo = PdoConnectionFactory::fromEnvironment();
         } catch (Throwable $e) {
-            error_log('Fallo al abrir conexión PDO, se usará JSON: ' . $e->getMessage());
+            $envForLogs = $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?: '';
+            if (PHP_SAPI !== 'cli' && !defined('PHPUNIT_RUNNING') && $envForLogs !== 'test') {
+                error_log('Fallo al abrir conexión PDO, se usará JSON: ' . $e->getMessage());
+            }
             $pdo = null;
             if ($albumDriver === 'db') {
                 $albumDriver = 'file';
