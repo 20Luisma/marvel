@@ -343,8 +343,8 @@ require_once __DIR__ . '/../layouts/header.php';
             </table>
           </div>
 
-          <div class="rounded-xl border border-green-700/50 bg-green-900/20 p-4 mt-3">
-            <p class="text-green-300 font-semibold mb-3">✅ Beneficios de la Modularización</p>
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4 mt-3">
+            <p class="text-cyan-300 font-semibold mb-3">✅ Beneficios de la Modularización</p>
             <ul class="space-y-2 text-sm text-gray-200">
               <li><strong>Separación de responsabilidades:</strong> Cada módulo tiene una única razón de cambio.</li>
               <li><strong>Mantenibilidad:</strong> Fácil localizar y modificar configuración específica (seguridad, persistencia, etc.).</li>
@@ -367,6 +367,9 @@ require_once __DIR__ . '/../layouts/header.php';
             <p class="text-gray-200 italic text-lg leading-relaxed">
               "Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster."
             </p>
+            <p class="text-gray-300 mt-4 leading-relaxed">
+            El proyecto está diseñado para servir como base y guía en la creación de nuevos sistemas, mostrando cómo estructurar correctamente un backend moderno sin frameworks.
+          </p>
           </div>
         </section>
       </article>
