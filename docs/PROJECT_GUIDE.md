@@ -964,6 +964,8 @@ composer audit --no-interaction
 
 ## 13. Testing completo (niveles Marvel)
 
+Marvel implementa más de **120 tests automatizados** cubriendo múltiples niveles.
+
 ### Estructura de tests
 
 ```
@@ -972,39 +974,49 @@ tests/
 │   ├── Domain/           # Tests de entidades y VOs
 │   ├── Application/      # Tests de casos de uso
 │   └── Infrastructure/   # Tests de repos
-├── Controllers/          # Tests de controladores
-├── Security/             # Tests de seguridad
+├── Controllers/          # Tests de controladores (21 archivos)
+├── Security/             # Tests de seguridad (22 archivos)
 ├── Services/             # Tests de servicios
 ├── Shared/               # Tests de código compartido
-└── e2e/                  # Tests E2E (Playwright)
+├── Fakes/                # Repositorios fake para tests
+├── Doubles/              # Test doubles
+└── e2e/                  # Tests E2E (Playwright, 5 archivos)
+    ├── home.spec.js          # 2 tests de home
+    ├── albums.spec.js        # Tests de álbumes
+    ├── heroes.spec.js        # Tests de héroes
+    ├── comics.spec.js        # Tests de generación de cómics
+    └── movies.spec.js        # Tests de películas
 ```
 
 ### Tipos de tests en Marvel
 
-| Tipo | Herramienta | Qué valida |
-|------|-------------|-----------|
-| Unitarios | PHPUnit | Entidades, VOs, casos de uso |
-| Integración | PHPUnit + mocks | Repos, servicios externos |
-| Seguridad | PHPUnit | Cabeceras, CSRF, rate limit |
-| E2E | Playwright | Flujos completos en browser |
-| Accesibilidad | Pa11y | WCAG 2.1 AA |
-| Performance | Lighthouse | Core Web Vitals, SEO |
+| Tipo | Cantidad | Herramienta | Qué valida |
+|------|----------|-------------|------------|
+| **Unitarios y Dominio** | ~30 archivos | PHPUnit | Entidades, VOs, eventos |
+| **Casos de Uso** | ~25 archivos | PHPUnit | Application layer |
+| **Seguridad** | 22 archivos | PHPUnit | CSRF, Rate Limit, Sessions, Firewall |
+| **Controladores** | 21 archivos | PHPUnit | HTTP layer completa |
+| **Infraestructura** | ~20 archivos | PHPUnit | Repos, HTTP clients, Bus |
+| **E2E** | 5 archivos (6 tests) | Playwright | Flujos críticos de usuario |
+| **Accesibilidad** | Pipeline CI | Pa11y | WCAG 2.1 AA (0 errores) |
+| **Performance** | Pipeline CI | Lighthouse | Core Web Vitals, SEO |
 
 ### Configuración PHPUnit
 
 ```xml
 <!-- phpunit.xml.dist -->
-<phpunit bootstrap="vendor/autoload.php">
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
     <testsuites>
-        <testsuite name="Unit">
+        <testsuite name="all">
             <directory>tests</directory>
+            <exclude>tests/e2e</exclude>
         </testsuite>
     </testsuites>
-    <source>
+    <coverage>
         <include>
-            <directory>src</directory>
+            <directory suffix=".php">src</directory>
         </include>
-    </source>
+    </coverage>
 </phpunit>
 ```
 
@@ -1016,8 +1028,142 @@ parameters:
     level: 6
     paths:
         - src
-        - tests
+    excludePaths:
+        - src/Dev
 ```
+
+### Tests E2E con Playwright
+
+**Configuración** (`playwright.config.cjs`):
+
+```javascript
+const { defineConfig } = require('@playwright/test');
+
+module.exports = defineConfig({
+  testDir: 'tests/e2e',
+  reporter: 'line',
+  use: {
+    baseURL: 'http://localhost:8080',
+    browserName: 'chromium',
+    headless: false,  // Navegador visible
+    trace: 'on',
+    video: 'on',
+    screenshot: 'on',
+  },
+});
+```
+
+**Scripts NPM** (`package.json`):
+
+```json
+{
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug"
+  }
+}
+```
+
+**Comandos**:
+
+```bash
+# Prerequisito: Servidor PHP corriendo
+php -S localhost:8080 -t public
+
+# Ejecutar todos los tests E2E (navegador visible)
+npm run test:e2e
+
+# Modo UI interactivo (recomendado para desarrollo)
+npm run test:e2e:ui
+
+# Modo debug paso a paso
+npm run test:e2e:debug
+```
+
+**Tests E2E cubiertos**:
+
+1. **home.spec.js** (2 tests):
+   - Carga de home con título y elementos clave
+   - Navegación principal y enlaces del menú
+
+2. **albums.spec.js**:
+   - Renderizado de página de álbumes
+   - Presencia de cards y botón crear
+
+3. **heroes.spec.js**:
+   - Galería de héroes con parámetros
+   - Cards de héroes y botón añadir
+
+4. **comics.spec.js**:
+   - Formulario de generación de cómics
+   - Botones de generar y comparar
+
+5. **movies.spec.js**:
+   - Carga de películas
+   - Manejo de estados (con/sin datos/sin API key)
+
+**Artefactos generados**:
+- Videos de cada test
+- Screenshots en caso de error
+- Traces para debugging detallado
+
+### Comandos de testing por categoría
+
+```bash
+# PHPUnit completo
+vendor/bin/phpunit --colors=always
+
+# Solo tests de seguridad
+vendor/bin/phpunit tests/Security
+
+# Solo tests de dominio de Albums
+vendor/bin/phpunit tests/Albums/Domain
+
+# Solo tests de controladores
+vendor/bin/phpunit tests/Controllers
+
+# Cobertura (~70%, objetivo: 80%+)
+composer test:cov
+
+# Análisis estático (PHPStan nivel 6)
+vendor/bin/phpstan analyse --memory-limit=512M
+
+# E2E completo
+npm run test:e2e
+
+# Auditoría de dependencias
+composer audit
+
+# Validación de composer.json
+composer validate
+```
+
+### Workflow recomendado en desarrollo
+
+1. **Escribir test que falla** (TDD):
+   ```bash
+   vendor/bin/phpunit --filter test_nueva_feature
+   ```
+
+2. **Implementar la feature**
+
+3. **Ver test pasar**:
+   ```bash
+   vendor/bin/phpunit --filter test_nueva_feature
+   ```
+
+4. **Ejecutar suite completa**:
+   ```bash
+   vendor/bin/phpunit
+   vendor/bin/phpstan analyse
+   npm run test:e2e
+   ```
+
+5. **Commit solo si todo pasa** ✅
+
+**Documentación completa de testing**: Ver `docs/guides/testing-complete.md` para detalles exhaustivos de cada tipo de test, patrones AAA, mocks vs fakes, debugging y mejores prácticas.
 
 ---
 

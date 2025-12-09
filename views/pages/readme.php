@@ -53,9 +53,8 @@ require_once __DIR__ . '/../layouts/header.php';
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🦸‍♂️ ¿Qué es Clean Marvel Album?</h3>
           <p>
-            Es una plataforma didáctica que combina desarrollo backend y microservicios de inteligencia artificial.
-            El objetivo es que cualquier persona que esté aprendiendo Arquitectura Limpia pueda ver en acción cómo se separan responsabilidades
-            y cómo se comunican los distintos módulos del sistema.
+            Es una plataforma que combina desarrollo backend y microservicios de inteligencia artificial aplicando Clean Architecture.
+            He implementado separación de responsabilidades en capas bien definidas demostrando cómo se comunican los distintos módulos.
           </p>
           <p>
             Cada capa tiene su función: Presentación para la interfaz, Aplicación para los casos de uso, Dominio para las reglas del negocio e Infraestructura
@@ -67,7 +66,7 @@ require_once __DIR__ . '/../layouts/header.php';
           <h3 class="text-2xl text-white">🧩 Lo que puedes hacer</h3>
           <ul class="list-disc list-inside space-y-2 text-gray-200">
             <li>Gestionar álbumes, héroes y cómics desde una interfaz clara y uniforme.</li>
-            <li>Probar la generación de historias con IA (OpenAI) y comparar héroes con el microservicio RAG educativo.</li>
+            <li>Probar la generación de historias con IA (OpenAI) y comparar héroes con el microservicio RAG.</li>
             <li>Supervisar la actividad de la aplicación mediante logs y registros en tiempo real.</li>
             <li>Lanzar pruebas o “seeds” para validar comportamientos críticos del dominio.</li>
             <li>Visualizar métricas de calidad, errores, accesibilidad, rendimiento y actividad del repositorio sin salir del dashboard.</li>
@@ -94,8 +93,30 @@ require_once __DIR__ . '/../layouts/header.php';
             mediante endpoints definidos en <code>config/services.php</code>. Así, la misma arquitectura puede correr en local o en hosting sin cambios en el código.
           </p>
           <p class="text-sm text-gray-300">
-            El microservicio RAG está construido con fines educativos: reproduce el patrón <em>retrieval + generación</em> usando una base JSON in-memory y prompts controlados,
+            El microservicio RAG reproduce el patrón <em>retrieval + generación</em> usando una base JSON in-memory y prompts controlados,
             de modo que puedas inspeccionar cada paso del flujo sin necesidad de un vector DB o infraestructura adicional.
+          </p>
+        </section>
+
+        <!-- POR QUÉ CLEAN ARCHITECTURE -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🎯 ¿Por qué Clean Architecture?</h3>
+          <p>
+            Esta arquitectura se eligió por razones <strong>técnicas</strong> que garantizan la calidad y evolución del proyecto a largo plazo.
+          </p>
+
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-5">
+            <p class="text-cyan-300 font-semibold mb-3">✅ Beneficios clave</p>
+            <ul class="space-y-2 text-sm text-gray-200">
+              <li><strong>Independencia de frameworks:</strong> El dominio no depende de librerías externas, facilitando la evolución tecnológica sin reescribir la lógica de negocio.</li>
+              <li><strong>Testabilidad extrema:</strong> Cada capa se prueba aisladamente. El dominio tiene tests puros sin mocks complejos, los casos de uso se testean sin HTTP, y la infraestructura se valida con doubles.</li>
+              <li><strong>Mantenibilidad a largo plazo:</strong> Los cambios en UI, base de datos o APIs externas no afectan las reglas de negocio. Un cambio en persistencia (JSON → MySQL) solo toca <code>Infrastructure</code>.</li>
+              <li><strong>Escalabilidad gradual:</strong> Permite añadir microservicios, cache o nuevos contextos sin refactorizar el core. Los microservicios IA (OpenAI, RAG) se integraron como adaptadores sin tocar el dominio.</li>
+            </ul>
+          </div>
+
+          <p class="text-sm text-gray-300 mt-3">
+            La decisión arquitectónica completa está documentada en <code>docs/architecture/ADR-001-clean-architecture.md</code>.
           </p>
         </section>
 
@@ -175,7 +196,7 @@ require_once __DIR__ . '/../layouts/header.php';
         <!-- REFACTOR ESTRUCTURAL v2.0 -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🔧 Refactor Estructural v2.0 (Diciembre 2025)</h3>
-          <p>Consolidación de la arquitectura como referencia educativa de Clean Architecture.</p>
+          <p>Consolidación de la arquitectura como implementación de Clean Architecture.</p>
           
           <div class="grid gap-3 md:grid-cols-2">
             <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
@@ -209,17 +230,112 @@ require_once __DIR__ . '/../layouts/header.php';
 
         <!-- CALIDAD Y TESTS -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🧪 Calidad y tipos de tests</h3>
+          <h3 class="text-2xl text-white">🧪 Calidad y Testing Multinivel</h3>
           <p>
-            El proyecto incluye pruebas automáticas (PHPUnit), análisis estático (PHPStan), auditorías de accesibilidad (WAVE + Pa11y), rendimiento (PageSpeed + Lighthouse) y tests E2E (Playwright).
-            La idea es tener una visión completa de la salud del sistema tanto en local como en la integración continua.
+            El proyecto implementa una <strong>estrategia de testing multinivel</strong> con más de <strong>120 tests automatizados</strong>
+            que cubren desde la lógica de negocio hasta la experiencia de usuario final.
           </p>
-          <ul class="list-disc list-inside space-y-2 text-gray-200">
-            <li>Suites unitarias para entidades y servicios puros.</li>
-            <li>Pruebas de aplicación con repositorios en memoria (sin tocar disco ni HTTP externo).</li>
-            <li>Dobles de prueba en <code>tests/Fakes</code> y <code>tests/Doubles</code> para mantener determinismo.</li>
-            <li>Generación de <code>coverage.xml</code> con <code>composer test:cov</code> y uso de ese reporte en SonarCloud.</li>
-          </ul>
+
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-5 overflow-x-auto">
+            <p class="text-xs uppercase tracking-widest text-gray-400 mb-4">Tipos de Tests Implementados</p>
+            <table class="w-full text-sm text-gray-200">
+              <thead>
+                <tr class="border-b border-slate-700">
+                  <th class="text-left py-2 px-3 text-cyan-300">Tipo</th>
+                  <th class="text-left py-2 px-3 text-cyan-300">Cantidad</th>
+                  <th class="text-left py-2 px-3 text-cyan-300">Herramienta</th>
+                  <th class="text-left py-2 px-3 text-cyan-300">Cobertura</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Unitarios y Dominio</td>
+                  <td class="py-2 px-3">~30 archivos</td>
+                  <td class="py-2 px-3 font-mono text-xs">PHPUnit</td>
+                  <td class="py-2 px-3 text-sm">Entidades, VOs, Eventos</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Casos de Uso</td>
+                  <td class="py-2 px-3">~25 archivos</td>
+                  <td class="py-2 px-3 font-mono text-xs">PHPUnit</td>
+                  <td class="py-2 px-3 text-sm">Application layer</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Seguridad ⚔️</td>
+                  <td class="py-2 px-3">22 archivos</td>
+                  <td class="py-2 px-3 font-mono text-xs">PHPUnit</td>
+                  <td class="py-2 px-3 text-sm">CSRF, Rate Limit, Sessions, Firewall</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Controladores</td>
+                  <td class="py-2 px-3">21 archivos</td>
+                  <td class="py-2 px-3 font-mono text-xs">PHPUnit</td>
+                  <td class="py-2 px-3 text-sm">HTTP layer completa</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Infraestructura</td>
+                  <td class="py-2 px-3">~20 archivos</td>
+                  <td class="py-2 px-3 font-mono text-xs">PHPUnit</td>
+                  <td class="py-2 px-3 text-sm">Repos, HTTP clients, Bus</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">E2E 🎭</td>
+                  <td class="py-2 px-3">5 archivos (6 tests)</td>
+                  <td class="py-2 px-3 font-mono text-xs">Playwright</td>
+                  <td class="py-2 px-3 text-sm">Flujos críticos de usuario</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Accesibilidad</td>
+                  <td class="py-2 px-3">Pipeline CI</td>
+                  <td class="py-2 px-3 font-mono text-xs">Pa11y</td>
+                  <td class="py-2 px-3 text-sm">WCAG 2.1 AA (0 errores)</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-semibold">Performance</td>
+                  <td class="py-2 px-3">Pipeline CI</td>
+                  <td class="py-2 px-3 font-mono text-xs">Lighthouse</td>
+                  <td class="py-2 px-3 text-sm">Métricas de rendimiento</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2 mt-4">
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Suite PHPUnit (117+ tests)</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li><code>vendor/bin/phpunit --colors=always</code> — Ejecuta todos los tests.</li>
+                <li><code>composer test:cov</code> — Genera cobertura (~70%, objetivo: 80%+).</li>
+                <li><code>vendor/bin/phpstan analyse</code> — Análisis estático nivel 6.</li>
+                <li><code>vendor/bin/phpunit tests/Security</code> — Solo tests de seguridad.</li>
+              </ul>
+            </div>
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Tests E2E Playwright (6 tests)</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li><code>npm run test:e2e</code> — Tests con navegador visible.</li>
+                <li><code>npm run test:e2e:ui</code> — Modo UI interactivo (recomendado).</li>
+                <li><code>npm run test:e2e:debug</code> — Debug paso a paso.</li>
+                <li>✅ Home, Álbumes, Héroes, Cómics, Películas cubiertos.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-cyan-700/50 bg-cyan-900/20 p-4 mt-3">
+            <p class="text-cyan-300 font-semibold mb-2">🎯 Tests E2E Cubiertos</p>
+            <ul class="text-sm text-gray-200 space-y-1">
+              <li>✅ <strong>Home</strong> (2 tests): Carga correcta + navegación principal</li>
+              <li>✅ <strong>Álbumes</strong>: Renderizado, cards y formulario de creación</li>
+              <li>✅ <strong>Héroes</strong>: Galería, listado y botón añadir héroe</li>
+              <li>✅ <strong>Cómics</strong>: Formulario de generación con IA</li>
+              <li>✅ <strong>Películas</strong>: Búsqueda y manejo de estados (con/sin datos)</li>
+            </ul>
+          </div>
+
+          <p class="text-sm text-gray-300 mt-3">
+            Ver <code>docs/guides/testing-complete.md</code> para documentación exhaustiva de cada tipo de test,
+            comandos específicos y estrategia completa de testing.
+          </p>
         </section>
 
         <!-- NARRACIÓN ELEVENLABS -->
@@ -354,7 +470,7 @@ require_once __DIR__ . '/../layouts/header.php';
           </div>
 
           <p class="text-sm text-gray-300">
-            Esta arquitectura combina el objetivo educativo (claridad en el wiring) con las mejores prácticas empresariales (modularización, SRP).
+            Esta arquitectura combina claridad en el wiring con las mejores prácticas empresariales (modularización, SRP).
             El resultado es un sistema que mantiene la <strong>transparencia</strong> del ensamblado completo, pero con una <strong>estructura profesional</strong>
             basada en <strong>Clean Architecture</strong> con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
           </p>
@@ -368,7 +484,7 @@ require_once __DIR__ . '/../layouts/header.php';
               "Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster."
             </p>
             <p class="text-gray-300 mt-4 leading-relaxed">
-            El proyecto está diseñado para servir como base y guía en la creación de nuevos sistemas, mostrando cómo estructurar correctamente un backend moderno sin frameworks.
+            El proyecto está diseñado como base reutilizable para crear nuevos sistemas, aplicando correctamente la estructura de un backend moderno sin frameworks.
           </p>
           </div>
         </section>

@@ -6,7 +6,7 @@ module.exports = defineConfig({
   use: {
     baseURL: 'http://localhost:8080',
     browserName: 'chromium',
-    headless: true,
+    headless: false,
     trace: 'on',
     video: 'on',
     screenshot: 'on',
