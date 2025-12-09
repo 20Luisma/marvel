@@ -34,6 +34,18 @@ El resultado es una plataforma completa en **PHP 8.2** con **Arquitectura Limpia
 
 Dependencias: Presentación → Aplicación → Dominio, e Infraestructura implementa contratos de Dominio. `App\Config\ServiceUrlProvider` resuelve los endpoints según entorno (`local` vs `hosting`).
 
+### ¿Por qué Clean Architecture?
+
+Esta arquitectura se eligió por razones técnicas:
+
+**Beneficios clave:**
+- **Independencia de frameworks**: El dominio no depende de librerías externas, facilitando la evolución tecnológica sin reescribir la lógica de negocio.
+- **Testabilidad extrema**: Cada capa se prueba aisladamente. El dominio tiene tests puros sin mocks complejos, los casos de uso se testean sin HTTP, y la infraestructura se valida con doubles.
+- **Mantenibilidad a largo plazo**: Los cambios en UI, base de datos o APIs externas no afectan las reglas de negocio. Un cambio en persistencia (JSON → MySQL) solo toca `Infrastructure`.
+- **Escalabilidad gradual**: Permite añadir microservicios, cache o nuevos contextos sin refactorizar el core. Los microservicios IA (OpenAI, RAG) se integraron como adaptadores sin tocar el dominio.
+
+La decisión arquitectónica completa está documentada en `docs/architecture/ADR-001-clean-architecture.md`.
+
 ---
 
 ## 🗂️ Estructura del Proyecto
@@ -105,11 +117,74 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 
 ## 🧪 Calidad y pruebas
 
-- Suite completa: `vendor/bin/phpunit --colors=always`
-- Cobertura: `composer test:cov`
-- Análisis estático: `vendor/bin/phpstan analyse --memory-limit=512M`
-- Auditoría de dependencias: `composer security:audit`
-- Validación Composer: `composer validate`
+El proyecto implementa una **estrategia de testing multinivel** con más de **120 tests automatizados**:
+
+### Suite PHPUnit (117+ tests)
+
+```bash
+# Ejecutar todos los tests
+vendor/bin/phpunit --colors=always
+
+# Cobertura (~70%, objetivo: 80%+)
+composer test:cov
+
+# Análisis estático (PHPStan nivel 6)
+vendor/bin/phpstan analyse --memory-limit=512M
+```
+
+### Tests E2E con Playwright (6 tests)
+
+```bash
+# Ejecutar tests E2E en localhost:8080 con navegador visible
+npm run test:e2e
+
+# Modo UI interactivo (recomendado)
+npm run test:e2e:ui
+
+# Modo debug paso a paso
+npm run test:e2e:debug
+```
+
+**Tests E2E cubiertos**:
+- ✅ Home y navegación principal (2 tests)
+- ✅ Álbumes (renderizado y formularios)
+- ✅ Héroes (galería y creación)
+- ✅ Cómics (generación con IA)
+- ✅ Películas (búsqueda y estados)
+
+### Tipos de Tests Implementados
+
+| Tipo | Cantidad | Herramienta | Cobertura |
+|------|----------|-------------|-----------|
+| **Unitarios y Dominio** | ~30 archivos | PHPUnit | Entidades, VOs, Eventos |
+| **Casos de Uso** | ~25 archivos | PHPUnit | Application layer |
+| **Seguridad** | 22 archivos | PHPUnit | CSRF, Rate Limit, Sessions, Firewall |
+| **Controladores** | 21 archivos | PHPUnit | HTTP layer completa |
+| **Infraestructura** | ~20 archivos | PHPUnit | Repos, HTTP clients, Bus |
+| **E2E** | 5 archivos (6 tests) | Playwright | Flujos críticos |
+| **Accesibilidad** | Pipeline CI | Pa11y | WCAG 2.1 AA (0 errores) |
+| **Performance** | Pipeline CI | Lighthouse | Métricas de rendimiento |
+
+### Comandos por Categoría
+
+```bash
+# Solo tests de seguridad
+vendor/bin/phpunit tests/Security
+
+# Solo tests de dominio de Albums
+vendor/bin/phpunit tests/Albums/Domain
+
+# Solo tests de controladores
+vendor/bin/phpunit tests/Controllers
+
+# Auditoría de dependencias
+composer security:audit
+
+# Validación de composer.json
+composer validate
+```
+
+**Documentación completa**: Ver `docs/guides/testing-complete.md` para detalles exhaustivos de cada tipo de test.
 
 ## 📚 Documentación ampliada
 
@@ -140,7 +215,7 @@ El proyecto incorpora manifiestos en `k8s/` para la aplicación principal y los 
 
 ## 🔧 Refactor Estructural v2.0 (Diciembre 2025)
 
-Este refactor consolida la arquitectura del proyecto como referencia educativa de Clean Architecture.
+Este refactor consolida la arquitectura del proyecto como implementación de Clean Architecture.
 
 ### Cambios principales
 
@@ -203,7 +278,7 @@ El archivo `bootstrap.php` actúa como **Composition Root** del proyecto, pero c
 - **Testabilidad**: Los módulos pueden probarse de forma aislada.
 - **Escalabilidad**: Permite añadir nuevos módulos (cache, queue, etc.) sin afectar los existentes.
 
-Esta arquitectura combina el objetivo educativo (claridad en el wiring) con las mejores prácticas empresariales (modularización, SRP). El resultado es un sistema que mantiene la **transparencia** del ensamblado completo, pero con una **estructura profesional** basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+Esta arquitectura combina claridad en el wiring con las mejores prácticas empresariales (modularización, SRP). El resultado es un sistema que mantiene la **transparencia** del ensamblado completo, pero con una **estructura profesional** basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
 
 ---
 
