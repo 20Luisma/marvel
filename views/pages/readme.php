@@ -569,6 +569,9 @@ require_once __DIR__ . '/../layouts/header.php';
             <p class="text-gray-300 mt-4 leading-relaxed">
             El proyecto está diseñado como base reutilizable para crear nuevos sistemas, aplicando correctamente la estructura de un backend moderno sin frameworks.
           </p>
+          <p class="text-cyan-300 mt-4 italic text-lg leading-relaxed">
+            ⚡ "Como un centauro del universo Marvel, este proyecto fusiona la creatividad humana con la fuerza imparable de la IA: dos mitades, un héroe completo."
+          </p>
           </div>
         </section>
       </article>
