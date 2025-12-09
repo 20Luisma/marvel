@@ -358,3 +358,7 @@ Esta arquitectura combina claridad en el wiring con las mejores prácticas empre
 ## 💭 Reflexión Final
 
 > *Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster.*
+
+---
+
+> ⚡ *"Como un centauro del universo Marvel, este proyecto fusiona la creatividad humana con la fuerza imparable de la IA: dos mitades, un héroe completo."*
