@@ -193,6 +193,89 @@ require_once __DIR__ . '/../layouts/header.php';
           <p class="text-sm text-gray-300">Detalle completo y roadmap (Máster vs Enterprise) en <code>docs/security.md</code>.</p>
         </section>
 
+        <!-- CONTAINERIZACIÓN Y KUBERNETES -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🐳 Containerización y Kubernetes</h3>
+          <p>
+            El proyecto está <strong>completamente preparado para contenedorización y orquestación</strong>. Todos los microservicios
+            incluyen Dockerfiles y pueden desplegarse tanto en contenedores individuales como en un cluster de Kubernetes.
+          </p>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">🐳 Docker</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li>• <strong>3 Dockerfiles</strong>: App principal + OpenAI Service + RAG Service</li>
+                <li>• <strong>docker-compose.yml</strong>: Stack completa con un comando</li>
+                <li>• <strong>Variables de entorno</strong>: Configuración unificada con <code>.env</code></li>
+                <li>• <strong>Multi-puerto</strong>: 8080 (app), 8081 (OpenAI), 8082 (RAG)</li>
+              </ul>
+            </div>
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">☸️ Kubernetes</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li>• <strong>8 manifiestos YAML</strong> en directorio <code>k8s/</code></li>
+                <li>• <strong>Deployments</strong>: 2 réplicas escalables por servicio</li>
+                <li>• <strong>Ingress NGINX</strong>: Enrutamiento por path (/, /api/rag, /api/openai)</li>
+                <li>• <strong>ConfigMaps + Secrets</strong>: Configuración separada por servicio</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-cyan-700/50 bg-cyan-900/20 p-5 mt-3">
+            <p class="text-cyan-300 font-semibold mb-3">📖 Documentación Kubernetes</p>
+            <ul class="text-sm text-gray-200 space-y-2">
+              <li>• <code>k8s/README.md</code> — Índice general y arquitectura desplegada</li>
+              <li>• <code>k8s/DEPLOY_K8S.md</code> — Guía paso a paso de despliegue</li>
+              <li>• <code>k8s/PRODUCTION_CONSIDERATIONS.md</code> — Mejoras para producción (Sealed Secrets, TLS, NetworkPolicies, etc.)</li>
+              <li>• <code>k8s/SECURITY_HARDENING.md</code> — 10 capas de seguridad para K8s</li>
+            </ul>
+          </div>
+
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4 mt-3">
+            <p class="text-xs uppercase tracking-widest text-gray-400 mb-3">🚀 Estrategias de Despliegue</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-gray-200">
+                <thead>
+                  <tr class="border-b border-slate-700">
+                    <th class="text-left py-2 px-3 text-cyan-300">Entorno</th>
+                    <th class="text-left py-2 px-3 text-cyan-300">Tecnología</th>
+                    <th class="text-left py-2 px-3 text-cyan-300">Caso de uso</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  <tr>
+                    <td class="py-2 px-3 font-semibold">Local</td>
+                    <td class="py-2 px-3 font-mono text-xs">php -S</td>
+                    <td class="py-2 px-3">Desarrollo rápido</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 px-3 font-semibold">Hosting</td>
+                    <td class="py-2 px-3 font-mono text-xs">Apache/Nginx + FTP</td>
+                    <td class="py-2 px-3">Producción simple</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 px-3 font-semibold">Docker</td>
+                    <td class="py-2 px-3 font-mono text-xs">docker-compose</td>
+                    <td class="py-2 px-3">Entorno con dependencias</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 px-3 font-semibold">Kubernetes</td>
+                    <td class="py-2 px-3 font-mono text-xs">kubectl</td>
+                    <td class="py-2 px-3">Producción escalable</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p class="text-sm text-gray-300">
+            Los manifiestos actuales están diseñados para desarrollo y demostración. La documentación incluye una
+            <strong>hoja de ruta completa</strong> con mejoras para producción: Sealed Secrets, cert-manager + TLS automático,
+            NetworkPolicies, Pod Security Admission, Image scanning, Runtime security con Falco, y observabilidad avanzada.
+          </p>
+        </section>
+
         <!-- REFACTOR ESTRUCTURAL v2.0 -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🔧 Refactor Estructural v2.0 (Diciembre 2025)</h3>

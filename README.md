@@ -196,10 +196,83 @@ composer validate
 - `AGENTS.md` / `docs/agent.md`: roles y pautas para agentes de IA.
 - UML completo
 
-## 🏗️ Despliegue en Kubernetes (visión general)
+## 🐳 Containerización y Kubernetes
 
-El proyecto incorpora manifiestos en `k8s/` para la aplicación principal y los microservicios de IA (OpenAI, RAG), junto con una guía detallada en `docs/DEPLOY_K8S.md`. La solución está preparada para contenedorización y orquestación con Kubernetes mediante Deployments, Services `ClusterIP` e Ingress NGINX con reglas diferenciadas. El uso de ConfigMaps/Secrets permite portar la configuración entre entornos; el despliegue K8S es opcional y complementa los flujos local/hosting existentes.
-- Microservicio Heatmap → `/docs/microservicioheatmap/README.md`
+### Docker y Microservicios
+
+El proyecto está **completamente preparado para contenedorización**. Los tres microservicios incluyen Dockerfiles y pueden ejecutarse en contenedores:
+
+```bash
+# Aplicación principal (PHP + Apache)
+docker build -t 20luisma/clean-marvel:latest .
+docker run -p 8080:8080 --env-file .env 20luisma/clean-marvel:latest
+
+# Microservicio OpenAI
+cd openai-service
+docker build -t 20luisma/openai-service:latest .
+docker run -p 8081:8081 --env-file .env 20luisma/openai-service:latest
+
+# Microservicio RAG
+cd rag-service
+docker build -t 20luisma/rag-service:latest .
+docker run -p 8082:80 --env-file .env 20luisma/rag-service:latest
+```
+
+**Docker Compose** permite levantar toda la stack con un solo comando:
+```bash
+docker-compose up -d
+```
+
+### Kubernetes (Orquestación)
+
+El directorio `k8s/` contiene **manifiestos completos** para desplegar la aplicación y sus microservicios en un cluster de Kubernetes:
+
+**Componentes incluidos:**
+- ✅ **Deployments** escalables (2 réplicas por defecto)
+- ✅ **Services ClusterIP** para comunicación interna
+- ✅ **Ingress NGINX** con enrutamiento inteligente (`/` → frontend, `/api/rag/*` → RAG, `/api/openai/*` → OpenAI)
+- ✅ **ConfigMaps** para configuración no sensible
+- ✅ **Secrets** para credenciales (placeholders, deben sustituirse)
+- ✅ **Health Probes** (liveness y readiness)
+- ✅ **Resource Limits** (CPU/memoria)
+
+**Quick Start:**
+```bash
+# 1. Aplicar manifiestos
+kubectl apply -f k8s/
+
+# 2. Verificar estado
+kubectl get pods,svc,ing
+kubectl rollout status deployment/clean-marvel
+
+# 3. Port-forward para acceso local
+kubectl port-forward svc/clean-marvel 8080:80
+```
+
+**Documentación completa:**
+- 📖 **[k8s/README.md](./k8s/README.md)** - Índice general y guía de uso
+- 🚀 **[k8s/DEPLOY_K8S.md](./k8s/DEPLOY_K8S.md)** - Despliegue paso a paso
+- 📚 **[k8s/PRODUCTION_CONSIDERATIONS.md](./k8s/PRODUCTION_CONSIDERATIONS.md)** - Mejoras para producción
+- 🔒 **[k8s/SECURITY_HARDENING.md](./k8s/SECURITY_HARDENING.md)** - Hardening de seguridad
+
+**Alcance actual:** Los manifiestos están diseñados para:
+- ✅ Desarrollo y pruebas en clusters locales (minikube, kind, k3s)
+- ✅ Demostración de arquitectura de microservicios
+- ✅ Base sólida para evolución a producción
+
+**Mejoras documentadas para producción:** Sealed Secrets, TLS automático (cert-manager), NetworkPolicies, Pod Security Admission, Image scanning, Runtime security (Falco), Observabilidad avanzada (Prometheus/Grafana), y más.
+
+### Arquitectura Multi-Entorno
+
+El proyecto soporta **múltiples estrategias de despliegue**:
+
+| Entorno | Tecnología | Caso de uso |
+|---------|-----------|-------------|
+| **Local** | `php -S` | Desarrollo rápido |
+| **Hosting tradicional** | Apache/Nginx + FTP | Producción simple |
+| **Docker** | docker-compose | Desarrollo con dependencias |
+| **Kubernetes** | kubectl | Producción escalable |
+
 
 ---
 
