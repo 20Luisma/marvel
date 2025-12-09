@@ -1,6 +1,25 @@
 # Despliegue en Kubernetes (Clean Marvel Album)
 
-Esta guía formaliza el despliegue en Kubernetes de la aplicación principal y de los microservicios IA. Se asume un clúster con Ingress Controller NGINX y acceso a un registro de contenedores. Todos los manifiestos residen en `k8s/` y usan etiquetas `app` + `tier` para selección coherente de pods.
+## 📋 Alcance y Contexto
+
+Esta guía formaliza el despliegue en Kubernetes de la aplicación principal y de los microservicios IA. Los manifiestos proporcionados son **funcionales y demostrativos**, diseñados para:
+
+- ✅ **Entornos de desarrollo y pruebas**
+- ✅ **Validación académica y demostración técnica**
+- ✅ **Base sólida para evolución a producción**
+
+### ⚠️ Importante: Entorno de Desarrollo vs Producción
+
+La configuración actual está **completamente operativa** pero optimizada para desarrollo y pruebas. Para despliegues en producción profesional, consulta:
+
+- 📚 **[PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)** - Mejoras para entornos críticos
+- 🔒 **[SECURITY_HARDENING.md](./SECURITY_HARDENING.md)** - Hardening de seguridad para Kubernetes
+
+---
+
+## 🏗️ Arquitectura Desplegada
+
+Se asume un clúster con Ingress Controller NGINX y acceso a un registro de contenedores. Todos los manifiestos residen en `k8s/` y usan etiquetas `app` + `tier` para selección coherente de pods.
 
 ## 1) Construcción de imágenes Docker
 
@@ -94,11 +113,66 @@ kubectl rollout status deploy/openai-service
    kubectl port-forward svc/openai-service 8081:8081
    ```
 
-## 5) Notas para Máster / Tribunal
+## 5) Evaluación y Alcance del Despliegue
 
-- La solución está orquestada para Kubernetes con Deployments escalables, Services `ClusterIP` e Ingress NGINX con reglas separadas para frontend y microservicios.
-- ConfigMaps aíslan parámetros no sensibles; Secrets concentran tokens y claves, facilitando la gestión externa (Sealed Secrets/External Secrets).
-- Los manifiestos contemplan probes, recursos mínimos y etiquetado consistente (`app`, `tier`) para simplificar observabilidad y políticas.
-- El pipeline recomendado es: tests y análisis estático → build/push de imágenes → `kubectl apply -f k8s/` → validación de rollout.
-- El host del Ingress es un placeholder (`clean-marvel.local`); debe ajustarse al dominio real y acompañarse de TLS gestionado (cert-manager o secreto TLS).
-- Todo el despliegue es opcional: la aplicación sigue operando en los flujos local/hosting tradicionales, pero queda lista para contenedorización y orquestación académica.
+### ✅ Implementación Actual
+
+Esta configuración de Kubernetes demuestra:
+
+1. **Arquitectura de Microservicios**: Separación clara entre frontend y servicios AI backend
+2. **Orquestación Correcta**: Deployments escalables (2 réplicas), Services `ClusterIP`, Ingress NGINX con path rewriting
+3. **Gestión de Configuración**: ConfigMaps para parámetros no sensibles, Secrets para credenciales
+4. **Health Monitoring**: Liveness y Readiness probes configuradas en todos los contenedores
+5. **Resource Management**: Requests y limits definidos para CPU/memoria
+6. **Etiquetado Consistente**: Sistema de labels (`app`, `tier`) para políticas y observabilidad
+
+### 🎓 Validación Académica
+
+El despliegue es **completamente funcional** para:
+- ✅ Demostración técnica en presentación de TFG/Máster
+- ✅ Validación de conocimientos de orquestación de contenedores
+- ✅ Pruebas de concepto y desarrollo en cluster local (minikube, kind, k3s)
+- ✅ Base arquitectónica para evolucionar a producción
+
+### ⚠️ Limitaciones Conocidas (Entorno de Desarrollo)
+
+Para transparencia técnica, se identifican las siguientes áreas que requerirían mejora en producción:
+
+| Aspecto | Estado Actual | Mejora para Producción |
+|---------|---------------|------------------------|
+| **Secrets** | Placeholders en YAML | Sealed Secrets / External Secrets |
+| **TLS/HTTPS** | No configurado | cert-manager + Let's Encrypt |
+| **Network Policies** | No implementadas | Segmentación de red por tiers |
+| **Image Tags** | `:latest` | Tags inmutables (`v1.2.3` o SHA) |
+| **Healthchecks** | TCP/HTTP básicos | Endpoints dedicados `/health`, `/ready` |
+| **Rolling Updates** | Defaults de K8s | Estrategia explícita con maxUnavailable |
+| **Disaster Recovery** | Sin PodDisruptionBudget | PDB para alta disponibilidad |
+| **Observability** | Logs básicos | Prometheus/Grafana, tracing distribuido |
+
+👉 **Consultar [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)** para guías detalladas de cada mejora.
+
+### 🚀 Pipeline Recomendado
+
+```bash
+# 1. Validación de código
+composer test
+composer phpstan
+
+# 2. Build y tageo de imágenes (usar tags semánticos)
+docker build -t 20luisma/clean-marvel:v1.0.0 .
+docker push 20luisma/clean-marvel:v1.0.0
+
+# 3. Despliegue en Kubernetes
+kubectl apply -f k8s/
+
+# 4. Validación de salud
+kubectl rollout status deploy/clean-marvel
+kubectl get pods -l app=clean-marvel
+```
+
+### 📝 Notas Importantes
+
+- **Opcionalidad**: El despliegue en Kubernetes es completamente opcional. La aplicación sigue operando en entornos locales y hosting tradicionales.
+- **Host del Ingress**: `clean-marvel.local` es un placeholder. En producción ajustar al dominio real.
+- **Secrets**: Los valores `CHANGEME-*` deben sustituirse por credenciales reales antes del despliegue (ver sección 2).
+- **Namespace**: Por defecto usa `default`. En producción usar namespaces dedicados (ver [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md#namespaces-y-aislamiento)).
