@@ -9,8 +9,8 @@ Clean Marvel Album se organiza por capas limpias, pero el diagrama lógico tambi
    - Scripts en `public/assets/js/` solo llaman a la API mediante `fetch()` y no se navega a endpoints que devuelven JSON.  
 
 2. **Monolito PHP (`src/` + `public/index.php`)**  
-   - Router HTTP (`Src\Shared\Http\Router`) dirige rutas HTML y JSON a controladores.  
-   - Controladores (`Src\Controllers\AlbumController`, `HeroController`, `ComicController`, etc.) actúan como orquestadores: validan, llaman casos de uso y devuelven `JsonResponse`.  
+   - Router HTTP (`App\Shared\Http\Router`) dirige rutas HTML y JSON a controladores.  
+   - Controladores (`App\Controllers\AlbumController`, `HeroController`, `ComicController`, etc.) actúan como orquestadores: validan, llaman casos de uso y devuelven `JsonResponse`.  
    - Casos de uso (`src/*/Application`) ejecutan lógica de negocio y se apoyan en repositorios dominados por `src/*/Domain` y `Infrastructure`.  
 
 3. **Microservicio `openai-service`**  
@@ -31,7 +31,7 @@ Clean Marvel Album se organiza por capas limpias, pero el diagrama lógico tambi
 
 Presentación → Aplicación → Dominio → Infraestructura → Microservicios externos.
 
-- `public/index.php` inicia `Src\Shared\Http\Router`.  
+- `public/index.php` inicia `App\Shared\Http\Router`.  
 - `Router` despacha a controladores y verifica `Request::wantsHtml()` para renderizar vistas.  
 - Los controladores llaman a casos de uso (`App\Albums\Application\ListAlbumsUseCase`) que, a su vez, dependen de repositorios (contratos en `Domain`).  
 - Los adaptadores concretos (`FileAlbumRepository`, `DbAlbumRepository`) están en `Infrastructure`.  

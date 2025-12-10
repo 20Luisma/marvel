@@ -11,10 +11,10 @@ Presentation (public/, src/Controllers, views/)
         └── Infrastructure (Repos JSON/DB, EventBus, adaptadores externos)
 ```
 
-- **Presentación:** Front Controller `public/index.php`, router HTTP (`Src\Shared\Http\Router`), controladores en `src/Controllers` y vistas en `views/`. Solo orquesta y devuelve HTML/JSON.
+- **Presentación:** Front Controller `public/index.php`, router HTTP (`App\Shared\Http\Router`), controladores en `src/Controllers` y vistas en `views/`. Solo orquesta y devuelve HTML/JSON.
 - **Aplicación:** Casos de uso en `src/*/Application`, servicios de IA en `src/AI`, dev tools en `src/Dev` (seeders, runner PHPUnit). No conoce HTTP ni persistencia concreta.
 - **Dominio:** Entidades y Value Objects (`Hero`, `Album`, etc.), eventos (`HeroCreated`, `AlbumUpdated`), contratos de repositorio. Sin dependencias externas.
-- **Infraestructura:** Implementa contratos con repositorios JSON/DB en `src/*/Infrastructure`, EventBus en memoria (`Src\Shared\Infrastructure\Bus`), gateways externos y adaptadores a APIs.
+- **Infraestructura:** Implementa contratos con repositorios JSON/DB en `src/*/Infrastructure`, EventBus en memoria (`App\Shared\Infrastructure\Bus`), gateways externos y adaptadores a APIs.
 
 Dependencias siempre fluyen hacia el dominio. `App\Config\ServiceUrlProvider` resuelve endpoints según entorno (`local`, `hosting`).
 
