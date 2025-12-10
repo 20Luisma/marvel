@@ -355,6 +355,63 @@ Esta arquitectura combina claridad en el wiring con las mejores prácticas empre
 
 ---
 
+## 🛤️ Router HTTP (`src/Shared/Http/Router.php`)
+
+El Router es el **punto de entrada principal** de todas las peticiones HTTP. Implementa un diseño custom que demuestra los principios de un enrutador profesional sin depender de librerías externas.
+
+### Arquitectura del Router
+
+| Componente | Descripción |
+|------------|-------------|
+| **Pipeline de Seguridad** | 3 capas secuenciales: `ApiFirewall` → `RateLimitMiddleware` → `AuthMiddleware` |
+| **Sistema de Rutas** | Declarativo con soporte para rutas estáticas y dinámicas (regex) |
+| **Despacho por Método** | `match` expression para GET, POST, PUT, DELETE |
+| **Lazy-Loading** | Controladores instanciados bajo demanda con caché interna |
+
+### Pipeline de Seguridad (orden de ejecución)
+
+```
+Petición HTTP
+    │
+    ▼
+┌─────────────────┐
+│  1. ApiFirewall │ → Bloquea patrones maliciosos (SQL injection, XSS, etc.)
+└────────┬────────┘
+         ▼
+┌─────────────────────────┐
+│ 2. RateLimitMiddleware  │ → Protege contra abusos y DoS
+└────────┬────────────────┘
+         ▼
+┌─────────────────────┐
+│ 3. AuthMiddleware   │ → Verifica sesión en rutas /admin/*
+└────────┬────────────┘
+         ▼
+    Controlador
+```
+
+### Sistema de Rutas Declarativas
+
+Las rutas se definen en arrays tipados con soporte para patrones estáticos y expresiones regulares:
+
+```php
+// Ruta estática
+['pattern' => '/albums', 'regex' => false, 'handler' => fn() => $this->albumController()->index()]
+
+// Ruta dinámica con captura de parámetros
+['pattern' => '#^/heroes/([A-Za-z0-9\-]+)$#', 'regex' => true, 'handler' => fn($id) => $this->heroController()->show($id)]
+```
+
+### Características Clave
+
+- **Inyección de dependencias**: Recibe el contenedor como array asociativo desde `AppBootstrap`
+- **Controladores cacheados**: Una vez instanciados, se reutilizan durante la petición
+- **Manejo de errores**: Try-catch global con respuesta JSON genérica (sin leak de información)
+- **Separación HTML/JSON**: Detecta `Accept: text/html` para renderizar vistas vs respuestas API
+
+Esta implementación custom permite entender cómo funcionan los routers internamente, manteniendo un nivel profesional de seguridad y mantenibilidad.
+
+---
+
 ## 💭 Reflexión Final
 
 > *Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster.*

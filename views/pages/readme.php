@@ -559,6 +559,51 @@ require_once __DIR__ . '/../layouts/header.php';
           </p>
         </section>
 
+        <!-- ROUTER HTTP -->
+        <section class="space-y-3">
+          <h3 class="text-2xl text-white">🛤️ Router HTTP</h3>
+          <p>
+            El <code>Router</code> (<code>src/Shared/Http/Router.php</code>) es el <strong>punto de entrada principal</strong> de todas las peticiones HTTP.
+            Implementa un diseño custom que demuestra los principios de un enrutador profesional sin depender de librerías externas.
+          </p>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">🔒 Pipeline de Seguridad</p>
+              <p class="text-sm text-gray-300 mb-3">3 capas ejecutadas en orden estricto:</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li><strong>1. ApiFirewall</strong> → Bloquea patrones maliciosos (SQL injection, XSS, path traversal)</li>
+                <li><strong>2. RateLimitMiddleware</strong> → Protege contra abusos y ataques DoS</li>
+                <li><strong>3. AuthMiddleware</strong> → Verifica sesión en rutas <code>/admin/*</code></li>
+              </ul>
+            </div>
+            <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">📋 Sistema de Rutas</p>
+              <p class="text-sm text-gray-300 mb-3">Declarativo con soporte dual:</p>
+              <ul class="space-y-2 text-sm text-gray-200">
+                <li><strong>Rutas estáticas</strong>: <code>/albums</code>, <code>/heroes</code>, <code>/login</code></li>
+                <li><strong>Rutas dinámicas (regex)</strong>: <code>/heroes/{id}</code>, <code>/albums/{id}/heroes</code></li>
+                <li><strong>Despacho por método</strong>: GET, POST, PUT, DELETE con <code>match</code> expression</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-cyan-700/50 bg-cyan-900/20 p-5 mt-3">
+            <p class="text-cyan-300 font-semibold mb-3">⚡ Características Clave</p>
+            <ul class="text-sm text-gray-200 space-y-2">
+              <li><strong>Inyección de dependencias:</strong> Recibe el contenedor como array asociativo desde <code>AppBootstrap</code></li>
+              <li><strong>Lazy-loading:</strong> Controladores instanciados bajo demanda y cacheados durante la petición</li>
+              <li><strong>Manejo de errores:</strong> Try-catch global con respuesta JSON genérica (sin leak de información sensible)</li>
+              <li><strong>Separación HTML/JSON:</strong> Detecta <code>Accept: text/html</code> para renderizar vistas vs respuestas API</li>
+            </ul>
+          </div>
+
+          <p class="text-sm text-gray-300">
+            Esta implementación custom permite entender cómo funcionan los routers internamente, manteniendo un nivel profesional de seguridad y mantenibilidad. La arquitectura completa está documentada en
+            <code>docs/architecture/ARCHITECTURE.md</code>.
+          </p>
+        </section>
+
         <!-- REFLEXIÓN FINAL -->
         <section class="space-y-3">
           <h3 class="text-2xl text-white">💭 Reflexión Final</h3>
