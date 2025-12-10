@@ -45,6 +45,10 @@ final class Router
 
     public function handle(string $method, string $path): void
     {
+        // Orden de seguridad:
+        // 1) ApiFirewall → bloquea patrones maliciosos
+        // 2) RateLimitMiddleware → protege de abusos/DoS
+        // 3) AuthMiddleware → protege rutas de administrador
         $firewall = $this->apiFirewall();
         if ($firewall !== null && !$firewall->handle($method, $path)) {
             return;
@@ -81,7 +85,8 @@ final class Router
                 JsonResponse::error('Endpoint no encontrado.', 404);
             }
         } catch (Throwable $exception) {
-            JsonResponse::error('Error inesperado: ' . $exception->getMessage(), 500);
+            // TODO: log de la excepción con trace_id en un logger centralizado
+            JsonResponse::error('Error inesperado en el servidor.', 500);
         }
     }
 
@@ -98,178 +103,22 @@ final class Router
 
     private function handleGet(string $path): bool
     {
-        if ($path === '/activity/albums') {
-            $this->activityController()->index(ActivityScope::ALBUMS);
-            return true;
-        }
-
-        if ($path === '/activity/comic') {
-            $this->activityController()->index(ActivityScope::COMIC);
-            return true;
-        }
-
-        if (preg_match('#^/activity/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->activityController()->index(ActivityScope::HEROES, $matches[1]);
-            return true;
-        }
-
-        if ($path === '/albums') {
-            $this->albumController()->index();
-            return true;
-        }
-
-        if ($path === '/readme/raw') {
-            ($this->readmeController())();
-            return true;
-        }
-
-        if ($path === '/config/services') {
-            $this->configController()->services();
-            return true;
-        }
-
-        if ($path === '/heroes') {
-            $this->heroController()->index();
-            return true;
-        }
-
-        if (preg_match('#^/albums/([A-Za-z0-9\-]+)/heroes$#', $path, $matches) === 1) {
-            $this->heroController()->listByAlbum($matches[1]);
-            return true;
-        }
-
-        if ($path === '/notifications') {
-            $this->notificationController()->index();
-            return true;
-        }
-
-        if (preg_match('#^/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->heroController()->show($matches[1]);
-            return true;
-        }
-
-        return false;
+        return $this->dispatchRoutes($path, $this->getGetRoutes());
     }
 
     private function handlePost(string $path): bool
     {
-        if ($path === '/activity/albums') {
-            $this->activityController()->store(ActivityScope::ALBUMS);
-            return true;
-        }
-
-        if ($path === '/activity/comic') {
-            $this->activityController()->store(ActivityScope::COMIC);
-            return true;
-        }
-
-        if (preg_match('#^/activity/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->activityController()->store(ActivityScope::HEROES, $matches[1]);
-            return true;
-        }
-
-        if ($path === '/login') {
-            $this->authController()->login();
-            return true;
-        }
-
-        if ($path === '/logout') {
-            $this->authController()->logout();
-            return true;
-        }
-
-        if ($path === '/dev/tests/run') {
-            $this->devController()->runTests();
-            return true;
-        }
-
-        if (preg_match('#^/albums/([A-Za-z0-9\-]+)/cover$#', $path, $matches) === 1) {
-            $this->albumController()->uploadCover($matches[1]);
-            return true;
-        }
-
-        if ($path === '/admin/seed-all') {
-            $adminController = $this->adminController();
-            if ($adminController === null) {
-                JsonResponse::error('Servicio de seed no disponible.', 500);
-                return true;
-            }
-
-            $adminController->seedAll();
-            return true;
-        }
-
-        if ($path === '/comics/generate') {
-            $this->comicController()->generate();
-            return true;
-        }
-
-        if ($path === '/albums') {
-            $this->albumController()->store();
-            return true;
-        }
-
-        if (preg_match('#^/albums/([A-Za-z0-9\-]+)/heroes$#', $path, $matches) === 1) {
-            $this->heroController()->store($matches[1]);
-            return true;
-        }
-
-        if ($path === '/api/rag/heroes') {
-            $this->ragProxyController()->forwardHeroesComparison();
-            return true;
-        }
-
-        return false;
+        return $this->dispatchRoutes($path, $this->getPostRoutes());
     }
 
     private function handlePut(string $path): bool
     {
-        if (preg_match('#^/albums/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->albumController()->update($matches[1]);
-            return true;
-        }
-
-        if (preg_match('#^/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->heroController()->update($matches[1]);
-            return true;
-        }
-
-        return false;
+        return $this->dispatchRoutes($path, $this->getPutRoutes());
     }
 
     private function handleDelete(string $path): bool
     {
-        if ($path === '/activity/albums') {
-            $this->activityController()->clear(ActivityScope::ALBUMS);
-            return true;
-        }
-
-        if ($path === '/activity/comic') {
-            $this->activityController()->clear(ActivityScope::COMIC);
-            return true;
-        }
-
-        if (preg_match('#^/activity/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->activityController()->clear(ActivityScope::HEROES, $matches[1]);
-            return true;
-        }
-
-        if (preg_match('#^/albums/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->albumController()->destroy($matches[1]);
-            return true;
-        }
-
-        if ($path === '/notifications') {
-            $this->notificationController()->clear();
-            return true;
-        }
-
-        if (preg_match('#^/heroes/([A-Za-z0-9\-]+)$#', $path, $matches) === 1) {
-            $this->heroController()->destroy($matches[1]);
-            return true;
-        }
-
-        return false;
+        return $this->dispatchRoutes($path, $this->getDeleteRoutes());
     }
 
     private function methodNotAllowed(): bool
@@ -290,16 +139,308 @@ final class Router
         return $useCases;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function security(): array
+    {
+        $security = $this->container['security'] ?? [];
+
+        return is_array($security) ? $security : [];
+    }
+
+    /**
+     * @return array<int, array{pattern: string, regex: bool, handler: callable}>
+     */
+    private function getGetRoutes(): array
+    {
+        return [
+            [
+                'pattern' => '/activity/albums',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->index(ActivityScope::ALBUMS);
+                },
+            ],
+            [
+                'pattern' => '/activity/comic',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->index(ActivityScope::COMIC);
+                },
+            ],
+            [
+                'pattern' => '#^/activity/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->activityController()->index(ActivityScope::HEROES, $heroId);
+                },
+            ],
+            [
+                'pattern' => '/albums',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->albumController()->index();
+                },
+            ],
+            [
+                'pattern' => '/readme/raw',
+                'regex' => false,
+                'handler' => function (): void {
+                    ($this->readmeController())();
+                },
+            ],
+            [
+                'pattern' => '/config/services',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->configController()->services();
+                },
+            ],
+            [
+                'pattern' => '/heroes',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->heroController()->index();
+                },
+            ],
+            [
+                'pattern' => '#^/albums/([A-Za-z0-9\\-]+)/heroes$#',
+                'regex' => true,
+                'handler' => function (string $albumId): void {
+                    $this->heroController()->listByAlbum($albumId);
+                },
+            ],
+            [
+                'pattern' => '/notifications',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->notificationController()->index();
+                },
+            ],
+            [
+                'pattern' => '#^/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->heroController()->show($heroId);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{pattern: string, regex: bool, handler: callable}>
+     */
+    private function getPostRoutes(): array
+    {
+        return [
+            [
+                'pattern' => '/activity/albums',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->store(ActivityScope::ALBUMS);
+                },
+            ],
+            [
+                'pattern' => '/activity/comic',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->store(ActivityScope::COMIC);
+                },
+            ],
+            [
+                'pattern' => '#^/activity/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->activityController()->store(ActivityScope::HEROES, $heroId);
+                },
+            ],
+            [
+                'pattern' => '/login',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->authController()->login();
+                },
+            ],
+            [
+                'pattern' => '/logout',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->authController()->logout();
+                },
+            ],
+            [
+                'pattern' => '/dev/tests/run',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->devController()->runTests();
+                },
+            ],
+            [
+                'pattern' => '#^/albums/([A-Za-z0-9\\-]+)/cover$#',
+                'regex' => true,
+                'handler' => function (string $albumId): void {
+                    $this->albumController()->uploadCover($albumId);
+                },
+            ],
+            [
+                'pattern' => '/admin/seed-all',
+                'regex' => false,
+                'handler' => function (): void {
+                    $adminController = $this->adminController();
+                    if ($adminController === null) {
+                        JsonResponse::error('Servicio de seed no disponible.', 500);
+                        return;
+                    }
+
+                    $adminController->seedAll();
+                },
+            ],
+            [
+                'pattern' => '/comics/generate',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->comicController()->generate();
+                },
+            ],
+            [
+                'pattern' => '/albums',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->albumController()->store();
+                },
+            ],
+            [
+                'pattern' => '#^/albums/([A-Za-z0-9\\-]+)/heroes$#',
+                'regex' => true,
+                'handler' => function (string $albumId): void {
+                    $this->heroController()->store($albumId);
+                },
+            ],
+            [
+                'pattern' => '/api/rag/heroes',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->ragProxyController()->forwardHeroesComparison();
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{pattern: string, regex: bool, handler: callable}>
+     */
+    private function getPutRoutes(): array
+    {
+        return [
+            [
+                'pattern' => '#^/albums/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $albumId): void {
+                    $this->albumController()->update($albumId);
+                },
+            ],
+            [
+                'pattern' => '#^/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->heroController()->update($heroId);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{pattern: string, regex: bool, handler: callable}>
+     */
+    private function getDeleteRoutes(): array
+    {
+        return [
+            [
+                'pattern' => '/activity/albums',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->clear(ActivityScope::ALBUMS);
+                },
+            ],
+            [
+                'pattern' => '/activity/comic',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->activityController()->clear(ActivityScope::COMIC);
+                },
+            ],
+            [
+                'pattern' => '#^/activity/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->activityController()->clear(ActivityScope::HEROES, $heroId);
+                },
+            ],
+            [
+                'pattern' => '#^/albums/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $albumId): void {
+                    $this->albumController()->destroy($albumId);
+                },
+            ],
+            [
+                'pattern' => '/notifications',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->notificationController()->clear();
+                },
+            ],
+            [
+                'pattern' => '#^/heroes/([A-Za-z0-9\\-]+)$#',
+                'regex' => true,
+                'handler' => function (string $heroId): void {
+                    $this->heroController()->destroy($heroId);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @param array<int, array{pattern: string, regex: bool, handler: callable}> $routes
+     */
+    private function dispatchRoutes(string $path, array $routes): bool
+    {
+        foreach ($routes as $route) {
+            $pattern = $route['pattern'];
+            $handler = $route['handler'];
+
+            if ($route['regex']) {
+                $matches = [];
+                if (preg_match($pattern, $path, $matches) === 1) {
+                    $handler(...array_slice($matches, 1));
+                    return true;
+                }
+                continue;
+            }
+
+            if ($path === $pattern) {
+                $handler();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private ?AuthController $authController = null;
     private ?AuthMiddleware $authMiddleware = null;
 
+    /**
+     * @throws RuntimeException
+     */
     private function authController(): AuthController
     {
         if ($this->authController === null) {
-            $security = $this->container['security'] ?? [];
-            $authService = is_array($security) ? ($security['auth'] ?? null) : null;
-            $csrfManager = is_array($security) ? ($security['csrf'] ?? null) : null;
-            $ipBlocker = is_array($security) ? ($security['ipBlocker'] ?? null) : null;
+            $security = $this->security();
+            $authService = $security['auth'] ?? null;
+            $csrfManager = $security['csrf'] ?? null;
+            $ipBlocker = $security['ipBlocker'] ?? null;
 
             if (!$authService instanceof AuthService || !$csrfManager instanceof CsrfTokenManager || !$ipBlocker instanceof IpBlockerService) {
                 throw new RuntimeException('Servicios de autenticación no disponibles.');
@@ -314,8 +455,8 @@ final class Router
     private function authMiddleware(): ?AuthMiddleware
     {
         if ($this->authMiddleware === null) {
-            $security = $this->container['security'] ?? [];
-            $middleware = is_array($security) ? ($security['middleware'] ?? null) : null;
+            $security = $this->security();
+            $middleware = $security['middleware'] ?? null;
             if ($middleware instanceof AuthMiddleware) {
                 $this->authMiddleware = $middleware;
             }
@@ -328,6 +469,9 @@ final class Router
     private ?AlbumController $albumController = null;
     private ?ReadmeController $readmeController = null;
 
+    /**
+     * @throws RuntimeException
+     */
     private function activityController(): ActivityController
     {
         if ($this->activityController === null) {
@@ -370,6 +514,9 @@ final class Router
         return $this->albumController;
     }
 
+    /**
+     * @throws RuntimeException
+     */
     private function readmeController(): ReadmeController
     {
         if ($this->readmeController === null) {
@@ -484,8 +631,8 @@ final class Router
             $provider = $this->serviceUrlProvider();
             $ragUrl = $provider->getRagHeroesUrl();
             
-            $security = $this->container['security'] ?? [];
-            $internalKey = is_array($security) ? ($security['internal_api_key'] ?? null) : null;
+            $security = $this->security();
+            $internalKey = $security['internal_api_key'] ?? null;
 
             $this->ragProxyController = new RagProxyController(
                 new \App\Shared\Infrastructure\Http\CurlHttpClient(),
@@ -534,8 +681,8 @@ final class Router
     private function rateLimitMiddleware(): ?RateLimitMiddleware
     {
         if ($this->rateLimitMiddleware === null) {
-            $security = $this->container['security'] ?? [];
-            $middleware = is_array($security) ? ($security['rateLimitMiddleware'] ?? null) : null;
+            $security = $this->security();
+            $middleware = $security['rateLimitMiddleware'] ?? null;
             if ($middleware instanceof RateLimitMiddleware) {
                 $this->rateLimitMiddleware = $middleware;
             }
@@ -547,8 +694,8 @@ final class Router
     private function apiFirewall(): ?ApiFirewall
     {
         if ($this->apiFirewall === null) {
-            $security = $this->container['security'] ?? [];
-            $firewall = is_array($security) ? ($security['apiFirewall'] ?? null) : null;
+            $security = $this->security();
+            $firewall = $security['apiFirewall'] ?? null;
             if ($firewall instanceof ApiFirewall) {
                 $this->apiFirewall = $firewall;
             }
