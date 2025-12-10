@@ -71,4 +71,12 @@ final class JsonResponse
     {
         return self::$lastPayload;
     }
+
+    /**
+     * Reset last payload for test isolation.
+     */
+    public static function resetLastPayload(): void
+    {
+        self::$lastPayload = null;
+    }
 }
