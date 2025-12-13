@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Application\Clients;
 
+use Creawebes\Rag\Application\Contracts\HttpTransportInterface;
 use Creawebes\Rag\Application\Contracts\LlmClientInterface;
+use Creawebes\Rag\Application\Contracts\StructuredLoggerInterface;
+use Creawebes\Rag\Application\Observability\NullStructuredLogger;
+use Creawebes\Rag\Application\Resilience\CircuitBreaker;
+use Creawebes\Rag\Application\Resilience\CircuitBreakerOpenException;
 use JsonException;
 use RuntimeException;
 
@@ -17,8 +22,18 @@ final class OpenAiHttpClient implements LlmClientInterface
     private readonly ?string $internalApiKey;
     private readonly string $internalCaller;
     private readonly string $feature;
+    private readonly bool $debugEnabled;
+    private readonly StructuredLoggerInterface $logger;
+    private readonly ?CircuitBreaker $circuitBreaker;
+    private readonly HttpTransportInterface $transport;
 
-    public function __construct(?string $openAiEndpoint = null, string $feature = 'rag_service')
+    public function __construct(
+        ?string $openAiEndpoint = null,
+        string $feature = 'rag_service',
+        ?HttpTransportInterface $transport = null,
+        ?CircuitBreaker $circuitBreaker = null,
+        ?StructuredLoggerInterface $logger = null,
+    )
     {
         $this->resolveLogPath();
         $this->resolveCentralLogPath();
@@ -34,26 +49,43 @@ final class OpenAiHttpClient implements LlmClientInterface
         }
         $this->internalCaller = $callerCandidate !== '' ? $callerCandidate : 'localhost:8082';
         $this->feature = $feature;
+        $this->debugEnabled = filter_var($_ENV['APP_DEBUG'] ?? getenv('APP_DEBUG'), FILTER_VALIDATE_BOOL) === true;
+        $this->logger = $logger ?? new NullStructuredLogger();
+        $this->circuitBreaker = $circuitBreaker;
+        $this->transport = $transport ?? new class implements HttpTransportInterface {
+            public function post(string $url, array $headers, string $body, int $connectTimeoutSeconds, int $timeoutSeconds): array
+            {
+                $ch = curl_init($url);
+                if ($ch === false) {
+                    return ['response' => false, 'http_code' => 0, 'error' => 'curl_init failed'];
+                }
+
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connectTimeoutSeconds);
+                curl_setopt($ch, CURLOPT_TIMEOUT, $timeoutSeconds);
+
+                $response = curl_exec($ch);
+                $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $error = (string) curl_error($ch);
+                curl_close($ch);
+
+                return ['response' => $response, 'http_code' => $httpCode, 'error' => $error];
+            }
+        };
     }
 
     private function resolveLogPath(): void
     {
-        // 1. Prioridad: Variable de entorno
         $envPath = getenv('TOKENS_LOG_PATH');
         if (is_string($envPath) && $envPath !== '') {
             $this->tokensLogPath = $envPath;
             return;
         }
 
-        // 2. Prioridad: Ruta absoluta de hosting detectada (subdominio rag-service)
-        $hostingPath = '/home/u968396048/domains/contenido.creawebes.com/public_html/rag-service/storage/ai/tokens.log';
-        // Verificar si la carpeta padre existe para confirmar que estamos en ese entorno
-        if (is_dir(dirname($hostingPath))) {
-            $this->tokensLogPath = $hostingPath;
-            return;
-        }
-
-        // 3. Fallback: Ruta relativa local
+        // Fallback: Ruta relativa (rag-service/storage/ai/tokens.log)
         $this->tokensLogPath = __DIR__ . '/../../../storage/ai/tokens.log';
     }
 
@@ -71,6 +103,11 @@ final class OpenAiHttpClient implements LlmClientInterface
 
     public function ask(string $prompt): string
     {
+        $state = $this->circuitBreaker?->beforeCall();
+        if ($state === null) {
+            $state = 'closed';
+        }
+
         $messages = [
             [
                 'role' => 'system',
@@ -97,42 +134,51 @@ final class OpenAiHttpClient implements LlmClientInterface
         $response = false;
         $httpCode = 0;
         $error = '';
+        $requestStart = microtime(true);
 
-        while ($attempts < $maxAttempts) {
-            $attempts++;
-            $ch = curl_init($this->openAiEndpoint);
-            if ($ch === false) {
-                $error = 'No se pudo inicializar la petición al microservicio de OpenAI.';
-                continue;
+        try {
+            while ($attempts < $maxAttempts) {
+                $attempts++;
+
+                $headers = ['Content-Type: application/json'];
+                if ($this->internalApiKey !== null) {
+                    $headers = array_merge($headers, $this->signatureHeaders($encodedPayload));
+                }
+
+                $result = $this->transport->post($this->openAiEndpoint, $headers, $encodedPayload, 10, 30);
+                $response = $result['response'];
+                $httpCode = $result['http_code'];
+                $error = $result['error'];
+
+                if ($response !== false && $httpCode > 0 && $httpCode < 500) {
+                    break;
+                }
+
+                if ($attempts < $maxAttempts) {
+                    usleep((int) (250000 * (2 ** ($attempts - 1))));
+                }
             }
-
-            $headers = ['Content-Type: application/json'];
-            if ($this->internalApiKey !== null) {
-                $headers = array_merge($headers, $this->signatureHeaders($encodedPayload));
-            }
-
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedPayload);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $error = curl_error($ch);
-            curl_close($ch);
-
-            if ($response !== false && $httpCode > 0 && $httpCode < 500) {
-                break;
-            }
-
-            if ($attempts < $maxAttempts) {
-                usleep((int) (250000 * (2 ** ($attempts - 1))));
-            }
+        } catch (CircuitBreakerOpenException $exception) {
+            throw $exception;
+        } catch (\Throwable $exception) {
+            $this->circuitBreaker?->onFailure();
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => $exception->getMessage(),
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
+            throw $exception;
         }
 
         if ($response === false || $httpCode >= 500) {
+            $this->circuitBreaker?->onFailure();
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => $error !== '' ? $error : 'http_' . $httpCode,
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
             throw new RuntimeException('Microservicio OpenAI no disponible' . ($error !== '' ? ': ' . $error : ''));
         }
 
@@ -140,12 +186,20 @@ final class OpenAiHttpClient implements LlmClientInterface
             /** @var array<string, mixed> $decoded */
             $decoded = json_decode((string) $response, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
+            $this->circuitBreaker?->onFailure();
             $snippet = trim((string) substr((string) $response, 0, 200));
             $details = $snippet !== '' ? ' Contenido recibido: ' . $snippet : '';
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => 'invalid_json',
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
             throw new RuntimeException('Respuesta no válida del microservicio de OpenAI.' . $details, 0, $exception);
         }
 
         if (isset($decoded['error'])) {
+            $this->circuitBreaker?->onFailure();
             $errorValue = $decoded['error'];
             if (is_array($errorValue)) {
                 $errorValue = $errorValue['message'] ?? json_encode($errorValue, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -155,11 +209,18 @@ final class OpenAiHttpClient implements LlmClientInterface
                 $errorValue = 'Error desconocido';
             }
 
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => $errorValue,
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
             throw new RuntimeException('Microservicio OpenAI no disponible: ' . $errorValue);
         }
 
         if (isset($decoded['ok'])) {
             if ($decoded['ok'] !== true) {
+                $this->circuitBreaker?->onFailure();
                 $message = $decoded['error'] ?? 'Error desconocido';
                 if (is_array($message)) {
                     $message = $message['message'] ?? json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -169,6 +230,12 @@ final class OpenAiHttpClient implements LlmClientInterface
                     $message = 'Error desconocido';
                 }
 
+                $this->logger->log('llm.request', [
+                    'state' => $this->circuitBreaker?->getState() ?? $state,
+                    'ok' => false,
+                    'error' => $message,
+                    'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+                ]);
                 throw new RuntimeException('Microservicio OpenAI no disponible: ' . $message);
             }
 
@@ -178,6 +245,12 @@ final class OpenAiHttpClient implements LlmClientInterface
             foreach ($contentKeys as $key) {
                 $value = $decoded[$key] ?? null;
                 if (is_string($value) && trim($value) !== '') {
+                    $this->circuitBreaker?->onSuccess();
+                    $this->logger->log('llm.request', [
+                        'state' => $this->circuitBreaker?->getState() ?? $state,
+                        'ok' => true,
+                        'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+                    ]);
                     return trim($value);
                 }
             }
@@ -186,21 +259,48 @@ final class OpenAiHttpClient implements LlmClientInterface
             if (is_array($raw)) {
                 $value = $raw['choices'][0]['message']['content'] ?? null;
                 if (is_string($value) && trim($value) !== '') {
+                    $this->circuitBreaker?->onSuccess();
+                    $this->logger->log('llm.request', [
+                        'state' => $this->circuitBreaker?->getState() ?? $state,
+                        'ok' => true,
+                        'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+                    ]);
                     return trim($value);
                 }
             }
 
+            $this->circuitBreaker?->onFailure();
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => 'missing_content',
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
             throw new RuntimeException('Respuesta del microservicio no contenía datos de comparación.');
         }
 
         // Formato directo de OpenAI (sin campo 'ok')
         $content = $decoded['choices'][0]['message']['content'] ?? null;
         if (!is_string($content) || trim($content) === '') {
+            $this->circuitBreaker?->onFailure();
+            $this->logger->log('llm.request', [
+                'state' => $this->circuitBreaker?->getState() ?? $state,
+                'ok' => false,
+                'error' => 'missing_content',
+                'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+            ]);
             throw new RuntimeException('La respuesta del modelo no contenía comparación.');
         }
 
         // Registrar uso también para formato directo
         $this->logUsage($decoded);
+
+        $this->circuitBreaker?->onSuccess();
+        $this->logger->log('llm.request', [
+            'state' => $this->circuitBreaker?->getState() ?? $state,
+            'ok' => true,
+            'latency_ms' => (int) round((microtime(true) - $requestStart) * 1000),
+        ]);
 
         return trim($content);
     }
@@ -210,19 +310,14 @@ final class OpenAiHttpClient implements LlmClientInterface
      */
     private function logUsage(array $decoded): void
     {
-        // DEBUG DIRECTO: Escribir en archivo de depuración
-        $debugFile = '/home/u968396048/rag-debug.txt';
-        @file_put_contents($debugFile, date('c') . " - Entrando a logUsage() para feature: {$this->feature}\n", FILE_APPEND);
-
-        // DEBUG: Trazar inicio de logUsage
-        error_log("[RAG-DEBUG] Iniciando logUsage para feature: {$this->feature}");
-
-        // BEGIN ZONAR FIX 1.3 + 1.4 - Logging mejorado con diagnóstico
         $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
-        
-        // Diagnóstico: registrar si no hay usage
         if (!is_array($usage)) {
-            error_log("[TOKENS] No usage found for feature={$this->feature}");
+            if ($this->debugEnabled) {
+                $this->logger->log('llm.debug', [
+                    'message' => 'No usage found',
+                    'feature' => $this->feature,
+                ]);
+            }
             return;
         }
 
@@ -247,19 +342,26 @@ final class OpenAiHttpClient implements LlmClientInterface
         // Use resolved path
         $logFile = $this->logFile;
         $logDir = dirname($logFile);
-        
-        error_log("[RAG-DEBUG] Intentando escribir en: {$logFile}");
 
         // Asegurar que el directorio existe
         if (!is_dir($logDir) && !@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
-            error_log("[TOKENS] Failed to create directory: {$logDir}");
+            if ($this->debugEnabled) {
+                $this->logger->log('llm.debug', [
+                    'message' => 'Failed to create tokens log directory',
+                    'dir' => $logDir,
+                ]);
+            }
             return;
         }
 
         // Verificar permisos de escritura
         if (!is_writable($logDir)) {
-            error_log("[TOKENS] Directory not writable: {$logDir}");
-            // Intentar escribir de todos modos para ver si salta error
+            if ($this->debugEnabled) {
+                $this->logger->log('llm.debug', [
+                    'message' => 'Tokens log directory not writable',
+                    'dir' => $logDir,
+                ]);
+            }
         }
 
         $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -267,16 +369,25 @@ final class OpenAiHttpClient implements LlmClientInterface
             try {
                 $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
                 if ($result === false) {
-                    $error = error_get_last();
-                    error_log("[TOKENS] Failed to write to log file: {$logFile}. Error: " . ($error['message'] ?? 'Unknown'));
-                } else {
-                    error_log("[TOKENS] Successfully logged {$entry['total_tokens']} tokens for feature={$this->feature}");
+                    if ($this->debugEnabled) {
+                        $error = error_get_last();
+                        $this->logger->log('llm.debug', [
+                            'message' => 'Failed to write tokens log',
+                            'file' => $logFile,
+                            'error' => $error['message'] ?? 'Unknown',
+                        ]);
+                    }
                 }
             } catch (\Throwable $e) {
-                error_log("[TOKENS] Exception writing log: " . $e->getMessage());
+                if ($this->debugEnabled) {
+                    $this->logger->log('llm.debug', [
+                        'message' => 'Exception writing tokens log',
+                        'file' => $logFile,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
         }
-        // END ZONAR FIX 1.3 + 1.4
     }
 
     /**
