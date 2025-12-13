@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Application\Rag;
 
+use Creawebes\Rag\Application\Contracts\RagTelemetryInterface;
+use Creawebes\Rag\Application\Observability\NullRagTelemetry;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 
 final class MarvelAgentRetriever implements MarvelAgentRetrieverInterface
 {
-    public function __construct(private readonly MarvelAgentKnowledgeBase $knowledgeBase)
-    {
+    public function __construct(
+        private readonly MarvelAgentKnowledgeBase $knowledgeBase,
+        private readonly RagTelemetryInterface $telemetry = new NullRagTelemetry(),
+    ) {
     }
 
     /**
@@ -17,6 +21,7 @@ final class MarvelAgentRetriever implements MarvelAgentRetrieverInterface
      */
     public function retrieve(string $question, int $limit = 3): array
     {
+        $start = microtime(true);
         $normalizedQuestion = $this->normalize($question);
         $questionWords = $this->tokenize($normalizedQuestion);
         if ($questionWords === []) {
@@ -46,6 +51,13 @@ final class MarvelAgentRetriever implements MarvelAgentRetrieverInterface
         if ($limit > 0) {
             $scored = array_slice($scored, 0, $limit);
         }
+
+        $this->telemetry->log(
+            'rag.retrieve',
+            'lexical',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
 
         return array_map(
             static fn (array $item): array => [

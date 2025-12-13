@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Creawebes\Rag\Application;
 
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
+use Creawebes\Rag\Application\Contracts\RagTelemetryInterface;
 use Creawebes\Rag\Application\Contracts\RetrieverInterface;
+use Creawebes\Rag\Application\Observability\NullRagTelemetry;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 
 final class HeroRetriever implements RetrieverInterface
 {
-    public function __construct(private readonly KnowledgeBaseInterface $knowledgeBase)
-    {
+    public function __construct(
+        private readonly KnowledgeBaseInterface $knowledgeBase,
+        private readonly CosineSimilarity $similarity,
+        private readonly RagTelemetryInterface $telemetry = new NullRagTelemetry(),
+    ) {
     }
 
     /**
@@ -19,6 +25,7 @@ final class HeroRetriever implements RetrieverInterface
      */
     public function retrieve(array $heroIds, string $question, int $limit = 5): array
     {
+        $start = microtime(true);
         $questionVector = $this->vectorize($question);
 
         $heroes = $this->knowledgeBase->findByIds(array_values(array_unique($heroIds)));
@@ -27,7 +34,7 @@ final class HeroRetriever implements RetrieverInterface
         foreach ($heroes as $hero) {
             $text = $hero['nombre'] . ' ' . $hero['contenido'];
             $vector = $this->vectorize($text);
-            $score = $this->cosineSimilarity($questionVector, $vector);
+            $score = $this->similarity->sparse($questionVector, $vector);
 
             $scored[] = [
                 'heroId' => $hero['heroId'],
@@ -46,34 +53,14 @@ final class HeroRetriever implements RetrieverInterface
             $scored = array_slice($scored, 0, $limit);
         }
 
+        $this->telemetry->log(
+            'rag.retrieve',
+            'lexical',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
+
         return $scored;
-    }
-
-    /**
-     * @param array<string, float> $a
-     * @param array<string, float> $b
-     */
-    private function cosineSimilarity(array $a, array $b): float
-    {
-        if ($a === [] || $b === []) {
-            return 0.0;
-        }
-
-        $dot = 0.0;
-        foreach ($a as $term => $weight) {
-            if (isset($b[$term])) {
-                $dot += $weight * $b[$term];
-            }
-        }
-
-        $normA = sqrt(array_sum(array_map(static fn ($value) => $value * $value, $a)));
-        $normB = sqrt(array_sum(array_map(static fn ($value) => $value * $value, $b)));
-
-        if ($normA === 0.0 || $normB === 0.0) {
-            return 0.0;
-        }
-
-        return $dot / ($normA * $normB);
     }
 
     /**

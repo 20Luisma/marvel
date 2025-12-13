@@ -7,6 +7,7 @@ namespace Creawebes\Rag\Tests\Infrastructure;
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
 use Creawebes\Rag\Application\Contracts\RetrieverInterface;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +31,7 @@ final class VectorHeroRetrieverTest extends TestCase
         $fallback = new CountingFallbackRetriever();
         $client = new FakeEmbeddingClient([1.0, 0.0]);
 
-        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, useEmbeddings: true);
+        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, new CosineSimilarity(), useEmbeddings: true);
         $result = $retriever->retrieve(['hero-1', 'hero-2'], 'quiero un heroe que vuele', 2);
 
         $this->assertSame(['hero-1', 'hero-2'], array_column($result, 'heroId'));
@@ -53,7 +54,7 @@ final class VectorHeroRetrieverTest extends TestCase
         ]);
         $client = new FakeEmbeddingClient([0.0, 0.0]);
 
-        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, useEmbeddings: true, autoRefreshEmbeddings: false);
+        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, new CosineSimilarity(), useEmbeddings: true, autoRefreshEmbeddings: false);
         $result = $retriever->retrieve(['hero-1', 'hero-2'], 'pregunta', 2);
 
         $this->assertSame([['heroId' => 'fallback', 'nombre' => 'Fallback', 'contenido' => 'lexico', 'score' => 0.1]], $result);
@@ -79,7 +80,7 @@ final class VectorHeroRetrieverTest extends TestCase
         );
         $fallback = new CountingFallbackRetriever();
 
-        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, useEmbeddings: true, autoRefreshEmbeddings: true);
+        $retriever = new VectorHeroRetriever($knowledgeBase, $store, $client, $fallback, new CosineSimilarity(), useEmbeddings: true, autoRefreshEmbeddings: true);
         $result = $retriever->retrieve(['hero-1', 'hero-2'], 'prefiero sigilo', 2);
 
         $this->assertSame(['hero-2', 'hero-1'], array_column($result, 'heroId'));
