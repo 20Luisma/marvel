@@ -10,6 +10,20 @@ use PHPUnit\Framework\TestCase;
 
 final class AppEnvironmentResolverTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        unset($_ENV['APP_ENV']);
+        putenv('APP_ENV');
+    }
+
+    protected function tearDown(): void
+    {
+        unset($_ENV['APP_ENV']);
+        putenv('APP_ENV');
+        parent::tearDown();
+    }
+
     public function testResolvesExplicitEnvironment(): void
     {
         self::assertSame('hosting', AppEnvironmentResolver::resolve('hosting', null, 'example.com'));
@@ -23,6 +37,9 @@ final class AppEnvironmentResolverTest extends TestCase
 
     public function testResolvesAutoUsingServiceUrlProvider(): void
     {
+        $_ENV['APP_ENV'] = 'auto';
+        putenv('APP_ENV=auto');
+
         $config = [
             'default_environment' => 'local',
             'environments' => [
@@ -53,4 +70,3 @@ final class AppEnvironmentResolverTest extends TestCase
         self::assertSame('local', AppEnvironmentResolver::resolve(null, null, null));
     }
 }
-
