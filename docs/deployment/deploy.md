@@ -23,7 +23,7 @@
 - Los workflows en `.github/workflows/*.yml` toman credenciales desde `secrets.*` (ej. `FTP_HOST`, `FTP_USER`, `FTP_PASS`, `FTP_PORT`). No hay tokens en texto plano.
 - Para despliegues, configura los secrets en GitHub antes de ejecutar los jobs.
 
-## Despliegue seguro
+## Despliegue seguros
 - Docroot debe ser `public/`; **no expongas** `storage/` (contiene logs, sesiones y JSON).
 - En producción usa `APP_DEBUG=0`. HSTS forzado y cookies más estrictas son mejoras enterprise futuras.
 
