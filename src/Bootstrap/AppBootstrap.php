@@ -53,12 +53,34 @@ final class AppBootstrap
 
         EnvironmentBootstrap::initialize();
 
-        $appEnvironment = $_ENV['APP_ENV'] ?? (getenv('APP_ENV') ?: null);
-        if ($appEnvironment === '' || $appEnvironment === null) {
-            $appEnvironment = 'local';
+        $traceId = $_SERVER['X_TRACE_ID'] ?? '';
+
+        $serviceConfigPath = $rootPath . '/config/services.php';
+        $serviceConfig = $GLOBALS['__clean_marvel_service_config'] ?? null;
+        if (!is_array($serviceConfig)) {
+            /** @var array<string, mixed> $serviceConfig */
+            $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
+            $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
         }
 
-        $traceId = $_SERVER['X_TRACE_ID'] ?? '';
+        $serviceUrlProvider = null;
+        if (class_exists(ServiceUrlProvider::class)) {
+            $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
+        }
+
+        // Resolver APP_ENV=auto en base al host/config para que los servicios (ej. sync RAG) no se queden apuntando a localhost en hosting.
+        $declaredEnvironment = $_ENV['APP_ENV'] ?? (getenv('APP_ENV') ?: null);
+        $appEnvironment = AppEnvironmentResolver::resolve(
+            is_string($declaredEnvironment) ? $declaredEnvironment : null,
+            $serviceUrlProvider,
+            is_string($_SERVER['HTTP_HOST'] ?? null) ? (string) $_SERVER['HTTP_HOST'] : null
+        );
+        if (!is_string($declaredEnvironment) || trim($declaredEnvironment) === '' || strcasecmp(trim($declaredEnvironment), 'auto') === 0) {
+            $_ENV['APP_ENV'] = $appEnvironment;
+            putenv('APP_ENV=' . $appEnvironment);
+        }
+
+        (new ConfigValidator($_ENV + ['APP_ENV' => $appEnvironment], $serviceUrlProvider, $appEnvironment))->validate();
 
         // Seguridad de cabeceras (se mantiene comportamiento original).
         $isTestEnv = ($appEnvironment === 'test');
@@ -84,21 +106,6 @@ final class AppBootstrap
         $addHeader('Cross-Origin-Resource-Policy', 'same-origin');
         $addHeader('Cross-Origin-Opener-Policy', 'same-origin');
         $addHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
-
-        $serviceConfigPath = $rootPath . '/config/services.php';
-        $serviceConfig = $GLOBALS['__clean_marvel_service_config'] ?? null;
-        if (!is_array($serviceConfig)) {
-            /** @var array<string, mixed> $serviceConfig */
-            $serviceConfig = is_file($serviceConfigPath) ? require_once $serviceConfigPath : ['environments' => []];
-            $GLOBALS['__clean_marvel_service_config'] = $serviceConfig;
-        }
-
-        $serviceUrlProvider = null;
-        if (class_exists(ServiceUrlProvider::class)) {
-            $serviceUrlProvider = new ServiceUrlProvider($serviceConfig);
-        }
-
-        (new ConfigValidator($_ENV + ['APP_ENV' => $appEnvironment], $serviceUrlProvider, $appEnvironment))->validate();
 
         $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
         $heatmapBaseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? 'http://34.74.102.123:8080')));
