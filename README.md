@@ -132,7 +132,7 @@ composer test:cov
 vendor/bin/phpstan analyse --memory-limit=512M
 ```
 
-### Tests E2E con Playwright (6 tests)
+### Tests E2E con Playwright (10 tests)
 
 ```bash
 # Ejecutar tests E2E en localhost:8080 con navegador visible
@@ -151,6 +151,9 @@ npm run test:e2e:debug
 - ✅ Héroes (galería y creación)
 - ✅ Cómics (generación con IA)
 - ✅ Películas (búsqueda y estados)
+- ✅ Smoke/Health y Auth (4 tests)
+
+**Nota sobre `skipped`**: el test de `/health` se marca como `skip` automáticamente si la app principal no expone ese endpoint (retorna 404 en local/CI). Esto evita falsos negativos y mantiene el test estable; si se añade `/health` al monolito en el futuro, el test se activará solo.
 
 ### Tipos de Tests Implementados
 
@@ -161,7 +164,7 @@ npm run test:e2e:debug
 | **Seguridad** | 22 archivos | PHPUnit | CSRF, Rate Limit, Sessions, Firewall |
 | **Controladores** | 21 archivos | PHPUnit | HTTP layer completa |
 | **Infraestructura** | ~20 archivos | PHPUnit | Repos, HTTP clients, Bus |
-| **E2E** | 5 archivos (6 tests) | Playwright | Flujos críticos |
+| **E2E** | 7 archivos (10 tests) | Playwright | Flujos críticos |
 | **Accesibilidad** | Pipeline CI | Pa11y | WCAG 2.1 AA (0 errores) |
 | **Performance** | Pipeline CI | Lighthouse | Métricas de rendimiento |
 
