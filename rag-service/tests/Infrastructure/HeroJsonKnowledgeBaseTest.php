@@ -33,4 +33,22 @@ final class HeroJsonKnowledgeBaseTest extends TestCase
         $this->assertSame('Spider Hero', $result[0]['nombre']);
         $this->assertSame('Captain Valor', $result[1]['nombre']);
     }
+
+    public function testUpsertHeroPersistsToDisk(): void
+    {
+        $tempFile = sys_get_temp_dir() . '/heroes_' . uniqid('', true) . '.json';
+        file_put_contents($tempFile, json_encode([], JSON_PRETTY_PRINT));
+
+        $knowledgeBase = new HeroJsonKnowledgeBase($tempFile);
+        $knowledgeBase->upsertHero('hero-123', 'Nuevo', 'Contenido');
+
+        $reloaded = new HeroJsonKnowledgeBase($tempFile);
+        $heroes = $reloaded->findByIds(['hero-123']);
+
+        $this->assertCount(1, $heroes);
+        $this->assertSame('Nuevo', $heroes[0]['nombre']);
+        $this->assertSame('Contenido', $heroes[0]['contenido']);
+
+        @unlink($tempFile);
+    }
 }

@@ -130,6 +130,15 @@ final class VectorHeroRetrieverTest extends TestCase
             {
                 return array_values($this->heroes);
             }
+
+            public function upsertHero(string $heroId, string $nombre, string $contenido): void
+            {
+                $this->heroes[$heroId] = [
+                    'heroId' => $heroId,
+                    'nombre' => $nombre,
+                    'contenido' => $contenido,
+                ];
+            }
         };
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Creawebes\Rag\Infrastructure;
 
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
+use InvalidArgumentException;
 use RuntimeException;
 
 final class HeroJsonKnowledgeBase implements KnowledgeBaseInterface
@@ -42,6 +43,23 @@ final class HeroJsonKnowledgeBase implements KnowledgeBaseInterface
     public function all(): array
     {
         return array_values($this->heroes);
+    }
+
+    public function upsertHero(string $heroId, string $nombre, string $contenido): void
+    {
+        $normalizedId = trim($heroId);
+        if ($normalizedId === '') {
+            throw new InvalidArgumentException('El heroId es obligatorio para registrar el héroe en RAG.');
+        }
+
+        $entry = [
+            'heroId' => $normalizedId,
+            'nombre' => trim($nombre),
+            'contenido' => trim($contenido),
+        ];
+
+        $this->heroes[$normalizedId] = $entry;
+        $this->persist();
     }
 
     /**
@@ -82,5 +100,22 @@ final class HeroJsonKnowledgeBase implements KnowledgeBaseInterface
         }
 
         return $heroes;
+    }
+
+    private function persist(): void
+    {
+        $directory = dirname($this->storageFile);
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            throw new RuntimeException('No se pudo crear el directorio para guardar héroes en ' . $directory);
+        }
+
+        $json = json_encode(array_values($this->heroes), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        if ($json === false) {
+            throw new RuntimeException('No se pudo serializar los héroes para guardar.');
+        }
+
+        if (file_put_contents($this->storageFile, $json) === false) {
+            throw new RuntimeException('No se pudo guardar el archivo de héroes en ' . $this->storageFile);
+        }
     }
 }

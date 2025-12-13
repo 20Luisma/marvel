@@ -9,6 +9,7 @@ use Creawebes\Rag\Controllers\RagController;
 use Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
+use Creawebes\Rag\Application\HeroKnowledgeSyncService;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
@@ -116,8 +117,17 @@ return (static function (): array {
 
     $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClientForAgent);
 
+    $ragUpsertLog = $rootPath . '/storage/logs/rag_upsert.log';
+    $knowledgeSync = new HeroKnowledgeSyncService(
+        $knowledgeBase,
+        $embeddingStore,
+        $useEmbeddings ? new OpenAiEmbeddingClient() : null,
+        $useEmbeddings,
+        $ragUpsertLog
+    );
+
     return [
-        'ragController' => new RagController($ragService),
+        'ragController' => new RagController($ragService, $knowledgeSync),
         'askMarvelAgentUseCase' => $agentUseCase,
     ];
 })();

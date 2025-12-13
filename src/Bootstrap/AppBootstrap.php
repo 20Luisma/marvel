@@ -20,6 +20,7 @@ use App\Config\ServiceUrlProvider;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
+use App\Heroes\Application\Rag\HeroRagSyncer;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Heroes\Application\UseCase\CreateHeroUseCase;
 use App\Heroes\Application\UseCase\DeleteHeroUseCase;
@@ -35,6 +36,8 @@ use App\Security\Http\SecurityHeaders;
 use App\Shared\Http\ReadmeController;
 use App\Shared\Infrastructure\Bus\InMemoryEventBus;
 use App\Shared\Infrastructure\Http\CurlHttpClient;
+use App\Shared\Infrastructure\Security\InternalRequestSigner;
+use App\Heroes\Infrastructure\Rag\HeroRagSyncService;
 use App\Bootstrap\Shared\DriverResolver;
 use PDO;
 use Throwable;
@@ -103,6 +106,7 @@ final class AppBootstrap
             $heatmapBaseUrl = 'http://34.74.102.123:8080';
         }
         $heatmapApiToken = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
+        $httpClient = new CurlHttpClient();
 
         /** @var array{albumRepository: AlbumRepository, heroRepository: HeroRepository, pdo: PDO|null} $persistence */
         $persistence = PersistenceBootstrap::initialize($appEnvironment);
@@ -114,6 +118,14 @@ final class AppBootstrap
 
         $pdo = $persistence['pdo'] ?? null;
         $storagePath = $rootPath . '/storage';
+
+        $internalApiKey = trim((string) (getenv('INTERNAL_API_KEY') ?: ($_ENV['INTERNAL_API_KEY'] ?? '')));
+        $callerId = $serviceUrlProvider instanceof ServiceUrlProvider
+            ? ($serviceUrlProvider->getAppHost($appEnvironment) ?: 'clean-marvel-app')
+            : 'clean-marvel-app';
+        $ragSigner = $internalApiKey !== '' ? new InternalRequestSigner($internalApiKey, $callerId) : null;
+        $ragSyncLog = $storagePath . '/logs/rag_sync_client.log';
+        $ragSyncer = new HeroRagSyncService($httpClient, $serviceUrlProvider, $ragSigner, $appEnvironment, $ragSyncLog);
 
         $activityRepository = ($activityDriver === 'db' && $pdo !== null)
             ? new DbActivityLogRepository($pdo)
@@ -137,7 +149,7 @@ final class AppBootstrap
         /** @var PDO|null $pdo */
         $pdo = $persistence['pdo'] ?? null;
 
-        $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus);
+        $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus, $ragSyncer);
 
         $container = [
             'albumRepository'      => $albumRepository,
@@ -154,6 +166,7 @@ final class AppBootstrap
             'services' => [
                 'urlProvider' => $serviceUrlProvider,
                 'heatmapApiClient' => new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
+                'ragSyncer' => $ragSyncer,
             ],
             'useCases' => [
                 'createAlbum'    => new CreateAlbumUseCase($albumRepository),
@@ -166,7 +179,7 @@ final class AppBootstrap
                 'listHeroes'     => new ListHeroesUseCase($heroRepository),
                 'findHero'       => new FindHeroUseCase($heroRepository),
                 'deleteHero'     => new DeleteHeroUseCase($heroRepository),
-                'updateHero'     => new UpdateHeroUseCase($heroRepository),
+                'updateHero'     => new UpdateHeroUseCase($heroRepository, $ragSyncer),
                 'clearNotifications' => new ClearNotificationsUseCase($notificationRepository),
                 'listNotifications'  => new ListNotificationsUseCase($notificationRepository),
                 'recordActivity'     => new RecordActivityUseCase($activityRepository),
@@ -202,7 +215,7 @@ final class AppBootstrap
         ];
 
         $container['http'] = [
-            'client' => new CurlHttpClient(),
+            'client' => $httpClient,
         ];
 
         $container = array_merge($container, $observability);

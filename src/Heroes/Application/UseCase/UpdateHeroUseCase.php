@@ -6,12 +6,17 @@ namespace App\Heroes\Application\UseCase;
 
 use App\Heroes\Application\DTO\HeroResponse;
 use App\Heroes\Application\DTO\UpdateHeroRequest;
+use App\Heroes\Application\Rag\HeroRagSyncer;
 use App\Heroes\Domain\Repository\HeroRepository;
 use InvalidArgumentException;
+use Throwable;
 
 final class UpdateHeroUseCase
 {
-    public function __construct(private readonly HeroRepository $heroRepository)
+    public function __construct(
+        private readonly HeroRepository $heroRepository,
+        private readonly ?HeroRagSyncer $ragSyncer = null
+    )
     {
     }
 
@@ -36,6 +41,14 @@ final class UpdateHeroUseCase
         }
 
         $this->heroRepository->save($hero);
+
+        if ($this->ragSyncer !== null) {
+            try {
+                $this->ragSyncer->sync($hero);
+            } catch (Throwable $exception) {
+                error_log('RAG sync (update) failed: ' . $exception->getMessage());
+            }
+        }
 
         return HeroResponse::fromHero($hero);
     }
