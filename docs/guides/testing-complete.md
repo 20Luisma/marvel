@@ -228,14 +228,16 @@ tests/
 
 **Propósito**: Validar flujos completos en navegador real.
 
-**Tests implementados** (6 tests en 5 archivos):
+**Tests implementados** (10 tests en 7 archivos):
 ```
 tests/e2e/
 ├── home.spec.js         # 2 tests
 ├── albums.spec.js       # 1 test
 ├── heroes.spec.js       # 1 test
 ├── comics.spec.js       # 1 test
-└── movies.spec.js       # 1 test
+├── movies.spec.js       # 1 test
+├── health.spec.js       # 2 tests (smoke + /health opcional)
+└── auth-render.spec.js  # 2 tests (render + submit vacío)
 ```
 
 #### **Detalle de cada test**:
@@ -288,6 +290,27 @@ tests/e2e/
    - Valida heading "Marvel Movies"
    - Verifica buscador de películas
    - Maneja estados: con películas / sin películas / sin API key
+```
+
+##### **health.spec.js**
+```javascript
+✅ Test: "Landing (/) responde 200 y renderiza elementos base"
+   - Smoke de / (status 200, title y main visible)
+
+⚠️ Test: "Si existe `/health`, responde 200 y devuelve JSON..."
+   - Se marca como `skip` automáticamente si `/health` devuelve 404 en la app principal
+   - Si el monolito añade `/health` en el futuro, el test se activará sin cambios
+```
+
+##### **auth-render.spec.js**
+```javascript
+✅ Test: "La página de login renderiza el formulario"
+   - Navega a /login
+   - Verifica inputs (Correo/Contraseña) y botón submit
+
+✅ Test: "Enviar login vacío no redirige y marca inputs inválidos"
+   - Envía formulario sin datos
+   - Verifica que la URL sigue siendo /login y que hay inputs invalid
 ```
 
 #### **Configuración**:
