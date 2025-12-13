@@ -7,18 +7,21 @@ namespace App\Heroes\Application\UseCase;
 use App\Albums\Domain\Repository\AlbumRepository;
 use App\Heroes\Application\DTO\CreateHeroRequest;
 use App\Heroes\Application\DTO\HeroResponse;
+use App\Heroes\Application\Rag\HeroRagSyncer;
 use App\Heroes\Domain\Entity\Hero;
 use App\Heroes\Domain\Event\HeroCreated;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Shared\Domain\Bus\EventBus;
 use InvalidArgumentException;
+use Throwable;
 
 final class CreateHeroUseCase
 {
     public function __construct(
         private readonly HeroRepository $heroRepository,
         private readonly AlbumRepository $albumRepository,
-        private readonly EventBus $eventBus
+        private readonly EventBus $eventBus,
+        private readonly ?HeroRagSyncer $ragSyncer = null
     ) {
     }
 
@@ -42,6 +45,14 @@ final class CreateHeroUseCase
 
         $event = HeroCreated::forHero($hero, $album->nombre());
         $this->eventBus->publish([$event]);
+
+        if ($this->ragSyncer !== null) {
+            try {
+                $this->ragSyncer->sync($hero);
+            } catch (Throwable $exception) {
+                error_log('RAG sync (create) failed: ' . $exception->getMessage());
+            }
+        }
 
         return HeroResponse::fromHero($hero);
     }

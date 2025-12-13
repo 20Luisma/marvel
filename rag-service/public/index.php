@@ -88,6 +88,21 @@ if ($method === 'POST' && $path === '/rag/heroes') {
     return;
 }
 
+if ($method === 'POST' && $path === '/rag/heroes/upsert') {
+    $controller = $container['ragController'] ?? null;
+    if ($controller instanceof \Creawebes\Rag\Controllers\RagController) {
+        $controller->upsertHero();
+        log_request_event($path, http_response_code(), $requestStart);
+        return;
+    }
+
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => 'Controlador RAG no disponible.'], JSON_UNESCAPED_UNICODE);
+    log_request_event($path, 500, $requestStart, 'controller-missing');
+    return;
+}
+
 if ($method === 'POST' && $path === '/rag/agent') {
     $useCase = $container['askMarvelAgentUseCase'] ?? null;
     if ($useCase instanceof \Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase) {

@@ -16,4 +16,6 @@ interface KnowledgeBaseInterface
      * @return array<int, array{heroId: string, nombre: string, contenido: string}>
      */
     public function all(): array;
+
+    public function upsertHero(string $heroId, string $nombre, string $contenido): void;
 }

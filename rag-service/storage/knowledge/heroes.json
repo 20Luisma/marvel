@@ -1,362 +1,192 @@
 [
     {
         "heroId": "a1a1a1a1-0001-4f00-9000-000000000001",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Iron Man",
-        "slug": "iron-man",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (tecnología / vuelo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Genio multimillonario con armadura de alta tecnología",
-        "imagen": "https://imgcdn.stablediffusionweb.com/2024/5/14/1818bdfc-7920-46a5-afd1-78a536121652.jpg",
-        "createdAt": "2025-10-26T15:55:00+00:00",
-        "updatedAt": "2025-10-27T17:54:21+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (tecnología / vuelo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Genio multimillonario con armadura de alta tecnología"
     },
     {
         "heroId": "a1a1a1a1-0002-4f00-9000-000000000002",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Captain America",
-        "slug": "captain-america",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★★\nHabilidad especial (liderazgo / escudo)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Símbolo de justicia y coraje.",
-        "imagen": "https://i.pinimg.com/736x/80/07/4e/80074ea36e3de24dd3b3b1a5a6f1825f.jpg",
-        "createdAt": "2025-10-26T15:55:05+00:00",
-        "updatedAt": "2025-10-26T16:43:38+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★★\nHabilidad especial (liderazgo / escudo)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Símbolo de justicia y coraje."
     },
     {
         "heroId": "a1a1a1a1-0003-4f00-9000-000000000003",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Thor",
-        "slug": "thor",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (trueno / Mjölnir)\t★★★★★\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Dios del trueno y protector de los reinos.",
-        "imagen": "https://www.beon.com/wp-content/uploads/2018/03/Dise%C3%B1o-sin-t%C3%ADtulo-9-1.png",
-        "createdAt": "2025-10-26T15:55:10+00:00",
-        "updatedAt": "2025-10-27T21:38:21+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (trueno / Mjölnir)\t★★★★★\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Dios del trueno y protector de los reinos."
     },
     {
         "heroId": "a1a1a1a1-0004-4f00-9000-000000000004",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Black Widow",
-        "slug": "black-widow",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espionaje / sigilo)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Espía maestra con precisión quirúrgica.",
-        "imagen": "https://www.zonanegativa.com/imagenes/2020/01/black-widow-widows-sting-muestra-portada-1.jpg",
-        "createdAt": "2025-10-26T15:55:15+00:00",
-        "updatedAt": "2025-11-02T16:02:34+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espionaje / sigilo)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Espía maestra con precisión quirúrgica."
     },
     {
         "heroId": "a1a1a1a1-0005-4f00-9000-000000000005",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Hulk",
-        "slug": "hulk",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / regeneración)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Fuerza imparable y gran corazón.",
-        "imagen": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Hulk_%282540708438%29.jpg",
-        "createdAt": "2025-10-26T15:55:20+00:00",
-        "updatedAt": "2025-10-26T16:46:40+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / regeneración)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Fuerza imparable y gran corazón."
     },
     {
         "heroId": "a1a1a1a1-0006-4f00-9000-000000000006",
-        "albumId": "51f11956-6c06-4a49-8d2e-c8f5ea9b7a9d",
         "nombre": "Vision",
-        "slug": "vision",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (intangible / rayo mente)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t21 / 25\n\n🧩 Síntesis de IA y humanidad, poderoso y sabio.",
-        "imagen": "https://upload.wikimedia.org/wikipedia/en/e/ea/Avengers_Vol_4_24.1.jpg",
-        "createdAt": "2025-10-26T15:55:25+00:00",
-        "updatedAt": "2025-10-26T16:54:10+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (intangible / rayo mente)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t21 / 25\n\n🧩 Síntesis de IA y humanidad, poderoso y sabio."
     },
     {
         "heroId": "b2b2b2b2-0001-4f00-9000-000000000007",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Wolverine",
-        "slug": "wolverine",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (garras / curación)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Salvaje y noble; garras de adamantium.",
-        "imagen": "https://pics.craiyon.com/2023-06-05/350df6c7728044ea8d38caa5a86cfbed.webp",
-        "createdAt": "2025-10-26T15:55:30+00:00",
-        "updatedAt": "2025-10-26T16:18:37+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (garras / curación)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Salvaje y noble; garras de adamantium."
     },
     {
         "heroId": "b2b2b2b2-0002-4f00-9000-000000000008",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Cyclops",
-        "slug": "cyclops",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (rayo óptico)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Líder disciplinado y preciso.",
-        "imagen": "https://media.gq.com/photos/66049ca2d6bafed5ec9b791f/16:9/w_3104,h_1746,c_limit/AAM0370_comp_Tk2_v001_r709.117420_C.jpg",
-        "createdAt": "2025-10-26T15:55:35+00:00",
-        "updatedAt": "2025-10-26T16:10:00+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (rayo óptico)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Líder disciplinado y preciso."
     },
     {
         "heroId": "b2b2b2b2-0003-4f00-9000-000000000009",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Storm",
-        "slug": "storm",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (control del clima)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Diosa del clima, majestuosa y compasiva.",
-        "imagen": "https://i.pinimg.com/736x/40/32/29/403229b5b822354f7c90a5d301271af3.jpg",
-        "createdAt": "2025-10-26T15:55:40+00:00",
-        "updatedAt": "2025-10-26T16:15:48+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (control del clima)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Diosa del clima, majestuosa y compasiva."
     },
     {
         "heroId": "b2b2b2b2-0004-4f00-9000-00000000000a",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Jean Grey",
-        "slug": "jean-grey",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (telepatía/telequinesis)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t20 / 25\n\n🧩 Poder psíquico arrollador y sensibilidad.",
-        "imagen": "https://img.goodfon.com/wallpaper/big/9/fe/dzhin-grey-jean-grey-x-men-2188.webp",
-        "createdAt": "2025-10-26T15:55:45+00:00",
-        "updatedAt": "2025-10-26T16:11:59+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (telepatía/telequinesis)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t20 / 25\n\n🧩 Poder psíquico arrollador y sensibilidad."
     },
     {
         "heroId": "b2b2b2b2-0005-4f00-9000-00000000000b",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Beast",
-        "slug": "beast",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (acrobacia / ciencia)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Mente brillante en un cuerpo ágil.",
-        "imagen": "https://www.sideshow.com/cdn-cgi/image/height=850,quality=90,f=auto/https://www.sideshow.com/storage/product-images/502547U/x-men-portraits-beast_marvel_gallery_66916f90ea6e3.jpg",
-        "createdAt": "2025-10-26T15:55:50+00:00",
-        "updatedAt": "2025-10-26T16:09:20+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (acrobacia / ciencia)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Mente brillante en un cuerpo ágil."
     },
     {
         "heroId": "b2b2b2b2-0006-4f00-9000-00000000000c",
-        "albumId": "a2c9479d-9e45-4d62-8d6a-bfc213f54a1a",
         "nombre": "Professor X",
-        "slug": "professor-x",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (telepatía / mentor)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★☆☆☆\nNivel total\t18 / 25\n\n🧩 Mentor visionario, defensor de la paz.",
-        "imagen": "https://cdn.marvel.com/content/1x/new_avengers_-_illuminati_2007_3_art_by_jim_cheung_mark_morales_and_justin_ponsor.jpg",
-        "createdAt": "2025-10-26T15:55:55+00:00",
-        "updatedAt": "2025-10-26T16:13:19+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (telepatía / mentor)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★☆☆☆\nNivel total\t18 / 25\n\n🧩 Mentor visionario, defensor de la paz."
     },
     {
         "heroId": "c3c3c3c3-0001-4f00-9000-00000000000d",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Star-Lord",
-        "slug": "star-lord",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (piloto / táctica)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Aventurero espacial con humor y música.",
-        "imagen": "https://i.pinimg.com/236x/cb/b9/f8/cbb9f8bac1c123d2706be992b5455878.jpg",
-        "createdAt": "2025-10-26T15:56:00+00:00",
-        "updatedAt": "2025-10-26T17:38:02+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (piloto / táctica)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Aventurero espacial con humor y música."
     },
     {
         "heroId": "c3c3c3c3-0002-4f00-9000-00000000000e",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Gamora",
-        "slug": "gamora",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espadas / sigilo)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Guerrera letal con sentido del honor.",
-        "imagen": "https://lumiere-a.akamaihd.net/v1/images/gamora_foto_ucm3_3_be68c244.jpeg",
-        "createdAt": "2025-10-26T15:56:05+00:00",
-        "updatedAt": "2025-10-26T17:25:08+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espadas / sigilo)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Guerrera letal con sentido del honor."
     },
     {
         "heroId": "c3c3c3c3-0003-4f00-9000-00000000000f",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Drax",
-        "slug": "drax",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (cuchillas / resistencia)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t17 / 25\n\n🧩 Literal y poderoso, fiel a los suyos.",
-        "imagen": "https://pics.craiyon.com/2023-06-18/ac02f119d7ea43e099e5fea51d0a81a7.webp",
-        "createdAt": "2025-10-26T15:56:10+00:00",
-        "updatedAt": "2025-10-26T17:24:04+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (cuchillas / resistencia)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t17 / 25\n\n🧩 Literal y poderoso, fiel a los suyos."
     },
     {
         "heroId": "c3c3c3c3-0004-4f00-9000-000000000010",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Rocket Raccoon",
-        "slug": "rocket-raccoon",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingeniería / armas pesadas)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Pequeño pero letal. Experto en armas, explosivos y estrategia tecnológica.",
-        "imagen": "https://www.cinemascomics.com/wp-content/uploads/2021/11/Rocket-Raccoon-James-Gunn-Guardianes-de-la-Galaxia-Marvel-Studios.jpg",
-        "createdAt": "2025-10-26T15:56:15+00:00",
-        "updatedAt": "2025-10-26T17:35:22+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingeniería / armas pesadas)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Pequeño pero letal. Experto en armas, explosivos y estrategia tecnológica."
     },
     {
         "heroId": "c3c3c3c3-0005-4f00-9000-000000000011",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Groot",
-        "slug": "groot",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (regeneración / crecimiento)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 ‘Yo soy Groot’: noble y protector.",
-        "imagen": "https://s3.amazonaws.com/comicgeeks/characters/avatars/1275.jpg",
-        "createdAt": "2025-10-26T15:56:20+00:00",
-        "updatedAt": "2025-10-26T17:26:53+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (regeneración / crecimiento)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 ‘Yo soy Groot’: noble y protector."
     },
     {
         "heroId": "c3c3c3c3-0006-4f00-9000-000000000012",
-        "albumId": "c4f53910-ff25-41ce-9b38-df1186c6fa52",
         "nombre": "Nebula",
-        "slug": "nebula",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (cibernética / combate)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Asesina letal en busca de redención.",
-        "imagen": "https://static.wikia.nocookie.net/marveldatabase/images/4/45/Nebula_Vol_1_1_Textless.jpg",
-        "createdAt": "2025-10-26T15:56:25+00:00",
-        "updatedAt": "2025-10-26T17:27:44+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (cibernética / combate)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Asesina letal en busca de redención."
     },
     {
         "heroId": "d4d4d4d4-0001-4f00-9000-000000000013",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Spider-Man",
-        "slug": "spider-man",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (trepar / telarañas)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t20 / 25\n\n🧩 Amigable vecino con poderes arácnidos.",
-        "imagen": "https://www.larepublica.ec/wp-content/uploads/2014/04/spiderman1-e1398691168576.jpg",
-        "createdAt": "2025-10-26T15:56:30+00:00",
-        "updatedAt": "2025-10-26T18:04:11+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (trepar / telarañas)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t20 / 25\n\n🧩 Amigable vecino con poderes arácnidos."
     },
     {
         "heroId": "d4d4d4d4-0002-4f00-9000-000000000014",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Venom",
-        "slug": "venom",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (simbiote)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Simbiote poderoso entre caos y control.",
-        "imagen": "https://i.pinimg.com/736x/63/a5/4b/63a54b81d8eeb6f2d26a5c69c74ba4c8.jpg",
-        "createdAt": "2025-10-26T15:56:35+00:00",
-        "updatedAt": "2025-10-26T18:05:30+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (simbiote)\t★★★★☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Simbiote poderoso entre caos y control."
     },
     {
         "heroId": "d4d4d4d4-0003-4f00-9000-000000000015",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Gwen Stacy",
-        "slug": "gwen-stacy",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★☆☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingenio / valentía)\t★★★☆☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t16 / 25\n\n🧩 Inteligente y valiente, clave en la vida de Peter.",
-        "imagen": "https://img.goodfon.com/wallpaper/big/0/8d/spider-gwen-marvel-comics.webp",
-        "createdAt": "2025-10-26T15:56:40+00:00",
-        "updatedAt": "2025-10-26T17:55:51+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★☆☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingenio / valentía)\t★★★☆☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t16 / 25\n\n🧩 Inteligente y valiente, clave en la vida de Peter."
     },
     {
         "heroId": "d4d4d4d4-0004-4f00-9000-000000000016",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Doctor Octopus",
-        "slug": "doctor-octopus",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (tentáculos mecánicos)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Científico brillante de ambición desbordada.",
-        "imagen": "https://i.pinimg.com/474x/bd/d1/14/bdd11451d58659fe2ba3ec65565d7ba0.jpg",
-        "createdAt": "2025-10-26T15:56:45+00:00",
-        "updatedAt": "2025-10-26T17:52:48+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (tentáculos mecánicos)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Científico brillante de ambición desbordada."
     },
     {
         "heroId": "d4d4d4d4-0005-4f00-9000-000000000017",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Green Goblin",
-        "slug": "green-goblin",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (armas / planeador)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Villano astuto con tecnología avanzada.",
-        "imagen": "https://i.pinimg.com/736x/98/f8/57/98f857d2d52a468e2ea55f270ceda3d1.jpg",
-        "createdAt": "2025-10-26T15:56:50+00:00",
-        "updatedAt": "2025-10-26T17:57:46+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (armas / planeador)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Villano astuto con tecnología avanzada."
     },
     {
         "heroId": "d4d4d4d4-0006-4f00-9000-000000000018",
-        "albumId": "e7f84031-97d2-4738-9bdf-bfc9f49c98b4",
         "nombre": "Miles Morales",
-        "slug": "miles-morales",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (camuflaje / descarga veneno)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t20 / 25\n\n🧩 Joven héroe con estilo propio y gran corazón.",
-        "imagen": "https://i.pinimg.com/1200x/b7/c9/7d/b7c97dd8aaf656536ea4e0896fccb056.jpg",
-        "createdAt": "2025-10-26T15:56:55+00:00",
-        "updatedAt": "2025-10-26T18:00:11+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (camuflaje / descarga veneno)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t20 / 25\n\n🧩 Joven héroe con estilo propio y gran corazón."
     },
     {
         "heroId": "e5e5e5e5-0001-4f00-9000-000000000019",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "Mr. Fantastic",
-        "slug": "mr-fantastic",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (elasticidad / ciencia)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t20 / 25\n\n🧩 Mente brillante y elasticidad extraordinaria.",
-        "imagen": "https://i.pinimg.com/736x/04/73/8b/04738bfd4e84d9ec6c8031a7b57c2357.jpg",
-        "createdAt": "2025-10-26T15:57:00+00:00",
-        "updatedAt": "2025-10-26T17:49:01+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (elasticidad / ciencia)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t20 / 25\n\n🧩 Mente brillante y elasticidad extraordinaria."
     },
     {
         "heroId": "e5e5e5e5-0002-4f00-9000-00000000001a",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "Invisible Woman",
-        "slug": "invisible-woman",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (invisibilidad / campos de fuerza)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Equilibrio del equipo y poder sutil.",
-        "imagen": "https://i.pinimg.com/736x/59/17/54/591754acdcdcc122136b2cd4d6035bd6.jpg",
-        "createdAt": "2025-10-26T15:57:05+00:00",
-        "updatedAt": "2025-10-26T17:45:12+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (invisibilidad / campos de fuerza)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Equilibrio del equipo y poder sutil."
     },
     {
         "heroId": "e5e5e5e5-0003-4f00-9000-00000000001b",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "Human Torch",
-        "slug": "human-torch",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (fuego / vuelo)\t★★★★★\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Ímpetu ardiente y corazón leal.",
-        "imagen": "https://i.pinimg.com/736x/0d/44/3c/0d443c13211853e17ab8f1841f50ef81.jpg",
-        "createdAt": "2025-10-26T15:57:10+00:00",
-        "updatedAt": "2025-10-26T17:43:25+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (fuego / vuelo)\t★★★★★\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t19 / 25\n\n🧩 Ímpetu ardiente y corazón leal."
     },
     {
         "heroId": "e5e5e5e5-0004-4f00-9000-00000000001c",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "The Thing",
-        "slug": "the-thing",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / resistencia)\t★★★☆☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★☆☆☆\nNivel total\t17 / 25\n\n🧩 Roca viviente con corazón de oro.",
-        "imagen": "https://i.pinimg.com/564x/21/23/9f/21239fa886ee920cd495eb38ad5eebe4.jpg",
-        "createdAt": "2025-10-26T15:57:15+00:00",
-        "updatedAt": "2025-10-26T17:50:38+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / resistencia)\t★★★☆☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★☆☆☆\nNivel total\t17 / 25\n\n🧩 Roca viviente con corazón de oro."
     },
     {
         "heroId": "e5e5e5e5-0005-4f00-9000-00000000001d",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "Silver Surfer",
-        "slug": "silver-surfer",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (poder cósmico)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t23 / 25\n\n🧩 Mensajero cósmico en busca de redención.",
-        "imagen": "https://i.pinimg.com/736x/ba/4e/e4/ba4ee41165ff596ccc105294f35f6609.jpg",
-        "createdAt": "2025-10-26T15:57:20+00:00",
-        "updatedAt": "2025-10-26T17:49:37+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (poder cósmico)\t★★★★★\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★★\nNivel total\t23 / 25\n\n🧩 Mensajero cósmico en busca de redención."
     },
     {
         "heroId": "e5e5e5e5-0006-4f00-9000-00000000001e",
-        "albumId": "b8a7de93-fc3a-44cb-93e1-49b8b5e0e1f7",
         "nombre": "Doctor Doom",
-        "slug": "doctor-doom",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (magia / tecnología)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t21 / 25\n\n🧩 Monarca brillante, tan temido como respetado.",
-        "imagen": "https://imgcdn.stablediffusionweb.com/2024/9/7/89e37781-ec32-4b55-9624-30aaca3fbd95.jpg",
-        "createdAt": "2025-10-26T15:57:25+00:00",
-        "updatedAt": "2025-11-02T16:05:48+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (magia / tecnología)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t21 / 25\n\n🧩 Monarca brillante, tan temido como respetado."
     },
     {
         "heroId": "f6f6f6f6-0001-4f00-9000-00000000001f",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "Black Panther",
-        "slug": "black-panther",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (vibranio / sigilo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t22 / 25\n\n🧩 Rey de Wakanda, tradición y tecnología.",
-        "imagen": "https://goldenapplecomics.com/cdn/shop/files/STL319147.jpg",
-        "createdAt": "2025-10-26T15:57:30+00:00",
-        "updatedAt": "2025-10-26T16:59:23+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (vibranio / sigilo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t22 / 25\n\n🧩 Rey de Wakanda, tradición y tecnología."
     },
     {
         "heroId": "f6f6f6f6-0002-4f00-9000-000000000020",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "Shuri",
-        "slug": "shuri",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingeniería / I+D)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Genio tecnológico y espíritu innovador.",
-        "imagen": "https://cdn.nerdist.com/wp-content/uploads/2022/07/26095506/Shuri-Black-Panther-Suit.jpg",
-        "createdAt": "2025-10-26T15:57:35+00:00",
-        "updatedAt": "2025-10-26T17:21:21+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (ingeniería / I+D)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Genio tecnológico y espíritu innovador."
     },
     {
         "heroId": "f6f6f6f6-0003-4f00-9000-000000000021",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "Okoye",
-        "slug": "okoye",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (lanza / táctica)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Líder de la Dora Milaje, disciplina y honor.",
-        "imagen": "https://i.pinimg.com/736x/b6/75/6f/b6756f2c8aaa0caa584df9d907099684.jpg",
-        "createdAt": "2025-10-26T15:57:40+00:00",
-        "updatedAt": "2025-10-26T17:17:05+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (lanza / táctica)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Líder de la Dora Milaje, disciplina y honor."
     },
     {
         "heroId": "f6f6f6f6-0004-4f00-9000-000000000022",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "M'Baku",
-        "slug": "m-baku",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (fuerza tribal)\t★★★☆☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Guerrero poderoso noble y generoso.",
-        "imagen": "https://i.pinimg.com/736x/a5/5a/b9/a55ab92e04a908b72c20b2715e987629.jpg",
-        "createdAt": "2025-10-26T15:57:45+00:00",
-        "updatedAt": "2025-10-27T21:10:33+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (fuerza tribal)\t★★★☆☆\nInteligencia táctica\t★★★☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Guerrero poderoso noble y generoso."
     },
     {
         "heroId": "f6f6f6f6-0005-4f00-9000-000000000023",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "Nakia",
-        "slug": "nakia",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espionaje / diplomacia)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Espía valiente con gran corazón.",
-        "imagen": "https://www.fortressofsolitude.co.za/wp-content/uploads/2025/06/nubia-dc-character-black-superhero.jpg",
-        "createdAt": "2025-10-26T15:57:50+00:00",
-        "updatedAt": "2025-10-26T17:15:21+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (espionaje / diplomacia)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t18 / 25\n\n🧩 Espía valiente con gran corazón."
     },
     {
         "heroId": "f6f6f6f6-0006-4f00-9000-000000000024",
-        "albumId": "f3e97d61-1d57-48af-bf14-7c4c3e45863e",
         "nombre": "Killmonger",
-        "slug": "killmonger",
-        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (tácticas / combate)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Estratega implacable con convicciones propias.",
-        "imagen": "https://cdn.marvel.com/u/prod/marvel/i/mg/9/20/6138dd0b325ef/clean.jpg",
-        "createdAt": "2025-10-26T15:57:55+00:00",
-        "updatedAt": "2025-10-27T20:56:19+00:00"
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★☆\nDefensa / Resistencia\t★★★★☆\nHabilidad especial (tácticas / combate)\t★★★★☆\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t21 / 25\n\n🧩 Estratega implacable con convicciones propias."
+    },
+    {
+        "heroId": "b4cd4884-3989-483a-a322-0e052178501a",
+        "nombre": "super",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / regeneración)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Fuerza imparable y gran corazón."
+    },
+    {
+        "heroId": "0d946cc9-4bb6-430f-8e55-71788f3a3824",
+        "nombre": "Pancho",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / regeneración)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Fuerza imparable y gran corazón."
     }
 ]

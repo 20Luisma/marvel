@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Controllers;
 
+use Creawebes\Rag\Application\HeroKnowledgeSyncService;
 use Creawebes\Rag\Application\HeroRagService;
 use InvalidArgumentException;
 use RuntimeException;
@@ -11,7 +12,10 @@ use Throwable;
 
 final class RagController
 {
-    public function __construct(private readonly HeroRagService $ragService)
+    public function __construct(
+        private readonly HeroRagService $ragService,
+        private readonly HeroKnowledgeSyncService $knowledgeSync
+    )
     {
     }
 
@@ -42,6 +46,30 @@ final class RagController
         }
 
         $this->sendJson($result);
+    }
+
+    public function upsertHero(): void
+    {
+        $body = $_SERVER['__RAW_INPUT__'] ?? file_get_contents('php://input') ?: '';
+        $payload = json_decode($body, true) ?? [];
+
+        $heroId = isset($payload['heroId']) ? trim((string) $payload['heroId']) : '';
+        $nombre = isset($payload['nombre']) ? (string) $payload['nombre'] : '';
+        $contenido = isset($payload['contenido']) ? (string) $payload['contenido'] : '';
+
+        if ($heroId === '' || trim($nombre) === '') {
+            $this->sendError('Los campos heroId y nombre son obligatorios.', 422);
+            return;
+        }
+
+        try {
+            $this->knowledgeSync->upsertHero($heroId, $nombre, $contenido);
+        } catch (Throwable $exception) {
+            $this->sendError('No se pudo sincronizar el héroe: ' . $exception->getMessage(), 500);
+            return;
+        }
+
+        $this->sendJson(['status' => 'ok']);
     }
 
     private function sendJson(array $data, int $status = 200): void
