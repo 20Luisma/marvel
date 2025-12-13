@@ -116,4 +116,28 @@ final class SanitizerExtendedTest extends TestCase
         $this->assertStringContainsString('你好世界', $result);
         $this->assertStringContainsString('Привет', $result);
     }
+
+    public function test_sanitize_string_preserves_newlines_and_symbols(): void
+    {
+        $input = "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★★★\nHabilidad especial (liderazgo / escudo)\t★★★★☆\nInteligencia táctica\t★★★★☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Símbolo de justicia y coraje.";
+
+        $result = $this->sanitizer->sanitizeString($input);
+
+        $this->assertStringContainsString("Poder de ataque\t★★★☆☆", $result);
+        $this->assertStringContainsString("Nivel total\t19 / 25", $result);
+        $this->assertStringContainsString('🧩', $result);
+        $this->assertStringContainsString('★★★★★', $result);
+        $this->assertStringContainsString("\nDefensa / Resistencia", $result);
+    }
+
+    public function test_sanitize_string_still_strips_scripts_with_symbols(): void
+    {
+        $input = "Intro ★★★<script>alert('x')</script>\nMás texto 🧩";
+
+        $result = $this->sanitizer->sanitizeString($input);
+
+        $this->assertStringNotContainsString('script', strtolower($result));
+        $this->assertStringContainsString('★★★', $result);
+        $this->assertStringContainsString('🧩', $result);
+    }
 }

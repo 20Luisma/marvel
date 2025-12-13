@@ -22,8 +22,8 @@ final class Sanitizer
             $clean = mb_substr($clean, 0, 2000);
         }
 
-        // Whitelist aproximada: letras, números, espacios, puntuación básica y acentos.
-        $clean = preg_replace('/[^\p{L}\p{N}\p{P}\p{Zs}]/u', '', $clean) ?? $clean;
+        // Whitelist aproximada: letras, números, puntuación, espacios, saltos de línea y símbolos (ej. emojis, ★).
+        $clean = preg_replace('/[^\p{L}\p{N}\p{P}\p{Zs}\p{S}\r\n\t]/u', '', $clean) ?? $clean;
 
         return trim($clean);
     }
