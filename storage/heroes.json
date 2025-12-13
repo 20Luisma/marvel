@@ -358,5 +358,25 @@
         "imagen": "https://cdn.marvel.com/u/prod/marvel/i/mg/9/20/6138dd0b325ef/clean.jpg",
         "createdAt": "2025-10-26T15:57:55+00:00",
         "updatedAt": "2025-10-27T20:56:19+00:00"
+    },
+    {
+        "heroId": "1a63a464-cf6e-42c0-befd-72fd8a3ddd0d",
+        "albumId": "472081c0-8c3c-434b-8570-99f74982e902",
+        "nombre": "super",
+        "slug": "super",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (sigilo / combate cuerpo a cuerpo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Precisión, inteligencia y letalidad silenciosa.",
+        "imagen": "https://www.zonanegativa.com/imagenes/2020/01/black-widow-widows-sting-muestra-portada-1.jpg",
+        "createdAt": "2025-12-13T16:34:58+00:00",
+        "updatedAt": "2025-12-13T16:35:29+00:00"
+    },
+    {
+        "heroId": "c055c653-883b-4043-98fa-880c1b5a32d6",
+        "albumId": "472081c0-8c3c-434b-8570-99f74982e902",
+        "nombre": "ELEKTRA",
+        "slug": "elektra",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (sigilo / combate cuerpo a cuerpo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Precisión, inteligencia y letalidad silenciosa.",
+        "imagen": "https://www.eluniverso.com/entretenimiento/2017/04/13/nota/6136825/10-versiones-mas-insolitas-power-rangers/",
+        "createdAt": "2025-12-13T16:35:39+00:00",
+        "updatedAt": "2025-12-13T16:35:39+00:00"
     }
 ]

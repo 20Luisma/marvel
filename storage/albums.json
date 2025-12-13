@@ -40,5 +40,12 @@
         "coverImage": "https://i.blogs.es/271923/pantera-negra-comic/375_375.jpeg",
         "createdAt": "2025-10-26T15:28:59+00:00",
         "updatedAt": "2025-10-26T16:34:29+00:00"
+    },
+    {
+        "albumId": "472081c0-8c3c-434b-8570-99f74982e902",
+        "nombre": "AVENGERSS",
+        "coverImage": "https://gaming-cdn.com/images/products/14075/orig/marvel-s-avengers-the-definitive-edition-the-definitive-edition-pc-juego-steam-cover.jpg?v=1742470115",
+        "createdAt": "2025-12-13T16:34:41+00:00",
+        "updatedAt": "2025-12-13T16:34:41+00:00"
     }
 ]

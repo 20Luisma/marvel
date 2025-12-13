@@ -188,5 +188,15 @@
         "heroId": "0d946cc9-4bb6-430f-8e55-71788f3a3824",
         "nombre": "Pancho",
         "contenido": "Atributo\tValoración\nPoder de ataque\t★★★★★\nDefensa / Resistencia\t★★★★★\nHabilidad especial (fuerza / regeneración)\t★★★☆☆\nInteligencia táctica\t★★☆☆☆\nVelocidad / movilidad\t★★★☆☆\nNivel total\t19 / 25\n\n🧩 Fuerza imparable y gran corazón."
+    },
+    {
+        "heroId": "1a63a464-cf6e-42c0-befd-72fd8a3ddd0d",
+        "nombre": "super",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (sigilo / combate cuerpo a cuerpo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Precisión, inteligencia y letalidad silenciosa."
+    },
+    {
+        "heroId": "c055c653-883b-4043-98fa-880c1b5a32d6",
+        "nombre": "ELEKTRA",
+        "contenido": "Atributo\tValoración\nPoder de ataque\t★★★☆☆\nDefensa / Resistencia\t★★★☆☆\nHabilidad especial (sigilo / combate cuerpo a cuerpo)\t★★★★★\nInteligencia táctica\t★★★★★\nVelocidad / movilidad\t★★★★☆\nNivel total\t20 / 25\n\n🧩 Precisión, inteligencia y letalidad silenciosa."
     }
 ]
