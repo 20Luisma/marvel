@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Creawebes\Rag\Application\HeroRagService;
 use Creawebes\Rag\Application\HeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
+use Creawebes\Rag\Application\Resilience\CircuitBreaker;
 use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use Creawebes\Rag\Controllers\RagController;
 use Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase;
@@ -15,7 +16,9 @@ use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
 use Creawebes\Rag\Infrastructure\Observability\JsonFileRagTelemetry;
+use Creawebes\Rag\Infrastructure\Observability\JsonFileStructuredLogger;
 use Creawebes\Rag\Infrastructure\Observability\ServerTraceIdProvider;
+use Creawebes\Rag\Infrastructure\Resilience\JsonFileCircuitBreakerStateStore;
 use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiEmbeddingClient;
 use Creawebes\Rag\Infrastructure\Retrieval\VectorMarvelAgentRetriever;
@@ -71,6 +74,23 @@ return (static function (): array {
     $traceIdProvider = new ServerTraceIdProvider();
     $ragLogFile = $_ENV['RAG_LOG_FILE'] ?? getenv('RAG_LOG_FILE') ?: ($rootPath . '/storage/logs/rag.log');
     $telemetry = new JsonFileRagTelemetry($traceIdProvider, (string) $ragLogFile);
+    $structuredLogger = new JsonFileStructuredLogger($traceIdProvider, (string) $ragLogFile);
+
+    $cbStateFile = $_ENV['CB_STATE_FILE'] ?? getenv('CB_STATE_FILE') ?: ($rootPath . '/storage/ai/circuit_breaker.json');
+    $cbFailureThreshold = (int) ($_ENV['CB_FAILURE_THRESHOLD'] ?? getenv('CB_FAILURE_THRESHOLD') ?: 3);
+    $cbOpenTtlSeconds = (int) ($_ENV['CB_OPEN_TTL_SECONDS'] ?? getenv('CB_OPEN_TTL_SECONDS') ?: 30);
+    $cbHalfOpenMaxCalls = (int) ($_ENV['CB_HALF_OPEN_MAX_CALLS'] ?? getenv('CB_HALF_OPEN_MAX_CALLS') ?: 1);
+    $cbFailureThreshold = max(1, $cbFailureThreshold);
+    $cbOpenTtlSeconds = max(1, $cbOpenTtlSeconds);
+    $cbHalfOpenMaxCalls = max(1, $cbHalfOpenMaxCalls);
+
+    $circuitBreaker = new CircuitBreaker(
+        new JsonFileCircuitBreakerStateStore((string) $cbStateFile),
+        $structuredLogger,
+        failureThreshold: $cbFailureThreshold,
+        openTtlSeconds: $cbOpenTtlSeconds,
+        halfOpenMaxCalls: $cbHalfOpenMaxCalls,
+    );
 
     $lexicalRetriever = new HeroRetriever($knowledgeBase, $similarity, $telemetry);
 
@@ -100,11 +120,15 @@ return (static function (): array {
 
     $llmClientForCompare = new OpenAiHttpClient(
         openAiEndpoint: $openAiEndpoint,
-        feature: 'compare_heroes'
+        feature: 'compare_heroes',
+        circuitBreaker: $circuitBreaker,
+        logger: $structuredLogger,
     );
     $llmClientForAgent = new OpenAiHttpClient(
         openAiEndpoint: $openAiEndpoint,
-        feature: 'marvel_agent'
+        feature: 'marvel_agent',
+        circuitBreaker: $circuitBreaker,
+        logger: $structuredLogger,
     );
     
     $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClientForCompare);
