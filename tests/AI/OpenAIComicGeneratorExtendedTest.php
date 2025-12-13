@@ -83,7 +83,12 @@ final class OpenAIComicGeneratorExtendedTest extends TestCase
             'model' => 'gpt-4'
         ]);
         
-        $result = $generator->generateComic([['nombre' => 'Hero']]);
+        $result = $generator->generateComic([[
+            'heroId' => 'hero-1',
+            'nombre' => 'Hero',
+            'contenido' => '',
+            'imagen' => 'img',
+        ]]);
         
         $this->assertArrayHasKey('story', $result);
         

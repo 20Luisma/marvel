@@ -6,8 +6,13 @@ namespace App\Notifications\Infrastructure;
 
 final class NotificationRepository
 {
-    public function __construct(private readonly string $filePath)
+    private const DEFAULT_FILENAME = 'notifications.log';
+
+    private string $filePath;
+
+    public function __construct(string $filePath)
     {
+        $this->filePath = $this->resolveFilePath($filePath);
         $this->ensureStorage();
     }
 
@@ -16,7 +21,7 @@ final class NotificationRepository
      */
     public function lastNotifications(): array
     {
-        if (!file_exists($this->filePath)) {
+        if (!is_file($this->filePath) || !is_readable($this->filePath)) {
             return [];
         }
 
@@ -40,7 +45,18 @@ final class NotificationRepository
 
     public function clear(): void
     {
+        $this->ensureStorage();
         file_put_contents($this->filePath, '');
+    }
+
+    private function resolveFilePath(string $filePath): string
+    {
+        if (is_dir($filePath)) {
+            $directory = rtrim($filePath, DIRECTORY_SEPARATOR);
+            return $directory . DIRECTORY_SEPARATOR . self::DEFAULT_FILENAME;
+        }
+
+        return $filePath;
     }
 
     private function ensureStorage(): void
