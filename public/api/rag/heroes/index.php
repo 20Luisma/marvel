@@ -12,6 +12,7 @@ use App\Shared\Infrastructure\Http\HttpClientInterface;
 use App\Security\RateLimit\RateLimiter;
 use App\Security\Logging\SecurityLogger;
 use App\Controllers\RagProxyController;
+use App\Heroes\Domain\Repository\HeroRepository;
 
 require_once dirname(__DIR__, 4) . '/vendor/autoload.php';
 
@@ -58,6 +59,29 @@ if (!$http instanceof HttpClientInterface) {
 $ragUrl = resolve_rag_url($container);
 $token = $container['security']['internal_api_key'] ?? null;
 $token = is_string($token) ? $token : null;
+
+// Intento preventivo de sincronizar los héroes al RAG antes de comparar (por si el upsert previo falló en hosting).
+try {
+    $rawBody = $_SERVER['MARVEL_RAW_BODY'] ?? '';
+    $payload = is_string($rawBody) && $rawBody !== '' ? json_decode($rawBody, true) : null;
+    if (is_array($payload) && isset($payload['heroIds']) && is_array($payload['heroIds'])) {
+        $heroIds = array_values(array_filter(array_map('strval', $payload['heroIds']), static fn($id) => trim($id) !== ''));
+        if (count($heroIds) === 2) {
+            $heroRepository = $container['heroRepository'] ?? null;
+            $ragSyncer = $container['services']['ragSyncer'] ?? null;
+            if ($heroRepository instanceof HeroRepository && $ragSyncer && method_exists($ragSyncer, 'sync')) {
+                foreach ($heroIds as $heroId) {
+                    $hero = $heroRepository->find($heroId);
+                    if ($hero !== null) {
+                        $ragSyncer->sync($hero);
+                    }
+                }
+            }
+        }
+    }
+} catch (\Throwable $e) {
+    // No bloqueamos la petición; seguimos adelante.
+}
 
 $controller = new RagProxyController($http, $ragUrl, $token);
 $controller->forwardHeroesComparison();
