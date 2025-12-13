@@ -12,7 +12,8 @@ on:
         default: "Deploy manual"
 
 jobs:
-  deploy:
+  deploy_app:
+    name: Deploy app principal
     runs-on: ubuntu-latest
 
     steps:
@@ -22,8 +23,16 @@ jobs:
       - name: Generar bundle size (JS/CSS)
         run: php bin/generate-bundle-size.php
 
+      - name: Crear archivo prueba (APP)
+        run: |
+          cat > DEPLOY_TEST_APP.txt <<EOF
+          Servicio: Clean Marvel Album (APP principal)
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
       ####################################################################
-      # 1) Deploy APP PRINCIPAL (toda la carpeta iamasterbigschool)
+      # 1) Deploy APP PRINCIPAL (server-dir: iamasterbigschool)
       ####################################################################
       - name: Deploy app principal (iamasterbigschool)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -39,6 +48,9 @@ jobs:
 
           # 📌 Subimos TODO el proyecto (NO solo public)
           local-dir: ./
+
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-app.json
 
           # 📌 Archivos/carpetas que NO deben subirse
           exclude: |
@@ -58,6 +70,23 @@ jobs:
             openai-service/**
             rag-service/**
 
+  deploy_openai:
+    name: Deploy openai-service
+    runs-on: ubuntu-latest
+    needs: deploy_app
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Crear archivo prueba (OPENAI)
+        run: |
+          cat > openai-service/DEPLOY_TEST_OPENAI.txt <<EOF
+          Servicio: openai-service
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
       ####################################################################
       # 2) Deploy microservicio OPENAI
       ####################################################################
@@ -73,6 +102,26 @@ jobs:
           server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
           local-dir: ./openai-service/
 
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-openai.json
+
+  deploy_rag:
+    name: Deploy rag-service
+    runs-on: ubuntu-latest
+    needs: deploy_openai
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Crear archivo prueba (RAG)
+        run: |
+          cat > rag-service/DEPLOY_TEST_RAG.txt <<EOF
+          Servicio: rag-service
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
       ####################################################################
       # 3) Deploy microservicio RAG
       ####################################################################
@@ -87,3 +136,6 @@ jobs:
 
           server-dir: /domains/contenido.creawebes.com/public_html/rag-service/
           local-dir: ./rag-service/
+
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-rag.json
