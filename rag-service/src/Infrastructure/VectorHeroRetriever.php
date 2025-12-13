@@ -6,7 +6,10 @@ namespace Creawebes\Rag\Infrastructure;
 
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
+use Creawebes\Rag\Application\Contracts\RagTelemetryInterface;
 use Creawebes\Rag\Application\Contracts\RetrieverInterface;
+use Creawebes\Rag\Application\Observability\NullRagTelemetry;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 
 /**
  * Retriever que prioriza embeddings y cae al retriever léxico cuando faltan vectores.
@@ -18,8 +21,10 @@ final class VectorHeroRetriever implements RetrieverInterface
         private readonly EmbeddingStore $embeddingStore,
         private readonly EmbeddingClientInterface $embeddingClient,
         private readonly RetrieverInterface $fallback,
+        private readonly CosineSimilarity $similarity,
         private readonly bool $useEmbeddings = false,
         private readonly bool $autoRefreshEmbeddings = false,
+        private readonly RagTelemetryInterface $telemetry = new NullRagTelemetry(),
     ) {
     }
 
@@ -29,8 +34,9 @@ final class VectorHeroRetriever implements RetrieverInterface
      */
     public function retrieve(array $heroIds, string $question, int $limit = 5): array
     {
+        $start = microtime(true);
         if ($this->useEmbeddings === false) {
-            return $this->fallback->retrieve($heroIds, $question, $limit);
+            return $this->retrieveViaFallback($heroIds, $question, $limit, $start);
         }
 
         $trimmedQuestion = trim($question);
@@ -41,7 +47,7 @@ final class VectorHeroRetriever implements RetrieverInterface
         $uniqueIds = array_values(array_unique($heroIds));
         $heroes = $this->knowledgeBase->findByIds($uniqueIds);
         if ($heroes === []) {
-            return $this->fallback->retrieve($heroIds, $question, $limit);
+            return $this->retrieveViaFallback($heroIds, $question, $limit, $start);
         }
 
         $heroEmbeddings = $this->embeddingStore->loadByHeroIds(array_column($heroes, 'heroId'));
@@ -53,12 +59,12 @@ final class VectorHeroRetriever implements RetrieverInterface
         }
 
         if ($heroEmbeddings === [] || count($heroEmbeddings) < 2) {
-            return $this->fallback->retrieve($heroIds, $question, $limit);
+            return $this->retrieveViaFallback($heroIds, $question, $limit, $start);
         }
 
         $queryVector = $this->embeddingClient->embedText($trimmedQuestion);
         if ($queryVector === []) {
-            return $this->fallback->retrieve($heroIds, $question, $limit);
+            return $this->retrieveViaFallback($heroIds, $question, $limit, $start);
         }
 
         $scored = [];
@@ -68,7 +74,7 @@ final class VectorHeroRetriever implements RetrieverInterface
                 continue;
             }
 
-            $score = $this->cosineSimilarity($queryVector, $heroEmbeddings[$heroId]);
+            $score = $this->similarity->dense($queryVector, $heroEmbeddings[$heroId]);
             $scored[] = [
                 'heroId' => $hero['heroId'],
                 'nombre' => $hero['nombre'],
@@ -78,7 +84,7 @@ final class VectorHeroRetriever implements RetrieverInterface
         }
 
         if ($scored === [] || count($scored) < 2) {
-            return $this->fallback->retrieve($heroIds, $question, $limit);
+            return $this->retrieveViaFallback($heroIds, $question, $limit, $start);
         }
 
         usort(
@@ -89,6 +95,13 @@ final class VectorHeroRetriever implements RetrieverInterface
         if ($limit > 0) {
             $scored = array_slice($scored, 0, $limit);
         }
+
+        $this->telemetry->log(
+            'rag.retrieve',
+            'vector',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
 
         return $scored;
     }
@@ -127,28 +140,20 @@ final class VectorHeroRetriever implements RetrieverInterface
     }
 
     /**
-     * @param array<int|float> $a
-     * @param array<int|float> $b
+     * @param array<int, string> $heroIds
+     * @return array<int, array{heroId: string, nombre: string, contenido: string, score: float}>
      */
-    private function cosineSimilarity(array $a, array $b): float
+    private function retrieveViaFallback(array $heroIds, string $question, int $limit, float $start): array
     {
-        if ($a === [] || $b === []) {
-            return 0.0;
-        }
+        $result = $this->fallback->retrieve($heroIds, $question, $limit);
 
-        $length = min(count($a), count($b));
-        $dot = 0.0;
-        for ($i = 0; $i < $length; $i++) {
-            $dot += (float) $a[$i] * (float) $b[$i];
-        }
+        $this->telemetry->log(
+            'rag.retrieve.fallback',
+            'fallback',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
 
-        $normA = sqrt(array_sum(array_map(static fn ($value) => (float) $value * (float) $value, array_slice($a, 0, $length))));
-        $normB = sqrt(array_sum(array_map(static fn ($value) => (float) $value * (float) $value, array_slice($b, 0, $length))));
-
-        if ($normA === 0.0 || $normB === 0.0) {
-            return 0.0;
-        }
-
-        return $dot / ($normA * $normB);
+        return $result;
     }
 }

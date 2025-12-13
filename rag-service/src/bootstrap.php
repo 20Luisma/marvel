@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Creawebes\Rag\Application\HeroRagService;
 use Creawebes\Rag\Application\HeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiHttpClient;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use Creawebes\Rag\Controllers\RagController;
 use Creawebes\Rag\Application\UseCase\AskMarvelAgentUseCase;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
@@ -13,6 +14,8 @@ use Creawebes\Rag\Application\HeroKnowledgeSyncService;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\HeroJsonKnowledgeBase;
+use Creawebes\Rag\Infrastructure\Observability\JsonFileRagTelemetry;
+use Creawebes\Rag\Infrastructure\Observability\ServerTraceIdProvider;
 use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiEmbeddingClient;
 use Creawebes\Rag\Infrastructure\Retrieval\VectorMarvelAgentRetriever;
@@ -64,7 +67,12 @@ return (static function (): array {
     $environment = $resolveEnvironment();
 
     $knowledgeBase = new HeroJsonKnowledgeBase($rootPath . '/storage/knowledge/heroes.json');
-    $lexicalRetriever = new HeroRetriever($knowledgeBase);
+    $similarity = new CosineSimilarity();
+    $traceIdProvider = new ServerTraceIdProvider();
+    $ragLogFile = $_ENV['RAG_LOG_FILE'] ?? getenv('RAG_LOG_FILE') ?: ($rootPath . '/storage/logs/rag.log');
+    $telemetry = new JsonFileRagTelemetry($traceIdProvider, (string) $ragLogFile);
+
+    $lexicalRetriever = new HeroRetriever($knowledgeBase, $similarity, $telemetry);
 
     $embeddingStore = new EmbeddingStore($rootPath . '/storage/embeddings/heroes.json');
     $useEmbeddings = filter_var($_ENV['RAG_USE_EMBEDDINGS'] ?? getenv('RAG_USE_EMBEDDINGS'), FILTER_VALIDATE_BOOL) === true;
@@ -76,8 +84,10 @@ return (static function (): array {
             $embeddingStore,
             new OpenAiEmbeddingClient(),
             $lexicalRetriever,
+            $similarity,
             useEmbeddings: $useEmbeddings,
             autoRefreshEmbeddings: $autoRefresh,
+            telemetry: $telemetry,
         )
         : $lexicalRetriever;
 
@@ -99,7 +109,7 @@ return (static function (): array {
     
     $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClientForCompare);
     $agentKb = new MarvelAgentKnowledgeBase($rootPath . '/storage/marvel_agent_kb.json');
-    $agentLexicalRetriever = new MarvelAgentRetriever($agentKb);
+    $agentLexicalRetriever = new MarvelAgentRetriever($agentKb, $telemetry);
     $agentEmbeddingStore = new EmbeddingStore($rootPath . '/storage/marvel_agent_embeddings.json');
     $agentUseEmbeddings = filter_var($_ENV['AGENT_USE_EMBEDDINGS'] ?? getenv('AGENT_USE_EMBEDDINGS'), FILTER_VALIDATE_BOOL) === true;
     $agentAutoRefresh = filter_var($_ENV['AGENT_EMBEDDINGS_AUTOREFRESH'] ?? getenv('AGENT_EMBEDDINGS_AUTOREFRESH'), FILTER_VALIDATE_BOOL) === true;
@@ -110,8 +120,10 @@ return (static function (): array {
             $agentEmbeddingStore,
             new OpenAiEmbeddingClient(),
             $agentLexicalRetriever,
+            $similarity,
             useEmbeddings: $agentUseEmbeddings,
             autoRefreshEmbeddings: $agentAutoRefresh,
+            telemetry: $telemetry,
         )
         : $agentLexicalRetriever;
 

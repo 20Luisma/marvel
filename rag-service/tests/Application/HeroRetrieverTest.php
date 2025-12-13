@@ -6,6 +6,7 @@ namespace Creawebes\Rag\Tests\Application;
 
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
 use Creawebes\Rag\Application\HeroRetriever;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use PHPUnit\Framework\TestCase;
 
 final class HeroRetrieverTest extends TestCase
@@ -25,7 +26,7 @@ final class HeroRetrieverTest extends TestCase
             ],
         ]);
 
-        $retriever = new HeroRetriever($knowledgeBase);
+        $retriever = new HeroRetriever($knowledgeBase, new CosineSimilarity());
 
         $result = $retriever->retrieve(['hero-1', 'hero-2'], 'fuerza volar');
 
@@ -55,7 +56,7 @@ final class HeroRetrieverTest extends TestCase
             ],
         ]);
 
-        $retriever = new HeroRetriever($knowledgeBase);
+        $retriever = new HeroRetriever($knowledgeBase, new CosineSimilarity());
 
         $result = $retriever->retrieve(['hero-1', 'hero-2', 'hero-3'], 'fuerza velocidad', 2);
 
@@ -78,7 +79,7 @@ final class HeroRetrieverTest extends TestCase
             ],
         ]);
 
-        $retriever = new HeroRetriever($knowledgeBase);
+        $retriever = new HeroRetriever($knowledgeBase, new CosineSimilarity());
 
         $resultWithEmpty = $retriever->retrieve(['hero-1', 'hero-2'], '');
         $resultWithShort = $retriever->retrieve(['hero-1', 'hero-2'], 'ok');

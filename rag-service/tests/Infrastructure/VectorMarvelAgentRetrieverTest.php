@@ -7,6 +7,7 @@ namespace Creawebes\Rag\Tests\Infrastructure;
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetriever;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\Retrieval\VectorMarvelAgentRetriever;
@@ -38,6 +39,7 @@ final class VectorMarvelAgentRetrieverTest extends TestCase
             $store,
             $client,
             $fallback,
+            new CosineSimilarity(),
             useEmbeddings: true,
             autoRefreshEmbeddings: false
         );
@@ -67,6 +69,7 @@ final class VectorMarvelAgentRetrieverTest extends TestCase
             $store,
             $client,
             $fallback,
+            new CosineSimilarity(),
             useEmbeddings: true,
             autoRefreshEmbeddings: false
         );

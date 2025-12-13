@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+$traceId = resolve_trace_id();
+header('X-Trace-Id: ' . $traceId);
+
 $container = require_once __DIR__ . '/../src/bootstrap.php';
 $requestStart = microtime(true);
 $rawInput = read_raw_body();
@@ -53,13 +56,34 @@ $allowedOrigin = $origin !== '' ? $origin : ($allowedOrigins[0] ?? '');
 if ($allowedOrigin !== '') {
     header('Access-Control-Allow-Origin: ' . $allowedOrigin);
 }
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller, X-Trace-Id');
 header('Access-Control-Max-Age: 86400');
 
 if ($method === 'OPTIONS') {
     http_response_code(204);
     exit;
+}
+
+if ($method === 'GET' && $path === '/health') {
+    $embeddingsEnabled = filter_var(
+        $_ENV['RAG_USE_EMBEDDINGS'] ?? getenv('RAG_USE_EMBEDDINGS'),
+        FILTER_VALIDATE_BOOL
+    ) === true;
+
+    http_response_code(200);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(
+        [
+            'status' => 'ok',
+            'service' => 'rag-service',
+            'time' => date('c'),
+            'embeddings_enabled' => $embeddingsEnabled,
+        ],
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    );
+    log_request_event($path, 200, $requestStart);
+    return;
 }
 
 if ($method !== 'OPTIONS') {
@@ -239,6 +263,7 @@ function log_request_event(string $path, int $statusCode, float $startTime, ?str
 
     $entry = [
         'timestamp' => date('c'),
+        'trace_id' => $_SERVER['__TRACE_ID__'] ?? ($_SERVER['HTTP_X_TRACE_ID'] ?? null),
         'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
         'path' => $path,
         'status' => $statusCode,
@@ -255,6 +280,33 @@ function log_request_event(string $path, int $statusCode, float $startTime, ?str
     if ($encoded !== false) {
         @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
     }
+}
+
+function resolve_trace_id(): string
+{
+    $existing = $_SERVER['__TRACE_ID__'] ?? null;
+    if (is_string($existing) && $existing !== '') {
+        return $existing;
+    }
+
+    $header = $_SERVER['HTTP_X_TRACE_ID'] ?? null;
+    if (is_string($header)) {
+        $candidate = trim($header);
+        if ($candidate !== '' && preg_match('/^[A-Za-z0-9._-]{1,128}$/', $candidate) === 1) {
+            $_SERVER['__TRACE_ID__'] = $candidate;
+            return $candidate;
+        }
+    }
+
+    try {
+        $generated = bin2hex(random_bytes(16));
+    } catch (\Throwable) {
+        $generated = str_replace('.', '', uniqid('trace_', true));
+    }
+
+    $_SERVER['__TRACE_ID__'] = $generated;
+
+    return $generated;
 }
 
 function read_raw_body(): string

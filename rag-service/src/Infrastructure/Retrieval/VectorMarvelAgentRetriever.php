@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Infrastructure\Retrieval;
 
+use Creawebes\Rag\Application\Contracts\RagTelemetryInterface;
+use Creawebes\Rag\Application\Observability\NullRagTelemetry;
 use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
+use Creawebes\Rag\Application\Similarity\CosineSimilarity;
 use Creawebes\Rag\Infrastructure\Knowledge\MarvelAgentKnowledgeBase;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
@@ -16,8 +19,10 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
         private readonly EmbeddingStore $embeddingStore,
         private readonly EmbeddingClientInterface $embeddingClient,
         private readonly MarvelAgentRetrieverInterface $fallback,
+        private readonly CosineSimilarity $similarity,
         private readonly bool $useEmbeddings = false,
         private readonly bool $autoRefreshEmbeddings = false,
+        private readonly RagTelemetryInterface $telemetry = new NullRagTelemetry(),
     ) {
     }
 
@@ -26,13 +31,14 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
      */
     public function retrieve(string $question, int $limit = 3): array
     {
+        $start = microtime(true);
         if ($this->useEmbeddings === false) {
-            return $this->fallback->retrieve($question, $limit);
+            return $this->retrieveViaFallback($question, $limit, $start);
         }
 
         $kb = $this->knowledgeBase->all();
         if ($kb === [] || count($kb) < 1) {
-            return $this->fallback->retrieve($question, $limit);
+            return $this->retrieveViaFallback($question, $limit, $start);
         }
 
         $vectors = $this->embeddingStore->loadAll();
@@ -44,12 +50,12 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
         }
 
         if ($vectors === []) {
-            return $this->fallback->retrieve($question, $limit);
+            return $this->retrieveViaFallback($question, $limit, $start);
         }
 
         $queryVector = $this->embeddingClient->embedText($question);
         if ($queryVector === []) {
-            return $this->fallback->retrieve($question, $limit);
+            return $this->retrieveViaFallback($question, $limit, $start);
         }
 
         $scored = [];
@@ -59,12 +65,12 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
                 continue;
             }
 
-            $score = $this->cosineSimilarity($queryVector, $vectors[$id]);
+            $score = $this->similarity->dense($queryVector, $vectors[$id]);
             $scored[] = $entry + ['score' => $score];
         }
 
         if ($scored === []) {
-            return $this->fallback->retrieve($question, $limit);
+            return $this->retrieveViaFallback($question, $limit, $start);
         }
 
         usort(
@@ -75,6 +81,13 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
         if ($limit > 0) {
             $scored = array_slice($scored, 0, $limit);
         }
+
+        $this->telemetry->log(
+            'rag.retrieve',
+            'vector',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
 
         return array_map(
             static fn (array $item): array => [
@@ -120,28 +133,19 @@ final class VectorMarvelAgentRetriever implements MarvelAgentRetrieverInterface
     }
 
     /**
-     * @param array<int|float> $a
-     * @param array<int|float> $b
+     * @return array<int, array{id: string, title: string, text: string}>
      */
-    private function cosineSimilarity(array $a, array $b): float
+    private function retrieveViaFallback(string $question, int $limit, float $start): array
     {
-        if ($a === [] || $b === []) {
-            return 0.0;
-        }
+        $result = $this->fallback->retrieve($question, $limit);
 
-        $length = min(count($a), count($b));
-        $dot = 0.0;
-        for ($i = 0; $i < $length; $i++) {
-            $dot += (float) $a[$i] * (float) $b[$i];
-        }
+        $this->telemetry->log(
+            'rag.retrieve.fallback',
+            'fallback',
+            (int) round((microtime(true) - $start) * 1000),
+            $limit
+        );
 
-        $normA = sqrt(array_sum(array_map(static fn ($value) => (float) $value * (float) $value, array_slice($a, 0, $length))));
-        $normB = sqrt(array_sum(array_map(static fn ($value) => (float) $value * (float) $value, array_slice($b, 0, $length))));
-
-        if ($normA === 0.0 || $normB === 0.0) {
-            return 0.0;
-        }
-
-        return $dot / ($normA * $normB);
+        return $result;
     }
 }
