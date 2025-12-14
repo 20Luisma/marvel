@@ -32,7 +32,6 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      # TODO: decidir si este paso debe fallar el pipeline cuando detecte vulnerabilidades conocidas.
       - name: Composer security audit
         run: composer security:audit
 

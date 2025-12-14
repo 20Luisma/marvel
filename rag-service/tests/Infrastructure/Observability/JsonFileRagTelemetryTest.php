@@ -46,6 +46,7 @@ final class JsonFileRagTelemetryTest extends TestCase
         $this->assertIsArray($decoded);
 
         $this->assertArrayHasKey('timestamp', $decoded);
+        $this->assertArrayHasKey('level', $decoded);
         $this->assertArrayHasKey('trace_id', $decoded);
         $this->assertArrayHasKey('event', $decoded);
         $this->assertArrayHasKey('retriever', $decoded);
@@ -56,6 +57,7 @@ final class JsonFileRagTelemetryTest extends TestCase
         $this->assertNotSame('', $decoded['timestamp']);
         $this->assertNotFalse(strtotime($decoded['timestamp']));
 
+        $this->assertSame('INFO', $decoded['level']);
         $this->assertSame('rag.retrieve', $decoded['event']);
         $this->assertSame('vector', $decoded['retriever']);
         $this->assertSame(123, $decoded['latency_ms']);
