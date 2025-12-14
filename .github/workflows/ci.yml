@@ -48,6 +48,12 @@ jobs:
             exit 1
           fi
 
+      # Coverage gate (Clover): fails CI if total statement coverage drops below COVERAGE_THRESHOLD (default 75).
+      - name: Enforce coverage threshold
+        env:
+          COVERAGE_THRESHOLD: ${{ vars.COVERAGE_THRESHOLD || 75 }}
+        run: php scripts/coverage-gate.php coverage.xml
+
       - name: Run PHPStan analysis
         run: |
           if [ -f vendor/bin/phpstan ]; then
