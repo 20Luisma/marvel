@@ -1,6 +1,6 @@
 # Consideraciones para Producción - Kubernetes
 
-## 📋 Índice
+## Índice
 
 1. [Introducción](#introducción)
 2. [Gestión Segura de Secrets](#1-gestión-segura-de-secrets)
@@ -18,13 +18,13 @@
 
 ## Introducción
 
-Este documento complementa [DEPLOY_K8S.md](./DEPLOY_K8S.md) con **mejoras críticas para entornos de producción**. La implementación actual es funcional y didáctica, pero requiere estas adaptaciones para cumplir estándares empresariales.
+Este documento complementa `k8s/DEPLOY_K8S.md` con consideraciones adicionales para entornos operativos. La configuración del repositorio está orientada a demos y desarrollo; estas adaptaciones se documentan como trabajo futuro.
 
-### 🎯 Objetivo
+### Objetivo
 
-Proporcionar una **hoja de ruta clara** para evolucionar el despliegue de desarrollo/demo a un entorno production-ready, manteniendo la arquitectura base intacta.
+Proporcionar una guía para evolucionar el despliegue de desarrollo/demo hacia un entorno operativo, manteniendo la arquitectura base intacta.
 
-### ⚠️ Importante
+### Importante
 
 Implementar estas mejoras es **opcional** para demostraciones académicas, pero **obligatorio** para despliegues en producción con tráfico real, datos sensibles o SLAs estrictos.
 
@@ -32,7 +32,7 @@ Implementar estas mejoras es **opcional** para demostraciones académicas, pero 
 
 ## 1. Gestión Segura de Secrets
 
-### 🔴 Problema Actual
+### Problema actual
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (ACTUAL)
@@ -42,19 +42,19 @@ metadata:
   name: clean-marvel-secrets
 type: Opaque
 stringData:
-  INTERNAL_API_KEY: "CHANGEME-STRONG-RANDOM"  # ❌ En repositorio
-  OPENAI_API_KEY: "CHANGEME-OPENAI-KEY"      # ❌ Plaintext
+  INTERNAL_API_KEY: "CHANGEME-STRONG-RANDOM"  # No versionar secrets en el repositorio
+  OPENAI_API_KEY: "CHANGEME-OPENAI-KEY"      # No incluir secrets en texto plano
 ```
 
 **Riesgos:**
-- ❌ Secrets en control de versiones (incluso con placeholders)
-- ❌ Sin cifrado en reposo en etcd
-- ❌ Sin rotación automatizada
-- ❌ Exposición en logs de CI/CD
+- Secrets en control de versiones (incluso con placeholders)
+- Sin cifrado en reposo en etcd
+- Sin rotación automatizada
+- Exposición en logs de CI/CD
 
 ---
 
-### ✅ Solución 1: Crear Secrets fuera del repositorio
+### Solución 1: crear secrets fuera del repositorio
 
 #### Paso 1: Eliminar sección Secret del YAML
 
@@ -107,7 +107,7 @@ kubectl create secret generic clean-marvel-secrets \
 
 ---
 
-### ✅ Solución 2: Sealed Secrets (Recomendado para GitOps)
+### Solución 2: Sealed Secrets (GitOps)
 
 **Ventaja:** Allows almacenar secrets cifrados en Git de forma segura.
 
@@ -151,13 +151,13 @@ metadata:
   name: clean-marvel-secrets
 spec:
   encryptedData:
-    OPENAI_API_KEY: AgB7Y3J5cHRvMToxNT...  # ✅ Cifrado, seguro en Git
+    OPENAI_API_KEY: AgB7Y3J5cHRvMToxNT...  # Cifrado para almacenarse en Git
     INTERNAL_API_KEY: AgCkY3J5cHRvMToxNT...
 ```
 
 ---
 
-### ✅ Solución 3: External Secrets Operator (Empresarial)
+### Solución 3: External Secrets Operator (entornos avanzados)
 
 **Ventaja:** Sincroniza secrets desde gestores externos (AWS Secrets Manager, Vault, Azure Key Vault).
 
@@ -195,7 +195,7 @@ spec:
 
 ---
 
-### 🔐 Cifrado en Reposo (etcd)
+### Cifrado en reposo (etcd)
 
 Por defecto, Kubernetes almacena Secrets sin cifrar en etcd. Para producción **crítica**:
 
@@ -226,7 +226,7 @@ head -c 32 /dev/urandom | base64
 
 ## 2. Alta Disponibilidad y Estrategias de Despliegue
 
-### 🟠 Problema Actual
+### Problema actual
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (ACTUAL)
@@ -237,13 +237,13 @@ spec:
 ```
 
 **Riesgos:**
-- ⚠️ Posible downtime durante rolling updates
-- ⚠️ Mantenimientos del cluster pueden tumbar todos los pods
-- ⚠️ Sin control granular sobre el proceso de actualización
+- Posible downtime durante rolling updates
+- Mantenimientos del cluster pueden tumbar todos los pods
+- Sin control granular sobre el proceso de actualización
 
 ---
 
-### ✅ Solución: Rolling Update Controlado
+### Solución: rolling update controlado
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (MEJORADO)
@@ -252,16 +252,16 @@ kind: Deployment
 metadata:
   name: clean-marvel
 spec:
-  replicas: 3  # ✅ Mínimo 3 para HA real
+  replicas: 3  # Recomendación: 3 para alta disponibilidad
   
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0      # ✅ Nunca bajar pods antes de que nuevos estén ready
-      maxSurge: 1            # ✅ Crear máximo 1 pod extra durante update
+      maxUnavailable: 0      # No bajar pods antes de que nuevos estén ready
+      maxSurge: 1            # Crear máximo 1 pod extra durante update
   
-  minReadySeconds: 10         # ✅ Esperar 10s antes de marcar como ready
-  revisionHistoryLimit: 5     # ✅ Mantener 5 versiones para rollback rápido
+  minReadySeconds: 10         # Esperar 10s antes de marcar como ready
+  revisionHistoryLimit: 5     # Mantener 5 versiones para rollback
   
   selector:
     matchLabels:
@@ -273,14 +273,14 @@ spec:
       labels:
         app: clean-marvel
         tier: frontend
-        version: v1.0.0  # ✅ Versionado para canary deploys
+        version: v1.0.0  # Versionado para canary deploys
     spec:
       # ... resto igual
 ```
 
 ---
 
-### ✅ PodDisruptionBudget (Evitar Downtime)
+### PodDisruptionBudget (evitar downtime)
 
 ```yaml
 # k8s/clean-marvel-pdb.yaml (NUEVO)
@@ -289,7 +289,7 @@ kind: PodDisruptionBudget
 metadata:
   name: clean-marvel-pdb
 spec:
-  minAvailable: 2  # ✅ Siempre mantener 2 pods disponibles
+  minAvailable: 2  # Mantener 2 pods disponibles
   selector:
     matchLabels:
       app: clean-marvel
@@ -301,7 +301,7 @@ kind: PodDisruptionBudget
 metadata:
   name: openai-service-pdb
 spec:
-  maxUnavailable: 1  # ✅ Permitir caída de máximo 1 pod
+  maxUnavailable: 1  # Permitir caída de máximo 1 pod
   selector:
     matchLabels:
       app: openai-service
@@ -315,7 +315,7 @@ kubectl apply -f k8s/clean-marvel-pdb.yaml
 
 ---
 
-### ✅ Anti-Affinity (Distribución en Nodos)
+### Anti-affinity (distribución en nodos)
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (AGREGAR)
@@ -333,7 +333,7 @@ spec:
                       operator: In
                       values:
                         - clean-marvel
-                topologyKey: kubernetes.io/hostname  # ✅ No dos pods en el mismo nodo
+                topologyKey: kubernetes.io/hostname  # Evitar dos pods en el mismo nodo
       
       containers:
         - name: clean-marvel
@@ -344,23 +344,23 @@ spec:
 
 ## 3. Observabilidad Avanzada
 
-### 🟠 Problema Actual
+### Problema actual
 
 ```yaml
 # openai-service-deployment.yaml (ACTUAL)
 livenessProbe:
   tcpSocket:
-    port: 8081  # ❌ Solo verifica que el puerto está abierto
+    port: 8081  # Solo verifica que el puerto está abierto
 ```
 
 **Riesgos:**
-- ⚠️ TCP check NO valida funcionalidad real del servicio
-- ⚠️ Sin métricas de performance
-- ⚠️ Sin trazabilidad de errores internos
+- TCP check no valida funcionalidad real del servicio
+- Sin métricas de performance
+- Sin trazabilidad de errores internos
 
 ---
 
-### ✅ Solución: Healthchecks HTTP Específicos
+### Solución: healthchecks HTTP específicos
 
 #### Paso 1: Crear endpoints de salud en microservicios
 
@@ -469,7 +469,7 @@ livenessProbe:
         value: "liveness"
   initialDelaySeconds: 15
   periodSeconds: 20
-  timeoutSeconds: 5       # ✅ Timeout explícito
+  timeoutSeconds: 5       # Timeout explícito
   failureThreshold: 3
   successThreshold: 1
 
@@ -481,19 +481,19 @@ readinessProbe:
   periodSeconds: 10
   timeoutSeconds: 3
   failureThreshold: 3
-  successThreshold: 1     # ✅ Cuántas veces debe pasar antes de ready
+  successThreshold: 1     # Cuántas veces debe pasar antes de ready
 
-startupProbe:             # ✅ NUEVO: para startups lentos
+startupProbe:             # Nuevo: para startups lentos
   httpGet:
     path: /health
     port: 8081
-  failureThreshold: 30    # ✅ 30 intentos * 10s = 5 minutos max startup
+  failureThreshold: 30    # 30 intentos * 10s = 5 minutos max startup
   periodSeconds: 10
 ```
 
 ---
 
-### ✅ Integración con Prometheus
+### Integración con Prometheus
 
 #### Paso 1: Anotar Services
 
@@ -548,7 +548,7 @@ spec:
 
 ---
 
-### ✅ Distributed Tracing (Jaeger/Tempo)
+### Distributed tracing (Jaeger/Tempo)
 
 ```yaml
 # k8s/jaeger-all-in-one.yaml (DESARROLLO)
@@ -596,15 +596,15 @@ spec:
 
 ## 4. Seguridad de Red
 
-### 🟡 Problema Actual
+### Problema actual
 
-- ❌ Sin NetworkPolicies: cualquier pod puede comunicarse con cualquier otro
-- ❌ Frontend puede acceder directamente a bases de datos (si hubiera)
-- ❌ Sin segmentación por capas
+- Sin NetworkPolicies: cualquier pod puede comunicarse con cualquier otro
+- Frontend puede acceder directamente a bases de datos (si hubiera)
+- Sin segmentación por capas
 
 ---
 
-### ✅ Solución: Network Policies por Tier
+### Solución: NetworkPolicies por tier
 
 ```yaml
 # k8s/network-policies.yaml (NUEVO)
@@ -765,7 +765,7 @@ kubectl describe networkpolicy clean-marvel-network-policy
 
 ---
 
-### ✅ Deny-All por Defecto (Best Practice)
+### Deny-all por defecto (best practice)
 
 ```yaml
 # k8s/default-deny-all.yaml (NUEVO)
@@ -787,7 +787,7 @@ spec:
 
 ## 5. TLS y Certificados Automáticos
 
-### 🟡 Problema Actual
+### Problema actual
 
 ```yaml
 # k8s/ingress.yaml (ACTUAL)
@@ -798,13 +798,13 @@ spec:
 ```
 
 **Riesgos:**
-- ⚠️ Tráfico sin cifrar (HTTP)
-- ⚠️ Sin autenticación del servidor
-- ⚠️ Vulnerable a MITM
+- Tráfico sin cifrar (HTTP)
+- Sin autenticación del servidor
+- Vulnerable a MITM
 
 ---
 
-### ✅ Solución: cert-manager + Let's Encrypt
+### Solución: cert-manager + Let's Encrypt
 
 #### Paso 1: Instalar cert-manager
 
@@ -828,7 +828,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: tu-email@example.com  # ✅ Cambiar por tu email
+    email: tu-email@example.com  # Cambiar por tu email
     privateKeySecretRef:
       name: letsencrypt-staging-key
     solvers:
@@ -845,7 +845,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: tu-email@example.com  # ✅ Cambiar por tu email
+    email: tu-email@example.com  # Cambiar por tu email
     privateKeySecretRef:
       name: letsencrypt-prod-key
     solvers:
@@ -868,24 +868,24 @@ kind: Ingress
 metadata:
   name: clean-marvel-web
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"  # ✅ Certificado automático
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"  # Certificado automático
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # ✅ Redirigir HTTP → HTTPS
-    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"  # ✅ Solo TLS moderno
-    nginx.ingress.kubernetes.io/rate-limit: "100"  # ✅ 100 req/s por IP
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # Redirigir HTTP -> HTTPS
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"  # Solo TLS moderno
+    nginx.ingress.kubernetes.io/rate-limit: "100"  # 100 req/s por IP
     nginx.ingress.kubernetes.io/limit-connections: "10"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://clean-marvel.com"
 spec:
   ingressClassName: nginx
   
-  tls:  # ✅ NUEVO
+  tls:  # Nuevo
     - hosts:
-        - clean-marvel.com  # ✅ Cambiar por tu dominio real
-      secretName: clean-marvel-tls  # ✅ cert-manager creará este Secret
+        - clean-marvel.com  # Cambiar por tu dominio real
+      secretName: clean-marvel-tls  # cert-manager creará este Secret
   
   rules:
-    - host: clean-marvel.com  # ✅ Cambiar por tu dominio real
+    - host: clean-marvel.com  # Cambiar por tu dominio real
       http:
         paths:
           - path: /
@@ -913,28 +913,28 @@ kubectl get secret clean-marvel-tls
 
 ## 6. Gestión de Imágenes
 
-### 🟡 Problema Actual
+### Problema actual
 
 ```yaml
-image: 20luisma/clean-marvel:latest  # ❌ Tag mutable
+image: 20luisma/clean-marvel:latest  # Tag mutable
 imagePullPolicy: IfNotPresent
 ```
 
 **Riesgos:**
-- ⚠️ `:latest` puede cambiar sin previo aviso
-- ⚠️ Dificulta rollbacks (¿cuál era la versión anterior?)
-- ⚠️ Sin validation de integridad
+- `:latest` puede cambiar sin previo aviso
+- Dificulta rollbacks (¿cuál era la versión anterior?)
+- Sin validación de integridad
 
 ---
 
-### ✅ Solución 1: Tags Semánticos Inmutables
+### Solución 1: tags semánticos inmutables
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (MEJORADO)
 containers:
   - name: clean-marvel
-    image: 20luisma/clean-marvel:v1.2.3  # ✅ Versionado semántico
-    imagePullPolicy: Always  # ✅ Siempre verificar registry
+    image: 20luisma/clean-marvel:v1.2.3  # Versionado semántico
+    imagePullPolicy: Always  # Verificar registry
 ```
 
 **Workflow de versionado:**
@@ -954,7 +954,7 @@ kubectl rollout undo deployment/clean-marvel
 
 ---
 
-### ✅ Solución 2: Usar SHA256 (Máxima Inmutabilidad)
+### Solución 2: usar SHA256 (máxima inmutabilidad)
 
 ```bash
 # Obtener digest de la imagen
@@ -971,12 +971,12 @@ kubectl set image deployment/clean-marvel \
 # k8s/clean-marvel-deployment.yaml (MÁXIMA SEGURIDAD)
 containers:
   - name: clean-marvel
-    image: 20luisma/clean-marvel@sha256:abc123...  # ✅ Inmutable por diseño
+    image: 20luisma/clean-marvel@sha256:abc123...  # Inmutable por diseño
 ```
 
 ---
 
-### ✅ Scanning de Vulnerabilidades
+### Scanning de vulnerabilidades
 
 #### Opción 1: Trivy (Open Source)
 
@@ -1009,7 +1009,7 @@ snyk container test 20luisma/clean-marvel:v1.2.3
 
 ---
 
-### ✅ Firma de Imágenes con Cosign
+### Firma de imágenes con Cosign
 
 ```bash
 # Instalar Cosign
@@ -1047,18 +1047,18 @@ spec:
 
 ## 7. Namespaces y Aislamiento
 
-### 🟡 Problema Actual
+### Problema actual
 
 Todos los recursos van al namespace `default`.
 
 **Riesgos:**
-- ⚠️ Sin aislamiento entre entornos (dev/staging/prod)
-- ⚠️ Sin límites de recursos por equipo/proyecto
-- ⚠️ Dificulta gestión de permisos RBAC
+- Sin aislamiento entre entornos (dev/staging/prod)
+- Sin límites de recursos por equipo/proyecto
+- Dificulta gestión de permisos RBAC
 
 ---
 
-### ✅ Solución: Namespaces Dedicados
+### Solución: namespaces dedicados
 
 ```yaml
 # k8s/namespaces.yaml (NUEVO)
@@ -1096,7 +1096,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: clean-marvel
-  namespace: clean-marvel-prod  # ✅ AGREGAR
+  namespace: clean-marvel-prod  # Agregar
 spec:
   # ... resto igual
 ```
@@ -1109,7 +1109,7 @@ kubectl get pods -n clean-marvel-prod
 
 ---
 
-### ✅ Resource Quotas
+### Resource quotas
 
 ```yaml
 # k8s/resource-quotas.yaml (NUEVO)
@@ -1167,7 +1167,7 @@ spec:
 
 ## 8. Autoescalado y Optimización de Recursos
 
-### ✅ HorizontalPodAutoscaler (HPA)
+### HorizontalPodAutoscaler (HPA)
 
 ```yaml
 # k8s/hpa.yaml (NUEVO)
@@ -1224,7 +1224,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 
 ---
 
-### ✅ Vertical Pod Autoscaler (VPA)
+### Vertical Pod Autoscaler (VPA)
 
 ```yaml
 # k8s/vpa.yaml (NUEVO)
@@ -1257,7 +1257,7 @@ spec:
 
 ## 9. Backup y Disaster Recovery
 
-### ✅ Velero (Backup de Cluster)
+### Velero (backup de cluster)
 
 ```bash
 # Instalar Velero
@@ -1284,7 +1284,7 @@ velero restore create --from-backup clean-marvel-backup-20231209
 
 ---
 
-### ✅ Backup de Base de Datos (si aplica)
+### Backup de base de datos (si aplica)
 
 ```yaml
 # k8s/mysql-backup-cronjob.yaml (EJEMPLO)
@@ -1328,7 +1328,7 @@ spec:
 
 ## Checklist de Pre-Producción
 
-### 🔴 Crítico (Obligatorio)
+### Crítico (obligatorio)
 
 - [ ] **Secrets gestionados externamente** (Sealed Secrets / External Secrets / manual)
 - [ ] **TLS configurado** (cert-manager + Let's Encrypt)
@@ -1341,7 +1341,7 @@ spec:
 - [ ] **Namespaces dedicados** (no usar `default`)
 - [ ] **Monitoring básico** (Prometheus/Grafana o equivalente)
 
-### 🟠 Alta Prioridad
+### Alta prioridad
 
 - [ ] **HorizontalPodAutoscaler** configurado
 - [ ] **Anti-affinity** para distribución en nodos
@@ -1353,7 +1353,7 @@ spec:
 - [ ] **Secrets cifrados en etcd**
 - [ ] **RBAC** configurado (Service Accounts con mínimos privilegios)
 
-### 🟡 Mejoras Adicionales
+### Mejoras adicionales
 
 - [ ] **VerticalPodAutoscaler** para optimización automática
 - [ ] **Service Mesh** (Istio/Linkerd) para tráfico avanzado
@@ -1390,11 +1390,11 @@ spec:
 
 ## Conclusión
 
-Esta guía proporciona una **hoja de ruta completa** para llevar el despliegue de Kubernetes de un entorno de desarrollo/demo a producción enterprise-grade.
+Esta guía resume consideraciones para llevar el despliegue de Kubernetes de un entorno de desarrollo/demo a un entorno operativo.
 
 **Recuerda:**
-- ✅ La implementación actual es **válida para demos y desarrollo**
-- 🚀 Las mejoras aquí descritas son **recomendaciones progresivas**
-- 🎯 Prioriza según tus **requisitos específicos de producción**
+- La implementación actual está orientada a demos y desarrollo.
+- Las mejoras aquí descritas son recomendaciones progresivas.
+- Priorizar según requisitos del entorno.
 
 Para cualquier duda, consulta la documentación oficial de Kubernetes o los recursos listados arriba.

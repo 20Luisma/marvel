@@ -12,7 +12,7 @@ Agregar un endpoint PHP (`public/api/sonar-metrics.php`) que consulta la API ofi
 ## Justificación
 - Evita exponer tokens al frontend: el JS solo llama al endpoint interno.  
 - Permite mostrar métricas en vivo sin necesidad de exponer la UI de SonarCloud ni compartir credenciales.  
-- Facilita que SonarCloud consuma el reporte (`build/coverage.xml`) generado por `composer test:cov`.
+- Facilita que SonarCloud consuma el reporte (`coverage.xml`) generado por `composer test:coverage`.
 
 ## Consecuencias
 ### Positivas

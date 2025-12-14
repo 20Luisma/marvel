@@ -46,7 +46,7 @@ final readonly class SecurityConfig
 - **Fail-Fast**: Errores de configuración detectados al iniciar, no en runtime
 - **Self-Documenting**: El constructor documenta qué parámetros existen y sus tipos
 - **Testable**: Factory `forTesting()` facilita tests sin configurar env vars
-- **Secure by Default**: `toArray()` no expone `adminPasswordHash`
+- **Reducción de exposición accidental**: `toArray()` no expone `adminPasswordHash`
 
 ## Uso
 
@@ -73,20 +73,19 @@ if ($config->verifyPassword($userInput)) {
 ## Consecuencias
 
 ### Positivas
-- ✅ Autocompletado completo en IDE
-- ✅ Errores de tipo detectados por PHPStan
-- ✅ Validación centralizada con mensajes claros
-- ✅ Tests con 100% de cobertura (`SecurityConfigTest.php`)
-- ✅ Inmutabilidad garantizada por el lenguaje
+- Autocompletado en IDE
+- Errores de tipo detectados por PHPStan
+- Validación centralizada con mensajes claros
+- Inmutabilidad garantizada por el lenguaje
 
 ### Negativas
-- ⚠️ Más archivos (1 clase + 1 test por Value Object)
-- ⚠️ Migración gradual requerida (no rompe código existente)
+- Más archivos (1 clase + 1 test por Value Object)
+- Migración gradual requerida (no rompe código existente)
 
 ## Archivos
 
 - `src/Bootstrap/Config/SecurityConfig.php` - Value Object
-- `tests/Bootstrap/Config/SecurityConfigTest.php` - 22 tests, 100% coverage
+- `tests/Bootstrap/Config/SecurityConfigTest.php` - tests de validación del Value Object
 
 ## Próximos Pasos (Opcional)
 

@@ -1,16 +1,12 @@
 # Kubernetes - Clean Marvel Album
 
-## 📋 Descripción General
+## Descripción general
 
-Este directorio contiene la **configuración completa de Kubernetes** para desplegar Clean Marvel Album en un entorno orquestado. La implementación actual está diseñada para:
-
-- ✅ **Desarrollo y pruebas** en clusters locales (minikube, kind, k3s)
-- ✅ **Demostración académica** (TFG, Máster, portfolio técnico)
-- ✅ **Base sólida** para evolucionar a producción empresarial
+Este directorio contiene manifiestos de Kubernetes y guías asociadas. Está orientado a despliegues de demostración y a documentación técnica (alcance académico).
 
 ---
 
-## 🗂️ Estructura del Directorio
+## Estructura del directorio
 
 ```
 k8s/
@@ -33,7 +29,7 @@ k8s/
 
 ---
 
-## 🚀 Quick Start
+## Quick start
 
 ### Requisitos Previos
 
@@ -42,13 +38,10 @@ k8s/
 - NGINX Ingress Controller instalado
 - Registro de contenedores accesible (Docker Hub, etc.)
 
-### Despliegue en 3 Pasos
+### Despliegue (alto nivel)
 
 ```bash
-# 1. Construir y publicar imágenes
-docker build -t 20luisma/clean-marvel:latest .
-docker push 20luisma/clean-marvel:latest
-
+# 1. Ajustar imágenes y secrets en los manifiestos (según tu registry y tu entorno)
 # 2. Aplicar manifiestos
 kubectl apply -f k8s/
 
@@ -57,65 +50,65 @@ kubectl get pods,svc,ing
 kubectl rollout status deployment/clean-marvel
 ```
 
-📖 **Para detalles completos, ver [DEPLOY_K8S.md](./DEPLOY_K8S.md)**
+Nota: el repositorio incluye Dockerfiles para `openai-service/` y `rag-service/`. Para la aplicación principal no se incluye un Dockerfile en la raíz; `k8s/DEPLOY_K8S.md` incluye un Dockerfile de referencia (no versionado) si se desea construir una imagen.
 
 ---
 
-## 📚 Documentación
+## Documentación
 
-### 1️⃣ [DEPLOY_K8S.md](./DEPLOY_K8S.md)
-**Guía de despliegue funcional** - Todo lo necesario para tener la aplicación corriendo en Kubernetes.
+### 1. `k8s/DEPLOY_K8S.md`
+Guía de despliegue y verificación.
 
-**Contenido:**
-- ✅ Construcción de imágenes Docker
-- ✅ Configuración de ConfigMaps y Secrets
-- ✅ Aplicación de manifiestos
-- ✅ Validación funcional
-- ⚠️ Alcance y limitaciones conocidas
+Contenido:
+- Construcción de imágenes (si se dispone de Dockerfiles)
+- ConfigMaps y Secrets
+- Aplicación de manifiestos
+- Validación funcional
+- Alcance y limitaciones
 
 **Audiencia:** Desarrolladores, evaluadores académicos, despliegues de demo
 
 ---
 
-### 2️⃣ [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)
-**Hoja de ruta para producción** - Mejoras críticas para entornos empresariales.
+### 2. `k8s/PRODUCTION_CONSIDERATIONS.md`
+Consideraciones adicionales para despliegues operativos (documentado como trabajo futuro).
 
-**Contenido:**
-- 🔐 Gestión segura de Secrets (Sealed Secrets, External Secrets, Vault)
-- 🔄 Alta disponibilidad y estrategias de despliegue (RollingUpdate, PDB)
-- 📊 Observabilidad avanzada (Prometheus, Grafana, Jaeger)
-- 🛡️ Seguridad de red (NetworkPolicies, zero-trust)
-- 🔒 TLS automático (cert-manager + Let's Encrypt)
-- 🐳 Gestión de imágenes (versionado, scanning, firma)
-- 📦 Namespaces y aislamiento (Resource Quotas, RBAC)
-- 📈 Autoescalado (HPA, VPA)
-- 💾 Backup y disaster recovery (Velero)
-- ✅ Checklist de pre-producción
+Contenido:
+- Gestión de secrets (Sealed Secrets, External Secrets, Vault)
+- Alta disponibilidad y estrategias de despliegue (RollingUpdate, PDB)
+- Observabilidad (Prometheus, Grafana, Jaeger)
+- Seguridad de red (NetworkPolicies)
+- TLS (cert-manager)
+- Gestión de imágenes (versionado, scanning, firma)
+- Namespaces y aislamiento (Resource Quotas, RBAC)
+- Autoescalado (HPA, VPA)
+- Backup y disaster recovery (Velero)
+- Checklist de pre-producción
 
 **Audiencia:** DevOps engineers, arquitectos de sistemas, despliegues críticos
 
 ---
 
-### 3️⃣ [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
-**Defensa en profundidad para Kubernetes** - Alineado con las 10 capas de seguridad del proyecto.
+### 3. `k8s/SECURITY_HARDENING.md`
+Hardening de seguridad para Kubernetes (documentado como trabajo futuro).
 
-**Contenido:**
-- 🔐 **Capa 1:** Control Plane Security (API Server, etcd, audit)
-- 👤 **Capa 2:** RBAC y gestión de identidades (Service Accounts, mínimo privilegio)
-- 🌐 **Capa 3:** Network Security (NetworkPolicies, Ingress hardening)
-- 🔑 **Capa 4:** Secrets Management (rotación, cifrado en reposo)
-- 🛡️ **Capa 5:** Pod Security Standards (PSA, OPA/Gatekeeper)
-- 🐳 **Capa 6:** Image Security (scanning, firma con Cosign)
-- 🚨 **Capa 7:** Runtime Security (Falco)
-- 📝 **Capa 8:** Audit y Compliance (logs centralizados, kube-bench)
-- 🔒 **Capa 9:** Data Protection (mTLS, encryption at rest)
-- 🆘 **Capa 10:** Incident Response (playbooks, forensics)
+Contenido:
+- Control plane security (API Server, etcd, audit)
+- RBAC y gestión de identidades (service accounts, mínimo privilegio)
+- Network security (NetworkPolicies, hardening de Ingress)
+- Secrets management (rotación, cifrado en reposo)
+- Pod security standards (PSA, OPA/Gatekeeper)
+- Image security (scanning, firma con Cosign)
+- Runtime security (Falco)
+- Audit y compliance (logs centralizados, kube-bench)
+- Data protection (mTLS, encryption at rest)
+- Incident response (playbooks, forensics)
 
 **Audiencia:** Security engineers, compliance officers, auditorías de seguridad
 
 ---
 
-## 🏗️ Arquitectura Desplegada
+## Arquitectura desplegada
 
 ```
                                     ┌─────────────────┐
@@ -148,16 +141,15 @@ kubectl rollout status deployment/clean-marvel
 
 **Componentes:**
 - **clean-marvel**: Aplicación PHP principal (frontend + lógica de negocio)
-- **openai-service**: Microservicio Python (proxy a OpenAI GPT-4)
-- **rag-service**: Microservicio Python (RAG + embeddings para héroes Marvel)
+- **openai-service**: Microservicio PHP (proxy hacia OpenAI)
+- **rag-service**: Microservicio PHP (RAG)
 - **Ingress**: Enrutamiento inteligente (`/` → frontend, `/api/rag/*` → RAG, `/api/openai/*` → OpenAI)
 
 ---
 
-## 🎯 Niveles de Implementación
+## Niveles de implementación (orientativo)
 
-### 📘 **Nivel 1: Demostración y Desarrollo** (ACTUAL)
-**Estado:** ✅ Completamente funcional
+### Nivel 1: demostración y desarrollo (manifiestos incluidos)
 
 **Incluye:**
 - Deployments con 2 réplicas
@@ -168,22 +160,20 @@ kubectl rollout status deployment/clean-marvel
 - Health probes básicas
 - Resource limits
 
-**Suficiente para:**
-- ✅ Demostración en presentación de TFG/Máster
-- ✅ Pruebas en cluster local (minikube, kind)
-- ✅ Validación de arquitectura de microservicios
-- ✅ Portfolio técnico
+Uso típico:
+- Demostración académica
+- Pruebas en cluster local (minikube, kind)
 
-**Limitaciones:**
-- ⚠️ Secrets en plaintext (placeholders)
-- ⚠️ Sin TLS
-- ⚠️ Sin NetworkPolicies
-- ⚠️ Tags `:latest` en imágenes
+Limitaciones:
+- Secrets con placeholders en YAML (no recomendados para entornos operativos)
+- Sin TLS por defecto
+- Sin NetworkPolicies por defecto
+- Uso de tags `:latest` en ejemplos
 
 ---
 
-### 📗 **Nivel 2: Producción Básica**
-**Estado:** 📚 Documentado en [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)
+### Nivel 2: producción básica (documentado)
+Referencia: `k8s/PRODUCTION_CONSIDERATIONS.md`.
 
 **Agregar:**
 - Sealed Secrets o External Secrets
@@ -196,15 +186,12 @@ kubectl rollout status deployment/clean-marvel
 - Prometheus + Grafana
 - Namespaces dedicados
 
-**Suficiente para:**
-- ✅ Staging environments
-- ✅ Producción de tráfico moderado
-- ✅ Startups y proyectos pequeños
+Uso típico: entornos de staging y cargas moderadas (dependiente del contexto).
 
 ---
 
-### 📕 **Nivel 3: Enterprise Production**
-**Estado:** 📚 Documentado en [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
+### Nivel 3: producción avanzada (documentado)
+Referencia: `k8s/SECURITY_HARDENING.md`.
 
 **Agregar:**
 - Todos los elementos de Nivel 2, más:
@@ -220,51 +207,40 @@ kubectl rollout status deployment/clean-marvel
 - Incident Response playbooks
 - Multi-cluster setup
 
-**Suficiente para:**
-- ✅ Producción crítica (fintech, healthcare, etc.)
-- ✅ Compliance (SOC2, ISO27001, PCI-DSS)
-- ✅ Alta disponibilidad (99.9%+ SLA)
+Uso típico: entornos con requisitos avanzados (seguridad, compliance, alta disponibilidad), fuera del alcance del Máster.
 
 ---
 
-## ⚠️ Disclaimer: Alcance Actual
+## Alcance actual
 
-### Lo que SÍ está implementado
-✅ Arquitectura de microservicios funcional  
-✅ Orquestación correcta (Deployments, Services, Ingress)  
-✅ Configuración separada por servicio (ConfigMaps)  
-✅ Health monitoring (probes)  
-✅ Resource management (limits/requests)  
-✅ Etiquetado consistente para observabilidad  
+### Implementado en los manifiestos del repositorio
+- Orquestación: Deployments, Services e Ingress.
+- Configuración por servicio: ConfigMaps y Secrets (placeholders).
+- Probes y resource limits (según manifiestos).
 
-### Lo que está DOCUMENTADO pero no implementado
-📚 Gestión segura de Secrets (Sealed Secrets, External Secrets)  
-📚 TLS automático (cert-manager)  
-📚 NetworkPolicies (segmentación de red)  
-📚 Pod Security Admission  
-📚 Image scanning y firma  
-📚 Runtime security (Falco)  
-📚 Observabilidad avanzada (Prometheus/Grafana/Jaeger)  
-📚 Autoescalado (HPA/VPA)  
+### Documentado como trabajo futuro
+- Gestión segura de secrets (Sealed Secrets, External Secrets).
+- TLS automático (cert-manager).
+- NetworkPolicies.
+- Pod Security Admission.
+- Image scanning y firma.
+- Runtime security (Falco).
+- Observabilidad avanzada (Prometheus/Grafana/Jaeger).
+- Autoescalado (HPA/VPA).
 
-### Por qué esta separación es CORRECTA
-
-1. **Transparencia académica:** Reconocer el alcance real sin sobrevender
-2. **Escalabilidad:** Base sólida que puede evolucionar progresivamente
-3. **Didáctico:** Demuestra conocimiento teórico sin complejidad innecesaria para demos
-4. **Profesionalismo:** Proveer hoja de ruta clara para quien quiera llevarlo a producción
+Esta separación permite distinguir lo que está incluido en el repositorio de lo que queda como extensión futura.
 
 ---
 
-## 🛠️ Casos de Uso
+## Casos de uso (orientativos)
 
-### Caso 1: Presentación de TFG/Máster
+### Caso 1: presentación académica
 1. Leer [DEPLOY_K8S.md](./DEPLOY_K8S.md)
 2. Desplegar en minikube local: `minikube start && kubectl apply -f k8s/`
 3. Demostrar funcionamiento con `kubectl port-forward`
 4. Mencionar [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md) en sección "Trabajo Futuro"
 
-### Caso 2: Despliegue en Staging
+### Caso 2: despliegue en staging
 1. Leer [DEPLOY_K8S.md](./DEPLOY_K8S.md) para entender base
 2. Implementar mejoras de [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md):
    - Sealed Secrets
@@ -272,7 +248,7 @@ kubectl rollout status deployment/clean-marvel
    - NetworkPolicies básicas
 3. Usar namespace dedicado (`clean-marvel-staging`)
 
-### Caso 3: Despliegue en Producción
+### Caso 3: despliegue en producción (fuera de alcance)
 1. Completar **todos** los checks de [PRODUCTION_CONSIDERATIONS.md - Checklist](./PRODUCTION_CONSIDERATIONS.md#checklist-de-pre-producción)
 2. Implementar capas de [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
 3. Ejecutar kube-bench y remediar hallazgos
@@ -281,27 +257,27 @@ kubectl rollout status deployment/clean-marvel
 
 ---
 
-## 📊 Comparación con la Aplicación Principal
+## Comparación con la aplicación principal
 
 | Aspecto | Aplicación PHP | Kubernetes |
 |---------|---------------|------------|
 | **Configuración** | `.env` + archivos PHP | ConfigMaps + Secrets |
-| **Seguridad** | 10 capas implementadas | Documentadas en [SECURITY_HARDENING.md](./SECURITY_HARDENING.md) |
+| **Seguridad** | Ver `docs/security/security.md` | Ver `k8s/SECURITY_HARDENING.md` |
 | **Escalabilidad** | Vertical (más recursos) | Horizontal (más pods) + HPA |
-| **Monitoring** | Sentry + logs propios | Prometheus + Grafana + Falco |
-| **Deployment** | `git pull` + reload | Rolling updates sin downtime |
+| **Monitoring** | Sentry + logs propios | Prometheus + Grafana + Falco (documentado) |
+| **Deployment** | `git pull` + reload | Rolling updates (según configuración) |
 | **Networking** | Reverse proxy (Nginx/Apache) | Ingress + Service Mesh |
 | **Secrets** | `.env` + gitignored | Sealed Secrets / External Secrets |
 
 ---
 
-## 🔗 Enlaces Rápidos
+## Enlaces rápidos
 
-### Documentación de Este Proyecto
-- [📖 Guía de Despliegue](./DEPLOY_K8S.md)
-- [🚀 Mejoras para Producción](./PRODUCTION_CONSIDERATIONS.md)
-- [🔒 Hardening de Seguridad](./SECURITY_HARDENING.md)
-- [📚 README Principal](../README.md)
+### Documentación de este proyecto
+- `k8s/DEPLOY_K8S.md`
+- `k8s/PRODUCTION_CONSIDERATIONS.md`
+- `k8s/SECURITY_HARDENING.md`
+- `README.md` (raíz)
 
 ### Documentación Externa
 - [Kubernetes Official Docs](https://kubernetes.io/docs/)
@@ -320,7 +296,7 @@ kubectl rollout status deployment/clean-marvel
 
 ---
 
-## 🤝 Contribuciones
+## Contribuciones
 
 Si despliegas este proyecto en Kubernetes y encuentras mejoras o problemas:
 
@@ -330,26 +306,14 @@ Si despliegas este proyecto en Kubernetes y encuentras mejoras o problemas:
 
 ---
 
-## 📝 Notas Finales
+## Notas finales
 
-### Para Evaluadores Académicos
-✅ La implementación actual demuestra **conocimiento sólido de Kubernetes**  
-✅ La documentación muestra **madurez técnica** al reconocer limitaciones  
-✅ La hoja de ruta evidencia **capacidad de diseño para escalabilidad**  
-
-### Para Usuarios Profesionales
-⚠️ **NO usar en producción sin implementar mejoras de [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)**  
-✅ La arquitectura base es **sólida y escalable**  
-✅ Toda la documentación necesaria **está provista**  
-
-### Para Futuros Desarrolladores
-📚 Empieza por [DEPLOY_K8S.md](./DEPLOY_K8S.md) para entender la base  
-📚 Lee [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md) para planeaR evolución  
-📚 Consulta [SECURITY_HARDENING.md](./SECURITY_HARDENING.md) para seguridad  
+- Este directorio incluye manifiestos y guías orientadas a despliegues de demostración.
+- Las consideraciones de producción y hardening están documentadas como trabajo futuro.
 
 ---
 
-## 📧 Soporte
+## Soporte
 
 Para preguntas sobre esta implementación de Kubernetes:
 - **Documentación completa:** Ver archivos `.md` en este directorio

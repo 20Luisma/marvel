@@ -1,8 +1,8 @@
-# 🔧 Fix: Token Metrics en Hosting
+# Fix: Token Metrics en Hosting
 
 ## Problema Resuelto
 
-El dashboard `/secret-ai-metrics` funcionaba perfectamente en **local** pero en **hosting** solo mostraba datos de `comic_generator`, sin contabilizar `compare_heroes` ni `marvel_agent`.
+El dashboard `/secret-ai-metrics` funcionaba en **local** pero en **hosting** solo mostraba datos de `comic_generator`, sin contabilizar `compare_heroes` ni `marvel_agent`.
 
 ## Causa Raíz
 
@@ -11,13 +11,13 @@ El servicio `TokenMetricsService` lee dos archivos de logs:
 1. `storage/ai/tokens.log` → logs de `comic_generator` (app principal)
 2. `rag-service/storage/ai/tokens.log` → logs de `compare_heroes` y `marvel_agent`
 
-**En LOCAL**: `rag-service/` es un directorio real → ✅ funciona
+**En local**: `rag-service/` es un directorio real, por lo que una ruta relativa puede funcionar.
 
-**En HOSTING**: `rag-service/` es un **symlink** a `/home/u968396048/rag-service` → ❌ `file_exists()` fallaba
+**En hosting**: se observó un despliegue donde `rag-service/` apunta a una ruta externa (p. ej., mediante symlink), lo que hacía fallar `file_exists()` sobre la ruta relativa.
 
 ## Solución Implementada
 
-Se implementó un sistema **profesional de resolución automática de rutas** con tres niveles de fallback:
+Se implementó un mecanismo de resolución automática de rutas con tres niveles de fallback:
 
 ### 1. Variable de entorno (máxima prioridad)
 ```bash
@@ -42,10 +42,8 @@ Fallback hardcoded para el hosting conocido.
 ### `src/Monitoring/TokenMetricsService.php`
 
 **Cambios principales:**
-- ✅ Nuevo método `resolveRagLogPath()` con lógica inteligente
-- ✅ Documentación actualizada
-- ✅ Compatible con local Y hosting
-- ✅ Extensible vía configuración
+- Nuevo método `resolveRagLogPath()` para resolver rutas con fallback.
+- Configuración opcional vía variable de entorno.
 
 **Método clave:**
 ```php
@@ -75,12 +73,11 @@ private function resolveRagLogPath(): ?string
 
 ## Ventajas de Esta Solución
 
-✅ **No rompe nada**: Compatible 100% con código existente  
-✅ **Funciona en local**: Usa ruta relativa automáticamente  
-✅ **Funciona en hosting**: Detecta y usa ruta absoluta  
-✅ **Configurable**: Permite override vía variable de entorno  
-✅ **Profesional**: Código limpio, documentado y mantenible  
-✅ **Extensible**: Fácil añadir más entornos en el futuro  
+- No cambia contratos públicos: mantiene compatibilidad con el código existente  
+- Funciona en local: usa ruta relativa automáticamente  
+- Funciona en hosting: permite ruta absoluta cuando aplica  
+- Configurable: permite override vía variable de entorno  
+- Extensible: permite añadir más entornos/rutas si fuese necesario  
 
 ## Verificación en Local
 
@@ -93,13 +90,13 @@ $ php -r "require 'vendor/autoload.php'; \
     echo '  - ' . \$f['feature'] . ': ' . \$f['calls'] . ' llamadas' . PHP_EOL; \
   }"
 
-Total calls: 117
-  - comic_generator: 78 llamadas
-  - compare_heroes: 28 llamadas
-  - marvel_agent: 11 llamadas
+Ejemplo de salida (los valores dependen del log disponible en `rag-service/storage/ai/tokens.log`):
+  - comic_generator: …
+  - compare_heroes: …
+  - marvel_agent: …
 ```
 
-✅ **Las 3 features se contabilizan correctamente**
+Resultado esperado: que el panel agregue métricas de todas las features registradas en los logs disponibles.
 
 ## Próximos Pasos
 
@@ -107,30 +104,26 @@ Total calls: 117
 2. **Verificar** que el dashboard muestra las 3 features
 3. **Opcional**: Si el hosting tiene configuración especial, añadir `RAG_LOG_PATH` al `.env` del hosting
 
-## Archivos Modificados
+## Archivos modificados
 
-- ✏️ `src/Monitoring/TokenMetricsService.php` - Lógica mejorada con resolución automática
-- ✏️ `.env.example` - Documentación de nueva variable `RAG_LOG_PATH`
-- 📄 `doc/fixes/TOKEN_METRICS_HOSTING_FIX.md` - Esta documentación
+- `src/Monitoring/TokenMetricsService.php` - Resolución de ruta del log de RAG
+- `.env.example` - Variable `RAG_LOG_PATH`
+- `docs/fixes/TOKEN_METRICS_HOSTING_FIX.md` - Esta documentación
 
-## Testing
+## Testing (escenarios)
 
-### Escenario 1: Entorno Local (actual)
-- ✅ Ruta relativa funciona
-- ✅ Lee 117 llamadas (78 comic + 28 compare + 11 agent)
+### Escenario 1: Entorno local
+- La ruta relativa puede funcionar si `rag-service/` es un directorio real.
 
-### Escenario 2: Hosting (después de deploy)
-- ⏳ Ruta relativa falla (symlink)
-- ✅ Fallback a ruta absoluta funciona
-- ✅ Debería leer todas las features
+### Escenario 2: Hosting
+- La ruta relativa puede no funcionar si `rag-service/` apunta fuera del árbol del proyecto.
+- El fallback a ruta absoluta depende del entorno y permisos de lectura.
 
 ### Escenario 3: Con variable de entorno
-- ✅ `RAG_LOG_PATH` tiene máxima prioridad
-- ✅ Permite configuración custom sin modificar código
+- `RAG_LOG_PATH` tiene prioridad si apunta a un archivo existente.
+- Permite configurar el path sin modificar código.
 
 ---
 
 **Fecha**: 2025-12-03  
-**Desarrollador**: Antigravity AI  
-**Complejidad**: 7/10 (crítico pero sin romper nada)  
-**Estado**: ✅ Implementado y verificado en local
+**Estado**: implementado (según el código del repositorio)

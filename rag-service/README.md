@@ -56,7 +56,7 @@ php -S localhost:8082 -t public
 
 ```json
 {
-  "answer": "Atributo | Valoración\nAtaque | ...\n\n🧩 ...",
+  "answer": "Atributo | Valoración\nAtaque | ...\n\n...",
   "contexts": [
     { "heroId": "id-1", "nombre": "Iron Man", "contenido": "...", "score": 0.91 }
   ],

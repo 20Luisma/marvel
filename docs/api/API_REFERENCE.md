@@ -1,4 +1,4 @@
-# 🌐 Referencia de API — Clean Marvel Album
+# Referencia de API — Clean Marvel Album
 
 ## Core REST (álbumes y héroes)
 | Método | Endpoint | Descripción |
@@ -16,7 +16,8 @@
 | Método | Endpoint | Descripción |
 |---------|-----------|-------------|
 | POST | `/comics/generate` | Genera cómic Marvel con héroes elegidos (usa `openai-service`) |
-| POST | `http://localhost:8082/rag/heroes` (local) | Compara dos héroes con recuperación de contexto (`rag-service`, llamado desde el frontend/configuración) |
+| POST | `/api/rag/heroes` | Proxy en app principal: reenvía comparación a `rag-service` (recomendado para no exponer secretos en frontend) |
+| POST | `http://localhost:8082/rag/heroes` (local) | Endpoint directo del microservicio `rag-service` (solo si llamas al microservicio sin pasar por la app) |
 | POST | `/api/tts-elevenlabs.php` | Narración de texto a audio (ElevenLabs) |
 
 ## Observabilidad y herramientas

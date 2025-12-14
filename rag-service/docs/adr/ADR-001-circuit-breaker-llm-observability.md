@@ -10,7 +10,7 @@ En el estado previo existía un retry con backoff (3 intentos) pero no había un
 
 Requisitos del TFM:
 
-- Incrementar resiliencia “production-ready” sin reescritura ni frameworks externos.
+- Incrementar resiliencia para entornos operativos sin reescritura ni frameworks externos.
 - Mantener contratos públicos y comportamiento funcional cuando el upstream está sano.
 - Añadir observabilidad ligera en JSON, correlable por `trace_id`.
 - Persistencia sin Redis/DB (hosting compartido / despliegues simples).
@@ -147,4 +147,3 @@ Se registran eventos en formato JSON line-delimited, incluyendo siempre `trace_i
 - [ ] Se verifica transición `open -> half_open -> closed` en éxito.
 - [ ] No hay rutas absolutas hardcodeadas ni logs ad-hoc cuando `APP_DEBUG=0`.
 - [ ] El archivo `CB_STATE_FILE` se escribe con `LOCK_EX` y no contiene secretos.
-

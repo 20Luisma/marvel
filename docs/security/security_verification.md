@@ -1,12 +1,12 @@
-# 🔒 Guía de Verificación de Seguridad CSP
+# Guía de verificación de seguridad (CSP)
 
-## 🎯 Objetivo
+## Objetivo
 
 Verificar que la **Content Security Policy con nonces** está funcionando correctamente y bloqueando ataques XSS.
 
 ---
 
-## ✅ Verificación 1: Headers CSP
+## Verificación 1: Headers CSP
 
 ### Comando
 ```bash
@@ -26,15 +26,15 @@ Content-Security-Policy: default-src 'self';
   frame-ancestors 'self'
 ```
 
-### ✅ Verificar
-- ✅ `script-src` tiene `'nonce-XXXXX'` (nonce único)
-- ✅ `script-src` NO tiene `'unsafe-inline'`
-- ✅ `style-src` tiene `'unsafe-inline'` (Tailwind CDN)
-- ✅ Nonce cambia en cada request (ejecuta curl varias veces)
+### Comprobaciones
+- `script-src` incluye un valor `'nonce-...'` (nonce por respuesta).
+- `script-src` no incluye `'unsafe-inline'`.
+- `style-src` incluye `'unsafe-inline'` (limitación conocida por uso de Tailwind CDN).
+- El nonce cambia entre respuestas (repite `curl` varias veces).
 
 ---
 
-## ✅ Verificación 2: Nonce Único por Request
+## Verificación 2: Nonce único por respuesta
 
 ### Comandos
 ```bash
@@ -55,14 +55,14 @@ nonce-A1b2C3d4E5f6G7h8I9j0K1==
 nonce-Z9y8X7w6V5u4T3s2R1q0P9==
 ```
 
-### ✅ Verificar
-- ✅ Cada request genera un nonce DIFERENTE
-- ✅ Nonces son base64 válidos (caracteres A-Z, a-z, 0-9, +, /, =)
-- ✅ Longitud aproximada de 24 caracteres (128 bits)
+### Comprobaciones
+- Cada respuesta genera un nonce distinto.
+- El nonce es base64 válido (A-Z, a-z, 0-9, `+`, `/`, `=`).
+- La longitud depende de la implementación; el objetivo es que el valor sea suficientemente aleatorio.
 
 ---
 
-## ✅ Verificación 3: Bloqueo de Scripts Inline
+## Verificación 3: Bloqueo de scripts inline
 
 ### Prueba en Navegador
 
@@ -77,22 +77,22 @@ script.innerHTML = "alert('XSS Attack!')";
 document.body.appendChild(script);
 ```
 
-### Resultado Esperado
+### Resultado esperado
 ```
-❌ Refused to execute inline script because it violates the following 
+Refused to execute inline script because it violates the following
    Content Security Policy directive: "script-src 'self' 'nonce-XXX...'". 
    Either the 'unsafe-inline' keyword, a hash ('sha256-...'), 
    or a nonce ('nonce-...') is required to enable inline execution.
 ```
 
-### ✅ Verificar
-- ✅ El script NO se ejecuta
-- ✅ Aparece error CSP en consola
-- ✅ NO aparece alert('XSS Attack!')
+### Comprobaciones
+- El script no se ejecuta.
+- Aparece un error CSP en consola.
+- No aparece `alert('XSS Attack!')`.
 
 ---
 
-## ✅ Verificación 4: Scripts con Nonce Válido
+## Verificación 4: Scripts con nonce válido
 
 ### Prueba en Navegador
 
@@ -100,21 +100,21 @@ document.body.appendChild(script);
 2. **Busca** `<script` tags
 3. **Verifica** que tienen el atributo `nonce`
 
-### Resultado Esperado
+### Resultado esperado
 ```html
-<!-- ✅ PERMITIDO - tiene nonce válido -->
+<!-- Permitido: tiene nonce válido -->
 <script src="https://cdn.tailwindcss.com" nonce="Xy9kL2mN4pQ..."></script>
 <script src="./assets/js/intro.js" defer nonce="Xy9kL2mN4pQ..."></script>
 ```
 
-### ✅ Verificar
-- ✅ Scripts externos tienen atributo `nonce="..."`
-- ✅ El nonce coincide con el del header CSP
-- ✅ Scripts se ejecutan correctamente (página funciona)
+### Comprobaciones
+- Los scripts externos tienen atributo `nonce="..."`.
+- El nonce coincide con el del header CSP.
+- Los scripts se ejecutan (la página carga con normalidad).
 
 ---
 
-## ✅ Verificación 5: Inyección XSS en Formularios
+## Verificación 5: Inyección XSS en formularios
 
 ### Prueba Manual
 
@@ -129,10 +129,10 @@ Si tu aplicación tiene formularios (login, crear álbum, etc.):
 
 2. **Envía el formulario**
 
-### Resultado Esperado
-- ✅ Input es sanitizado (tags HTML removidos)
-- ✅ Si algún script pasa sanitización, CSP lo bloquea
-- ✅ NO aparece ningún alert
+### Resultado esperado (observación)
+- La entrada se sanitiza (p. ej., se eliminan tags HTML).
+- Si algún script llegase a renderizarse, CSP lo bloquearía.
+- No aparece ningún `alert`.
 
 ### Verificar con curl
 ```bash
@@ -144,7 +144,7 @@ curl -X POST http://localhost:8080/api/albums \
 
 ---
 
-## ✅ Verificación 6: CSP Evaluator (Google)
+## Verificación 6: CSP Evaluator (Google) (opcional)
 
 ### Pasos
 
@@ -157,51 +157,48 @@ curl -X POST http://localhost:8080/api/albums \
 
 3. **Pega el header** y haz clic en "Check CSP"
 
-### Resultado Esperado
+### Resultado esperado
 ```
-✅ No high severity issues found
-⚠️ 'unsafe-inline' in style-src (expected - Tailwind CDN)
-✅ script-src uses nonces (strict)
-✅ No 'unsafe-eval'
-✅ default-src is restrictive
+No high severity issues found
+'unsafe-inline' in style-src (Tailwind CDN)
+script-src uses nonces (strict)
+No 'unsafe-eval'
+default-src is restrictive
 ```
 
-### ✅ Verificar
-- ✅ Score alto (8-10/10)
-- ✅ Solo warnings en `style-src` (aceptable)
-- ✅ Sin errores críticos en `script-src`
+### Comprobaciones
+- No aparecen avisos de alta severidad.
+- Si hay avisos en `style-src` por `'unsafe-inline'`, queda documentado el motivo (Tailwind CDN).
+- `script-src` usa nonces y no depende de `'unsafe-inline'`.
 
 ---
 
-## ✅ Verificación 7: Tests Automatizados
+## Verificación 7: Tests automatizados
 
-### Ejecutar Suite de Tests
+### Ejecutar suite de tests
 ```bash
-cd /Users/admin/Desktop/Proyecto\ Marvel\ local\ y\ Hosting/clean-marvel
 XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml
 ```
 
-### Resultado Esperado
+### Resultado esperado
 ```
-Tests: 191, Assertions: 593 - ALL PASSING ✅
+PHPUnit finaliza sin fallos (puede haber tests marcados como `skipped` según condiciones).
 
 Csp Strict (Tests\Security\CspStrict)
- ✔ Csp with nonce does not contain unsafe inline
- ✔ Csp without nonce falls back to unsafe inline
- ✔ Nonce generator produces valid base64
- ✔ Nonce generator produces unique values
- ✔ Csp nonce appears in both script and style directives
- ✔ Csp maintains allowed cdn sources
+ - Csp with nonce does not contain unsafe inline
+ - Csp without nonce falls back to unsafe inline
+ - Nonce generator produces valid base64
+ - Nonce generator produces unique values
+ - Csp maintains allowed cdn sources
 ```
 
-### ✅ Verificar
-- ✅ 191/191 tests pasan
-- ✅ 6 tests específicos de CSP pasan
-- ✅ Sin errores ni warnings
+### Comprobaciones
+- Finaliza sin `failures` ni `errors` (puede haber `skipped`).
+- Los tests de CSP (`tests/Security/CspStrictTest.php`) pasan.
 
 ---
 
-## ✅ Verificación 8: Nonce en HTML Renderizado
+## Verificación 8: Nonce en HTML renderizado
 
 ### Comando
 ```bash
@@ -215,14 +212,14 @@ nonce="Xy9kL2mN4pQrS8tU3vW5xY=="
 nonce="Xy9kL2mN4pQrS8tU3vW5xY=="
 ```
 
-### ✅ Verificar
-- ✅ Todos los nonces en el HTML son IGUALES (mismo request)
-- ✅ Nonce del HTML coincide con nonce del header CSP
-- ✅ Nonce está correctamente escapado (sin caracteres raros)
+### Comprobaciones
+- En una misma respuesta HTML, los nonces coinciden entre scripts.
+- El nonce del HTML coincide con el nonce del header CSP.
+- El nonce está correctamente escapado.
 
 ---
 
-## ✅ Verificación 9: Protección contra Event Handlers
+## Verificación 9: Protección contra event handlers
 
 ### Prueba en Navegador
 
@@ -237,51 +234,26 @@ document.body.appendChild(div);
 // Ahora haz clic en el botón
 ```
 
-### Resultado Esperado
+### Resultado esperado
 ```
-❌ Refused to execute inline event handler because it violates the following 
+Refused to execute inline event handler because it violates the following 
    Content Security Policy directive: "script-src 'self' 'nonce-XXX...'".
 ```
 
-### ✅ Verificar
-- ✅ El botón aparece pero NO ejecuta el onclick
-- ✅ Error CSP en consola
-- ✅ NO aparece alert
+### Comprobaciones
+- El botón aparece pero no ejecuta el `onclick`.
+- Aparece un error CSP en consola.
+- No aparece `alert`.
 
 ---
 
-## ✅ Verificación 10: Backward Compatibility
+## Verificación 10: Compatibilidad sin nonce (vía tests)
 
-### Prueba sin Nonce
-
-Temporalmente, comenta la generación de nonce en `public/index.php`:
-
-```php
-// TEMPORAL - solo para testing
-// $cspNonce = \App\Security\Http\CspNonceGenerator::generate();
-// $_SERVER['CSP_NONCE'] = $cspNonce;
-// SecurityHeaders::apply($cspNonce);
-SecurityHeaders::apply(null); // Sin nonce
-```
-
-### Verificar Header
-```bash
-curl -I http://localhost:8080/ | grep "script-src"
-```
-
-### Resultado Esperado
-```
-script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com ...
-```
-
-### ✅ Verificar
-- ✅ Fallback a `'unsafe-inline'` funciona
-- ✅ Página sigue funcionando
-- ✅ **IMPORTANTE**: Restaura el código después de la prueba
+La compatibilidad de la política cuando no se genera nonce se verifica con tests automatizados (casos "con nonce" y "sin nonce") en `tests/Security/CspStrictTest.php`.
 
 ---
 
-## 📊 Checklist Final de Verificación
+## Checklist final de verificación
 
 | Verificación | Estado | Notas |
 |--------------|--------|-------|
@@ -290,44 +262,41 @@ script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com ...
 | Scripts inline bloqueados | ☐ | Consola navegador |
 | Scripts con nonce permitidos | ☐ | Inspeccionar código |
 | XSS en formularios bloqueado | ☐ | Prueba manual |
-| CSP Evaluator score alto | ☐ | Google CSP Evaluator |
-| 191 tests pasando | ☐ | PHPUnit |
+| CSP Evaluator sin avisos de alta severidad | ☐ | Google CSP Evaluator |
+| Suite de tests sin fallos | ☐ | `vendor/bin/phpunit` |
 | Nonce en HTML correcto | ☐ | curl + grep |
 | Event handlers bloqueados | ☐ | Consola navegador |
-| Backward compatibility OK | ☐ | Test sin nonce |
+| Compatibilidad sin nonce (tests) | ☐ | `tests/Security/CspStrictTest.php` |
 
 ---
 
-## 🎓 Para tu Máster
+## Evidencias sugeridas (memoria)
 
-### Evidencias a Incluir
+### Evidencias a incluir
 
-1. **Screenshot de CSP Evaluator** mostrando score 8-10/10
-2. **Screenshot de consola** mostrando script bloqueado
-3. **Output de tests** mostrando 191/191 passing
+1. **Captura de CSP Evaluator** (sin avisos de alta severidad)
+2. **Captura de consola** mostrando script bloqueado
+3. **Output de tests** mostrando la suite sin fallos
 4. **Curl output** mostrando headers CSP con nonces
 5. **Código fuente** de `SecurityHeaders.php` con comentarios
 
-### Argumentos de Defensa
+### Puntos de discusión
 
-1. **"¿Por qué unsafe-inline en style-src?"**
+1. **Por qué `unsafe-inline` en `style-src`**
    - Tailwind CDN inyecta estilos dinámicamente
-   - Estilos NO son vector de XSS (solo scripts)
-   - Protección crítica está en `script-src` con nonces
+   - El control principal contra XSS está en `script-src` con nonces
 
-2. **"¿Cómo garantizas que funciona?"**
-   - 6 tests automatizados específicos de CSP
+2. **Evidencia de funcionamiento**
+   - Tests automatizados específicos de CSP
    - Verificación con Google CSP Evaluator
    - Pruebas manuales de inyección XSS
 
-3. **"¿Qué pasa si falla el nonce?"**
-   - Backward compatible: fallback a `unsafe-inline`
-   - Tests verifican ambos escenarios
-   - Logs de seguridad registran intentos
+3. **Qué ocurre si no hay nonce**
+   - El comportamiento "sin nonce" queda cubierto por tests (ver `tests/Security/CspStrictTest.php`)
 
 ---
 
-## 🚀 Comandos Rápidos
+## Comandos rápidos
 
 ```bash
 # Verificación completa en un comando
@@ -342,14 +311,10 @@ vendor/bin/phpunit --filter CspStrict --testdox
 
 ---
 
-## ✅ Conclusión
+## Cierre
 
-Si **TODAS** las verificaciones pasan:
+Si las verificaciones anteriores pasan, queda evidencia práctica de que:
 
-🏆 **Tu sistema de seguridad CSP funciona al 100%**
-
-- ✅ Protección XSS completa
-- ✅ Nonces criptográficamente seguros
-- ✅ Tests automatizados
-- ✅ Backward compatible
-- ✅ Listo para producción
+- `Content-Security-Policy` se emite con nonces en `script-src`
+- scripts inline sin nonce se bloquean por CSP
+- los scripts previstos se ejecutan cuando se sirve el nonce correcto

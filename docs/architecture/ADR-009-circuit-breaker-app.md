@@ -87,16 +87,16 @@ $result = $circuitBreaker->execute(
 ## Consecuencias
 
 ### Positivas
-- ✅ Protección contra fallos en cascada
-- ✅ Mejor experiencia de usuario (fail-fast en vez de timeout largo)
-- ✅ Reducción de carga en servicios que ya están fallando
-- ✅ Métricas implícitas de estado del servicio (archivo JSON)
-- ✅ Tests completos (`tests/Shared/Infrastructure/Resilience/CircuitBreakerTest.php`)
+- Protección contra fallos en cascada
+- Mejor experiencia de usuario (fail-fast en vez de timeout largo)
+- Reducción de carga en servicios que ya están fallando
+- Métricas implícitas de estado del servicio (archivo JSON)
+- Tests (`tests/Shared/Infrastructure/Resilience/CircuitBreakerTest.php`)
 
 ### Negativas
-- ⚠️ Estado persistido en archivos JSON (no distribuido)
-- ⚠️ Para multi-instancia, considerar Redis u otro store distribuido
-- ⚠️ Añade complejidad a las llamadas HTTP
+- Estado persistido en archivos JSON (no distribuido)
+- Para multi-instancia, considerar Redis u otro store distribuido
+- Añade complejidad a las llamadas HTTP
 
 ## Archivos creados
 

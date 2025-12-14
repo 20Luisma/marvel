@@ -1,21 +1,21 @@
 # Guía Completa de Testing — Clean Marvel Album
 
-## 📊 Resumen Ejecutivo
+## Resumen ejecutivo
 
-Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre desde tests unitarios hasta E2E, pasando por seguridad, accesibilidad y rendimiento. El proyecto cuenta con **646 tests automatizados** y **1,411 assertions** organizados en múltiples categorías.
+Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre tests unitarios, integración, seguridad, E2E, accesibilidad y rendimiento.
 
 ### Cobertura Actual
 
-- **Tests PHPUnit**: 646 tests (1,411 assertions)
-- **Tests E2E (Playwright)**: 10 tests (7 archivos)
-- **Cobertura de código**: 90.28% ✅ (objetivo: 80%+)
-- **Análisis estático**: PHPStan nivel 6
+- **Tests PHPUnit**: ver ejecución de `vendor/bin/phpunit`
+- **Tests E2E (Playwright)**: ver `tests/e2e/`
+- **Cobertura de código**: ver `COVERAGE.md` y `coverage.xml` (Clover)
+- **Análisis estático**: PHPStan (config en `phpstan.neon`)
 - **Accesibilidad**: Pa11y WCAG 2.1 AA
 - **Performance**: Lighthouse CI
 
 ---
 
-## 🧪 Tipos de Tests Implementados
+## Tipos de tests implementados
 
 ### 1. Tests Unitarios de Dominio
 
@@ -98,9 +98,9 @@ tests/
 ├── Shared/Infrastructure/
 │   ├── Bus/EventBusTest.php
 │   └── Resilience/
-│       └── CircuitBreakerTest.php    # NEW: 12 tests de Circuit Breaker
+│       └── CircuitBreakerTest.php
 └── Bootstrap/Config/
-    └── SecurityConfigTest.php         # NEW: 22 tests de Value Object
+    └── SecurityConfigTest.php
 ```
 
 **Casos cubiertos**:
@@ -119,7 +119,7 @@ tests/
 
 **Propósito**: Validar la capa HTTP sin servidor real.
 
-**Ejemplos** (21 archivos):
+**Ejemplos**:
 ```
 tests/Controllers/
 ├── AlbumControllerTest.php
@@ -186,15 +186,15 @@ tests/Security/
 ```
 
 **Controles testeados**:
-- ✅ Cabeceras de seguridad (X-Frame-Options, CSP, COOP, COEP, etc.)
-- ✅ CSRF en POST críticos
-- ✅ Rate limiting y login throttling
-- ✅ Sesiones con TTL y lifetime
-- ✅ Anti-replay de sesiones
-- ✅ Firewall de payloads maliciosos
-- ✅ Sanitización de logs y entrada
-- ✅ Protección de rutas admin
-- ✅ Validación de configuración de seguridad
+- Cabeceras de seguridad (X-Frame-Options, CSP, COOP, COEP, etc.)
+- CSRF en POST críticos
+- Rate limiting y login throttling
+- Sesiones con TTL y lifetime
+- Anti-replay de sesiones
+- Firewall de payloads maliciosos
+- Sanitización de logs y entrada
+- Protección de rutas admin
+- Validación de configuración de seguridad
 
 **Ejecutar solo tests de seguridad**:
 ```bash
@@ -242,13 +242,13 @@ tests/Contracts/
 └── OpenApiSchemaValidationTest.php   # Validación del schema OpenAPI
 ```
 
-#### **OpenAPI Schema Validation** (16 assertions)
+#### OpenAPI Schema Validation
 
 Valida que `docs/api/openapi.yaml` contenga:
-- ✅ Endpoints requeridos (`/albums`, `/heroes`, `/rag/heroes`, `/comics/generate`)
-- ✅ Schemas de componentes (`AlbumSummary`, `HeroSummary`, `CreateAlbumRequest`, etc.)
-- ✅ Campos obligatorios en cada schema
-- ✅ Estructura de request/response para cada endpoint
+- Endpoints requeridos (`/albums`, `/heroes`, `/rag/heroes`, `/comics/generate`)
+- Schemas de componentes (`AlbumSummary`, `HeroSummary`, `CreateAlbumRequest`, etc.)
+- Campos obligatorios en cada schema
+- Estructura de request/response para cada endpoint
 
 **Ejecutar tests de schema**:
 ```bash
@@ -266,35 +266,35 @@ RUN_CONTRACT_TESTS=1 vendor/bin/phpunit tests/Contracts/RagServiceContractTest.p
 
 ---
 
-### 7. Tests E2E con Playwright 🎭
+### 7. Tests E2E con Playwright
 
 **Ubicación**: `tests/e2e/`
 
 **Propósito**: Validar flujos completos en navegador real.
 
-**Tests implementados** (10 tests en 7 archivos):
+**Tests implementados**:
 ```
 tests/e2e/
-├── home.spec.js         # 2 tests
-├── albums.spec.js       # 1 test
-├── heroes.spec.js       # 1 test
-├── comics.spec.js       # 1 test
-├── movies.spec.js       # 1 test
-├── health.spec.js       # 2 tests (smoke + /health opcional)
-└── auth-render.spec.js  # 2 tests (render + submit vacío)
+├── home.spec.js
+├── albums.spec.js
+├── heroes.spec.js
+├── comics.spec.js
+├── movies.spec.js
+├── health.spec.js
+└── auth-render.spec.js
 ```
 
 #### **Detalle de cada test**:
 
-##### **home.spec.js** (2 tests)
+##### home.spec.js
 ```javascript
-✅ Test 1: "La home carga correctamente"
+Test 1: "La home carga correctamente"
    - Verifica status HTTP 200
    - Valida título "Clean Marvel Album"
    - Comprueba frase icónica visible
    - Verifica imagen principal
 
-✅ Test 2: "El menú principal muestra enlaces clave"
+Test 2: "El menú principal muestra enlaces clave"
    - Navega a /readme
    - Valida heading "Clean Architecture with Marvel"
    - Verifica enlaces del menú (Inicio, Crear Cómic, Movies, Secret Room)
@@ -302,7 +302,7 @@ tests/e2e/
 
 ##### **albums.spec.js**
 ```javascript
-✅ Test: "La página de álbumes se renderiza correctamente"
+Test: "La página de álbumes se renderiza correctamente"
    - Navega a /albums
    - Valida headings principales
    - Verifica presencia de cards de álbumes
@@ -311,7 +311,7 @@ tests/e2e/
 
 ##### **heroes.spec.js**
 ```javascript
-✅ Test: "La página de héroes lista contenido"
+Test: "La página de héroes lista contenido"
    - Navega a /heroes con parámetros (albumId, albumName)
    - Valida headings de galería
    - Verifica cards de héroes
@@ -320,7 +320,7 @@ tests/e2e/
 
 ##### **comics.spec.js**
 ```javascript
-✅ Test: "La página de cómics muestra el formulario de generación"
+Test: "La página de cómics muestra el formulario de generación"
    - Navega a /comic
    - Valida heading "Crear tu cómic"
    - Verifica sección "Héroes disponibles"
@@ -329,7 +329,7 @@ tests/e2e/
 
 ##### **movies.spec.js**
 ```javascript
-✅ Test: "La página de películas carga correctamente"
+Test: "La página de películas carga correctamente"
    - Navega a /movies
    - Valida heading "Marvel Movies"
    - Verifica buscador de películas
@@ -338,21 +338,21 @@ tests/e2e/
 
 ##### **health.spec.js**
 ```javascript
-✅ Test: "Landing (/) responde 200 y renderiza elementos base"
+Test: "Landing (/) responde 200 y renderiza elementos base"
    - Smoke de / (status 200, title y main visible)
 
-⚠️ Test: "Si existe `/health`, responde 200 y devuelve JSON..."
+Test (condicional): "Si existe `/health`, responde 200 y devuelve JSON..."
    - Se marca como `skip` automáticamente si `/health` devuelve 404 en la app principal
    - Si el monolito añade `/health` en el futuro, el test se activará sin cambios
 ```
 
 ##### **auth-render.spec.js**
 ```javascript
-✅ Test: "La página de login renderiza el formulario"
+Test: "La página de login renderiza el formulario"
    - Navega a /login
    - Verifica inputs (Correo/Contraseña) y botón submit
 
-✅ Test: "Enviar login vacío no redirige y marca inputs inválidos"
+Test: "Enviar login vacío no redirige y marca inputs inválidos"
    - Envía formulario sin datos
    - Verifica que la URL sigue siendo /login y que hay inputs invalid
 ```
@@ -415,7 +415,7 @@ npm run test:e2e:headed
 
 **Ubicación**: Pipeline CI (`.github/workflows/ci.yml`)
 
-**Propósito**: Garantizar WCAG 2.1 AA compliance.
+**Propósito**: Evaluar el cumplimiento de WCAG 2.1 AA mediante auditoría automatizada.
 
 **Rutas testeadas**:
 - `/` (Home)
@@ -451,7 +451,7 @@ pa11y --reporter json http://localhost:8080/ > pa11y-report.json
 
 **Métricas analizadas**:
 - **Performance**: FCP, LCP, TTI, TBT, CLS
-- **Accesibilidad**: Score 0-100
+- **Accesibilidad**: puntuación (0-100)
 - **SEO**: Meta tags, títulos, estructura
 - **Best Practices**: HTTPS, console errors, etc.
 
@@ -486,7 +486,7 @@ Valida que:
 
 ---
 
-## 🚀 Comandos de Testing
+## Comandos de testing
 
 ### Comandos Principales
 
@@ -494,8 +494,8 @@ Valida que:
 # TODOS los tests PHPUnit
 vendor/bin/phpunit --colors=always
 
-# Tests con cobertura
-composer test:cov
+	# Tests con cobertura
+	composer test:coverage
 
 # Análisis estático (PHPStan)
 vendor/bin/phpstan analyse --memory-limit=512M
@@ -538,7 +538,7 @@ vendor/bin/phpunit tests/*/Infrastructure
 
 ---
 
-## 📁 Organización de Tests
+## Organización de tests
 
 ### Estructura Completa
 
@@ -546,25 +546,25 @@ vendor/bin/phpunit tests/*/Infrastructure
 tests/
 ├── bootstrap.php                  # Setup PHPUnit
 │
-├── Activities/                    # Tests del módulo Actividades (5 archivos)
-├── AI/                           # Tests de IA (2 archivos)
-├── Albums/                       # Tests de Álbumes (9 archivos)
-├── Application/                  # Tests de aplicación (8 archivos)
-├── Config/                       # Tests de configuración (2 archivos)
-├── Controllers/                  # Tests HTTP (21 archivos)
-├── Dev/                          # Tests de DevTools (1 archivo)
-├── Heatmap/                      # Tests de Heatmap (4 archivos)
-├── Heroes/                       # Tests de Héroes (10 archivos)
-├── Monitoring/                   # Tests de observabilidad (2 archivos)
-├── Notifications/                # Tests de notificaciones (6 archivos)
-├── Security/                     # Tests de seguridad (22 archivos)
-├── Services/                     # Tests de servicios (3 archivos)
-├── Shared/                       # Tests compartidos (11 archivos)
-├── Smoke/                        # Smoke tests (1 archivo)
-├── Support/                      # Tests de soporte (3 archivos)
-├── Unit/                         # Tests unitarios genéricos (2 archivos)
+├── Activities/
+├── AI/
+├── Albums/
+├── Application/
+├── Config/
+├── Controllers/
+├── Dev/
+├── Heatmap/
+├── Heroes/
+├── Monitoring/
+├── Notifications/
+├── Security/
+├── Services/
+├── Shared/
+├── Smoke/
+├── Support/
+├── Unit/
 │
-├── e2e/                          # Tests E2E Playwright (5 archivos)
+├── e2e/
 │   ├── home.spec.js
 │   ├── albums.spec.js
 │   ├── heroes.spec.js
@@ -575,105 +575,62 @@ tests/
 └── Fakes/                        # Fakes para tests (3 archivos)
 ```
 
-### Total por Tipo
+### Verificaciones incluidas
 
-| Tipo de Test | Cantidad | Herramienta |
-|-------------|----------|-------------|
-| Tests PHPUnit | 117+ archivos | PHPUnit 9+ |
-| Tests E2E | 5 archivos (6 tests) | Playwright |
-| Análisis Estático | 1 config | PHPStan nivel 6 |
-| Accesibilidad | Pipeline CI | Pa11y |
-| Performance | Pipeline CI | Lighthouse |
-| **TOTAL** | **120+ archivos de test** | - |
+| Tipo de verificación | Herramienta | Evidencia |
+|----------------------|-------------|----------|
+| Tests backend | PHPUnit | `tests/` |
+| Tests E2E | Playwright | `tests/e2e/` |
+| Análisis estático | PHPStan | `phpstan.neon` |
+| Accesibilidad | Pa11y (CI) | workflows de CI |
+| Performance | Lighthouse (CI) | workflows de CI |
 
 ---
 
-## 🔧 Configuración de Testing
+## Configuración de testing
 
 ### phpunit.xml.dist
-
-```xml
-<?xml version="1.0"?>
-<phpunit bootstrap="tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="false"
-         convertWarningsToExceptions="false">
-    <testsuites>
-        <testsuite name="all">
-            <directory>tests</directory>
-            <exclude>tests/e2e</exclude>
-        </testsuite>
-    </testsuites>
-    <coverage>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </coverage>
-</phpunit>
-```
+Ver el archivo `phpunit.xml.dist`.
 
 ### phpstan.neon
 
-```neon
-parameters:
-    level: 6
-    paths:
-        - src
-    excludePaths:
-        - src/Dev
-```
+Ver el archivo `phpstan.neon`.
 
 ### playwright.config.cjs
 
-```javascript
-const { defineConfig } = require('@playwright/test');
-
-module.exports = defineConfig({
-  testDir: 'tests/e2e',
-  reporter: 'line',
-  use: {
-    baseURL: 'http://localhost:8080',
-    browserName: 'chromium',
-    headless: false,
-    trace: 'on',
-    video: 'on',
-    screenshot: 'on',
-  },
-});
-```
+Ver el archivo `playwright.config.cjs`.
 
 ---
 
-## 🎯 Estrategia de Testing por Nivel
+## Estrategia de testing por nivel
 
 ### Nivel 1: Proyecto Simple
 ```
-✅ Tests unitarios de dominio
-✅ PHPStan básico
-✅ CI con GitHub Actions básico
+- Tests unitarios de dominio
+- PHPStan básico
+- CI con GitHub Actions básico
 ```
 
 ### Nivel 2: Demo Técnica
 ```
-✅ Todo lo anterior +
-✅ Tests de casos de uso
-✅ Tests de controladores
-✅ Cobertura con SonarCloud
+- Todo lo anterior, más:
+  - Tests de casos de uso
+  - Tests de controladores
+  - Cobertura con SonarCloud
 ```
 
 ### Nivel 3: Marvel (Completo)
 ```
-✅ Todo lo anterior +
-✅ 22 tests de seguridad
-✅ Tests E2E con Playwright
-✅ Pa11y + Lighthouse
-✅ Tests de microservicios
+- Todo lo anterior, más:
+  - Tests de seguridad (suite `tests/Security/`)
+  - Tests E2E con Playwright (`tests/e2e/`)
+  - Pa11y + Lighthouse
+  - Tests de microservicios
 ```
 
 ---
 
-## 💡 Mejores Prácticas
+## Mejores prácticas
 
 ### 1. Aislamiento
 - Cada test debe ser **independiente**
@@ -682,10 +639,10 @@ module.exports = defineConfig({
 
 ### 2. Naming
 ```php
-// ✅ Bien
+// Ejemplo recomendado
 public function test_create_album_with_valid_name()
 
-// ❌ Mal
+// Ejemplo a evitar
 public function testAlbum()
 ```
 
@@ -723,7 +680,7 @@ class InMemoryAlbumRepository implements AlbumRepository
 
 ---
 
-## 🐛 Debugging Tests
+## Debugging tests
 
 ### Ver logs de tests
 ```bash
@@ -734,7 +691,7 @@ vendor/bin/phpunit --testdox
 vendor/bin/phpunit --filter test_create_album_with_valid_name
 
 # Ver coverage HTML
-composer test:cov
+composer test:coverage
 open build/coverage/index.html
 ```
 
@@ -749,21 +706,21 @@ npx playwright show-trace trace.zip
 
 ---
 
-## 📈 Métricas de Calidad
+## Métricas de calidad
 
 ### Objetivos del Proyecto
 
 | Métrica | Objetivo | Actual |
 |---------|----------|--------|
-| Cobertura | 80%+ | 90.28% ✅ |
-| PHPStan | Nivel 6 | Nivel 6 ✅ |
-| Tests E2E | 100% crítico | 100% ✅ |
-| Pa11y | 0 errores | 0 errores ✅ |
-| Lighthouse | 90+ | Variable |
+| Cobertura | Umbral en CI | ver `COVERAGE.md` / `coverage.xml` |
+| PHPStan | Configurado | ver `phpstan.neon` |
+| Tests E2E | Flujos críticos | ver `tests/e2e/` |
+| Pa11y | Auditoría WCAG | ver logs/artefactos de CI |
+| Lighthouse | Auditoría | ver logs/artefactos de CI |
 
 ---
 
-## 🔄 Workflow Recomendado
+## Workflow recomendado
 
 ### Para nuevas features
 
@@ -785,11 +742,11 @@ npx playwright show-trace trace.zip
    vendor/bin/phpstan analyse
    ```
 
-5. **Commit solo si todo pasa** ✅
+5. Commit tras ejecutar las comprobaciones principales
 
 ---
 
-## 📚 Recursos Adicionales
+## Recursos adicionales
 
 - **PHPUnit**: https://phpunit.de/
 - **PHPStan**: https://phpstan.org/
@@ -799,16 +756,14 @@ npx playwright show-trace trace.zip
 
 ---
 
-## 🎓 Conclusión
+## Cierre
 
-Clean Marvel Album implementa una **estrategia de testing integral** que valida:
+Clean Marvel Album incluye una estrategia de testing que valida:
 
-✅ **Lógica de negocio** (tests unitarios)  
-✅ **Casos de uso** (tests de aplicación)  
-✅ **Integraciones** (tests de infraestructura)  
-✅ **Seguridad** (22 tests dedicados)  
-✅ **Experiencia de usuario** (E2E con Playwright)  
-✅ **Accesibilidad** (Pa11y WCAG 2.1 AA)  
-✅ **Performance** (Lighthouse CI)  
-
-**Total: 646 tests automatizados con 1,411 assertions** que garantizan la calidad y estabilidad del proyecto.
+- **Lógica de negocio** (tests unitarios)  
+- **Casos de uso** (tests de aplicación)  
+- **Integraciones** (tests de infraestructura)  
+- **Seguridad** (tests en `tests/Security/`)  
+- **Experiencia de usuario** (E2E con Playwright)  
+- **Accesibilidad** (Pa11y WCAG 2.1 AA)  
+- **Performance** (Lighthouse CI)  

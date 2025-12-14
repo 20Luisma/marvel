@@ -1,7 +1,7 @@
-# docs/REQUIREMENTS.md
+# Requisitos y operación (Clean Marvel Album)
 ## 1. Objetivo del documento
 Este documento describe **los requisitos técnicos, de entorno y de ejecución** del proyecto **Clean Marvel Album** junto con los microservicios **`openai-service`** y **`rag-service`**.  
-Está pensado para desarrolladores que clonen el repositorio y quieran **levantarlo en local** siguiendo las mismas convenciones que usa Martín (Creawebes).
+Está pensado para desarrolladores que clonen el repositorio y quieran **levantarlo en local** siguiendo las convenciones del repositorio.
 
 ---
 
@@ -21,11 +21,10 @@ Está pensado para desarrolladores que clonen el repositorio y quieran **levanta
   - PHP Debug (requiere Xdebug activo si querés depurar paso a paso)
   - GitLens
   - Markdown All in One
-  - *opcional:* CodeGPT / Gemini / Alfred para refactors
 - **Configuración lista para usar:** el repo incluye `.vscode/` con tasks y launchers preconfigurados para instalar dependencias y levantar ambos servidores localmente sin pasos extra.
 - **Servicios opcionales:** WAVE API (`WAVE_API_KEY`), PageSpeed Insights, ElevenLabs (`ELEVENLABS_API_KEY`), heatmap (`HEATMAP_API_BASE_URL`, `HEATMAP_API_TOKEN`), GitHub (`GITHUB_API_KEY`), Sentry y SonarCloud.
 
-**Seguridad (resumen):** cabeceras de hardening activas, CSRF en POST críticos, rate-limit/login throttling, sesiones con TTL/lifetime + sellado IP/UA + anti-replay pasivo, firewall de payloads y sanitización, guard admin y logging con trace_id. Detalle y roadmap (Máster vs Enterprise) en `docs/security.md`.
+**Seguridad (resumen):** cabeceras de hardening activas, CSRF en POST críticos, rate limit en rutas sensibles, sesiones con TTL/lifetime + sellado IP/UA + anti-replay pasivo, firewall de payloads y sanitización, guard admin y logging con trace_id. Detalle y hardening futuro en `docs/security/security.md`.
 
 ---
 
@@ -115,7 +114,8 @@ Variables principales (ver el archivo para la lista completa):
 Microservicios:
 - `openai-service/.env.example` → copiar a `.env` y rellenar `OPENAI_API_KEY`, `OPENAI_MODEL` (fallback JSON si falta la key).
 - `rag-service/.env.example` → copiar a `.env`; opcional `OPENAI_SERVICE_URL` si no es `http://localhost:8081/v1/chat`.
-- Ambos cargan su `.env` con `putenv()` en `public/index.php`.
+- `openai-service` carga su `.env` con `putenv()` en `openai-service/public/index.php`.
+- `rag-service` carga su `.env` con `putenv()` en `rag-service/src/bootstrap.php` (invocado por `rag-service/public/index.php`).
 
 ---
 
@@ -170,12 +170,12 @@ Si desplegás ambos servicios en hosts distintos, configura `OPENAI_SERVICE_URL`
 
 El repo ya trae `.vscode/tasks.json` con estas tareas:
 
-- `🚀 Iniciar servidor PHP (8080)` → app principal
-- `🤖 Run OpenAI Service (8081)` → microservicio
-- `▶️ Run Both (8080 + 8081)` → **este es el que usarás siempre**
+- Iniciar servidor PHP (8080) → app principal
+- Run OpenAI Service (8081) → microservicio
+- Run Both (8080 + 8081) → opción para levantar ambos a la vez
 
 Para ejecutarlo:
-1. **Cmd+Shift+P** → “Run Task” → “▶️ Run Both (8080 + 8081)”
+1. Cmd+Shift+P → "Run Task" → seleccionar la tarea de "Run Both (8080 + 8081)"
 2. VS Code abrirá 2 terminales internas, una para cada servidor.
 
 > **Nota:** por ahora el microservicio RAG (8082) se arranca manualmente con el comando anterior o creando una task adicional en VS Code.
@@ -184,8 +184,8 @@ Para ejecutarlo:
 
 ## 6. Checks de calidad y seguridad mínimos
 
-- Tests completos (con cobertura clover para Sonar): `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` (raíz).
-- Security check local: `bash bin/security-check.sh` (ejecuta PHPUnit de seguridad, PHPStan sobre `src/Security` + `tests/Security` y `composer audit`).
+- Tests con cobertura (Clover): `composer test:coverage` (genera `coverage.xml`).
+- Security check local: `bash bin/security-check.sh` (ejecuta `composer audit` y lint de sintaxis con `php -l` sobre `src/` y `tests/`).
 - Análisis estático general: `vendor/bin/phpstan analyse --memory-limit=512M`.
 - Auditoría de dependencias: `composer audit --no-interaction`.
 
@@ -262,11 +262,11 @@ Responsabilidades:
   ```json
   {
     "ok": false,
-    "error": "⚠️ No se ha configurado OPENAI_API_KEY en el entorno."
+    "error": "No se ha configurado OPENAI_API_KEY en el entorno."
   }
   ```
 
-Esto es importante porque el **frontend ya está preparado** para mostrar un mensaje de “No se pudo generar el cómic” cuando `ok=false`.
+Esto es importante porque el frontend maneja el caso `ok=false` mostrando un mensaje de error.
 
 ### 6.6. Microservicio `rag-service` (detalle técnico)
 
@@ -306,11 +306,11 @@ Esto es importante porque el **frontend ya está preparado** para mostrar un men
 7. La app principal devuelve esa historia al frontend.
 8. El frontend la pinta como “Historia generada”.
 
-Si en cualquier punto hay un error (8081 apagado, API key faltante, OpenAI caído), la app muestra un mensaje bonito en vez de mostrar HTML roto.
+Si en cualquier punto hay un error (8081 apagado, API key faltante, OpenAI caído), la app muestra un mensaje de error controlado en vez de una respuesta HTML inesperada.
 
 **Flujo “Comparar héroes (RAG)”**
 
-1. Usuario hace clic en **“🧠 Comparar héroes (RAG)”** en la UI.
+1. Usuario hace clic en **“Comparar héroes (RAG)”** en la UI.
 2. El frontend valida que haya ≥2 héroes seleccionados y hace `POST http://localhost:8082/rag/heroes`.
 3. El microservicio RAG recupera los héroes desde su JSON, arma el prompt y llama a `http://localhost:8081/v1/chat`.
 4. El microservicio OpenAI genera la respuesta narrativa y responde al RAG.
@@ -356,7 +356,7 @@ Si 8081 está encendido y la knowledge base tiene esos héroes, deberías recibi
 
 ```json
 {
-  "answer": "Atributo | Valoración\nAtaque | ...\n\n🧩 Monarca brillante...",
+  "answer": "Atributo | Valoración\nAtaque | ...\n\n...",
   "contexts": [...],
   "heroIds": [...]
 }
@@ -386,7 +386,7 @@ composer validate
 - El microservicio devolvió HTML (por un warning) y no JSON
 - Solución: mirar el terminal donde corrés `php -S localhost:8081 -t public` y corregir el error
 
-### 9.2. “⚠️ No se ha configurado OPENAI_API_KEY en el entorno.”
+### 9.2. “No se ha configurado OPENAI_API_KEY en el entorno.”
 - Existe el `.env` pero no se está cargando
 - Revisar que el código de `public/index.php` del microservicio tenga el bloque de `putenv()`
 - Revisar que el `.env` esté en la ruta correcta: `openai-service/.env`
@@ -395,7 +395,7 @@ composer validate
 - La app principal intentó hablar con `http://localhost:8081/v1/chat` y no había nada escuchando
 - Solución: levantar el microservicio
 
-### 9.4. “❌ Error al consultar el RAG.”
+### 9.4. “Error al consultar el RAG.”
 - El microservicio RAG (8082) no está levantado o devolvió error 5xx.
 - El servicio de OpenAI (8081) no respondió y el RAG propagó el fallo.
 - Solución: encender 8082 (y 8081), revisar el log de la terminal del RAG.

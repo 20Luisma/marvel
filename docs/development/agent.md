@@ -33,8 +33,8 @@ Este documento describe cómo debe operar el agente (Codex) dentro del repositor
 - Servir microservicios: `php -S localhost:8081 -t public` (openai-service), `php -S localhost:8082 -t public` (rag-service)
 - Pruebas: `vendor/bin/phpunit --colors=always`
 - Análisis estático: `vendor/bin/phpstan analyse --memory-limit=512M`
-- Cobertura: `composer test:cov`
-- Security check: `bash bin/security-check.sh` (PHPUnit de seguridad + PHPStan de seguridad + composer audit); workflow `security-check.yml` en PR/push a main.
+- Cobertura: `composer test:coverage`
+- Security check: `bash bin/security-check.sh` (composer audit + lint de sintaxis); workflow `security-check.yml` en PR/push a main.
 
 ## Paneles y rutas útiles
 - GitHub PRs: `/panel-github`
@@ -49,5 +49,5 @@ Este documento describe cómo debe operar el agente (Codex) dentro del repositor
 ## Buenas prácticas rápidas
 - Mantener idempotencia de handlers de eventos y registros en `src/bootstrap.php`.
 - No leer/escribir `storage/` desde Presentación: usar repositorios/servicios.
-- Documentar cualquier cambio de payload en `docs/API_REFERENCE.md` y flujos en `docs/ARCHITECTURE.md`.
+- Documentar cualquier cambio de payload en `docs/api/API_REFERENCE.md` y flujos en `docs/architecture/ARCHITECTURE.md`.
 - Usar tokens de ejemplo o placeholders en la documentación, nunca credenciales reales.
