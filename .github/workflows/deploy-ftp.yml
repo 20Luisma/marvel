@@ -90,37 +90,20 @@ jobs:
       ####################################################################
       # 2) Deploy microservicio OPENAI
       ####################################################################
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Deploy microservicio openai-service
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
 
-      - name: Add SSH known hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST || secrets.FTP_HOST }}" >> ~/.ssh/known_hosts
+          server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
+          local-dir: ./openai-service/
 
-      - name: Deploy microservicio openai-service (SSH + rsync)
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST || secrets.FTP_HOST }}
-          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
-          SSH_USER: ${{ secrets.SSH_USER || secrets.FTP_USER }}
-          REMOTE_DIR: /domains/contenido.creawebes.com/public_html/openai-service/
-        run: |
-          rsync -az \
-            --timeout=60 \
-            --exclude ".git*" \
-            --exclude ".github/" \
-            --exclude "node_modules/" \
-            --exclude "tests/" \
-            --exclude ".scannerwork/" \
-            --exclude "coverage.xml" \
-            --exclude "test-results/" \
-            --exclude "blob-report/" \
-            --exclude "playwright-report/" \
-            -e "ssh -p ${SSH_PORT} -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ConnectTimeout=30" \
-            ./openai-service/ \
-            "${SSH_USER}@${SSH_HOST}:${REMOTE_DIR}"
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-openai.json
 
   deploy_rag:
     name: Deploy rag-service
