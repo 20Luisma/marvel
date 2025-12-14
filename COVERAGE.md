@@ -1,64 +1,48 @@
-# 📊 Code Coverage Transparency
+# Cobertura de código (PHPUnit)
 
-## Test Coverage Metrics
+## Métrica verificada
 
-### Backend Coverage (Business Logic)
-**90.45%** - PHP backend code in `src/` directory
-- ✅ 653 tests passing
-- ✅ 1,435 assertions
-- ✅ Covers: Domain logic, services, controllers, security, resilience patterns
+Este repositorio mide la cobertura de **código PHP en `src/`** mediante PHPUnit (Clover).
 
-### Why Only Backend Coverage?
+Para obtener el valor actual de cobertura:
 
-Following industry standards (Laravel, Symfony, WordPress), we analyze **only backend PHP code** with PHPUnit:
-
-```
-✅ Analyzed:  src/           (Business logic - 90.28% coverage)
-❌ Excluded:  public/        (Frontend assets - tested with Jest/Cypress)
-❌ Excluded:  views/         (Templates - tested with E2E tools)
+```bash
+composer test:coverage
 ```
 
-### Full Project Breakdown
+El reporte se genera en `coverage.xml` y el pipeline CI aplica un umbral mínimo con `scripts/coverage-gate.php`.
 
-| Directory | Lines | Coverage | Tool |
-|-----------|-------|----------|------|
-| `src/` | 4,384 | **90.28%** | PHPUnit |
-| `public/` | ~3,500 | N/A* | Jest/Cypress |
-| `views/` | ~2,000 | N/A* | E2E Testing |
-| **Backend Total** | 4,384 | **90.28%** | ✅ |
-| **Full Project** | ~10,000 | **~45%*** | Mixed |
+### Alcance de cobertura
 
-\* *Frontend code requires specialized JavaScript testing tools (Jest, Cypress, Playwright) which are not included in PHPUnit coverage reports. This is standard practice in modern web development.*
+- Incluido: `src/` (lógica PHP medida por PHPUnit; ver `coverage.xml`)
+- Excluido: `public/` y `views/` (no se mide con PHPUnit; se valida con tests E2E y auditorías de navegador)
 
-### Industry Comparison
+### Desglose
 
-- **Laravel Framework**: Analyzes only `src/Illuminate/` (~80% coverage)
-- **Symfony**: Analyzes only `src/Symfony/` (~85% coverage)  
-- **WordPress**: Analyzes `wp-includes/` (~40% coverage including frontend)
-- **Clean Marvel Album**: Analyzes `src/` (**90.28% coverage**) ✅
+| Directory | Coverage | Verificación |
+|-----------|----------|--------------|
+| `src/` | **90.45%** (statements) | `coverage.xml` (Clover) |
+| `public/`, `views/` | N/A (no se mide con PHPUnit) | Tests E2E y auditorías en CI |
 
-### SonarCloud Configuration
+\* *El frontend (assets/vistas) se valida con herramientas de navegador (Playwright) y auditorías de accesibilidad/rendimiento en CI. No se refleja en la cobertura de PHPUnit.*
 
-Our SonarCloud is configured following Laravel's approach:
+### Configuración SonarCloud
 
 ```properties
 sonar.sources=src
 sonar.tests=tests
 ```
 
-This ensures accurate measurement of **testable business logic** coverage, which is the industry standard for PHP frameworks.
+Esto hace que la métrica de cobertura se aplique únicamente a `src/` (código PHP cubierto por PHPUnit).
 
-### Coverage Gate
+### Umbral en CI
 
-The CI pipeline enforces a minimum coverage threshold:
+El workflow `.github/workflows/ci.yml` ejecuta un "coverage gate" con `scripts/coverage-gate.php` (umbral configurable con `COVERAGE_THRESHOLD`).
 
 ```bash
-# Fails CI if coverage drops below 75%
 COVERAGE_THRESHOLD=75 php scripts/coverage-gate.php coverage.xml
 ```
 
-Current status: **PASS** (90.28% > 75% threshold)
-
 ---
 
-**🎯 Bottom Line**: Our **90.45% backend coverage** with **653 tests** and **1,435 assertions** represents excellent test quality that exceeds the 80% target for business-critical PHP code. This places the project above Laravel and Symfony standards.
+Nota: el porcentaje exacto puede variar con cambios en el repositorio. Para recalcularlo, ejecuta los comandos anteriores o revisa los logs de GitHub Actions.

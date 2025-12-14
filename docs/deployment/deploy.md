@@ -1,4 +1,4 @@
-# Deploy seguro — Clean Marvel Album (Nivel Máster)
+# Deploy (alcance Máster) — Clean Marvel Album
 
 ## Entornos
 - **Local**: `APP_ENV=local`, servicios en `localhost:8080` (app), `8081` (openai-service), `8082` (rag-service).
@@ -10,7 +10,7 @@
    - `openai-service/.env` desde `openai-service/.env.example`
    - `rag-service/.env` desde `rag-service/.env.example`
 3. Variables críticas (raíz):
-   - `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH`: credenciales del admin (hash bcrypt, no la contraseña en claro).
+   - `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH`: credenciales del admin (hash bcrypt, no la contraseña en claro). **Recomendación verificable**: configura `ADMIN_PASSWORD_HASH` en cualquier entorno público. **Comportamiento actual del código**: `src/Config/SecurityConfig.php` solo obliga (lanza excepción) si `APP_ENV` es `prod` o `production`; en `hosting` no se bloquea automáticamente, pero debe configurarse igualmente.
    - `INTERNAL_API_KEY`: firma HMAC interno.
    - `OPENAI_API_KEY`: clave OpenAI (usada por embeddings y paneles).
    - `ELEVENLABS_API_KEY`: TTS.
@@ -20,14 +20,14 @@
    - `SENTRY_DSN` (+ `SENTRY_API_TOKEN`, `SENTRY_ORG_SLUG`, `SENTRY_PROJECT_SLUG`): observabilidad.
 
 ## GitHub Actions (secrets)
-- Los workflows en `.github/workflows/*.yml` toman credenciales desde `secrets.*` (ej. `FTP_HOST`, `FTP_USER`, `FTP_PASS`, `FTP_PORT`). No hay tokens en texto plano.
-- Para despliegues, configura los secrets en GitHub antes de ejecutar los jobs.
+- Los workflows en `.github/workflows/*.yml` usan `secrets.*` y `vars.*` para credenciales (p. ej., `FTP_HOST`, `FTP_USER`, `FTP_PASS`, `FTP_PORT`).
+- Para despliegues, configura los secrets/vars en GitHub antes de ejecutar los jobs.
 
-## Despliegue seguros
+## Despliegue (buenas prácticas)
 - Docroot debe ser `public/`; **no expongas** `storage/` (contiene logs, sesiones y JSON).
-- En producción usa `APP_DEBUG=0`. HSTS forzado y cookies más estrictas son mejoras enterprise futuras.
+- En producción usa `APP_DEBUG=0`. El endurecimiento adicional (HSTS forzado y cookies más estrictas) se documenta como trabajo futuro.
 
 ## Comprobaciones rápidas post-deploy
-- `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` en CI/local (genera coverage.xml consumido por Sonar).
+- `composer test:coverage` en local/CI (genera `coverage.xml`, consumido por SonarCloud).
 - Cabeceras de seguridad: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php`.
 - Acceso básico: curl a `/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes` con las cabeceras adecuadas.

@@ -1,14 +1,14 @@
 ---
 
-# 🔥 Microservicio Heatmap – Python + Flask + Docker + Google Cloud
+# Microservicio Heatmap – Python + Flask + Docker + Google Cloud
 
 El sistema de mapa de calor del proyecto **Clean Marvel Album** funciona sobre un microservicio externo, totalmente desacoplado del backend PHP. Procesa clics reales desde la web y los almacena en una base de datos interna para ser consultados desde el panel `/secret-heatmap`.
 
-Este servicio corre de forma independiente, en producción, dentro de una instancia de Google Cloud.
+Este servicio corre de forma independiente. En el entorno de hosting se configura un endpoint desplegado en Google Cloud (ver variables de entorno y URLs configuradas en el proyecto).
 
 ---
 
-## 🧱 Arquitectura del Microservicio Heatmap
+## Arquitectura del microservicio Heatmap
 
 ```
 Navegador (JS Tracker)
@@ -24,7 +24,7 @@ PHP Proxy de Lectura → Panel Heatmap
 
 ---
 
-## 🌍 Tecnologías
+## Tecnologías
 
 - **Python 3.10**
 - **Flask 3**
@@ -36,7 +36,7 @@ PHP Proxy de Lectura → Panel Heatmap
 
 ---
 
-## 🏗 Estructura del microservicio
+## Estructura del microservicio
 
 ```
 heatmap-service/
@@ -49,15 +49,15 @@ heatmap-service/
 
 ---
 
-## 🚀 Endpoints del microservicio
+## Endpoints del microservicio
 
-### 🔹 `GET /`
+### `GET /`
 Comprueba que el servicio está vivo.
 
-### 🔹 `GET /health`
+### `GET /health`
 Devuelve estado general del servicio.
 
-### 🔹 `POST /track`
+### `POST /track`
 Registra un clic.
 
 **Headers:**
@@ -78,7 +78,7 @@ Content-Type: application/json
 }
 ```
 
-### 🔹 `GET /events`
+### `GET /events`
 Devuelve todos los clics ordenados por fecha.
 
 Soporta:
@@ -87,7 +87,7 @@ Soporta:
 
 ---
 
-## 🔐 Seguridad
+## Seguridad
 
 El microservicio exige autenticación en **todos los endpoints sensibles** vía cabecera:
 
@@ -104,7 +104,7 @@ Nunca se expone al navegador.
 
 ---
 
-## 🐳 Dockerización completa
+## Dockerización
 
 El servicio se ejecuta exclusivamente en contenedor:
 
@@ -119,7 +119,7 @@ Volumen montado:
 /home/luismpallante/heatmap-service/heatmap.db → /app/heatmap.db
 ```
 
-Garantiza persistencia incluso al reiniciar contenedor o VM.
+Permite persistencia incluso al reiniciar contenedor o VM (mientras se mantenga el volumen montado).
 
 ---
 
@@ -141,9 +141,9 @@ http://34.74.102.123:8080
 
 ---
 
-## 🎯 Integración con Clean Marvel Album (PHP)
+## Integración con Clean Marvel Album (PHP)
 
-### 🔹 JavaScript Tracker (frontend)
+### JavaScript tracker (frontend)
 
 Se ejecuta globalmente en todas las vistas:
 
@@ -158,7 +158,7 @@ fetch("http://34.74.102.123:8080/track", {
 });
 ```
 
-### 🔹 Proxy PHP de escritura  
+### Proxy PHP de escritura
 `/api/heatmap/click.php`
 
 Responsabilidades:
@@ -167,7 +167,7 @@ Responsabilidades:
 - autenticación con X-API-Token
 - reenvío seguro a /track
 
-### 🔹 Proxy PHP de lectura  
+### Proxy PHP de lectura
 `/api/heatmap/summary.php`  
 `/api/heatmap/pages.php`
 
@@ -178,7 +178,7 @@ Ambos llaman a `/events`, adaptan la respuesta y generan:
 - ranking de páginas
 - eventos para modo visual
 
-### 🔹 Variables de entorno (PHP)
+### Variables de entorno (PHP)
 
 `.env`:
 
@@ -189,7 +189,7 @@ HEATMAP_API_TOKEN=your-heatmap-token
 
 ---
 
-## 📊 Panel de Visualización del Heatmap
+## Panel de visualización del heatmap
 
 Ubicado en:
 
@@ -208,7 +208,7 @@ Incluye:
 
 ---
 
-## 📦 Base de datos SQLite
+## Base de datos SQLite
 
 Nombre: `heatmap.db`  
 Tabla principal:
@@ -235,12 +235,13 @@ sqlite3 heatmap.db "SELECT COUNT(*) FROM click_events;"
 
 ---
 
-## 🔥 Estado actual
+## Estado actual
 
-✔ Microservicio operativo en GCP  
-✔ Docker funcionando  
-✔ Persistencia estable con SQLite  
-✔ Integración 100% con Marvel Album  
-✔ Datos en tiempo real visibles en `/secret-heatmap`
+Componentes verificados en el entorno descrito:
+
+- Microservicio operativo en GCP  
+- Docker funcionando  
+- Persistencia con SQLite  
+- Integración con la app (panel `/secret-heatmap`)  
 
 ---

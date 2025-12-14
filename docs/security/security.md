@@ -3,31 +3,31 @@
 ## 1. Introducción
 - Enfoque: arquitectura limpia (Presentación → Aplicación → Dominio; Infra implementa contratos), con capa de seguridad centralizada (`src/Security/*`) y controles adicionales en `src/bootstrap.php`.
 - Alcance: app principal PHP (`public/`, `views/`, `src/`), almacenamiento local (`storage/`), microservicios asociados (`openai-service`, `rag-service`, heatmap) configurados vía `config/services.php` y variables `.env`.
-- Niveles de madurez: Fases 1–8 implementadas a “Nivel Máster” (controles activos y probados). En las Fases 1–7 permanecen mejoras de hardening “Nivel Enterprise” (MFA, HSTS forzado, CSP sin inline, HMAC completo, etc.) como backlog futuro.
+- Niveles de madurez: Fases 1–8 implementadas a nivel Máster (controles activos). La verificación se apoya en tests (ver `tests/Security/`) y en la guía `docs/security/security_verification.md`. En las Fases 1–7 quedan tareas de hardening adicional (MFA, HSTS forzado, CSP sin inline, HMAC completo, etc.) documentadas como trabajo futuro.
 - Resumen corto disponible en `README.md` y en la vista `views/pages/readme.php`; este documento mantiene el detalle completo y el roadmap.
 
-### Estado por fase (Máster vs Enterprise)
+### Estado por fase (Máster vs hardening adicional)
 
-| Fase | Tema | Estado base app (Máster) | Hardening enterprise (pendiente) |
+| Fase | Tema | Estado base (Máster) | Hardening adicional (pendiente) |
 | --- | --- | --- | --- |
-| 1 | Hardening HTTP básico | ✅ Implementado | 🔸 HSTS forzado/cookies estrictas |
-| 2 | Autenticación y sesiones | ✅ Implementado | 🔸 MFA, rotación credenciales, SameSite/secure siempre |
-| 3 | Autorización y control de acceso | ✅ Implementado (admin único) | 🔸 Multirol/usuarios |
-| 4 | CSRF y XSS | ✅ Implementado | 🔸 CSP sin unsafe-inline, SRI/nonce |
-| 5 | APIs y microservicios | ✅ Implementado | 🔸 HMAC completo en proxy, segmentación/red |
-| 6 | Monitorización y logs | ✅ Implementado | 🔸 Rotación/alertas, anonimización PII |
-| 7 | Anti-replay avanzado | ✅ Modo observación | 🔸 Modo bloqueo/enforcement |
-| 8 | Endurecimiento de cabeceras + tests | ✅ COMPLETADA | — |
-| 9 | Gestión de secretos y despliegue | 🚧 En progreso | 🔸 Hardening futuro |
-| 10 | Seguridad enterprise (MFA, roles, etc.) | 🚧 Futuro | 🔸 Consolidar backlog enterprise |
+| 1 | Hardening HTTP básico | Implementado | Pendiente: HSTS forzado/cookies más estrictas |
+| 2 | Autenticación y sesiones | Implementado | Pendiente: MFA, rotación credenciales, SameSite/secure siempre |
+| 3 | Autorización y control de acceso | Implementado (admin único) | Pendiente: multirol/usuarios |
+| 4 | CSRF y XSS | Implementado | Pendiente: CSP sin unsafe-inline, SRI/nonce |
+| 5 | APIs y microservicios | Implementado | Pendiente: HMAC completo en proxy, segmentación/red |
+| 6 | Monitorización y logs | Implementado | Pendiente: rotación/alertas, anonimización PII |
+| 7 | Anti-replay avanzado | Modo observación | Pendiente: modo bloqueo/enforcement |
+| 8 | Endurecimiento de cabeceras + tests | Implementado | — |
+| 9 | Gestión de secretos y despliegue | En progreso (documentado) | Pendiente: hardening adicional |
+| 10 | Hardening adicional (MFA, roles, etc.) | Trabajo futuro (documentado) | Pendiente: consolidar backlog |
 
 ## 2. Estado actual de la seguridad
 - **Fortalezas:** hardening inicial de cabeceras, CSRF en POST críticos, rate-limit y bloqueo de login por intentos, autenticación con hash bcrypt, sesión con TTL y lifetime, sellado IP/UA, detección de hijack y anti-replay en modo pasivo, firewall de payloads y sanitización básica, logging centralizado con trace_id.
-- **Debilidades:** único usuario admin hardcodeado, CSP permisiva (unsafe-inline + CDNs), HSTS solo activo cuando HTTPS (no forzado), storage local para rate-limit/intentos (no distribuido), controles anti-replay solo en observación, falta de pruebas automáticas de CORS/CSP avanzadas, claves HMAC entre servicios no validadas en el proxy principal.
+- **Debilidades:** admin único, CSP permisiva (unsafe-inline + CDNs), HSTS solo activo cuando HTTPS (no forzado), storage local para rate-limit/intentos (no distribuido), controles anti-replay solo en observación, falta de pruebas automáticas de CORS avanzadas, claves HMAC entre servicios no validadas en el proxy principal.
 
 ## 3. Controles de seguridad implementados
 ### Autenticación y sesiones
-- `AuthService`: email admin configurable (`SecurityConfig`), hash bcrypt `$2y$12...` (contraseña “seguridadmarvel2025”). Login verifica credenciales, regenera sesión, establece `user_id/user_email/user_role`, `session_created_at`, `last_activity`, `session_ip_hash`, `session_ua_hash`. TTL inactividad 30 min, lifetime 8h. Logout limpia sesión y cookie.
+- `AuthService`: email admin configurable (`SecurityConfig`) y password hash vía `ADMIN_PASSWORD_HASH`. Login verifica credenciales, regenera sesión, establece `user_id/user_email/user_role`, `session_created_at`, `last_activity`, `session_ip_hash`, `session_ua_hash`. TTL inactividad 30 min, lifetime 8h. Logout limpia sesión y cookie.
 - Anti-hijack: compara IP/UA en cada request; si difiere, invalida y loggea `session_hijack_detected`. Anti-replay soft: token `session_replay_token` generado/rotado, logs de ausencia/mismatch/validez (no bloquea).
 - Cookies: `httponly`, `samesite=Lax`, `secure` cuando HTTPS. Trace ID por request.
 
@@ -67,11 +67,11 @@
 - Storage de logs puede crecer sin rotación y contener IP/UA (Impacto Bajo-Medio, Prob Media, Prioridad Media-Baja).
 
 ## 5. Roadmap de fases de seguridad
-Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver tabla de estados).
+Base Máster implementada en 1–8; hardening adicional pendiente en 1–7 (ver tabla de estados).
 - **Fase 1 — Hardening HTTP básico**  
   Objetivo: cabeceras y cookies seguras.  
   Hecho: headers listados, cookies HttpOnly/Lax, HSTS en HTTPS.  
-  Hardening enterprise pendiente: HSTS forzado en prod y refinar cookies (SameSite/secure estrictos). Prioridad: Media-Alta.
+  Hardening adicional pendiente: HSTS forzado en prod y refinar cookies (SameSite/secure estrictos). Prioridad: Media-Alta.
 
 - **Fase 2 — Autenticación y sesiones**  
   Hecho: bcrypt, regen ID en login, TTL 30m, lifetime 8h, sellado IP/UA, anti-hijack, anti-replay soft, logout seguro.  
@@ -98,20 +98,21 @@ Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver
   Falta: modo enforcement con bloqueo, sincronizar con headers de cliente, pruebas funcionales de replay. Prioridad: Media-Alta.
 
 - **Fase 8 — Endurecimiento de cabeceras**  
-  Hecho: cabeceras endurecidas (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Content-Security-Policy y X-Content-Security-Policy, X-Download-Options, X-Permitted-Cross-Domain-Policies, Cross-Origin-Resource-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy) activas en HTML y APIs; cookies de sesión con HttpOnly + SameSite=Lax. Tests automáticos (`tests/Security/HeadersSecurityTest.php`) validan rutas clave (`/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes`) y la suite completa está verde.
+  Hecho: cabeceras endurecidas (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Content-Security-Policy y X-Content-Security-Policy, X-Download-Options, X-Permitted-Cross-Domain-Policies, Cross-Origin-Resource-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy) activas en HTML y APIs; cookies de sesión con HttpOnly + SameSite=Lax. Tests automáticos (`tests/Security/HeadersSecurityTest.php`) cubren rutas clave (`/`, `/login`, `/seccion`, `/secret/sonar`, `/api/rag/heroes`).
 
-### Validación Fase 8 (real)
-- Automática: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php` y la suite completa `XDEBUG_MODE=coverage vendor/bin/phpunit --colors=always --testdox --coverage-clover coverage.xml` para que Sonar lea la cobertura real.
+### Validación Fase 8 (local/CI)
+- Automática: `vendor/bin/phpunit --colors=always tests/Security/HeadersSecurityTest.php`.
+- Cobertura: `composer test:coverage` (genera `coverage.xml`, consumido por SonarCloud y por el "coverage gate" en CI).
 - Manual (curl):
   - Home: `curl -i http://localhost:8080/ -H "Accept: text/html"`
   - Login: `curl -i http://localhost:8080/login -H "Accept: text/html"`
   - Sección: `curl -i http://localhost:8080/seccion -H "Accept: text/html" -L`
   - Secret: `curl -i http://localhost:8080/secret/sonar -H "Accept: text/html" -L`
   - API RAG: `curl -i http://localhost:8080/api/rag/heroes -H "Content-Type: application/json" -d '{"heroes":[1,2],"question":"test"}'`
-- Conclusión: la Fase 8 se considera completada y cubierta por tests automatizados y verificación manual en entorno local.
+- Conclusión: para el alcance del Máster, la Fase 8 queda verificada por tests automatizados y comprobaciones manuales en entorno local.
 
 - **Fase 9 — Gestión de secretos y despliegue**  
-  En progreso (Nivel Máster): inventario de secretos, `.env.example` actualizados (app principal + microservicios), workflows sin claves planas y guía de despliegue (`docs/deploy.md`). Hardening enterprise futuro: vault/rotación automática, HSTS forzado tras HTTPS total. Prioridad: Media-Alta.
+  En progreso (Nivel Máster): inventario de secretos, `.env.example` actualizados (app principal + microservicios), workflows sin claves planas y guía de despliegue (`docs/deployment/deploy.md`). Hardening adicional futuro: vault/rotación automática, HSTS forzado tras HTTPS total. Prioridad: Media-Alta.
 
 - **Fase 10 — Pruebas automáticas de seguridad**  
   Plan: agregar tests de cabeceras/CORS/CSP, escaneos `composer audit`/SAST, tests de microservicios y anti-replay en enforcement. Prioridad: Media.
@@ -124,12 +125,11 @@ Base Máster implementada en 1–8; hardening enterprise pendiente en 1–7 (ver
 - Añadir pruebas automáticas adicionales para CORS/CSP y monitoreo/rotación de logs.
 - Evaluar mover rate-limit/intentos a un backend centralizado si hay múltiples instancias.
 
-> Nota: las tareas pendientes en fases 1–7 son mejoras de hardening “Nivel Enterprise”; la base de cada fase está implementada y probada para el alcance del Máster.
+> Nota: las tareas pendientes en fases 1–7 son mejoras de hardening adicional; la base de cada fase está implementada y probada para el alcance del Máster.
 
 ### Fase 10 — Verificación de seguridad antes del despliegue
-- Script local: `bin/security-check.sh` (chmod +x). Ejecuta, en orden:
-  - Tests de seguridad: `vendor/bin/phpunit --colors=always tests/Security`
-  - PHPStan sobre seguridad: `PHPSTAN_DISABLE_PARALLEL=1 vendor/bin/phpstan analyse --memory-limit=1G src/Security tests/Security`
-  - Auditoría de dependencias: `composer audit --no-interaction` (falla si hay vulnerabilidades)
+- Script local: `bin/security-check.sh`. Ejecuta, en orden:
+  - Auditoría de dependencias: `composer audit --no-interaction`
+  - Lint de sintaxis PHP: `php -l` sobre `src/` y `tests/`
 - Ejecución local: `bash bin/security-check.sh`.
-- CI: workflow `.github/workflows/security-check.yml` corre en cada PR a `main` y en cada push a `main`. Si falla, no se debe desplegar.
+- CI: workflow `.github/workflows/security-check.yml` corre en cada PR a `main` y en cada push a `main`.

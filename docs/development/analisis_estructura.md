@@ -1,12 +1,12 @@
-# 📊 Análisis Completo de la Estructura del Proyecto Clean Marvel Album
+# Análisis de la estructura del proyecto Clean Marvel Album
 
-## 🎯 Resumen Ejecutivo
+## Resumen ejecutivo
 
-**Clean Marvel Album** es una aplicación web educativa/demo desarrollada en **PHP 8.2+** que implementa **Arquitectura Limpia (Clean Architecture)** para gestionar álbumes y héroes de Marvel. El proyecto destaca por su arquitectura modular, integración con microservicios de IA, y un robusto sistema de observabilidad y calidad.
+**Clean Marvel Album** es una aplicación web académica desarrollada en **PHP 8.2+** que implementa Arquitectura Limpia (Clean Architecture) para gestionar álbumes y héroes de Marvel. El repositorio incluye integración con microservicios de IA y elementos de observabilidad y calidad (según configuración y workflows).
 
 ---
 
-## 🏗️ Arquitectura General
+## Arquitectura general
 
 ### Principios Fundamentales
 
@@ -48,9 +48,9 @@ El proyecto sigue estrictamente los principios de **Clean Architecture**:
 
 ---
 
-## 📁 Estructura de Directorios Detallada
+## Estructura de directorios detallada
 
-### 🔹 Raíz del Proyecto
+### Raíz del proyecto
 
 ```
 clean-marvel/
@@ -76,7 +76,7 @@ clean-marvel/
 └── views/                # Plantillas de vistas
 ```
 
-### 🔹 `/src` - Código Fuente Principal
+### `src/` - Código fuente principal
 
 Organizado por **módulos de dominio** siguiendo Clean Architecture:
 
@@ -142,7 +142,7 @@ src/
 └── bootstrap.php         # Inicialización y wiring de dependencias
 ```
 
-### 🔹 `/public` - Punto de Entrada Web
+### `public/` - Punto de entrada web
 
 ```
 public/
@@ -171,7 +171,7 @@ public/
 └── uploads/              # Archivos subidos por usuarios
 ```
 
-### 🔹 `/storage` - Persistencia y Logs
+### `storage/` - Persistencia y logs
 
 ```
 storage/
@@ -194,7 +194,7 @@ storage/
 └── sessions/             # Sesiones de usuario
 ```
 
-### 🔹 `/tests` - Suite de Pruebas
+### `tests/` - Suite de pruebas
 
 ```
 tests/
@@ -219,7 +219,7 @@ tests/
 └── bootstrap.php         # Bootstrap de tests
 ```
 
-### 🔹 `/docs` - Documentación
+### `docs/` - Documentación
 
 ```
 docs/
@@ -249,7 +249,7 @@ docs/
 └── uml/                  # Diagramas UML
 ```
 
-### 🔹 `/views` - Plantillas de Vistas
+### `views/` - Plantillas de vistas
 
 ```
 views/
@@ -282,7 +282,7 @@ views/
 
 ---
 
-## 🧩 Microservicios
+## Microservicios
 
 ### 1️⃣ OpenAI Service (Puerto 8081)
 
@@ -350,7 +350,7 @@ rag-service/
 
 ---
 
-## 🔐 Sistema de Seguridad
+## Sistema de seguridad
 
 El proyecto implementa múltiples capas de seguridad:
 
@@ -401,7 +401,7 @@ El proyecto implementa múltiples capas de seguridad:
 
 ---
 
-## 🧪 Sistema de Calidad y Testing
+## Sistema de calidad y testing
 
 ### Herramientas de Calidad
 
@@ -412,7 +412,7 @@ El proyecto implementa múltiples capas de seguridad:
    - Caché en `.phpunit.cache/`
 
 2. **PHPStan** (`phpstan.neon`)
-   - Análisis estático nivel 6
+   - Análisis estático (nivel configurado en `phpstan.neon`)
    - Excluye `src/Dev`
    - Configuración personalizada
 
@@ -422,8 +422,7 @@ El proyecto implementa múltiples capas de seguridad:
 
 4. **Pa11y**
    - Auditoría de accesibilidad WCAG 2.1 AA
-   - Script: `pa11y-all.sh`
-   - Reporta 0 issues en páginas públicas
+   - Script: `bin/pa11y-all.sh`
 
 5. **Lighthouse**
    - Auditoría de performance
@@ -446,7 +445,7 @@ El proyecto implementa múltiples capas de seguridad:
 vendor/bin/phpunit --colors=always
 
 # Cobertura
-composer test:cov
+composer test:coverage
 
 # Análisis estático
 vendor/bin/phpstan analyse --memory-limit=512M
@@ -460,7 +459,7 @@ composer validate
 
 ---
 
-## 🔄 CI/CD - GitHub Actions
+## CI/CD - GitHub Actions
 
 ### Workflows Disponibles
 
@@ -487,7 +486,7 @@ composer validate
 
 ---
 
-## 🌐 Persistencia Multi-Entorno
+## Persistencia multi-entorno
 
 ### Estrategia de Persistencia
 
@@ -517,7 +516,7 @@ El `ServiceUrlProvider` resuelve automáticamente qué implementación usar seg�
 
 ---
 
-## 🎨 Sistema de Vistas
+## Sistema de vistas
 
 ### Arquitectura de Vistas
 
@@ -548,7 +547,7 @@ Funciones auxiliares para renderizado, escape de HTML, formateo, etc.
 
 ---
 
-## 🔌 Integraciones Externas
+## Integraciones externas
 
 ### APIs Integradas
 
@@ -593,7 +592,7 @@ Funciones auxiliares para renderizado, escape de HTML, formateo, etc.
 
 ---
 
-## 📊 Paneles de Observabilidad
+## Paneles de observabilidad
 
 El proyecto incluye múltiples paneles técnicos:
 
@@ -635,7 +634,7 @@ El proyecto incluye múltiples paneles técnicos:
 
 ---
 
-## 🛠️ Herramientas de Desarrollo
+## Herramientas de desarrollo
 
 ### Scripts Composer
 
@@ -683,7 +682,7 @@ Tareas automatizadas para desarrollo en VS Code.
 
 ---
 
-## 🎯 Casos de Uso Principales
+## Casos de uso principales
 
 ### Módulo Albums
 
@@ -718,11 +717,11 @@ Tareas automatizadas para desarrollo en VS Code.
 
 ---
 
-## 🔔 Sistema de Eventos
+## Sistema de eventos
 
 ### EventBus en Memoria
 
-**Ubicación**: `Src\Shared\Infrastructure\Bus\InMemoryEventBus`
+**Ubicación**: `App\Shared\Infrastructure\Bus\InMemoryEventBus`
 
 ### Eventos de Dominio
 
@@ -744,7 +743,7 @@ Los handlers se registran en el bootstrap y deben ser **idempotentes**.
 
 ---
 
-## 📦 Dependencias
+## Dependencias
 
 ### PHP (Composer)
 
@@ -768,7 +767,7 @@ Mínimo, principalmente para herramientas de testing E2E (Playwright).
 
 ---
 
-## 🌍 Configuración de Entornos
+## Configuración de entornos
 
 ### Variables de Entorno (`.env`)
 
@@ -815,36 +814,36 @@ Resuelve automáticamente URLs de servicios según `APP_ENV`:
 
 ---
 
-## 🎓 Patrones y Principios Aplicados
+## Patrones y principios aplicados
 
 ### Clean Architecture
-- ✅ Inversión de dependencias
-- ✅ Separación de capas
-- ✅ Dominio independiente
+- Inversión de dependencias
+- Separación de capas
+- Dominio independiente
 
 ### SOLID
-- ✅ Single Responsibility
-- ✅ Open/Closed
-- ✅ Liskov Substitution
-- ✅ Interface Segregation
-- ✅ Dependency Inversion
+- Single Responsibility
+- Open/Closed
+- Liskov Substitution
+- Interface Segregation
+- Dependency Inversion
 
 ### Domain-Driven Design (DDD)
-- ✅ Entidades y Value Objects
-- ✅ Repositorios
-- ✅ Eventos de dominio
-- ✅ Casos de uso
+- Entidades y Value Objects
+- Repositorios
+- Eventos de dominio
+- Casos de uso
 
 ### Otros Patrones
-- ✅ Repository Pattern
-- ✅ Event-Driven Architecture
-- ✅ Gateway Pattern (microservicios)
-- ✅ Adapter Pattern (infraestructura)
-- ✅ Strategy Pattern (persistencia multi-entorno)
+- Repository Pattern
+- Event-Driven Architecture
+- Gateway Pattern (microservicios)
+- Adapter Pattern (infraestructura)
+- Strategy Pattern (persistencia multi-entorno)
 
 ---
 
-## 🚀 Flujo de Desarrollo Recomendado
+## Flujo de desarrollo recomendado
 
 ### 1. Setup Inicial
 
@@ -906,22 +905,22 @@ composer security:audit
 
 ---
 
-## 📝 Documentación Adicional
+## Documentación adicional
 
 ### Archivos Clave
 
 1. **`README.md`** - Documentación principal
 2. **`AGENTS.md`** - Guía para agentes IA
-3. **`docs/ARCHITECTURE.md`** - Arquitectura detallada
-4. **`docs/API_REFERENCE.md`** - Referencia de API
-5. **`docs/security.md`** - Seguridad completa
-6. **`docs/REQUIREMENTS.md`** - Requisitos del proyecto
-7. **`docs/ROADMAP.md`** - Hoja de ruta
-8. **`docs/USE_CASES.md`** - Casos de uso
+3. **`docs/architecture/ARCHITECTURE.md`** - Arquitectura detallada
+4. **`docs/api/API_REFERENCE.md`** - Referencia de API
+5. **`docs/security/security.md`** - Seguridad
+6. **`docs/architecture/REQUIREMENTS.md`** - Requisitos del proyecto
+7. **`docs/project-management/ROADMAP.md`** - Hoja de ruta
+8. **`docs/architecture/USE_CASES.md`** - Casos de uso
 
 ### Guías
 
-- `docs/guides/quick-start.md`
+- `docs/guides/getting-started.md`
 - `docs/guides/authentication.md`
 - `docs/guides/testing.md`
 
@@ -931,55 +930,36 @@ composer security:audit
 
 ---
 
-## 🎯 Puntos Destacables
+## Puntos relevantes
 
-### ✅ Fortalezas
+### Aspectos observables en el repositorio
 
-1. **Arquitectura Limpia Estricta**
-   - Separación clara de responsabilidades
-   - Inversión de dependencias correcta
-   - Dominio puro sin dependencias externas
+1. **Arquitectura**
+   - Separación por capas (presentación, aplicación, dominio, infraestructura) según estructura en `src/`.
+   - Composition root en `src/bootstrap.php` (wiring).
 
-2. **Calidad de Código**
-   - Cobertura de tests completa
-   - PHPStan nivel 7 (ignoreErrors comentado)
-   - CI/CD robusto
-   - SonarCloud integrado
+2. **Calidad y CI**
+   - Tests con PHPUnit (`tests/`) y cobertura generada en `coverage.xml` (ver `COVERAGE.md`).
+   - PHPStan configurado en `phpstan.neon`.
+   - Workflows de CI en `.github/workflows/` (según archivos del repositorio).
 
 3. **Seguridad**
-   - Múltiples capas de protección
-   - HMAC para microservicios
-   - Rate limiting
-   - CSRF protection
+   - Controles documentados en `docs/security/security.md` y tests de seguridad en `tests/Security/` (cuando aplican).
+   - Comunicación con microservicios con firma HMAC cuando se configura `INTERNAL_API_KEY` (ver configuración y proxies).
 
-4. **Observabilidad**
-   - Múltiples paneles de monitoreo
-   - Integración Sentry
-   - Logs estructurados
-   - Métricas de calidad
+4. **Observabilidad y paneles**
+   - Paneles y endpoints de métricas en `public/api/` y servicios en `src/` (según rutas del repositorio).
+   - Integración opcional con Sentry mediante variables de entorno (ver `.env.example` y documentación).
 
-5. **Modularidad**
-   - Microservicios independientes
-   - Módulos de dominio bien definidos
-   - Fácil extensibilidad
-
-6. **Documentación**
-   - Documentación exhaustiva
-   - Diagramas UML
-   - Guías para desarrolladores
-   - API reference completa
-
-7. **Accesibilidad**
-   - WCAG 2.1 AA compliant
-   - Pa11y con 0 issues
-   - Auditorías automatizadas
+5. **Documentación**
+   - Índice en `docs/README.md` y ADRs en `docs/architecture/`.
 
 8. **Multi-Entorno**
    - Soporte local y hosting
    - Fallback automático
    - Configuración flexible
 
-### 🔧 Áreas de Mejora Potencial
+### Áreas de mejora potencial
 
 1. **Templates**
    - Considera usar un motor de templates (Twig, Blade) para mayor seguridad y mantenibilidad
@@ -996,30 +976,19 @@ composer security:audit
 
 ---
 
-## 🎬 Conclusión
+## Conclusión
 
-**Clean Marvel Album** es un proyecto **ejemplar** que demuestra:
+Este repositorio documenta y ejemplifica una aplicación en PHP con:
 
-- ✅ Implementación correcta de **Clean Architecture**
-- ✅ Integración de **microservicios de IA**
-- ✅ **Calidad de código** profesional
-- ✅ **Seguridad** robusta
-- ✅ **Observabilidad** completa
-- ✅ **Documentación** exhaustiva
-- ✅ **Testing** comprehensivo
-- ✅ **CI/CD** automatizado
-
-Es un **blueprint perfecto** para proyectos PHP modernos que requieren:
-- Arquitectura escalable
-- Integración con IA
-- Calidad empresarial
-- Observabilidad completa
+- Separación por capas (Clean Architecture) y wiring centralizado en bootstrap
+- Integración con microservicios (OpenAI/RAG) y servicios externos (observabilidad/analíticas)
+- Controles de seguridad en capa HTTP y sesión
+- Suite de tests y workflows de CI
+- Documentación técnica (arquitectura, API, seguridad, despliegue)
 
 ---
 
-## 👤 Créditos
+## Créditos
 
 **Proyecto creado por**: Martín Pallante · [Creawebes](https://www.creawebes.com)  
-**Asistente técnico**: Alfred, IA desarrollada con ❤️
-
-> *"Diseñando tecnología limpia, modular y con propósito."*
+**Asistente técnico**: Alfred (asistente IA)

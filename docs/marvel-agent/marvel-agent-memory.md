@@ -53,7 +53,7 @@ Todo convive con automatizaciones externas (n8n) que alimentan contenido (últim
 ### 2.1 App principal (PHP)
 
 - **Routing principal**:
-  - `Src\Shared\Http\Router` y `PageController` mapean rutas como `/`, `/albums`, `/heroes`, `/comic`, `/seccion`, `/agentia`, etc., y cargan vistas en `views/*.php`.
+  - `App\Shared\Http\Router` y `PageController` mapean rutas como `/`, `/albums`, `/heroes`, `/comic`, `/seccion`, `/agentia`, etc., y cargan vistas en `views/*.php`.
 
 - **Vistas principales** (ejemplos):
   - `views/albums.php`: listado y gestión de álbumes.
@@ -112,7 +112,7 @@ También expone proxies para APIs clave: `/api/github-activity.php` (PRs), `/api
 - **Retrievers**:
   - Léxico (default): `HeroRetriever` (bolsa de palabras + coseno).
   - Vectorial (opcional): `VectorHeroRetriever` usa embeddings precalculados y cae al léxico si faltan vectores o config.
-- **RAG profesional (principios aplicados)**:
+- **RAG (principios aplicados)**:
   - Separación de conocimiento (JSON/embeddings) y lógica de recuperación.
   - Cliente LLM desacoplado (`openai-service`) y configurable por `.env`.
   - Fallback seguro: si faltan embeddings o falla el vectorial, usa el retriever léxico.
@@ -208,14 +208,14 @@ Clean Marvel Album está pensado para moverse entre local y producción sin camb
   - `heatmap-service`: dockerizado en VM (Google Cloud, según docs) accesible en `http://34.74.102.123:8080`.
 - **Docker e imágenes**:
   - `docker-compose.yml` (raíz): levanta la app principal PHP con servidor embebido en 8080 para desarrollo rápido.
-  - App principal: Dockerfile de referencia en `docs/DEPLOY_K8S.md` (php:8.2-apache, sirve `public/`); imagen sugerida `20luisma/clean-marvel:latest`.
-  - `openai-service` y `rag-service`: tienen Dockerfile en cada carpeta; imágenes por defecto `20luisma/openai-service:latest` y `20luisma/rag-service:latest`.
-  - `heatmap-service`: Dockerfile propio; se construye como imagen `heatmap-service` y se ejecuta en contenedor (`docker run -p 8080:8080 ...`). Volumen montado para `heatmap.db`.
+  - App principal: no hay `Dockerfile` en la raíz del repositorio. En `k8s/DEPLOY_K8S.md` hay un Dockerfile de referencia para construir una imagen (no versionado).
+  - `openai-service` y `rag-service`: incluyen `Dockerfile` en cada carpeta. Las imágenes referenciadas en manifiestos son ejemplos y deben ajustarse al registry del entorno.
+  - `heatmap-service`: microservicio externo (fuera de este repositorio); su Dockerfile se documenta en `docs/microservicioheatmap/README.md`.
 - **Kubernetes (nuevo)**:
   - Manifiestos en `k8s/*.yaml` definen Deployments (2 réplicas) + Services `ClusterIP` para `clean-marvel`, `rag-service`, `openai-service` y un Ingress NGINX con host `clean-marvel.local`.
   - Ingress: `/` apunta a la app principal; `/api/rag/*` se reescribe a `/rag/$2` hacia `rag-service`; `/api/openai/*` se reescribe a `/$2` hacia `openai-service` (puerto 8081).
   - ConfigMaps: `clean-marvel-config`, `rag-service-config`, `openai-service-config` (URLs internas, flags como `RAG_USE_EMBEDDINGS=0`, CORS y voz ElevenLabs). Secrets `clean-marvel-secrets` agrupa `INTERNAL_API_KEY`, `OPENAI_API_KEY`, `ELEVENLABS_API_KEY` y tokens externos con placeholders `CHANGEME`.
-  - Pipeline: tests + análisis → `docker build`/`docker push` (`20luisma/clean-marvel|openai-service|rag-service:latest`) → `kubectl apply -f k8s/` → `kubectl rollout status deploy/<name>` y `kubectl get svc,ing`.
+  - Pipeline: flujo sugerido (documentación). No implica que exista un pipeline de build/push configurado para Kubernetes en este repositorio.
   - Debug: `kubectl port-forward svc/clean-marvel 8080:80`, `svc/rag-service 8082:80`, `svc/openai-service 8081:8081`. Host Ingress `clean-marvel.local` es placeholder; ajustar DNS/TLS reales.
 - **Subdominios y hosting**:
   - Los microservicios PHP resuelven su URL vía `.env` (`OPENAI_SERVICE_URL`, `RAG_SERVICE_URL`), con fallback a subdominios `openai-service.contenido.creawebes.com` y `rag-service.contenido.creawebes.com` cuando están en hosting.
@@ -233,7 +233,7 @@ Clean Marvel Album está pensado para moverse entre local y producción sin camb
 
 ### 2.7 Seguridad (v1.2.0 - CSP Hardening)
 
-**Estado actual**: Calificación de seguridad **9.5/10** (nivel enterprise/bancario).
+**Estado actual (académico)**: controles de hardening activos (CSP con nonce en `script-src`, CSRF, rate limit, sesión) con tests automatizados y guía de verificación.
 
 #### Content Security Policy (CSP) con Nonces Dinámicos
 
@@ -268,27 +268,8 @@ style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwi
 
 #### Testing de Seguridad
 
-- **191 tests automatizados** (100% pasando), incluyendo:
-  - 6 tests específicos de CSP (`tests/Security/CspStrictTest.php`):
-    - Verificación de nonces en headers
-    - Bloqueo de `'unsafe-inline'` en `script-src`
-    - Generación de nonces únicos
-    - Backward compatibility
-  - Tests de CSRF, rate limiting, sanitización, session security
-- **Grupo de tests rápidos**: `vendor/bin/phpunit --group security`
-- **Verificación manual**: 10 pruebas prácticas documentadas en `docs/security/security_verification.md`
-
-#### Calificación por Categoría
-
-| Aspecto | Calificación |
-|---------|--------------|
-| Protección XSS | 10/10 |
-| CSP | 9/10 |
-| CSRF Protection | 10/10 |
-| Rate Limiting | 10/10 |
-| Session Security | 9.5/10 |
-| Input Validation | 9/10 |
-| **Global** | **9.5/10** |
+- Tests de CSP/CSRF/rate limit/sesión/sanitización en `tests/Security/`
+- Verificación manual guiada en `docs/security/security_verification.md`
 
 #### Documentación de Seguridad
 
@@ -314,26 +295,20 @@ vendor/bin/phpunit tests/Security/ --testdox
 ## 3. Calidad, CI y auditorías
 
 - **Pruebas**:
-  - App principal: `phpunit.xml.dist` - **191 tests, 593 assertions** (100% pasando)
+  - App principal: `vendor/bin/phpunit` (suite completa; ver salida de PHPUnit)
   - Microservicios: `rag-service/phpunit.xml`, `openai-service/phpunit.xml`
-  - Tests de seguridad: 6 tests específicos de CSP + tests de CSRF, rate limiting, sanitización
-  - Comandos típicos:
-    - `vendor/bin/phpunit` (suite completa)
-    - `vendor/bin/phpunit --group security` (solo seguridad)
-    - `cd rag-service && ../vendor/bin/phpunit`
-    - `cd openai-service && ../vendor/bin/phpunit`
 
 - **PHPStan**: `vendor/bin/phpstan analyse --memory-limit=1G` (config en `phpstan.neon`, nivel 7, excluye `src/Dev`; bloque `ignoreErrors` comentado).
 
-- **QA frontend**: Playwright (`playwright.config.cjs`), Pa11y (`pa11y-all.sh`), Lighthouse (`lighthouserc.json`), SonarCloud (ver ADR-003).
+- **QA frontend**: Playwright (`playwright.config.cjs`), Pa11y (`bin/pa11y-all.sh`), Lighthouse (`lighthouserc.json`), SonarCloud (ver ADR-003).
 
 - **CI/CD (GitHub Actions)**: jobs de PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright, SonarCloud; deploy/rollback FTP según pipelines definidos.
 
-- **Seguridad**: CSP con nonces (v1.2.0), CSRF protection, rate limiting, session security. Calificación: 9.5/10.
+- **Seguridad**: CSP con nonce en `script-src` (v1.2.0), CSRF, rate limiting, session security (ver `docs/security/security.md`).
 
 ---
 
-En conjunto, PHPUnit + PHPStan cubren la solidez del backend; Playwright, Pa11y y Lighthouse vigilan la UX, accesibilidad y rendimiento; SonarCloud da visibilidad continua de calidad. Este “cinturón de seguridad” automatizado evita regresiones y mantiene el código en niveles profesionales antes de cualquier despliegue.
+En conjunto, PHPUnit y PHPStan permiten verificar backend; Playwright, Pa11y y Lighthouse cubren flujos de UI y auditorías de navegador; SonarCloud centraliza métricas y reportes según su configuración.
 
 ## 4. Documentación y fuentes de conocimiento
 
@@ -348,17 +323,17 @@ En conjunto, PHPUnit + PHPStan cubren la solidez del backend; Playwright, Pa11y 
 - **Gestión de proyecto**: `docs/project-management/` con CHANGELOG.md (v1.2.0), ROADMAP.md, CONTRIBUTING.md, TASKS_AUTOMATION.md.
 - **Desarrollo**: `docs/development/` con agent.md, analisis_estructura.md.
 - **Guías**: `docs/guides/getting-started.md`, `docs/guides/testing.md`, `docs/guides/authentication.md`.
-- **Otros**: `docs/architecture/USE_CASES.md`, `docs/architecture/REQUIREMENTS.md`, `docs/deployment/deploy.md`, `docs/DEPLOY_K8S.md` (guía de despliegue en Kubernetes y manifiestos en `k8s/`).
+- **Otros**: `docs/architecture/USE_CASES.md`, `docs/architecture/REQUIREMENTS.md`, `docs/deployment/deploy.md`, `k8s/DEPLOY_K8S.md` (guía de despliegue en Kubernetes y manifiestos en `k8s/`).
 
 ---
 
-Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, leer `docs/ARCHITECTURE.md` y los ADRs para decisiones clave, luego revisar `API_REFERENCE.md` y los README de cada microservicio. Las guías de testing y automatización explican cómo ejecutar suites y scripts, acelerando la curva de aprendizaje.
+Un desarrollador nuevo debería empezar por `docs/README.md` para el índice, leer `docs/architecture/ARCHITECTURE.md` y los ADRs para decisiones clave, luego revisar `docs/api/API_REFERENCE.md` y los README de cada microservicio. Las guías de testing y automatización explican cómo ejecutar suites y scripts.
 
 ## 5. Reglas para el futuro Marvel Agent
 
 1. **Fuentes permitidas**: este archivo, la documentación listada y el código real. Si hay conflicto, prevalece el código.
 2. **No inventar**: no crear endpoints ni microservicios inexistentes. Si falta información, indicarlo.
-3. **Citar**: mencionar el archivo de soporte cuando aplique (ej.: `docs/ARCHITECTURE.md`, `rag-service/README.md`).
+3. **Citar**: mencionar el archivo de soporte cuando aplique (ej.: `docs/architecture/ARCHITECTURE.md`, `rag-service/README.md`).
 4. **Endpoints reales**: `/v1/chat` (openai-service), `/rag/heroes` (rag-service), proxies heatmap (`/api/heatmap/*.php`), rutas HTML según `PageController`.
 5. **Configuración**: hablar solo de variables que estén en `.env` o en código (`OPENAI_API_KEY`, `OPENAI_SERVICE_URL`, `RAG_USE_EMBEDDINGS`, `HEATMAP_API_*`, etc.).
 6. **Estado del agente**: `/agentia` es frontend con respuestas simuladas; el backend RAG/LLM se añadirá después usando esta memoria.

@@ -33,4 +33,4 @@ Se necesitan controles mínimos para los paneles internos (heatmap, GitHub, repo
 
 ## Relacionado
 - Implementación en `src/Security/*`, `src/Controllers/AuthController.php`, `src/Shared/Http/Router.php`, `views/pages/login.php`, `views/helpers.php`, `src/bootstrap.php`.
-- Actualizaciones de documentación: `README.md`, `AGENTS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/API_REFERENCE.md`, `docs/marvel-agent/marvel-agent-memory.md`.
+- Actualizaciones de documentación: `README.md`, `AGENTS.md`, `docs/project-management/ROADMAP.md`, `docs/architecture/ARCHITECTURE.md`, `docs/api/API_REFERENCE.md`, `docs/marvel-agent/marvel-agent-memory.md`.

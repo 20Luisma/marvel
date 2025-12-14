@@ -1,23 +1,23 @@
-# 🔒 Documentación de Seguridad
+# Documentación de seguridad
 
 Esta carpeta contiene toda la documentación relacionada con las medidas de seguridad implementadas en **Clean Marvel Album**.
 
 ---
 
-## 📚 Documentos Disponibles
+## Documentos disponibles
 
-### 1. [security.md](./security.md)
+### 1. `docs/security/security.md`
 Documentación completa de todas las medidas de seguridad implementadas en el proyecto:
 - CSRF Protection
 - Rate Limiting
 - Session Security
 - Input Sanitization
 - Security Headers
-- **CSP con Nonces** (nuevo)
+- CSP con nonces
 - HMAC para microservicios
-- Y más...
+- Otros controles documentados en el archivo.
 
-### 2. [security_verification.md](./security_verification.md)
+### 2. `docs/security/security_verification.md`
 Guía práctica de verificación de seguridad con 10 pruebas para validar que el sistema CSP funciona correctamente:
 - Verificación de headers
 - Nonces únicos
@@ -28,7 +28,7 @@ Guía práctica de verificación de seguridad con 10 pruebas para validar que el
 
 ---
 
-## 🎯 Uso Rápido
+## Uso rápido
 
 ### Verificar Seguridad CSP
 ```bash
@@ -42,28 +42,17 @@ curl -I http://localhost:8080/ 2>&1 | grep -o "nonce-[^']*"
 vendor/bin/phpunit tests/Security/ --testdox
 ```
 
-### Calificación del Sistema
-- **Protección XSS**: 10/10
-- **CSP**: 9/10
-- **Testing**: 10/10
-- **Implementación**: 10/10
-- **Global**: **9.5/10** 🏆
+---
+
+## Alcance y límites
+
+Este repositorio incluye controles de seguridad **a nivel académico/didáctico** (hardening, CSRF, rate limit, sesión, sanitización y CSP).  
+No se presenta como seguridad para entornos regulados: hay límites explícitos en `docs/security/security.md` y recomendaciones de hardening futuro.
 
 ---
 
-## 🏆 Nivel de Seguridad
+## Para más información
 
-El proyecto implementa seguridad de **nivel enterprise/bancario**:
-- ✅ OWASP Top 10 cubierto
-- ✅ CSP Level 3 con nonces
-- ✅ 191 tests automatizados
-- ✅ Protección XSS verificada
-- ✅ Documentación completa
-
----
-
-## 📖 Para Más Información
-
-- Ver [security.md](./security.md) para detalles técnicos
-- Ver [security_verification.md](./security_verification.md) para pruebas prácticas
-- Ver `/docs/analisis_estructura.md` para arquitectura general
+- Ver `docs/security/security.md` para detalles técnicos
+- Ver `docs/security/security_verification.md` para pruebas prácticas
+- Ver `docs/development/analisis_estructura.md` para arquitectura general

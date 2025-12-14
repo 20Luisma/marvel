@@ -1,14 +1,14 @@
 # AGENTS — Clean Marvel Album
 
-> 📚 **Documentación completa**: Para guía detallada ver `docs/PROJECT_GUIDE.md` (~2800 líneas).
+> Documentación ampliada: ver `docs/PROJECT_GUIDE.md`.
 
-## 🎯 Contexto y propósito
-- **Clean Marvel Album** es una demo/producto educativo en **PHP 8.2** que aplica Arquitectura Limpia para gestionar álbumes y héroes Marvel, desacoplando la lógica del framework, la UI (`public/`, `views/`) y la infraestructura (`storage/`, adaptadores JSON).
+## Contexto y propósito
+- **Clean Marvel Album** es un proyecto académico en **PHP 8.2** que aplica Arquitectura Limpia para gestionar álbumes y héroes Marvel, desacoplando la UI (`public/`, `views/`) y la infraestructura (`storage/`, adaptadores JSON).
 - El backend central orquesta **3 microservicios externos** propios y expone los casos de uso mediante controladores HTTP y vistas Twig-less.
 - La capa `App\Config\ServiceUrlProvider` resuelve automáticamente los endpoints según entorno (`local`, `hosting`).
 - El tráfico hacia microservicios se firma con HMAC usando `INTERNAL_API_KEY` y las cabeceras `X-Internal-*`.
 
-### 🧱 Capas Clean Architecture
+### Capas Clean Architecture
 | Capa | Directorios clave | Responsabilidad |
 | --- | --- | --- |
 | **Presentación** | `public/index.php`, `src/Controllers`, `views/` | Front Controller + Router HTTP; render de vistas y respuestas JSON. |
@@ -18,13 +18,13 @@
 
 ---
 
-## 🛰️ Los 3 Microservicios (Arquitectura Completa)
+## Los 3 microservicios (arquitectura)
 
 | Servicio | Tecnología | Puerto Local | Hosting | Propósito |
 |----------|------------|--------------|---------|-----------|
 | **OpenAI Service** | PHP 8.2 | 8081 | `openai-service.contenido.creawebes.com` | Generar cómics con GPT |
 | **RAG Service** | PHP 8.2 | 8082 | `rag-service.contenido.creawebes.com` | Comparar héroes con RAG |
-| **Heatmap Service** | ⚠️ **Python 3.10 + Flask** | 5000 | `http://34.74.102.123:8080` (Google Cloud) | Analytics de clics |
+| **Heatmap Service** | **Python 3.10 + Flask** | 5000 | `http://34.74.102.123:8080` (Google Cloud) | Registro/consulta de eventos de clic |
 
 ### OpenAI Service (PHP)
 - **Endpoint:** `POST /v1/chat`
@@ -37,7 +37,7 @@
 - **Knowledge base:** `storage/knowledge/*.json`, `storage/marvel_agent_kb.json`
 
 ### Heatmap Service (Python + Flask + Docker + Google Cloud)
-> ⚠️ **Diferente tecnología**: Python, no PHP. Desplegado en **Google Cloud VM**, no en hosting compartido.
+> Nota: diferente tecnología (Python, no PHP). Desplegado en Google Cloud VM, no en hosting compartido.
 
 - **Endpoints:** `POST /track` (registrar clic), `GET /events` (listar clics)
 - **Auth:** Header `X-API-Token`
@@ -70,38 +70,38 @@
 
 ---
 
-## 🔐 Las 10 Fases de Seguridad
+## Las 10 fases de seguridad
 
 | Fase | Tema | Estado |
 |------|------|--------|
-| 1 | Hardening HTTP (cabeceras, cookies) | ✅ Completa |
-| 2 | Autenticación (bcrypt, TTL, IP/UA) | ✅ Completa |
-| 3 | Autorización (AuthMiddleware, Guards) | ✅ Completa |
-| 4 | CSRF y XSS (tokens, escapado) | ✅ Completa |
-| 5 | APIs y microservicios (ApiFirewall, rate-limit) | ✅ Completa |
-| 6 | Monitorización (SecurityLogger, Sentry) | ✅ Completa |
-| 7 | Anti-replay (token sesión) | ✅ Observación |
-| 8 | Cabeceras avanzadas (CSP, CORP, COOP) | ✅ Completa |
-| 9 | Gestión de secretos | 🚧 En progreso |
-| 10 | Tests automáticos seguridad | 🚧 Planificado |
+| 1 | Hardening HTTP (cabeceras, cookies) | Implementada |
+| 2 | Autenticación (bcrypt, TTL, IP/UA) | Implementada |
+| 3 | Autorización (AuthMiddleware, Guards) | Implementada |
+| 4 | CSRF y XSS (tokens, escapado) | Implementada |
+| 5 | APIs y microservicios (ApiFirewall, rate-limit) | Implementada |
+| 6 | Monitorización (SecurityLogger, Sentry) | Implementada |
+| 7 | Anti-replay (token sesión) | Modo observación |
+| 8 | Cabeceras avanzadas (CSP, CORP, COOP) | Implementada |
+| 9 | Gestión de secretos | En progreso (documentado) |
+| 10 | Tests automáticos seguridad | Planificado (documentado) |
 
 > Detalle completo en `docs/security/security.md`
 
 ---
 
-## 🔊 Soporte ElevenLabs TTS
+## Soporte ElevenLabs TTS
 - **Endpoint:** `POST /api/tts-elevenlabs.php`
 - **Variables:** `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID` (default: Charlie)
 - **Uso:** Narración de cómics y comparaciones RAG
 
 ---
 
-## 🔧 Scripts CLI (bin/)
+## Scripts CLI (bin/)
 
 | Script | Propósito |
 |--------|-----------|
 | `migrar-json-a-db.php` | Migra datos JSON a MySQL |
-| `security-check.sh` | PHPUnit Security + PHPStan + audit |
+| `security-check.sh` | `composer audit` + lint de sintaxis (`php -l`) |
 | `generate-bundle-size.php` | Métricas de assets |
 | `pa11y-all.sh` | Auditoría accesibilidad |
 | `verify-token-metrics.php` | Verifica métricas tokens IA |
@@ -112,7 +112,7 @@
 
 ---
 
-## 📊 APIs del Dashboard (panel de métricas)
+## APIs del dashboard (panel de métricas)
 
 | Endpoint | Propósito | Auth |
 |----------|-----------|------|
@@ -129,43 +129,43 @@
 
 ---
 
-## 👥 Roles de los agentes
-- **🔧 Refactorizador:** mejoras estructurales sin romper contratos. Toca `src/bootstrap.php` para wiring.
-- **🧪 Generador de tests:** tests en `tests/` con convención `*Test.php`. Usa Mockery.
-- **📝 Documentador:** mantiene `README.md`, `docs/*.md`, `AGENTS.md`.
-- **🔗 Gestor de microservicios:** sincroniza app principal con los 3 microservicios. Verifica `.env`, puertos, healthchecks.
-- **🛡️ Auditor de calidad:** PHPUnit + PHPStan + Composer audit.
+## Roles de los agentes
+- **Refactorizador:** mejoras estructurales sin romper contratos. Toca `src/bootstrap.php` para wiring.
+- **Generador de tests:** tests en `tests/` con convención `*Test.php`. Usa Mockery.
+- **Documentador:** mantiene `README.md`, `docs/*.md`, `AGENTS.md`.
+- **Gestor de microservicios:** sincroniza app principal con los 3 microservicios. Verifica `.env`, puertos, healthchecks.
+- **Auditor de calidad:** PHPUnit + PHPStan + `composer audit`.
 
 ---
 
-## 🧩 Reglas y buenas prácticas
+## Reglas y buenas prácticas
 - Respetar inversión de dependencias: interfaces en `Domain/Repository`, implementación en `Infrastructure`.
 - Evitar lógica HTTP en dominio; controladores solo orquestan.
 - Eventos necesitan handler registrado en `bootstrap.php`.
 - No leer/escribir `storage/` desde presentación.
-- PHPStan nivel 6+, cobertura de tests, throwables tipados.
-- Documentar cambios de payload en `docs/API_REFERENCE.md`.
+- PHPStan nivel configurado en `phpstan.neon` (actualmente 7).
+- Documentar cambios de payload en `docs/api/API_REFERENCE.md`.
 
 ---
 
-## 🧪 Auditoría de calidad
+## Auditoría de calidad
 - **PHPUnit:** `vendor/bin/phpunit --colors=always`
-- **Coverage:** `composer test:cov` → `coverage.xml`
+- **Coverage:** `composer test:coverage` → `coverage.xml`
 - **PHPStan:** `vendor/bin/phpstan analyse --memory-limit=1G`
 - **Security:** `bash bin/security-check.sh`
-- **Composer:** `composer audit --no-interaction`
+- **Composer audit:** `composer audit --no-interaction`
 - **Entorno de tests:** `tests/bootstrap.php` fija `APP_ENV=test` y `DB_DSN=sqlite::memory:` (sin depender de `.env`) y redirige avisos PHP a `sys_get_temp_dir()/phpunit-clean-marvel.log`. Los endpoints/vistas de GitHub aceptan fakes con `__github_client_factory` + banderas `GITHUB_REPO_BROWSER_TEST` / `PANEL_GITHUB_TEST` para correr PHPUnit sin red.
 
 ---
 
-## 🧯 Safe Mode (dry-run)
+## Safe Mode (dry-run)
 - Activar `SAFE_MODE=1` para comandos sin escribir cambios.
 - Limitarse a inspección: `ls`, `rg`, `git status`, `cat`.
 - Producir diffs hipotéticos en lugar de aplicar parches.
 
 ---
 
-## 💻 Comandos útiles
+## Comandos útiles
 
 | Escenario | Comando |
 | --- | --- |
@@ -179,7 +179,7 @@
 
 ---
 
-## 📁 Variables de entorno clave (.env)
+## Variables de entorno clave (.env)
 
 ```env
 # App
@@ -206,7 +206,7 @@ SNYK_API_KEY=
 
 ---
 
-> 🔄 **Mantén este documento actualizado** cada vez que cambie la arquitectura, los microservicios, o los comandos soportados.  
-> 📚 **Para documentación exhaustiva**, consultar `docs/PROJECT_GUIDE.md`.
+> Mantén este documento actualizado cuando cambie la arquitectura, los microservicios o los comandos soportados.  
+> Para documentación ampliada, consultar `docs/PROJECT_GUIDE.md`.
 
 *Última sincronización: 8 Diciembre 2025*

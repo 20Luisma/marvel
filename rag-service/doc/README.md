@@ -1,6 +1,6 @@
 # Documentación del microservicio RAG
 
-Este directorio agrupa la guía operativa y técnica del microservicio `rag-service` de Clean Marvel Album. Está pensado para mantener la documentación autocontenida y de referencia rápida.
+Este directorio agrupa la guía operativa y técnica del microservicio `rag-service` de Clean Marvel Album. Está pensado para mantener la documentación autocontenida y de consulta rápida.
 
 - `overview.md`: propósito, arquitectura resumida y dependencias.
 - `retrieval-modes.md`: modos de retrieval (léxico vs vectorial), variables de entorno y generación de embeddings offline.

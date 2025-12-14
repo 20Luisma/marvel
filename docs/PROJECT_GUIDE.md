@@ -11,7 +11,7 @@ Antes de escribir una sola línea de código, para. El paso más importante es d
 ### Preguntas clave
 
 1. **¿Qué problema resuelve este proyecto?**  
-   Puede ser real (un cliente, una necesidad profesional) o educativo (practicar un patrón, experimentar con una tecnología).
+   Puede ser real (un cliente, una necesidad práctica) o educativo (practicar un patrón, experimentar con una tecnología).
 
 2. **¿Qué tipo de proyecto es?**
    - MVP para validar una idea.
@@ -32,20 +32,14 @@ Antes de empezar, completa esta lista:
 - [ ] **Stack tecnológico base**: (PHP 8.2+, MySQL, JSON, etc.).
 - [ ] **Complejidad esperada**: (Simple / Moderado / Avanzado).
 
-### Ejemplo basado en Marvel
+### Ejemplo (Clean Marvel Album)
 
 ```
-✅ Propósito: "Este proyecto gestiona un álbum de héroes Marvel para que 
-              desarrolladores puedan ver un ejemplo real de Arquitectura Limpia en PHP."
-
-✅ Tipo: Demo técnica + Educativo.
-
-✅ Practicar: Clean Architecture, DDD básico, seguridad por capas, CI/CD completo,
-             integración con microservicios de IA.
-
-✅ Stack: PHP 8.2+, JSON en local, MySQL en hosting, microservicios Python/PHP.
-
-✅ Complejidad: Avanzado (múltiples capas, microservicios, CI/CD multinivel).
+- Propósito: "Este proyecto gestiona un álbum de héroes Marvel para mostrar un ejemplo de Arquitectura Limpia en PHP."
+- Tipo: demo técnica y educativo.
+- Enfoque: Clean Architecture, seguridad por capas, CI con tests/análisis, integración con microservicios.
+- Stack: PHP 8.2+, JSON en local, MySQL en hosting, microservicios PHP/Python.
+- Complejidad: múltiples capas y servicios.
 ```
 
 ---
@@ -303,7 +297,7 @@ Solo cuando el proyecto lo requiere (producción real, datos críticos):
 | Práctica personal | 1 |
 | Demo técnica | 1 + Rate limiting básico |
 | MVP con usuarios reales | 1 + 2 |
-| Producción profesional | 1 + 2 + 3 (según necesidad) |
+| Producción | 1 + 2 + 3 (según necesidad) |
 
 **Marvel implementa hasta Fase 8** porque es un proyecto de demostración completo. Tu proyecto probablemente no necesite todo eso al principio.
 
@@ -316,12 +310,12 @@ En Marvel, los microservicios de IA (OpenAI para generar cómics, RAG para compa
 ### La regla de los 3 pasos
 
 ```
-1. Dominio y casos de uso funcionando con tests ✅
-2. Endpoints HTTP básicos funcionando ✅
+1. Dominio y casos de uso con tests
+2. Endpoints HTTP básicos funcionando
 3. SOLO ENTONCES → IA y microservicios
 ```
 
-**No añadas IA porque es "cool"**. Añádela cuando resuelve un problema real del dominio.
+Evitar añadir IA solo por novedad. Añadirla cuando resuelve un problema del dominio.
 
 ### Patrones para integrar IA
 
@@ -347,7 +341,7 @@ En Marvel, los microservicios de IA (OpenAI para generar cómics, RAG para compa
 
 3. **No mezcles IA en entidades ni controladores**
 
-   ❌ Mal:
+   Ejemplo a evitar:
    ```php
    class HeroController {
        public function compare() {
@@ -357,7 +351,7 @@ En Marvel, los microservicios de IA (OpenAI para generar cómics, RAG para compa
    }
    ```
 
-   ✅ Bien:
+   Ejemplo recomendado:
    ```php
    class HeroController {
        public function compare(ComicGeneratorInterface $generator) {
@@ -382,11 +376,11 @@ En Marvel, los microservicios de IA (OpenAI para generar cómics, RAG para compa
 
 | Criterio | Monolito | Microservicio |
 |----------|----------|---------------|
-| Equipo pequeño (1-3 devs) | ✅ | ❌ |
-| Tecnología diferente (Python, Node) | ❌ | ✅ |
-| Escalar independientemente | ❌ | ✅ |
-| Complejidad de despliegue aceptable | ✅ | ❌ |
-| Proyecto educativo mostrando patrones | Depende | ✅ |
+| Equipo pequeño (1-3 devs) | Sí | No |
+| Tecnología diferente (Python, Node) | No | Sí |
+| Escalar independientemente | No | Sí |
+| Complejidad de despliegue aceptable | Sí | No |
+| Proyecto educativo mostrando patrones | Depende | Sí |
 
 Marvel usa microservicios separados para OpenAI y RAG porque:
 - Permite mostrar el patrón.
@@ -429,10 +423,10 @@ jobs:
         run: vendor/bin/phpstan analyse
 ```
 
-**Lo que valida:**
-- ✅ El código compila.
-- ✅ Los tests pasan.
-- ✅ No hay errores obvios de tipos.
+**Lo que cubre:**
+- Ejecución de tests (PHPUnit).
+- Análisis estático (PHPStan).
+- Instalación de dependencias (Composer).
 
 ### Nivel 2 — Intermedio
 
@@ -451,9 +445,8 @@ Añade al Nivel 1:
 ```
 
 **Lo que añade:**
-- ✅ Cobertura de tests visible.
-- ✅ Análisis de calidad (bugs, code smells, vulnerabilidades).
-- ✅ Historial de métricas.
+- Cobertura en `coverage.xml` (consumida por SonarCloud).
+- Histórico de métricas en SonarCloud (según configuración del proyecto).
 
 ### Nivel 3 — Avanzado (como Marvel)
 
@@ -467,7 +460,7 @@ Jobs adicionales al Nivel 2:
 | **Lighthouse** | [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) | Performance, SEO, accesibilidad |
 | **Playwright** | [Playwright](https://playwright.dev/) | Tests E2E reales |
 | **Security audit** | `composer audit` | Vulnerabilidades en dependencias |
-| **Deploy automático** | FTP/SSH/K8s | Solo si todo pasa en verde |
+| **Deploy automático** | FTP/SSH/K8s | Condicionado a checks previos (según configuración) |
 
 **Ejemplo de estructura de jobs:**
 
@@ -489,7 +482,7 @@ jobs:
 | Portfolio/Demo técnica | 2 |
 | Entrevista técnica | 2 |
 | MVP con usuarios reales | 2–3 |
-| Producción profesional | 3 |
+| Producción | 3 |
 | Educativo (como Marvel) | 3 (para mostrar el patrón completo) |
 
 ### Archivos de configuración necesarios
@@ -525,34 +518,34 @@ Estructura recomendada:
 
 **Una línea describiendo qué hace el proyecto.**
 
-## 🎯 Objetivo
+## Objetivo
 Por qué existe este proyecto y qué problema resuelve.
 
-## 🧠 Arquitectura
+## Arquitectura
 Resumen de capas y decisiones arquitectónicas.
-(Enlace a docs/ARCHITECTURE.md para más detalle.)
+(Enlace a `docs/architecture/ARCHITECTURE.md` para más detalle.)
 
-## 🗂️ Estructura
+## Estructura
 Árbol de carpetas principales explicado.
 
-## 💾 Persistencia
+## Persistencia
 Qué base de datos usa y por qué.
 
-## 🔐 Seguridad
+## Seguridad
 Qué fases de seguridad están activas.
-(Enlace a docs/SECURITY.md para más detalle.)
+(Enlace a `docs/security/security.md` para más detalle.)
 
-## 🚀 Puesta en marcha
+## Puesta en marcha
 Pasos para levantar el proyecto localmente.
 
-## 🧪 Tests y calidad
+## Tests y calidad
 Cómo ejecutar tests, cobertura, análisis estático.
 
-## 📚 Documentación adicional
+## Documentación adicional
 Enlaces a otros docs relevantes.
 ```
 
-### docs/ARCHITECTURE.md (recomendado)
+### `docs/architecture/ARCHITECTURE.md` (recomendado)
 
 Para proyectos con arquitectura no trivial:
 
@@ -561,7 +554,7 @@ Para proyectos con arquitectura no trivial:
 - Decisiones arquitectónicas y por qué se tomaron.
 - Microservicios y cómo se comunican (si aplica).
 
-### docs/SECURITY.md (según contexto)
+### `docs/security/security.md` (según contexto)
 
 Si implementas más que Fase 1:
 
@@ -573,15 +566,15 @@ Si implementas más que Fase 1:
 
 | Documento | Cuándo crearlo |
 |-----------|---------------|
-| `docs/API_REFERENCE.md` | Si tienes endpoints públicos |
-| `docs/DOMAIN.md` | Para explicar entidades y reglas de negocio complejas |
-| `docs/DEPLOY.md` | Si el deploy tiene pasos especiales |
+| `docs/api/API_REFERENCE.md` | Si tienes endpoints públicos |
+| `docs/DOMAIN.md` (opcional) | Para explicar entidades y reglas de negocio complejas (no incluido en este repo) |
+| `docs/deployment/deploy.md` | Si el despliegue tiene pasos especiales |
 | `docs/guides/` | Para tutoriales específicos (autenticación, testing, etc.) |
 | `AGENTS.md` | Si trabajas con asistentes de IA (define reglas para el agente) |
 
-### Marvel como referencia
+### Patrón de documentación del repositorio
 
-Marvel es el "ejemplo completo" con documentación extensiva. Para tu proyecto:
+El repositorio incluye un conjunto amplio de documentación. Para tu proyecto:
 
 - **Proyecto simple** → Solo README.md bien hecho.
 - **Proyecto medio** → README + ARCHITECTURE.md.
@@ -846,11 +839,11 @@ $eventBus->publish(new HeroCreated($hero));
 
 | Situación | Usar evento |
 |-----------|-------------|
-| Notificar a otros sistemas | ✅ |
-| Loggear actividad | ✅ |
-| Actualizar cachés | ✅ |
-| Validar reglas de negocio | ❌ (debe estar en dominio) |
-| Modificar la entidad principal | ❌ (debe ser síncrono) |
+| Notificar a otros sistemas | Sí |
+| Loggear actividad | Sí |
+| Actualizar cachés | Sí |
+| Validar reglas de negocio | No (debe estar en dominio) |
+| Modificar la entidad principal | No (debe ser síncrono) |
 
 ---
 
@@ -939,7 +932,7 @@ Marvel incluye scripts CLI reutilizables:
 | Script | Propósito |
 |--------|-----------|
 | `bin/migrar-json-a-db.php` | Migra datos de JSON a MySQL |
-| `bin/security-check.sh` | Ejecuta tests de seguridad + PHPStan + audit |
+| `bin/security-check.sh` | Ejecuta `composer audit` + lint de sintaxis |
 | `bin/generate-bundle-size.php` | Genera métricas de tamaño de assets |
 | `bin/pa11y-all.sh` | Ejecuta auditoría de accesibilidad |
 | `bin/verify-token-metrics.php` | Verifica métricas de tokens IA |
@@ -950,21 +943,18 @@ Marvel incluye scripts CLI reutilizables:
 #!/bin/bash
 # bin/security-check.sh
 
-echo "=== Tests de seguridad ==="
-vendor/bin/phpunit tests/Security
-
-echo "=== PHPStan sobre seguridad ==="
-vendor/bin/phpstan analyse src/Security tests/Security
-
 echo "=== Auditoría de dependencias ==="
 composer audit --no-interaction
+
+echo "=== Lint de sintaxis PHP (src/ y tests/) ==="
+find src tests -name '*.php' -print0 | xargs -0 -r -n1 -P4 php -l
 ```
 
 ---
 
 ## 13. Testing completo (niveles Marvel)
 
-Marvel implementa más de **646 tests automatizados** con **1,411 assertions** cubriendo múltiples niveles.
+El repositorio incluye tests unitarios/integración, tests específicos de seguridad y tests E2E con Playwright.
 
 ### Estructura de tests
 
@@ -974,14 +964,14 @@ tests/
 │   ├── Domain/           # Tests de entidades y VOs
 │   ├── Application/      # Tests de casos de uso
 │   └── Infrastructure/   # Tests de repos
-├── Controllers/          # Tests de controladores (21 archivos)
-├── Security/             # Tests de seguridad (22 archivos)
+├── Controllers/          # Tests de controladores
+├── Security/             # Tests de seguridad
 ├── Services/             # Tests de servicios
 ├── Shared/               # Tests de código compartido
 ├── Fakes/                # Repositorios fake para tests
 ├── Doubles/              # Test doubles
-└── e2e/                  # Tests E2E (Playwright, 5 archivos)
-    ├── home.spec.js          # 2 tests de home
+└── e2e/                  # Tests E2E (Playwright)
+    ├── home.spec.js
     ├── albums.spec.js        # Tests de álbumes
     ├── heroes.spec.js        # Tests de héroes
     ├── comics.spec.js        # Tests de generación de cómics
@@ -990,42 +980,27 @@ tests/
 
 ### Tipos de tests en Marvel
 
-| Tipo | Cantidad | Herramienta | Qué valida |
-|------|----------|-------------|------------|
-| **Unitarios y Dominio** | ~30 archivos | PHPUnit | Entidades, VOs, eventos |
-| **Casos de Uso** | ~25 archivos | PHPUnit | Application layer |
-| **Seguridad** | 22 archivos | PHPUnit | CSRF, Rate Limit, Sessions, Firewall |
-| **Controladores** | 21 archivos | PHPUnit | HTTP layer completa |
-| **Infraestructura** | ~20 archivos | PHPUnit | Repos, HTTP clients, Bus |
-| **E2E** | 5 archivos (6 tests) | Playwright | Flujos críticos de usuario |
-| **Accesibilidad** | Pipeline CI | Pa11y | WCAG 2.1 AA (0 errores) |
-| **Performance** | Pipeline CI | Lighthouse | Core Web Vitals, SEO |
+| Tipo | Herramienta | Qué valida |
+|------|-------------|------------|
+| Unitarios y dominio | PHPUnit | Entidades, VOs, eventos |
+| Casos de uso | PHPUnit | Application layer |
+| Seguridad | PHPUnit | CSRF, rate limit, sesión, firewall |
+| Controladores | PHPUnit | Capa HTTP |
+| Infraestructura | PHPUnit | Repos, HTTP clients, bus |
+| E2E | Playwright | Flujos críticos de usuario |
+| Accesibilidad | Pa11y (CI) | Auditoría WCAG 2.1 AA |
+| Performance | Lighthouse (CI) | Core Web Vitals, SEO |
 
 ### Configuración PHPUnit
 
-```xml
-<!-- phpunit.xml.dist -->
-<phpunit bootstrap="tests/bootstrap.php" colors="true">
-    <testsuites>
-        <testsuite name="all">
-            <directory>tests</directory>
-            <exclude>tests/e2e</exclude>
-        </testsuite>
-    </testsuites>
-    <coverage>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </coverage>
-</phpunit>
-```
+Ver el archivo `phpunit.xml.dist`.
 
 ### Configuración PHPStan
 
 ```neon
 # phpstan.neon
 parameters:
-    level: 6
+    level: 7
     paths:
         - src
     excludePaths:
@@ -1084,7 +1059,7 @@ npm run test:e2e:debug
 
 **Tests E2E cubiertos**:
 
-1. **home.spec.js** (2 tests):
+1. **home.spec.js**:
    - Carga de home con título y elementos clave
    - Navegación principal y enlaces del menú
 
@@ -1124,10 +1099,10 @@ vendor/bin/phpunit tests/Albums/Domain
 # Solo tests de controladores
 vendor/bin/phpunit tests/Controllers
 
-# Cobertura (90.28% ✅, supera objetivo 80%+)
-composer test:cov
+# Cobertura (ver `COVERAGE.md` y `coverage.xml`)
+composer test:coverage
 
-# Análisis estático (PHPStan nivel 6)
+# Análisis estático (PHPStan; config en `phpstan.neon`)
 vendor/bin/phpstan analyse --memory-limit=512M
 
 # E2E completo
@@ -1161,9 +1136,9 @@ composer validate
    npm run test:e2e
    ```
 
-5. **Commit solo si todo pasa** ✅
+5. Commit tras ejecutar las comprobaciones principales
 
-**Documentación completa de testing**: Ver `docs/guides/testing-complete.md` para detalles exhaustivos de cada tipo de test, patrones AAA, mocks vs fakes, debugging y mejores prácticas.
+**Documentación completa de testing**: Ver `docs/guides/testing-complete.md` para más detalle de cada tipo de test, patrones AAA, mocks vs fakes, debugging y mejores prácticas.
 
 ---
 
@@ -1188,11 +1163,11 @@ k8s/
 
 | Escenario | ¿K8s? |
 |-----------|-------|
-| Proyecto personal/educativo | ❌ Usa hosting simple |
-| Demo técnica | ❌ A menos que quieras demostrar K8s |
-| MVP | ❌ Probablemente no lo necesitas |
-| Producción escalable | ✅ |
-| Múltiples microservicios | ✅ |
+| Proyecto personal/educativo | No (preferible hosting simple) |
+| Demo técnica | Depende (si se quiere demostrar K8s) |
+| MVP | No, salvo requisitos específicos |
+| Producción con necesidad de orquestación | Sí |
+| Múltiples microservicios | Sí |
 
 ### Alternativas más simples
 
@@ -1269,8 +1244,8 @@ Todo lo anterior, más:
 - [ ] Trace ID por request
 - [ ] SonarCloud integrado
 - [ ] Tests de seguridad
-- [ ] `docs/ARCHITECTURE.md`
-- [ ] `docs/SECURITY.md`
+- [ ] `docs/architecture/ARCHITECTURE.md`
+- [ ] `docs/security/security.md`
 
 ### Proyecto avanzado (Nivel Marvel)
 
@@ -1399,22 +1374,22 @@ Marvel define tareas para ejecutar con `Ctrl+Shift+P` → "Tasks: Run Task":
 
 | Categoría | Tareas |
 |-----------|--------|
-| **Servidor** | `🚀 Iniciar servidor PHP (8080)` |
-| **QA** | `🧪 Ejecutar Tests PHPUnit`, `🔍 Analizar código (PHPStan)`, `🧪 QA completo` |
-| **Seguridad** | `🛡️ Run Security Tests` |
+| **Servidor** | Iniciar servidor PHP (8080) |
+| **QA** | Ejecutar tests PHPUnit, analizar código (PHPStan), QA completo |
+| **Seguridad** | Ejecutar checks de seguridad |
 | **Git** | `Git \| crear rama`, `Git \| commit rápido`, `Git \| push seguro`, `Git \| crear versión` |
-| **Microservicios** | `🤖 Run OpenAI Service (8081)`, `🧬 Run RAG Service (8082)`, `🚀 Run All Services` |
-| **Calidad** | `🔎 Ejecutar SonarScanner`, `♿ Analizar accesibilidad (Pa11y)`, `📦 Medir Bundle Size` |
+| **Microservicios** | Ejecutar OpenAI Service (8081), ejecutar RAG Service (8082), ejecutar todos los servicios |
+| **Calidad** | Ejecutar SonarScanner, analizar accesibilidad (Pa11y), medir bundle size |
 
 ### Ejemplo de tarea
 
 ```json
 {
-    "label": "🧪 QA completo (tests + phpstan + composer)",
+    "label": "QA completo (tests + phpstan + composer)",
     "dependsOn": [
-        "🧪 Ejecutar Tests PHPUnit",
-        "🔍 Analizar código (PHPStan)",
-        "⚙️ Validar composer"
+        "Ejecutar Tests PHPUnit",
+        "Analizar código (PHPStan)",
+        "Validar composer"
     ],
     "dependsOrder": "sequence"
 }
@@ -1458,12 +1433,12 @@ Cuando trabajas con asistentes de IA:
 ```markdown
 # AGENTS — Nombre del Proyecto
 
-## 🎯 Contexto y propósito
+## Contexto y propósito
 - Descripción breve del proyecto.
 - Arquitectura general.
 - Microservicios y cómo se comunican.
 
-## 🧱 Capas Clean Architecture
+## Capas Clean Architecture
 | Capa | Directorios | Responsabilidad |
 | --- | --- | --- |
 | Presentación | `public/`, `src/Controllers` | HTTP |
@@ -1471,23 +1446,23 @@ Cuando trabajas con asistentes de IA:
 | Dominio | `src/*/Domain` | Entidades, reglas |
 | Infraestructura | `src/*/Infrastructure` | Adaptadores |
 
-## 👥 Roles de los agentes
-- 🔧 **Refactorizador**: Mejoras sin romper contratos.
-- 🧪 **Generador de tests**: Tests en `tests/`.
-- 📝 **Documentador**: README, docs, ADRs.
-- 🔗 **Gestor de microservicios**: Sincroniza servicios.
-- 🛡️ **Auditor de calidad**: PHPUnit + PHPStan.
+## Roles de los agentes
+- **Refactorizador**: mejoras sin romper contratos.
+- **Generador de tests**: tests en `tests/`.
+- **Documentador**: README, docs, ADRs.
+- **Gestor de microservicios**: sincroniza servicios.
+- **Auditor de calidad**: PHPUnit + PHPStan.
 
-## 🧩 Reglas y buenas prácticas
+## Reglas y buenas prácticas
 - Respetar inversión de dependencias.
 - No lógica HTTP en dominio.
 - Handlers idempotentes.
 - No acceder a `storage/` desde presentación.
 
-## 🧯 Safe Mode (dry-run)
+## Safe Mode (dry-run)
 - Cómo ejecutar en modo seguro sin escribir cambios.
 
-## 💻 Comandos útiles
+## Comandos útiles
 | Escenario | Comando |
 | --- | --- |
 | Instalar deps | `composer install` |
@@ -1500,10 +1475,10 @@ Cuando trabajas con asistentes de IA:
 
 | Situación | ¿AGENTS.md? |
 |-----------|-------------|
-| Proyecto personal sin IA | ❌ |
-| Usas Copilot/Claude ocasionalmente | ✅ Básico |
-| IA es parte del flujo de desarrollo | ✅ Completo |
-| Proyecto educativo | ✅ Sirve también como documentación |
+| Proyecto personal sin IA | No |
+| Usas Copilot/Claude ocasionalmente | Sí (básico) |
+| IA es parte del flujo de desarrollo | Sí (completo) |
+| Proyecto educativo | Sí (puede servir como documentación) |
 
 ### Dónde colocar el archivo
 
@@ -1585,10 +1560,10 @@ async function narrateText(text) {
 
 | Caso de uso | Recomendación |
 |-------------|---------------|
-| Resultados de IA largos | ✅ Mejora UX |
-| Accesibilidad | ✅ Esencial |
-| Contenido corto (< 50 palabras) | ❌ Innecesario |
-| Alta frecuencia de uso | ⚠️ Cuidado con costos |
+| Resultados de IA largos | Recomendable |
+| Accesibilidad | Recomendable |
+| Contenido corto (< 50 palabras) | Generalmente no necesario |
+| Alta frecuencia de uso | Evaluar costes |
 
 ---
 
@@ -1703,11 +1678,11 @@ services:
 
 | Escenario | ¿Docker? |
 |-----------|----------|
-| Desarrollo local simple | ❌ Usa `php -S` |
-| Múltiples microservicios | ✅ docker-compose |
-| Equipos grandes | ✅ Entorno consistente |
-| Despliegue en Kubernetes | ✅ Obligatorio |
-| Hosting compartido | ❌ No disponible |
+| Desarrollo local simple | No (usar `php -S`) |
+| Múltiples microservicios | Sí (docker-compose) |
+| Equipos grandes | Sí (entorno consistente) |
+| Despliegue en Kubernetes | Depende del contexto |
+| Hosting compartido | No aplica |
 
 ---
 
@@ -1755,9 +1730,9 @@ Este workflow:
 | Tarea | Mejor opción |
 |-------|--------------|
 | Cron jobs simples | `crontab` o GitHub Actions |
-| Integraciones complejas (múltiples APIs) | ✅ n8n |
-| Workflows visuales para no-developers | ✅ n8n |
-| Tareas críticas en producción | ⚠️ Evaluar disponibilidad |
+| Integraciones complejas (múltiples APIs) | n8n |
+| Workflows visuales para no-developers | n8n |
+| Tareas críticas en producción | Evaluar disponibilidad |
 
 ---
 
@@ -1769,16 +1744,16 @@ Marvel implementa un modelo de seguridad progresivo en **10 fases**. Aquí está
 
 | Fase | Tema | Estado Marvel | Controles clave |
 |------|------|---------------|-----------------|
-| 1 | Hardening HTTP básico | ✅ Máster | Cabeceras seguras, cookies HttpOnly/SameSite |
-| 2 | Autenticación y sesiones | ✅ Máster | bcrypt, TTL/lifetime, sellado IP/UA |
-| 3 | Autorización y acceso | ✅ Máster | AuthMiddleware, AuthGuards, rol admin |
-| 4 | CSRF y XSS | ✅ Máster | Tokens CSRF, escapado `e()`, sanitización |
-| 5 | APIs y microservicios | ✅ Máster | ApiFirewall, rate-limit, proxy seguro |
-| 6 | Monitorización y logs | ✅ Máster | SecurityLogger, trace_id, Sentry |
-| 7 | Anti-replay avanzado | ✅ Observación | Token de sesión, logging de intentos |
-| 8 | Endurecimiento cabeceras | ✅ Completa | CSP, CORP, COOP, tests automáticos |
-| 9 | Gestión de secretos | 🚧 En progreso | .env por entorno, inventario |
-| 10 | Pruebas automáticas seguridad | 🚧 Planificado | Tests de cabeceras, SAST, audits |
+| 1 | Hardening HTTP básico | Implementado (Máster) | Cabeceras seguras, cookies HttpOnly/SameSite |
+| 2 | Autenticación y sesiones | Implementado (Máster) | bcrypt, TTL/lifetime, sellado IP/UA |
+| 3 | Autorización y acceso | Implementado (Máster) | AuthMiddleware, AuthGuards, rol admin |
+| 4 | CSRF y XSS | Implementado (Máster) | Tokens CSRF, escapado `e()`, sanitización |
+| 5 | APIs y microservicios | Implementado (Máster) | ApiFirewall, rate-limit, proxy seguro |
+| 6 | Monitorización y logs | Implementado (Máster) | SecurityLogger, trace_id, Sentry |
+| 7 | Anti-replay avanzado | Modo observación | Token de sesión, logging de intentos |
+| 8 | Endurecimiento cabeceras | Implementado | CSP, CORP, COOP, tests automáticos |
+| 9 | Gestión de secretos | En progreso (documentado) | .env por entorno, inventario |
+| 10 | Pruebas automáticas seguridad | Trabajo futuro (documentado) | Tests de cabeceras, SAST, audits |
 
 ### Fase 1 — Hardening HTTP básico
 
@@ -2296,11 +2271,11 @@ playwright:
 
 | Escenario | ¿E2E? |
 |-----------|-------|
-| Flujo crítico de negocio (login, checkout) | ✅ Siempre |
-| Interacciones complejas de UI | ✅ Recomendado |
-| Cada nuevo componente | ❌ Overkill |
-| Regresiones visuales | ✅ Con screenshots |
-| APIs sin UI | ❌ Usar tests de integración |
+| Flujo crítico de negocio (login, checkout) | Sí |
+| Interacciones complejas de UI | Recomendado |
+| Cada nuevo componente | No (excesivo) |
+| Regresiones visuales | Sí (con screenshots) |
+| APIs sin UI | No (usar tests de integración) |
 
 ### Balance recomendado
 
@@ -2319,21 +2294,21 @@ Pirámide de tests:
 
 ## 27. Scripts CLI adicionales
 
-Además de los scripts documentados, Marvel incluye utilidades adicionales en `bin/`:
+Además de los scripts documentados, el repositorio incluye utilidades adicionales en `bin/`:
 
 ### Lista completa de scripts
 
 | Script | Propósito | Uso |
 |--------|-----------|-----|
-| `migrar-json-a-db.php` | Migra datos de JSON a MySQL | `php bin/migrar-json-a-db.php` |
-| `security-check.sh` | Ejecuta suite de seguridad | `bash bin/security-check.sh` |
-| `generate-bundle-size.php` | Genera métricas de assets | `php bin/generate-bundle-size.php` |
-| `pa11y-all.sh` | Auditoría de accesibilidad | `bash bin/pa11y-all.sh` |
-| `verify-token-metrics.php` | Verifica métricas de tokens IA | `php bin/verify-token-metrics.php` |
-| `analyze_coverage.py` | Analiza cobertura de tests | `python3 bin/analyze_coverage.py` |
-| `diagnose-token-metrics.sh` | Diagnostica problemas de métricas | `bash bin/diagnose-token-metrics.sh` |
-| `simulate_web_call.php` | Simula llamadas HTTP para testing | `php bin/simulate_web_call.php` |
-| `zonar_fix_permisos.sh` | Corrige permisos en hosting | `bash bin/zonar_fix_permisos.sh` |
+| `bin/migrar-json-a-db.php` | Migra datos de JSON a MySQL | `php bin/migrar-json-a-db.php` |
+| `bin/security-check.sh` | Ejecuta `composer audit` + lint de sintaxis | `bash bin/security-check.sh` |
+| `bin/generate-bundle-size.php` | Genera métricas de assets | `php bin/generate-bundle-size.php` |
+| `bin/pa11y-all.sh` | Auditoría de accesibilidad | `bash bin/pa11y-all.sh` |
+| `bin/verify-token-metrics.php` | Verifica métricas de tokens IA | `php bin/verify-token-metrics.php` |
+| `bin/analyze_coverage.py` | Analiza cobertura de tests | `python3 bin/analyze_coverage.py` |
+| `bin/diagnose-token-metrics.sh` | Diagnostica problemas de métricas | `bash bin/diagnose-token-metrics.sh` |
+| `bin/simulate_web_call.php` | Simula llamadas HTTP para testing | `php bin/simulate_web_call.php` |
+| `bin/zonar_fix_permisos.sh` | Corrige permisos en hosting | `bash bin/zonar_fix_permisos.sh` |
 
 ### Ejemplo: Script de diagnóstico
 
@@ -2478,7 +2453,7 @@ Marvel utiliza **3 microservicios externos** desacoplados del backend PHP princi
 
 ---
 
-### 🔷 OpenAI Service (PHP)
+### OpenAI Service (PHP)
 
 **Propósito**: Proxy seguro hacia la API de OpenAI para generar cómics.
 
@@ -2556,7 +2531,7 @@ php -S localhost:8081 -t public
 
 ---
 
-### 🔷 RAG Service (PHP)
+### RAG Service (PHP)
 
 **Propósito**: Retrieval-Augmented Generation para comparar héroes usando base de conocimiento local.
 
@@ -2654,11 +2629,11 @@ php -S localhost:8082 -t public
 
 ---
 
-### 🔷 Heatmap Service (Python + Flask + Google Cloud)
+### Heatmap Service (Python + Flask + Google Cloud)
 
 **Propósito**: Microservicio de analytics que registra clics del usuario para generar mapas de calor.
 
-> ⚠️ **Tecnología diferente**: Este microservicio está en **Python** (no PHP) y corre en **Google Cloud** (no en hosting compartido).
+> Nota: este microservicio está en Python (no PHP) y corre en Google Cloud (no en hosting compartido).
 
 #### Arquitectura
 
@@ -2729,7 +2704,7 @@ HEATMAP_API_BASE_URL=http://34.74.102.123:8080
 HEATMAP_API_TOKEN=your-secret-token
 ```
 
-> 📍 **Nota**: La URL de Google Cloud es la misma tanto en local como en hosting, ya que el servicio siempre corre en GCP.
+> Nota: la URL de Google Cloud es la misma tanto en local como en hosting, ya que el servicio corre en GCP.
 
 #### Integración con PHP
 
@@ -2902,7 +2877,7 @@ curl http://34.74.102.123:8080/health
 
 ---
 
-> 💡 **Recuerda**: Esta guía es un punto de partida, no una ley. Adapta lo que necesites, ignora lo que no aplique, y sobre todo: **empieza simple y escala según el proyecto lo requiera**.
+> Nota: esta guía es un punto de partida. Adaptar al alcance del proyecto y priorizar una implementación simple antes de añadir complejidad.
 
 ---
 

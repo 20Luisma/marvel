@@ -20,7 +20,7 @@ Clean Marvel Album se organiza por capas limpias, pero el diagrama lógico tambi
 
 4. **Microservicio `rag-service`**  
    - Proporciona `POST /rag/heroes` con lógica RAG (HeroRetriever + HeroRagService) y bases JSON (`storage/knowledge/heroes.json`).  
-   - Sirve comparaciones de héroes y contextos relevantes; la vista de cómics lo consume a través de `fetch()` antes de renderizar el resultado.
+   - Sirve comparaciones de héroes y contextos relevantes; la vista de cómics lo consume normalmente a través del proxy de la app principal `POST /api/rag/heroes` (ver `src/Controllers/RagProxyController.php`).
 
 5. **Infraestructura de datos**  
    - Repositorios JSON (`storage/albums.json`, `storage/heroes.json`, carpetas `storage/actividad`, `storage/marvel`).  
@@ -31,7 +31,7 @@ Clean Marvel Album se organiza por capas limpias, pero el diagrama lógico tambi
 
 Presentación → Aplicación → Dominio → Infraestructura → Microservicios externos.
 
-- `public/index.php` inicia `App\Shared\Http\Router`.  
+- Para rutas distintas de `/`, `public/index.php` delega en `public/home.php`, que inicializa el contenedor (`src/bootstrap.php`) y ejecuta `App\Shared\Http\Router`.  
 - `Router` despacha a controladores y verifica `Request::wantsHtml()` para renderizar vistas.  
 - Los controladores llaman a casos de uso (`App\Albums\Application\ListAlbumsUseCase`) que, a su vez, dependen de repositorios (contratos en `Domain`).  
 - Los adaptadores concretos (`FileAlbumRepository`, `DbAlbumRepository`) están en `Infrastructure`.  

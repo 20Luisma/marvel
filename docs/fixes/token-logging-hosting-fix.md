@@ -1,18 +1,18 @@
-# 🔧 Fix: Token Logging en Hosting para RAG Service
+# Fix: Token logging en hosting para `rag-service`
 
-## Problema Identificado
+## Problema identificado
 
-En hosting, el contador de tokens NO funcionaba correctamente para:
-- ❌ **Comparar Héroes (RAG)**: No comparaba y no contaba tokens
-- ⚠️ **Marvel Agent**: Respondía pero no contaba tokens
-- ✅ **Crear Cómic**: Funcionaba perfectamente
+En hosting se observó que el contador de tokens no funcionaba correctamente para:
+- Comparar héroes (RAG): no comparaba y no contabilizaba tokens.
+- Marvel Agent: respondía pero no contabilizaba tokens.
+- Crear cómic: se contabilizaba en el log de la aplicación principal.
 
 ## Causa Raíz
 
 El `OpenAiHttpClient.php` del rag-service tenía un **path incorrecto** para el archivo de logs:
 
 ```php
-// ❌ ANTES (incorrecto)
+// Antes (incorrecto)
 $logFile = __DIR__ . '/../../../../storage/ai/tokens.log';
 ```
 
@@ -22,9 +22,9 @@ Este path apuntaba al directorio `storage/` del proyecto principal, pero:
 
 ## Solución Implementada
 
-### 1. **Corregido el path del log**
+### 1. Corregir el path del log
 ```php
-// ✅ AHORA (correcto)
+// Ahora (correcto)
 $logFile = __DIR__ . '/../../../storage/ai/tokens.log';
 ```
 
@@ -32,7 +32,7 @@ Ahora cada servicio escribe en su propio directorio:
 - `storage/ai/tokens.log` → Para comics (proyecto principal)
 - `rag-service/storage/ai/tokens.log` → Para comparación de héroes y Marvel Agent
 
-### 2. **Agregado soporte para features específicos**
+### 2. Soporte para features específicos
 
 Modificado `OpenAiHttpClient` para aceptar un parámetro `$feature`:
 
@@ -44,7 +44,7 @@ public function __construct(?string $openAiEndpoint = null, string $feature = 'r
 }
 ```
 
-### 3. **Creadas instancias separadas por feature**
+### 3. Instancias separadas por feature
 
 En `rag-service/src/bootstrap.php`:
 
@@ -56,7 +56,7 @@ $ragService = new HeroRagService($knowledgeBase, $retriever, $llmClientForCompar
 $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClientForAgent);
 ```
 
-### 4. **Actualizado TokenMetricsService**
+### 4. TokenMetricsService (agregación)
 
 Ahora lee de **ambos archivos de log** para agregar todas las métricas:
 
@@ -73,7 +73,7 @@ if (file_exists($ragLogFile)) {
 }
 ```
 
-### 5. **Estructura de directorios creada**
+### 5. Estructura de directorios
 
 ```
 rag-service/storage/ai/
@@ -134,30 +134,29 @@ rag-service/storage/ai/
 
 Al hacer deploy:
 
-1. ✅ El directorio `rag-service/storage/ai/` se creará automáticamente
-2. ✅ Los permisos de escritura deben estar correctos (755)
-3. ✅ Cada servicio escribirá en su propio log
-4. ✅ El dashboard agregará todos los logs correctamente
-5. ✅ En hosting, `rag-service/` en el proyecto principal es un symlink a `/home/REDACTED_SSH_USER/rag-service`, para que `TokenMetricsService` lea `rag-service/storage/ai/tokens.log` igual que en local.
+1. El directorio `rag-service/storage/ai/` debe existir y ser escribible por el proceso PHP.
+2. Los permisos de escritura deben ser consistentes con el entorno (p. ej., 755/775 según usuario/grupo del servidor).
+3. Cada servicio escribe en su propio log.
+4. El dashboard agrega ambos logs (si están disponibles y se pueden leer).
+5. En algunos despliegues, `rag-service/` dentro del proyecto principal puede ser un symlink a una ruta externa; la resolución de rutas debe contemplar ese caso.
 
-## Resultado Esperado
+## Resultado esperado
 
 Después de estos cambios, en hosting:
+- Crear cómic: mantiene el registro de tokens en el log de la app principal.
+- Comparar héroes: registra tokens en el log del `rag-service`.
+- Marvel Agent: registra tokens en el log del `rag-service`.
+- Dashboard de métricas: agrega tokens desde ambos logs.
 
-- ✅ **Crear Cómic**: Sigue funcionando (sin cambios)
-- ✅ **Comparar Héroes**: Ahora compara Y cuenta tokens
-- ✅ **Marvel Agent**: Ahora responde Y cuenta tokens
-- ✅ **Dashboard de Métricas**: Muestra TODOS los tokens correctamente
+## Notas
 
-## Notas Importantes
-
-- 📝 Los logs se mantienen separados por arquitectura (microservicios)
-- 📝 El dashboard los agrega automáticamente
-- 📝 Cada feature tiene su propio tracking
-- 📝 No se rompe nada existente (backwards compatible)
+- Los logs se mantienen separados por arquitectura (microservicios).
+- El dashboard agrega métricas a partir de los logs disponibles.
+- Cada feature se etiqueta en el log.
+- El objetivo es mantener compatibilidad sin modificar el contrato público del dashboard.
 
 ---
 
 **Fecha**: 2025-11-30  
-**Autor**: Antigravity AI Assistant  
+**Autor**: —  
 **Issue**: Token logging not working in hosting for RAG service

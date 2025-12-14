@@ -7,30 +7,28 @@
 ![Playwright E2E](https://img.shields.io/badge/Playwright%20E2E-passing-brightgreen)
 ![Bundle Size](https://img.shields.io/badge/Bundle%20Size-static-blue)
 
-**Clean Marvel Album** es un proyecto creado en paralelo a mi formación en el Máster de IA de Big School. Cada módulo del máster inspiró una parte del sistema: arquitectura limpia, seguridad, microservicios, RAG, automatización y buenas prácticas. A medida que avanzaba el curso, fui aplicando lo aprendido directamente en el código, convirtiendo este proyecto en un laboratorio real donde experimentar, equivocarme, mejorar y construir una aplicación profesional de principio a fin.
+**Clean Marvel Album** es un proyecto académico en **PHP 8.2** que aplica Arquitectura Limpia para gestionar álbumes y héroes, e integra microservicios (OpenAI/RAG) y herramientas de calidad.
 
-El resultado es una plataforma completa en **PHP 8.2** con **Arquitectura Limpia**, microservicios IA, métricas, paneles de calidad y un pipeline CI/CD totalmente automatizado. Más que un proyecto, es el reflejo del camino recorrido durante el máster.
-
-> ✅ **Accesibilidad WCAG 2.1 AA**: Pa11y reporta `0 issues` en todas las páginas públicas.
+La automatización (tests, análisis y auditorías) se define en `.github/workflows/` y la documentación técnica se organiza en `docs/`.
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 - Mantener el **dominio** limpio e independiente de frameworks.
 - Integrar IA mediante microservicios externos fáciles de sustituir.
-- Servir como blueprint de proyecto escalable con tests, calidad y despliegue profesional.
+- Servir como proyecto demostrativo con tests, calidad y despliegue automatizado.
 
 ---
 
-## 🧠 Arquitectura General
+## Arquitectura general
 
 | Capa | Ubicación principal | Responsabilidad |
 | --- | --- | --- |
-| **Presentación** | `public/`, `src/Controllers`, `views/`, `Src\Shared\Http\Router` | Front Controller + Router HTTP; render de vistas y respuestas JSON. |
+| **Presentación** | `public/`, `src/Controllers`, `views/`, `App\Shared\Http\Router` | Front Controller + Router HTTP; render de vistas y respuestas JSON. |
 | **Aplicación** | `src/*/Application`, `src/AI`, `src/Dev` | Casos de uso, orquestadores (comic generator, comparador RAG, seeders). |
 | **Dominio** | `src/*/Domain` | Entidades, Value Objects, eventos y contratos de repositorios. |
-| **Infraestructura** | `src/*/Infrastructure`, `storage/`, `Src\Shared\Infrastructure\Bus` | Repos JSON/DB, EventBus en memoria, adaptadores externos (notificaciones, gateways IA). |
+| **Infraestructura** | `src/*/Infrastructure`, `storage/`, `App\Shared\Infrastructure\Bus` | Repos JSON/DB, EventBus en memoria, adaptadores externos (notificaciones, gateways IA). |
 
 Dependencias: Presentación → Aplicación → Dominio, e Infraestructura implementa contratos de Dominio. `App\Config\ServiceUrlProvider` resuelve los endpoints según entorno (`local` vs `hosting`).
 
@@ -38,17 +36,17 @@ Dependencias: Presentación → Aplicación → Dominio, e Infraestructura imple
 
 Esta arquitectura se eligió por razones técnicas:
 
-**Beneficios clave:**
-- **Independencia de frameworks**: El dominio no depende de librerías externas, facilitando la evolución tecnológica sin reescribir la lógica de negocio.
-- **Testabilidad extrema**: Cada capa se prueba aisladamente. El dominio tiene tests puros sin mocks complejos, los casos de uso se testean sin HTTP, y la infraestructura se valida con doubles.
-- **Mantenibilidad a largo plazo**: Los cambios en UI, base de datos o APIs externas no afectan las reglas de negocio. Un cambio en persistencia (JSON → MySQL) solo toca `Infrastructure`.
-- **Escalabilidad gradual**: Permite añadir microservicios, cache o nuevos contextos sin refactorizar el core. Los microservicios IA (OpenAI, RAG) se integraron como adaptadores sin tocar el dominio.
+**Beneficios observables:**
+- **Independencia de frameworks**: El dominio no depende de librerías externas, lo que reduce el acoplamiento.
+- **Alta testabilidad**: La lógica de dominio y los casos de uso pueden probarse sin HTTP; la infraestructura se valida con dobles cuando aplica.
+- **Mantenibilidad**: Cambios en UI, persistencia o APIs externas se concentran principalmente en la capa de infraestructura.
+- **Evolución incremental**: Se pueden incorporar adaptadores (p. ej., microservicios) sin introducir dependencias en el dominio.
 
 La decisión arquitectónica completa está documentada en `docs/architecture/ADR-001-clean-architecture.md`.
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 clean-marvel/
@@ -64,7 +62,7 @@ clean-marvel/
 
 ---
 
-## 💾 Persistencia: JSON en Local, MySQL en Hosting
+## Persistencia: JSON en local, MySQL en hosting
 
 - **Local (`APP_ENV=local`)** → JSON  
 - **Hosting (`APP_ENV=hosting`)** → PDO MySQL  
@@ -78,7 +76,7 @@ php bin/migrar-json-a-db.php
 
 ---
 
-## 🧩 Microservicios y servicios externos
+## Microservicios y servicios externos
 
 - **openai-service** (`openai-service/`, puerto 8081)  
   Endpoint `POST /v1/chat` con cURL a OpenAI. Configurable con `OPENAI_API_KEY` y `OPENAI_MODEL`. Tiene fallback JSON sin credencial.
@@ -95,13 +93,13 @@ php bin/migrar-json-a-db.php
 
 ## ⚙️ CI/CD – GitHub Actions
 
-Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), `deploy-ftp.yml` (deploy automático si todo pasa), `rollback-ftp.yml` (rollback).
+Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), `deploy-ftp.yml` (deploy por FTP al hacer push a `main`; recomendado proteger `main` para que solo se pueda mergear si CI pasa), `rollback-ftp.yml` (rollback manual).
 
 - **Bundle size (JS/CSS)**: el job `sonarcloud` ejecuta `php bin/generate-bundle-size.php` y publica `public/assets/bundle-size.json`. La vista `/sonar` consume ese JSON para mostrar totales y top 5 sin necesitar `exec` en hosting.
 
 ---
 
-## 🚀 Puesta en marcha (local)
+## Puesta en marcha (local)
 
 1. **Instala dependencias**  
    `composer install` en la raíz. Si trabajas en microservicios, repite dentro de `openai-service/` y `rag-service/`.
@@ -115,24 +113,25 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 5. **Verifica paneles**  
    Navega a `/` y usa las acciones superiores para cómics, RAG, GitHub PRs, SonarCloud, Sentry, accesibilidad, performance, repo y heatmap.
 
-## 🧪 Calidad y pruebas
+## Calidad y pruebas
 
-El proyecto implementa una **estrategia de testing multinivel** con **653 tests automatizados** y **1,435 assertions**:
+El proyecto implementa una **estrategia de testing multinivel** (unit/integration + seguridad + E2E).  
+Para verificar el estado de la suite, ejecuta `vendor/bin/phpunit` (PHPUnit imprime el resumen).
 
-### Suite PHPUnit (653 tests)
+### Suite PHPUnit
 
 ```bash
 # Ejecutar todos los tests
 vendor/bin/phpunit --colors=always
 
-# Cobertura (90.28%, supera objetivo 80%+)
-composer test:cov
+# Cobertura (ver `COVERAGE.md` y `coverage.xml`)
+composer test:coverage
 
-# Análisis estático (PHPStan nivel 6)
+# Análisis estático (PHPStan; config en `phpstan.neon`)
 vendor/bin/phpstan analyse --memory-limit=512M
 ```
 
-### Tests E2E con Playwright (10 tests)
+### Tests E2E con Playwright
 
 ```bash
 # Ejecutar tests E2E en localhost:8080 con navegador visible
@@ -145,28 +144,28 @@ npm run test:e2e:ui
 npm run test:e2e:debug
 ```
 
-**Tests E2E cubiertos**:
-- ✅ Home y navegación principal (2 tests)
-- ✅ Álbumes (renderizado y formularios)
-- ✅ Héroes (galería y creación)
-- ✅ Cómics (generación con IA)
-- ✅ Películas (búsqueda y estados)
-- ✅ Smoke/Health y Auth (4 tests)
+**Flujos E2E incluidos en el repositorio**:
+- Home y navegación principal
+- Álbumes (renderizado y formularios)
+- Héroes (galería y creación)
+- Cómics (generación con IA)
+- Películas (búsqueda y estados)
+- Smoke/Health y autenticación
 
-**Nota sobre `skipped`**: el test de `/health` se marca como `skip` automáticamente si la app principal no expone ese endpoint (retorna 404 en local/CI). Esto evita falsos negativos y mantiene el test estable; si se añade `/health` al monolito en el futuro, el test se activará solo.
+**Nota sobre `skipped`**: el test de `/health` se marca como `skip` automáticamente si la app principal no expone ese endpoint (retorna 404). Esto evita falsos negativos y mantiene el test estable; si se añade `/health` en el futuro, el test se activará solo.
 
-### Tipos de Tests Implementados
+### Tipos de tests implementados
 
-| Tipo | Cantidad | Herramienta | Cobertura |
-|------|----------|-------------|-----------|
-| **Unitarios y Dominio** | ~30 archivos | PHPUnit | Entidades, VOs, Eventos |
-| **Casos de Uso** | ~25 archivos | PHPUnit | Application layer |
-| **Seguridad** | 22 archivos | PHPUnit | CSRF, Rate Limit, Sessions, Firewall |
-| **Controladores** | 21 archivos | PHPUnit | HTTP layer completa |
-| **Infraestructura** | ~20 archivos | PHPUnit | Repos, HTTP clients, Bus |
-| **E2E** | 7 archivos (10 tests) | Playwright | Flujos críticos |
-| **Accesibilidad** | Pipeline CI | Pa11y | WCAG 2.1 AA (0 errores) |
-| **Performance** | Pipeline CI | Lighthouse | Métricas de rendimiento |
+| Tipo | Herramienta | Alcance |
+|------|-------------|---------|
+| Unitarios y dominio | PHPUnit | Entidades, Value Objects, eventos |
+| Casos de uso | PHPUnit | Capa de aplicación |
+| Seguridad | PHPUnit | CSRF, rate limit, sesión, firewall |
+| Controladores | PHPUnit | Capa HTTP |
+| Infraestructura | PHPUnit | Repositorios, clientes HTTP, bus |
+| E2E | Playwright | Flujos críticos de usuario |
+| Accesibilidad | Pa11y (CI) | Auditoría WCAG 2.1 AA |
+| Performance | Lighthouse (CI) | Auditoría de rendimiento |
 
 ### Comandos por Categoría
 
@@ -187,57 +186,43 @@ composer security:audit
 composer validate
 ```
 
-**Documentación completa**: Ver `docs/guides/testing-complete.md` para detalles exhaustivos de cada tipo de test.
+**Documentación completa**: Ver `docs/guides/testing-complete.md` para más detalle de cada tipo de test.
 
-## 📚 Documentación ampliada
+## Documentación ampliada
 
-- `docs/ARCHITECTURE.md`: capas, flujos y microservicios.
-- `docs/API_REFERENCE.md`: endpoints de la app y microservicios.
+- `docs/architecture/ARCHITECTURE.md`: capas, flujos y microservicios.
+- `docs/api/API_REFERENCE.md`: endpoints de la app y microservicios.
 - `docs/README.md`: índice de documentación.
 - `docs/guides/`: arranque rápido, autenticación, testing.
 - `docs/microservicioheatmap/README.md`: integración del heatmap.
-- `AGENTS.md` / `docs/agent.md`: roles y pautas para agentes de IA.
+- `AGENTS.md` / `docs/development/agent.md`: roles y pautas para agentes de IA.
 - UML completo
 
-## 🐳 Containerización y Kubernetes
+## Containerización y Kubernetes
 
-### Docker y Microservicios
+### Docker y microservicios
 
-El proyecto está **completamente preparado para contenedorización**. Los tres microservicios incluyen Dockerfiles y pueden ejecutarse en contenedores:
+Este repositorio incluye:
+- Un `docker-compose.yml` (entorno local) que levanta la aplicación principal con `php:8.2-cli` montando el código como volumen.
+- Dockerfiles en `openai-service/Dockerfile` y `rag-service/Dockerfile`.
 
-```bash
-# Aplicación principal (PHP + Apache)
-docker build -t 20luisma/clean-marvel:latest .
-docker run -p 8080:8080 --env-file .env 20luisma/clean-marvel:latest
-
-# Microservicio OpenAI
-cd openai-service
-docker build -t 20luisma/openai-service:latest .
-docker run -p 8081:8081 --env-file .env 20luisma/openai-service:latest
-
-# Microservicio RAG
-cd rag-service
-docker build -t 20luisma/rag-service:latest .
-docker run -p 8082:80 --env-file .env 20luisma/rag-service:latest
-```
-
-**Docker Compose** permite levantar toda la stack con un solo comando:
+**Docker Compose** permite levantar la aplicación principal con un solo comando:
 ```bash
 docker-compose up -d
 ```
 
 ### Kubernetes (Orquestación)
 
-El directorio `k8s/` contiene **manifiestos completos** para desplegar la aplicación y sus microservicios en un cluster de Kubernetes:
+El directorio `k8s/` contiene manifiestos de ejemplo para desplegar la aplicación y sus microservicios en un cluster de Kubernetes:
 
-**Componentes incluidos:**
-- ✅ **Deployments** escalables (2 réplicas por defecto)
-- ✅ **Services ClusterIP** para comunicación interna
-- ✅ **Ingress NGINX** con enrutamiento inteligente (`/` → frontend, `/api/rag/*` → RAG, `/api/openai/*` → OpenAI)
-- ✅ **ConfigMaps** para configuración no sensible
-- ✅ **Secrets** para credenciales (placeholders, deben sustituirse)
-- ✅ **Health Probes** (liveness y readiness)
-- ✅ **Resource Limits** (CPU/memoria)
+**Componentes descritos en los manifiestos:**
+- Deployments
+- Services ClusterIP
+- Ingress NGINX con enrutamiento por rutas (`/`, `/api/rag/*`, `/api/openai/*`)
+- ConfigMaps
+- Secrets (placeholders que deben sustituirse fuera del repositorio)
+- Health probes
+- Resource limits
 
 **Quick Start:**
 ```bash
@@ -253,17 +238,12 @@ kubectl port-forward svc/clean-marvel 8080:80
 ```
 
 **Documentación completa:**
-- 📖 **[k8s/README.md](./k8s/README.md)** - Índice general y guía de uso
-- 🚀 **[k8s/DEPLOY_K8S.md](./k8s/DEPLOY_K8S.md)** - Despliegue paso a paso
-- 📚 **[k8s/PRODUCTION_CONSIDERATIONS.md](./k8s/PRODUCTION_CONSIDERATIONS.md)** - Mejoras para producción
-- 🔒 **[k8s/SECURITY_HARDENING.md](./k8s/SECURITY_HARDENING.md)** - Hardening de seguridad
+- `k8s/README.md` - Índice general y guía de uso
+- `k8s/DEPLOY_K8S.md` - Despliegue paso a paso
+- `k8s/PRODUCTION_CONSIDERATIONS.md` - Consideraciones adicionales
+- `k8s/SECURITY_HARDENING.md` - Hardening adicional
 
-**Alcance actual:** Los manifiestos están diseñados para:
-- ✅ Desarrollo y pruebas en clusters locales (minikube, kind, k3s)
-- ✅ Demostración de arquitectura de microservicios
-- ✅ Base sólida para evolución a producción
-
-**Mejoras documentadas para producción:** Sealed Secrets, TLS automático (cert-manager), NetworkPolicies, Pod Security Admission, Image scanning, Runtime security (Falco), Observabilidad avanzada (Prometheus/Grafana), y más.
+**Alcance:** los manifiestos están orientados a despliegues de demostración y a documentación técnica. Los requisitos adicionales (gestión de secrets, TLS, network policies, PSA, image scanning, runtime security, observabilidad avanzada) están documentados como trabajo futuro en `k8s/`.
 
 ### Arquitectura Multi-Entorno
 
@@ -279,17 +259,17 @@ El proyecto soporta **múltiples estrategias de despliegue**:
 
 ---
 
-## 🔐 Seguridad (resumen corto)
+## Seguridad (resumen corto)
 
 - Cabeceras de hardening (CSP básica, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, COOP/COEP/CORP) y cookies de sesión HttpOnly + SameSite=Lax.
 - CSRF en POST críticos, rate-limit/login throttling, firewall de payloads y sanitización de entrada.
 - Sesiones con TTL/lifetime, sellado IP/UA y anti-replay en modo observación; rutas sensibles con AuthMiddleware/guards.
 - Logs de seguridad con trace_id y secretos vía `.env` (app + microservicios); verificación previa a despliegue con `bin/security-check.sh` y workflow `security-check.yml`.
-- Detalle completo, fases y backlog Enterprise en `docs/security.md`.
+- Detalle completo, fases y hardening futuro en `docs/security/security.md`.
 
 ---
 
-## 🔧 Refactor Estructural v2.0 (Diciembre 2025)
+## Refactor estructural v2.0 (diciembre 2025)
 
 Este refactor consolida la arquitectura del proyecto como implementación de Clean Architecture.
 
@@ -297,9 +277,9 @@ Este refactor consolida la arquitectura del proyecto como implementación de Cle
 
 | Área | Cambio | Impacto |
 |------|--------|---------|
-| **Namespace** | Migración de `Src\` → `App\` | PSR-4 estándar, compatibilidad con IDEs y PHPStan |
+| **Namespace** | Migración de namespaces legacy (`Src\*`) → `App\*` | PSR-4 estándar, compatibilidad con IDEs y PHPStan |
 | **Autoload** | `"App\\": "src/"` en `composer.json` | Eliminación de ambigüedad en imports |
-| **Tests** | Migración completa a namespace `Tests\` | 191 tests pasando sin referencias antiguas |
+| **Tests** | Migración completa a namespace `Tests\` | Tests renombrados a `Tests\\` y suite ejecutable en CI |
 | **RequestBodyReader** | Lectura única de `php://input` con caché | Evita bug "body vacío" en endpoints POST |
 | **ApiFirewall** | Whitelist evaluada antes de leer body | Rutas RAG no consumen el stream |
 | **Logging DEBUG** | Variables `DEBUG_API_FIREWALL`, `DEBUG_RAG_PROXY`, `DEBUG_RAW_BODY` | Logs condicionados: activos en dev, opcionales en prod |
@@ -307,7 +287,7 @@ Este refactor consolida la arquitectura del proyecto como implementación de Cle
 ### Variables de depuración (`.env`)
 
 ```env
-# Solo aplican en APP_ENV=prod; en local/dev siempre están activos
+# Nota: estos flags se evalúan solo en `APP_ENV=prod`; en `local`/`hosting` los logs pueden quedar activos por defecto.
 DEBUG_API_FIREWALL=0   # Logs del firewall de payloads
 DEBUG_RAG_PROXY=0      # Logs del proxy RAG
 DEBUG_RAW_BODY=0       # Logs del lector de body HTTP
@@ -323,18 +303,16 @@ vendor/bin/phpstan analyse
 
 ---
 
-## 👤 Créditos
+## Créditos
 
 Proyecto creado por **Martín Pallante** · [Creawebes](https://www.creawebes.com)  
-Asistente técnico: **Alfred**, IA desarrollada con ❤️
-
-> *"Diseñando tecnología limpia, modular y con propósito."*
+Asistente técnico: **Alfred** (asistente IA)
 
 ---
 
-## 🧩 Arquitectura del Bootstrap (Composition Root)
+## Arquitectura del bootstrap (Composition Root)
 
-El archivo `bootstrap.php` actúa como **Composition Root** del proyecto, pero con una arquitectura **modular y escalable** que separa responsabilidades en módulos especializados:
+El archivo `bootstrap.php` actúa como **Composition Root** del proyecto, separando responsabilidades en módulos especializados:
 
 ### Módulos Bootstrap
 
@@ -354,13 +332,13 @@ El archivo `bootstrap.php` actúa como **Composition Root** del proyecto, pero c
 - **Testabilidad**: Los módulos pueden probarse de forma aislada.
 - **Escalabilidad**: Permite añadir nuevos módulos (cache, queue, etc.) sin afectar los existentes.
 
-Esta arquitectura combina claridad en el wiring con las mejores prácticas empresariales (modularización, SRP). El resultado es un sistema que mantiene la **transparencia** del ensamblado completo, pero con una **estructura profesional** basada en **Clean Architecture** con fallback resiliente JSON/BD, seguridad multicapa, microservicios y trazabilidad.
+Este enfoque documenta de forma explícita el wiring de dependencias y el orden de inicialización de la aplicación.
 
 ---
 
-## 🛤️ Router HTTP (`src/Shared/Http/Router.php`)
+## Router HTTP (`src/Shared/Http/Router.php`)
 
-El Router es el **punto de entrada principal** de todas las peticiones HTTP. Implementa un diseño custom que demuestra los principios de un enrutador profesional sin depender de librerías externas.
+El Router centraliza el enrutado HTTP y aplica un pipeline de middleware de seguridad antes de despachar a controladores.
 
 ### Arquitectura del Router
 
@@ -411,14 +389,10 @@ Las rutas se definen en arrays tipados con soporte para patrones estáticos y ex
 - **Manejo de errores**: Try-catch global con respuesta JSON genérica (sin leak de información)
 - **Separación HTML/JSON**: Detecta `Accept: text/html` para renderizar vistas vs respuestas API
 
-Esta implementación custom permite entender cómo funcionan los routers internamente, manteniendo un nivel profesional de seguridad y mantenibilidad.
+Esta implementación permite observar el flujo de una petición HTTP desde el front controller hasta el controlador.
 
 ---
 
-## 💭 Reflexión Final
+## Notas
 
-> *Este proyecto no pretende definir cómo debe hacerse arquitectura profesional, sino mostrar mi proceso de aprendizaje y experimentación aplicando conceptos del Máster.*
-
----
-
-> ⚡ *"Como un centauro del universo Marvel, este proyecto fusiona la creatividad humana con la fuerza imparable de la IA: dos mitades, un héroe completo."*
+La documentación prioriza descripciones verificables frente a valoraciones subjetivas.

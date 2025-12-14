@@ -1,19 +1,18 @@
-# 🕓 Changelog — Clean Marvel Album
+# Changelog — Clean Marvel Album
 
 ## v1.2.0 – 2025-11-29
-### 🔒 Security Enhancements
-- **CSP Hardening**: Implementación de Content Security Policy estricta con nonces dinámicos
-- Eliminado `'unsafe-inline'` de `script-src` (protección XSS completa)
-- Generador de nonces criptográficos (128 bits de entropía)
-- 6 nuevos tests de seguridad CSP
-- Documentación completa de seguridad reorganizada en `docs/security/`
+### Security enhancements
+- CSP con nonces dinámicos
+- Eliminación de `'unsafe-inline'` en `script-src` (manteniendo `'unsafe-inline'` en `style-src` por Tailwind CDN)
+- Generación de nonces
+- Tests de CSP y documentación reorganizada en `docs/security/`
 
-### ✅ Testing
-- 191 tests automatizados pasando (100%)
+### Testing
+- Tests automatizados y CI (ver `.github/workflows/ci.yml`)
 - Cobertura de seguridad mejorada
 - Tests de CSP con verificación de nonces
 
-### 📚 Documentation
+### Documentation
 - Reorganización completa de `docs/`
 - Guía de verificación de seguridad
 - Walkthrough de implementación CSP

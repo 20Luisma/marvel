@@ -1,4 +1,4 @@
-# 📘 Casos de Uso — Clean Marvel Album
+# Casos de uso — Clean Marvel Album
 
 | Caso de Uso | Descripción | Entrada | Salida | Evento |
 |--------------|-------------|----------|---------|---------|

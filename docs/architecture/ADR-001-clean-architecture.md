@@ -7,7 +7,7 @@ Accepted
 El proyecto necesita una base didáctica que muestre la separación de responsabilidades para álbumes, héroes y microservicios IA, sin acoplar reglas de negocio a detalles HTTP o de infraestructura.
 
 ## Decisión
-Adoptar una arquitectura limpia organizada en capas: Presentación (vistas, router, controladores), Aplicación (casos de uso y servicios), Dominio (entidades, eventos, interfaces) e Infraestructura (adaptadores JSON/DB, EventBus). El front controller `public/index.php` despacha a `Src\Shared\Http\Router`, y `src/bootstrap.php` configura dependencias y resoluciones de servicio.
+Adoptar una arquitectura limpia organizada en capas: Presentación (vistas, router, controladores), Aplicación (casos de uso y servicios), Dominio (entidades, eventos, interfaces) e Infraestructura (adaptadores JSON/DB, EventBus). El entrypoint web es `public/index.php` (intro) y, para el resto de rutas, delega en `public/home.php` que despacha a `App\Shared\Http\Router`. El archivo `src/bootstrap.php` actúa como wrapper del composition root (`App\Bootstrap\AppBootstrap::init()`).
 
 ## Justificación
 - Permite enseñar cómo fluyen las dependencias (Presentation → Application → Domain) mientras se mantiene un backend funcional.  

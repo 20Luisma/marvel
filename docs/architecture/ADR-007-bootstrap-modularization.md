@@ -4,7 +4,7 @@
 Accepted
 
 ## Contexto
-El archivo original `src/bootstrap.php` (~280 líneas) mezclaba múltiples responsabilidades en un único punto de inicialización:
+El archivo original `src/bootstrap.php` mezclaba múltiples responsabilidades en un único punto de inicialización:
 - Carga de variables de entorno (`.env`)
 - Generación y gestión de trace-id para observabilidad
 - Inicialización de sesión con configuración de seguridad
@@ -36,7 +36,7 @@ Dividir el sistema de bootstrap en **6 módulos especializados** siguiendo el **
 
 6. **`AppBootstrap`**: Orquestador central que llama a los demás bootstraps en orden correcto, ensambla el contenedor de dependencias, registra casos de uso y controladores.
 
-El archivo `src/bootstrap.php` queda reducido a **8 líneas** que invocan `AppBootstrap::init()` y retornan el contenedor.
+El archivo `src/bootstrap.php` queda reducido a un wrapper que invoca `AppBootstrap::init()` y retorna el contenedor.
 
 ## Justificación
 - **Mantenibilidad**: Cada módulo es fácil de entender, modificar y probar de forma aislada.
@@ -48,23 +48,22 @@ El archivo `src/bootstrap.php` queda reducido a **8 líneas** que invocan `AppBo
 ## Consecuencias
 
 ### Positivas
-- ✅ **Reducción de complejidad ciclomática**: De un archivo de 280 líneas a 6 módulos de 40-85 líneas cada uno.
-- ✅ **Testing aislado**: Posibilidad de testear `PersistenceBootstrap` sin inicializar seguridad u observabilidad.
-- ✅ **Onboarding rápido**: Nuevos desarrolladores pueden entender el sistema leyendo módulos individuales.
-- ✅ **Documentación implícita**: Los nombres de las clases y métodos documentan el flujo de inicialización.
-- ✅ **Riesgo controlado**: 490 tests existentes pasan sin regresiones, validando la preservación de comportamiento.
-- ✅ **Separación de concerns**: Cada módulo puede evolucionar independientemente (ej: cambiar estrategia de logging de seguridad sin tocar persistencia).
+- **Reducción de acoplamiento**: responsabilidades separadas por bootstrap especializado.
+- **Testing aislado**: posibilidad de testear `PersistenceBootstrap` sin inicializar seguridad u observabilidad.
+- **Onboarding**: nuevos desarrolladores pueden entender el sistema leyendo módulos individuales.
+- **Documentación implícita**: los nombres de clases y métodos describen el flujo de inicialización.
+- **Separación de concerns**: cada módulo puede evolucionar independientemente (ej.: cambiar estrategia de logging de seguridad sin tocar persistencia).
 
 ### Negativas
-- ⚠️ **Mayor número de archivos**: 6 archivos nuevos vs 1 monolítico (trade-off aceptable).
-- ⚠️ **Indirección adicional**: Hay que seguir la cadena de llamadas `bootstrap.php` → `AppBootstrap` → `*Bootstrap`.
-- ⚠️ **Deuda técnica residual**: 
+- **Mayor número de archivos**: 6 archivos nuevos vs 1 monolítico.
+- **Indirección adicional**: hay que seguir la cadena de llamadas `bootstrap.php` → `AppBootstrap` → `*Bootstrap`.
+- **Deuda técnica residual**:
   - Lógica de anti-replay permanece en `AppBootstrap` en lugar de `SecurityBootstrap` (cohesión mejorable).
   - Función `resolveDriver` duplicada en `AppBootstrap` y `PersistenceBootstrap` (candidato a extracción).
 
 ### Consideraciones futuras
 - **Patrón Builder**: Si `AppBootstrap::init()` crece más allá de 300 líneas, considerar patrón Builder para construcción fluida del contenedor.
-- **Dependency Injection Container**: Para proyectos empresariales, evaluar adopción de PSR-11 container (ej: Symfony DI, PHP-DI).
+- **Dependency Injection Container**: Para proyectos de mayor escala, evaluar adopción de un contenedor PSR-11 (ej: Symfony DI, PHP-DI).
 - **DTOs para configuración**: Reemplazar arrays `array<string, mixed>` por Value Objects tipados (ej: `SecurityConfig`, `PersistenceConfig`).
 
 ## Opciones descartadas
@@ -73,10 +72,9 @@ El archivo `src/bootstrap.php` queda reducido a **8 líneas** que invocan `AppBo
 - **Crear 12+ módulos micro-especializados**: Rechazado por sobre-ingeniería (ej: separar "Sentry" de "Métricas" no aporta valor).
 
 ## Métricas de éxito
-- ✅ **Tests pasando**: 490 tests unitarios/integración/E2E pasan sin cambios.
-- ✅ **PHPStan nivel 8**: Análisis estático sin errores ni warnings.
-- ✅ **Cobertura preservada**: ~70% de cobertura global (SonarCloud) mantenida.
-- ✅ **Sin regresiones en producción**: Comportamiento idéntico pre/post refactor.
+- **Tests**: suite existente ejecutable tras el refactor.
+- **PHPStan**: análisis estático (config en `phpstan.neon`).
+- **CI/CD**: workflows ejecutándose tras la modularización.
 
 ## Referencias
 - ADR-001: Clean Architecture en PHP (base arquitectónica)
@@ -91,6 +89,5 @@ Ninguno. Este ADR documenta la evolución del sistema de bootstrap original sin 
 
 ## Notas de implementación
 - **Fecha de refactor**: Diciembre 2025
-- **Líneas de código**: Reducción de ~280 LOC monolítico a ~150 LOC distribuido + 8 LOC orquestador
-- **Impacto en CI/CD**: Ninguno, pipelines existentes funcionan sin cambios
-- **Retrocompatibilidad**: 100% preservada, interfaz pública del contenedor idéntica
+- **Impacto en CI/CD**: los pipelines existentes continúan funcionando.
+- **Retrocompatibilidad**: se mantiene la interfaz pública del contenedor.

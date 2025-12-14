@@ -4,7 +4,7 @@
 Accepted
 
 ## Contexto
-El despliegue en hosting requiere bases de datos, pero en local es más ágil trabajar con archivos JSON. Queremos garantizar la consistencia sin perder disponibilidad si la BD falla.
+El despliegue en hosting requiere bases de datos, pero en local es más ágil trabajar con archivos JSON. Se busca mantener consistencia y disponibilidad cuando la BD no está disponible.
 
 ## Decisión
 Al arrancar, `src/bootstrap.php` comprueba `APP_ENV`.  
@@ -14,7 +14,7 @@ Al arrancar, `src/bootstrap.php` comprueba `APP_ENV`.
 ## Justificación
 - Permite a quienes aprenden el proyecto usar JSON sin configurar bases de datos.  
 - Obtenemos una capa persistente en producción sin duplicar lógica.  
-- Garantiza que fallos de la BD no derriben la app, manteniendo un fallback seguro.
+- Reduce el impacto de fallos de BD manteniendo un fallback a JSON.
 
 ## Consecuencias
 ### Positivas

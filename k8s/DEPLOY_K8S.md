@@ -1,23 +1,19 @@
 # Despliegue en Kubernetes (Clean Marvel Album)
 
-## 📋 Alcance y Contexto
+## Alcance y contexto
 
-Esta guía formaliza el despliegue en Kubernetes de la aplicación principal y de los microservicios IA. Los manifiestos proporcionados son **funcionales y demostrativos**, diseñados para:
+Esta guía describe el despliegue en Kubernetes de la aplicación principal y de los microservicios de IA. Los manifiestos proporcionados están orientados a despliegues de demostración y a documentación técnica.
 
-- ✅ **Entornos de desarrollo y pruebas**
-- ✅ **Validación académica y demostración técnica**
-- ✅ **Base sólida para evolución a producción**
+### Importante: desarrollo vs producción
 
-### ⚠️ Importante: Entorno de Desarrollo vs Producción
+La configuración está orientada a desarrollo y pruebas. Para consideraciones adicionales de despliegue operativo, consulta:
 
-La configuración actual está **completamente operativa** pero optimizada para desarrollo y pruebas. Para despliegues en producción profesional, consulta:
-
-- 📚 **[PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)** - Mejoras para entornos críticos
-- 🔒 **[SECURITY_HARDENING.md](./SECURITY_HARDENING.md)** - Hardening de seguridad para Kubernetes
+- `k8s/PRODUCTION_CONSIDERATIONS.md` - Consideraciones adicionales
+- `k8s/SECURITY_HARDENING.md` - Hardening de seguridad
 
 ---
 
-## 🏗️ Arquitectura Desplegada
+## Arquitectura desplegada
 
 Se asume un clúster con Ingress Controller NGINX y acceso a un registro de contenedores. Todos los manifiestos residen en `k8s/` y usan etiquetas `app` + `tier` para selección coherente de pods.
 
@@ -25,7 +21,7 @@ Se asume un clúster con Ingress Controller NGINX y acceso a un registro de cont
 
 Use las etiquetas de los manifiestos (`:latest` por defecto) o sustituya por tags inmutables (`:sha-<commit>`, `:vX.Y.Z`):
 
-- **Aplicación principal** (Dockerfile de referencia, al no existir en la raíz):
+- **Aplicación principal** (Dockerfile de referencia; no existe un `Dockerfile` en la raíz del repositorio):
 
 ```Dockerfile
 FROM php:8.2-apache
@@ -44,8 +40,9 @@ EXPOSE 8080
 CMD ["php","-S","0.0.0.0:8080","-t","public"]
 ```
 
+Guarda este ejemplo como `Dockerfile.clean-marvel` (sin versionarlo) y construye la imagen con:
 ```bash
-docker build -t 20luisma/clean-marvel:latest .
+docker build -f Dockerfile.clean-marvel -t 20luisma/clean-marvel:latest .
 ```
 
 - **openai-service** (`openai-service/Dockerfile`):
@@ -115,7 +112,7 @@ kubectl rollout status deploy/openai-service
 
 ## 5) Evaluación y Alcance del Despliegue
 
-### ✅ Implementación Actual
+### Implementación actual
 
 Esta configuración de Kubernetes demuestra:
 
@@ -126,15 +123,13 @@ Esta configuración de Kubernetes demuestra:
 5. **Resource Management**: Requests y limits definidos para CPU/memoria
 6. **Etiquetado Consistente**: Sistema de labels (`app`, `tier`) para políticas y observabilidad
 
-### 🎓 Validación Académica
+### Validación académica
 
-El despliegue es **completamente funcional** para:
-- ✅ Demostración técnica en presentación de TFG/Máster
-- ✅ Validación de conocimientos de orquestación de contenedores
-- ✅ Pruebas de concepto y desarrollo en cluster local (minikube, kind, k3s)
-- ✅ Base arquitectónica para evolucionar a producción
+El despliegue resulta adecuado para:
+- Demostración académica
+- Pruebas de concepto y desarrollo en cluster local (minikube, kind, k3s)
 
-### ⚠️ Limitaciones Conocidas (Entorno de Desarrollo)
+### Limitaciones conocidas (entorno de desarrollo)
 
 Para transparencia técnica, se identifican las siguientes áreas que requerirían mejora en producción:
 
@@ -149,17 +144,17 @@ Para transparencia técnica, se identifican las siguientes áreas que requerirí
 | **Disaster Recovery** | Sin PodDisruptionBudget | PDB para alta disponibilidad |
 | **Observability** | Logs básicos | Prometheus/Grafana, tracing distribuido |
 
-👉 **Consultar [PRODUCTION_CONSIDERATIONS.md](./PRODUCTION_CONSIDERATIONS.md)** para guías detalladas de cada mejora.
+Consultar `k8s/PRODUCTION_CONSIDERATIONS.md` para guías detalladas de cada mejora.
 
-### 🚀 Pipeline Recomendado
+### Pipeline recomendado
 
 ```bash
 # 1. Validación de código
 composer test
-composer phpstan
+vendor/bin/phpstan analyse
 
 # 2. Build y tageo de imágenes (usar tags semánticos)
-docker build -t 20luisma/clean-marvel:v1.0.0 .
+docker build -f Dockerfile.clean-marvel -t 20luisma/clean-marvel:v1.0.0 .
 docker push 20luisma/clean-marvel:v1.0.0
 
 # 3. Despliegue en Kubernetes
@@ -170,7 +165,7 @@ kubectl rollout status deploy/clean-marvel
 kubectl get pods -l app=clean-marvel
 ```
 
-### 📝 Notas Importantes
+### Notas importantes
 
 - **Opcionalidad**: El despliegue en Kubernetes es completamente opcional. La aplicación sigue operando en entornos locales y hosting tradicionales.
 - **Host del Ingress**: `clean-marvel.local` es un placeholder. En producción ajustar al dominio real.

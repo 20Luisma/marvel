@@ -1,6 +1,6 @@
 # Security Hardening para Kubernetes
 
-## 📋 Índice
+## Índice
 
 1. [Introducción](#introducción)
 2. [Modelo de Seguridad en Capas](#modelo-de-seguridad-en-capas)
@@ -22,11 +22,11 @@
 
 Este documento establece **prácticas de hardening de seguridad** para el despliegue de Kubernetes de Clean Marvel Album, alineadas con las **10 capas de seguridad** ya implementadas en la aplicación PHP.
 
-### 🎯 Objetivo
+### Objetivo
 
 Extender la **defensa en profundidad** del proyecto al nivel de orquestación, creando un entorno Kubernetes que refleje los mismos principios de seguridad multicapa de la aplicación.
 
-### 📚 Frameworks de Referencia
+### Frameworks de referencia
 
 - **CIS Kubernetes Benchmark** v1.8
 - **NSA/CISA Kubernetes Hardening Guide**
@@ -41,25 +41,25 @@ Extender la **defensa en profundidad** del proyecto al nivel de orquestación, c
 
 | Capa App (PHP) | Equivalente Kubernetes | Prioridad |
 |----------------|------------------------|-----------|
-| 1. Security Headers | Ingress Annotations | 🔴 Alta |
-| 2. CSP | Ingress + App Config | 🟠 Media |
+| 1. Security Headers | Ingress Annotations | Alta |
+| 2. CSP | Ingress + App Config | Media |
 | 3. CSRF | App-level (no K8s) | N/A |
-| 4. Rate Limiting | Ingress + NetworkPolicies | 🔴 Alta |
-| 5. API Firewall | NetworkPolicies + AdmissionControllers | 🔴 Alta |
+| 4. Rate Limiting | Ingress + NetworkPolicies | Alta |
+| 5. API Firewall | NetworkPolicies + AdmissionControllers | Alta |
 | 6. Input Sanitization | App-level (no K8s) | N/A |
-| 7. Secrets Protection | Sealed Secrets + Encryption at Rest | 🔴 Crítica |
+| 7. Secrets Protection | Sealed Secrets + Encryption at Rest | Crítica |
 | 8. Anti-Replay | App-level (no K8s) | N/A |
-| 9. Security Logging | Audit Logs + Falco | 🟠 Media |
-| 10. Security Monitoring | Prometheus + Sentry + Falco | 🟠 Media |
+| 9. Security Logging | Audit Logs + Falco | Media |
+| 10. Security Monitoring | Prometheus + Sentry + Falco | Media |
 
 ---
 
 ## Capa 1: Control Plane Security
 
-### 🔒 Objetivo
+### Objetivo
 Asegurar que el plano de control de Kubernetes (API Server, etcd, scheduler, controller-manager) esté protegido contra accesos no autorizados.
 
-### ✅ Best Practices
+### Best practices
 
 #### 1.1. API Server Flags Seguros
 
@@ -76,11 +76,11 @@ spec:
         - kube-apiserver
         
         # Autenticación
-        - --anonymous-auth=false                    # ✅ Deshabilitar auth anónimo
-        - --enable-bootstrap-token-auth=false       # ✅ Si no usas tokens de bootstrap
+        - --anonymous-auth=false                    # Deshabilitar auth anónimo
+        - --enable-bootstrap-token-auth=false       # Si no usas tokens de bootstrap
         
         # Autorización
-        - --authorization-mode=Node,RBAC            # ✅ Solo RBAC y Node
+        - --authorization-mode=Node,RBAC            # Solo RBAC y Node
         
         # Auditoría
         - --audit-log-path=/var/log/kube-audit.log
@@ -115,7 +115,7 @@ spec:
     - name: etcd
       command:
         - etcd
-        - --client-cert-auth=true  # ✅ Requiere certificados cliente
+        - --client-cert-auth=true  # Requiere certificados cliente
         - --peer-client-cert-auth=true
         - --peer-auto-tls=false
         - --auto-tls=false
@@ -193,10 +193,10 @@ rules:
 
 ## Capa 2: RBAC y Gestión de Identidades
 
-### 🔒 Objetivo
+### Objetivo
 Aplicar **mínimo privilegio** a todos los componentes, usuarios y procesos.
 
-### ✅ Service Accounts Dedicados
+### Service accounts dedicados
 
 ```yaml
 # k8s/service-accounts.yaml (NUEVO)
@@ -207,7 +207,7 @@ kind: ServiceAccount
 metadata:
   name: clean-marvel-sa
   namespace: clean-marvel-prod
-automountServiceAccountToken: false  # ✅ No montar token por defecto
+automountServiceAccountToken: false  # No montar token por defecto
 
 ---
 # Role mínimo para clean-marvel
@@ -284,8 +284,8 @@ roleRef:
 spec:
   template:
     spec:
-      serviceAccountName: clean-marvel-sa  # ✅ AGREGAR
-      automountServiceAccountToken: false  # ✅ AGREGAR
+      serviceAccountName: clean-marvel-sa  # Agregar
+      automountServiceAccountToken: false  # Agregar
       containers:
         - name: clean-marvel
           # ... resto
@@ -293,7 +293,7 @@ spec:
 
 ---
 
-### ✅ RBAC para Usuarios Humanos
+### RBAC para usuarios humanos
 
 ```yaml
 # k8s/rbac-developers.yaml (EJEMPLO)
@@ -341,10 +341,10 @@ roleRef:
 
 ## Capa 3: Network Security
 
-### 🔒 Objetivo
+### Objetivo
 Implementar **zero-trust networking**: negar todo por defecto, permitir explícitamente.
 
-### ✅ Default Deny + Allow Explícito
+### Default deny + allow explícito
 
 ```yaml
 # k8s/network-policies-strict.yaml (NUEVO)
@@ -491,7 +491,7 @@ spec:
 
 ---
 
-### ✅ Ingress Security Annotations
+### Ingress security annotations
 
 ```yaml
 # k8s/ingress-secure.yaml (MEJORADO)
@@ -551,10 +551,10 @@ spec:
 
 ## Capa 4: Secrets Management
 
-### 🔒 Objetivo
+### Objetivo
 Garantizar que **ningún secret esté en plaintext** en repositorio o etcd sin cifrar.
 
-### ✅ Implementación con Sealed Secrets
+### Implementación con Sealed Secrets
 
 Ver [PRODUCTION_CONSIDERATIONS.md - Sección 1](./PRODUCTION_CONSIDERATIONS.md#1-gestión-segura-de-secrets) para detalles completos.
 
@@ -573,7 +573,7 @@ git commit -m "Add sealed secrets"
 
 ---
 
-### ✅ Rotación Automática de Secrets
+### Rotación automática de secrets
 
 ```yaml
 # k8s/secret-rotation-cronjob.yaml (EJEMPLO)
@@ -608,7 +608,7 @@ spec:
                   
                   # Notificar (Slack, PagerDuty, etc.)
                   curl -X POST $SLACK_WEBHOOK \
-                    -d '{"text":"🔄 INTERNAL_API_KEY rotado exitosamente"}'
+                    -d '{"text":"INTERNAL_API_KEY rotado exitosamente"}'
               env:
                 - name: SLACK_WEBHOOK
                   valueFrom:
@@ -660,10 +660,10 @@ roleRef:
 
 ## Capa 5: Pod Security Standards
 
-### 🔒 Objetivo
+### Objetivo
 Aplicar **Pod Security Admission** para prevenir pods privilegiados, root containers, etc.
 
-### ✅ Habilitar Pod Security Admission
+### Habilitar Pod Security Admission
 
 ```yaml
 # k8s/namespace-with-psa.yaml (MEJORADO)
@@ -673,7 +673,7 @@ metadata:
   name: clean-marvel-prod
   labels:
     # Pod Security Standards (v1.25+)
-    pod-security.kubernetes.io/enforce: restricted  # ✅ Más estricto
+    pod-security.kubernetes.io/enforce: restricted  # Más estricto
     pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/warn: restricted
 ```
@@ -685,7 +685,7 @@ metadata:
 
 ---
 
-### ✅ Adaptar Deployments a `restricted`
+### Adaptar Deployments a `restricted`
 
 ```yaml
 # k8s/clean-marvel-deployment.yaml (HARDENED)
@@ -694,10 +694,10 @@ spec:
     spec:
       # Security Context a nivel de Pod
       securityContext:
-        runAsNonRoot: true           # ✅ No permitir root
-        runAsUser: 1000              # ✅ UID específico
+        runAsNonRoot: true           # No permitir root
+        runAsUser: 1000              # UID específico
         fsGroup: 1000
-        seccompProfile:              # ✅ Seccomp profile
+        seccompProfile:              # Seccomp profile
           type: RuntimeDefault
       
       containers:
@@ -706,13 +706,13 @@ spec:
           
           # Security Context a nivel de Container
           securityContext:
-            allowPrivilegeEscalation: false  # ✅ No escalación
-            readOnlyRootFilesystem: true     # ✅ Filesystem inmutable
+            allowPrivilegeEscalation: false  # No escalación
+            readOnlyRootFilesystem: true     # Filesystem inmutable
             runAsNonRoot: true
             runAsUser: 1000
             capabilities:
               drop:
-                - ALL                         # ✅ Drop todas las capabilities
+                - ALL                         # Drop todas las capabilities
               # add: ["NET_BIND_SERVICE"]     # Solo agregar si es necesario
           
           # Volumes para permitir escrituras específicas
@@ -741,7 +741,7 @@ spec:
 
 ---
 
-### ✅ OPA/Gatekeeper para Políticas Personalizadas
+### OPA/Gatekeeper para políticas personalizadas
 
 ```bash
 # Instalar Gatekeeper
@@ -801,10 +801,10 @@ spec:
 
 ## Capa 6: Image Security
 
-### 🔒 Objetivo
+### Objetivo
 Garantizar que solo **imágenes escaneadas, firmadas y aprobadas** se desplieguen.
 
-### ✅ Image Scanning en CI/CD
+### Image scanning en CI/CD
 
 ```yaml
 # .github/workflows/security-scan.yml
@@ -831,7 +831,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          exit-code: '1'  # ✅ Fallar build si hay vulnerabilidades
+          exit-code: '1'  # Fallar build si hay vulnerabilidades
       
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v2
@@ -851,7 +851,7 @@ jobs:
 
 ---
 
-### ✅ Image Signing con Cosign
+### Image signing con Cosign
 
 ```bash
 # Generar par de claves
@@ -888,10 +888,10 @@ spec:
 
 ## Capa 7: Runtime Security
 
-### 🔒 Objetivo
+### Objetivo
 Detectar y bloquear **comportamientos anómalos en runtime** (ejecuciones de shell, accesos no autorizados, etc.).
 
-### ✅ Falco para Runtime Detection
+### Falco para runtime detection
 
 #### Instalación
 
@@ -977,7 +977,7 @@ data:
 
 ---
 
-### ✅ Integración Falco → Sentry/Slack
+### Integración Falco -> Sentry/Slack
 
 ```yaml
 # k8s/falco-sidekick.yaml
@@ -1018,10 +1018,10 @@ spec:
 
 ## Capa 8: Audit y Compliance
 
-### 🔒 Objetivo
+### Objetivo
 Mantener **logs de auditoría completos** y generar reportes de compliance.
 
-### ✅ Logging Centralizado con Loki
+### Logging centralizado con Loki
 
 ```bash
 # Instalar Loki Stack (Loki + Promtail + Grafana)
@@ -1050,7 +1050,7 @@ helm install loki grafana/loki-stack \
 
 ---
 
-### ✅ Compliance Scanning con Kube-bench
+### Compliance scanning con Kube-bench
 
 ```bash
 # Ejecutar CIS Benchmark
@@ -1067,10 +1067,10 @@ kubectl logs -l app=kube-bench > kube-bench-report.txt
 
 ## Capa 9: Data Protection
 
-### 🔒 Objetivo
+### Objetivo
 Proteger **datos en tránsito y en reposo**.
 
-### ✅ Encryption in Transit
+### Encryption in transit
 
 ```yaml
 # Service Mesh (Istio) para mTLS automático
@@ -1081,7 +1081,7 @@ metadata:
   namespace: clean-marvel-prod
 spec:
   mtls:
-    mode: STRICT  # ✅ Requiere mTLS para todo el tráfico interno
+    mode: STRICT  # Requiere mTLS para todo el tráfico interno
 ```
 
 **O con Linkerd (más ligero):**
@@ -1092,7 +1092,7 @@ linkerd inject k8s/clean-marvel-deployment.yaml | kubectl apply -f -
 
 ---
 
-### ✅ Encryption at Rest (etcd)
+### Encryption at rest (etcd)
 
 ```yaml
 # /etc/kubernetes/encryption-config.yaml
@@ -1124,10 +1124,10 @@ kubectl get secrets --all-namespaces -o json | kubectl replace -f -
 
 ## Capa 10: Incident Response
 
-### 🔒 Objetivo
+### Objetivo
 Tener **playbooks claros** para responder a incidentes de seguridad.
 
-### ✅ Incident Response Playbook
+### Incident response playbook
 
 #### 1. Detección de Pod Comprometido
 
@@ -1177,7 +1177,7 @@ kubectl scale deployment/clean-marvel --replicas=10
 
 ---
 
-### ✅ Checklist de Post-Incident
+### Checklist de post-incident
 
 - [ ] **Root Cause Analysis** completado
 - [ ] **Timeline** del incidente documentado
@@ -1191,7 +1191,7 @@ kubectl scale deployment/clean-marvel --replicas=10
 
 ## Security Checklist Completo
 
-### 🔴 Crítico (Antes de Producción)
+### Crítico (antes de producción)
 
 #### Control Plane
 - [ ] API Server sin `--anonymous-auth`
@@ -1228,7 +1228,7 @@ kubectl scale deployment/clean-marvel --replicas=10
 - [ ] Imágenes firmadas con Cosign
 - [ ] Solo registry aprobado
 
-### 🟠 Alta Prioridad
+### Alta prioridad
 
 - [ ] Runtime security (Falco) instalado
 - [ ] Service Mesh para mTLS (Istio/Linkerd)
@@ -1238,7 +1238,7 @@ kubectl scale deployment/clean-marvel --replicas=10
 - [ ] Incident Response Playbook documentado
 - [ ] Security training para equipo
 
-### 🟡 Mejoras Continuas
+### Mejoras continuas
 
 - [ ] Chaos Engineering (Chaos Mesh)
 - [ ] Penetration testing programado
@@ -1250,13 +1250,13 @@ kubectl scale deployment/clean-marvel --replicas=10
 
 ## Conclusión
 
-Este documento proporciona una **guía exhaustiva de hardening** para Kubernetes, aplicando el mismo rigor de seguridad multicapa que ya existe en la aplicación Clean Marvel Album.
+Este documento proporciona una guía de hardening para Kubernetes, documentada como trabajo futuro.
 
 **Recordatorio:**
-- ✅ La seguridad es un **proceso continuo**, no un estado
-- 🔄 Revisa y actualiza estas políticas **regularmente**
-- 🎓 Educa al equipo en **mejores prácticas**
-- 📊 Mide y monitorea **continuamente**
+- La seguridad es un proceso continuo, no un estado.
+- Revisar y actualizar estas políticas regularmente.
+- Educar al equipo en buenas prácticas.
+- Medir y monitorear de forma continua.
 
 ---
 
