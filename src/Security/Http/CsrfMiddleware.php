@@ -30,7 +30,10 @@ class CsrfMiddleware
 
     public function handle(string $path): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+        $method = $_SERVER['REQUEST_METHOD'] ?? '';
+        
+        // Proteger POST, PUT y DELETE (operaciones de escritura)
+        if (!in_array($method, ['POST', 'PUT', 'DELETE'], true)) {
             return;
         }
 
