@@ -343,15 +343,33 @@ final class OpenAiHttpClient implements LlmClientInterface
         $logFile = $this->logFile;
         $logDir = dirname($logFile);
 
+        $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json === false) {
+            return;
+        }
+
         // Asegurar que el directorio existe
-        if (!is_dir($logDir) && !@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
+        try {
+            set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
+                throw new \ErrorException($message, 0, $severity, $file, $line);
+            });
+
+            if (!is_dir($logDir) && !mkdir($logDir, 0775, true) && !is_dir($logDir)) {
+                throw new \RuntimeException('Failed to create tokens log directory: ' . $logDir);
+            }
+        } catch (\Throwable $e) {
             if ($this->debugEnabled) {
                 $this->logger->log('llm.debug', [
                     'message' => 'Failed to create tokens log directory',
                     'dir' => $logDir,
+                    'error' => $e->getMessage(),
                 ]);
             }
+            error_log('[rag-service][log_write_failed] ' . $e->getMessage());
+            error_log('[rag-service][log_payload] ' . $json);
             return;
+        } finally {
+            restore_error_handler();
         }
 
         // Verificar permisos de escritura
@@ -364,29 +382,30 @@ final class OpenAiHttpClient implements LlmClientInterface
             }
         }
 
-        $json = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($json !== false) {
-            try {
-                $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
-                if ($result === false) {
-                    if ($this->debugEnabled) {
-                        $error = error_get_last();
-                        $this->logger->log('llm.debug', [
-                            'message' => 'Failed to write tokens log',
-                            'file' => $logFile,
-                            'error' => $error['message'] ?? 'Unknown',
-                        ]);
-                    }
-                }
-            } catch (\Throwable $e) {
+        try {
+            $result = file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
+            if ($result === false) {
                 if ($this->debugEnabled) {
+                    $error = error_get_last();
                     $this->logger->log('llm.debug', [
-                        'message' => 'Exception writing tokens log',
+                        'message' => 'Failed to write tokens log',
                         'file' => $logFile,
-                        'error' => $e->getMessage(),
+                        'error' => $error['message'] ?? 'Unknown',
                     ]);
                 }
+                error_log('[rag-service][log_write_failed] Cannot write log file: ' . $logFile);
+                error_log('[rag-service][log_payload] ' . $json);
             }
+        } catch (\Throwable $e) {
+            if ($this->debugEnabled) {
+                $this->logger->log('llm.debug', [
+                    'message' => 'Exception writing tokens log',
+                    'file' => $logFile,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+            error_log('[rag-service][log_write_failed] ' . $e->getMessage());
+            error_log('[rag-service][log_payload] ' . $json);
         }
     }
 

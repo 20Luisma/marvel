@@ -27,7 +27,9 @@ final class OpenAiHttpClientCircuitBreakerTest extends TestCase
         $this->envBackup = $_ENV;
 
         $this->tokensLogPath = sys_get_temp_dir() . '/rag-tokens-' . bin2hex(random_bytes(8)) . '.log';
-        @unlink($this->tokensLogPath);
+        if (is_file($this->tokensLogPath)) {
+            unlink($this->tokensLogPath);
+        }
 
         putenv('AI_TOKENS_LOG_PATH=' . $this->tokensLogPath);
         $_ENV['AI_TOKENS_LOG_PATH'] = $this->tokensLogPath;
@@ -44,7 +46,9 @@ final class OpenAiHttpClientCircuitBreakerTest extends TestCase
         putenv('AI_TOKENS_LOG_PATH');
         putenv('APP_DEBUG');
 
-        @unlink($this->tokensLogPath);
+        if (is_file($this->tokensLogPath)) {
+            unlink($this->tokensLogPath);
+        }
         parent::tearDown();
     }
 
@@ -185,4 +189,3 @@ final class CapturingStructuredLogger implements StructuredLoggerInterface
         return false;
     }
 }
-

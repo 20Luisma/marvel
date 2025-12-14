@@ -257,9 +257,6 @@ function log_request_event(string $path, int $statusCode, float $startTime, ?str
 {
     $logFile = __DIR__ . '/../storage/logs/requests.log';
     $directory = dirname($logFile);
-    if (!is_dir($directory)) {
-        @mkdir($directory, 0775, true);
-    }
 
     $entry = [
         'timestamp' => date('c'),
@@ -277,8 +274,30 @@ function log_request_event(string $path, int $statusCode, float $startTime, ?str
     }
 
     $encoded = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    if ($encoded !== false) {
-        @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
+    if ($encoded === false) {
+        return;
+    }
+
+    try {
+        set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        if (!is_dir($directory)) {
+            if (!mkdir($directory, 0775, true) && !is_dir($directory)) {
+                throw new RuntimeException('Cannot create dir: ' . $directory);
+            }
+        }
+
+        $bytes = file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX);
+        if ($bytes === false) {
+            throw new RuntimeException('Cannot write log file: ' . $logFile);
+        }
+    } catch (Throwable $e) {
+        error_log('[rag-service][log_write_failed] ' . $e->getMessage());
+        error_log('[rag-service][log_payload] ' . $encoded);
+    } finally {
+        restore_error_handler();
     }
 }
 

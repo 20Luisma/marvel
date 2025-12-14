@@ -49,6 +49,8 @@ final class HeroJsonKnowledgeBaseTest extends TestCase
         $this->assertSame('Nuevo', $heroes[0]['nombre']);
         $this->assertSame('Contenido', $heroes[0]['contenido']);
 
-        @unlink($tempFile);
+        if (is_file($tempFile)) {
+            unlink($tempFile);
+        }
     }
 }

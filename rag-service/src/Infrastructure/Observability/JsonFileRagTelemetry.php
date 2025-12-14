@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Creawebes\Rag\Infrastructure\Observability;
 
 use Creawebes\Rag\Application\Contracts\RagTelemetryInterface;
+use ErrorException;
+use RuntimeException;
+use Throwable;
 
 final class JsonFileRagTelemetry implements RagTelemetryInterface
 {
@@ -21,11 +24,6 @@ final class JsonFileRagTelemetry implements RagTelemetryInterface
             return;
         }
 
-        $directory = dirname($file);
-        if (!is_dir($directory)) {
-            @mkdir($directory, 0775, true);
-        }
-
         $entry = [
             'timestamp' => date('c'),
             'trace_id' => $this->traceIdProvider->getTraceId(),
@@ -40,7 +38,28 @@ final class JsonFileRagTelemetry implements RagTelemetryInterface
             return;
         }
 
-        @file_put_contents($file, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX);
+        $directory = dirname($file);
+
+        try {
+            set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
+                throw new ErrorException($message, 0, $severity, $file, $line);
+            });
+
+            if (!is_dir($directory)) {
+                if (!mkdir($directory, 0775, true) && !is_dir($directory)) {
+                    throw new RuntimeException('Cannot create dir: ' . $directory);
+                }
+            }
+
+            $bytes = file_put_contents($file, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX);
+            if ($bytes === false) {
+                throw new RuntimeException('Cannot write log file: ' . $file);
+            }
+        } catch (Throwable $e) {
+            error_log('[rag-service][log_write_failed] ' . $e->getMessage());
+            error_log('[rag-service][log_payload] ' . $encoded);
+        } finally {
+            restore_error_handler();
+        }
     }
 }
-

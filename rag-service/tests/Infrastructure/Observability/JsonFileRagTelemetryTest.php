@@ -64,15 +64,18 @@ final class JsonFileRagTelemetryTest extends TestCase
         $this->assertSame('trace-test-123', $decoded['trace_id']);
         $this->assertSame('trace-test-123', $provider->getTraceId());
 
-        @unlink($logFile);
+        if (is_file($logFile)) {
+            unlink($logFile);
+        }
     }
 
     private function createTempLogPath(): string
     {
         $path = sys_get_temp_dir() . '/rag-telemetry-' . bin2hex(random_bytes(8)) . '.log';
-        @unlink($path);
+        if (is_file($path)) {
+            unlink($path);
+        }
 
         return $path;
     }
 }
-
