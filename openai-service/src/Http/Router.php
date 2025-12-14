@@ -18,6 +18,8 @@ class Router
         $normalizedMethod = strtoupper($method);
         $path = parse_url($uri, PHP_URL_PATH) ?? '/';
 
+        PrometheusMetrics::incrementRequests();
+
         if (!$this->applyCors()) {
             $this->denyCorsRequest($normalizedMethod);
             $this->logRequest($start, $path, http_response_code() ?: 403, 'origin-not-allowed');
@@ -27,6 +29,35 @@ class Router
         if ($normalizedMethod === 'OPTIONS') {
             http_response_code(204);
             $this->logRequest($start, $path, 204);
+            return;
+        }
+
+        if ($normalizedMethod === 'GET' && $path === '/health') {
+            http_response_code(200);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(
+                [
+                    'status' => 'ok',
+                    'service' => 'openai-service',
+                    'time' => date('c'),
+                ],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            );
+            $this->logRequest($start, $path, 200);
+            return;
+        }
+
+        if ($normalizedMethod === 'GET' && $path === '/metrics') {
+            PrometheusMetrics::respond('openai-service');
+            $this->logRequest($start, $path, 200);
+            return;
+        }
+
+        if ($path === '/metrics') {
+            http_response_code(405);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Method not allowed'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $this->logRequest($start, $path, 405, 'method-not-allowed');
             return;
         }
 
@@ -41,7 +72,11 @@ class Router
 
             $controller = new OpenAIController(new GenerateContent(new OpenAiClient()));
             $controller->chat();
-            $this->logRequest($start, $path, http_response_code() ?: 200);
+            $status = http_response_code() ?: 200;
+            if ($status >= 500) {
+                PrometheusMetrics::incrementErrors();
+            }
+            $this->logRequest($start, $path, $status);
             return;
         }
 
@@ -69,7 +104,7 @@ class Router
             header('Access-Control-Allow-Origin: ' . $selectedOrigin);
         }
 
-        header('Access-Control-Allow-Methods: POST, OPTIONS');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller');
         header('Access-Control-Max-Age: 86400');
 

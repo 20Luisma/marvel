@@ -23,6 +23,10 @@ use Creawebes\Rag\Infrastructure\VectorHeroRetriever;
 use Creawebes\Rag\Application\Clients\OpenAiEmbeddingClient;
 use Creawebes\Rag\Infrastructure\Retrieval\VectorMarvelAgentRetriever;
 
+if (!defined('APP_START_TIME')) {
+    define('APP_START_TIME', time());
+}
+
 return (static function (): array {
     $rootPath = dirname(__DIR__);
     $envPath = $rootPath . DIRECTORY_SEPARATOR . '.env';

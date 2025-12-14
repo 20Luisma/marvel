@@ -6,6 +6,10 @@
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory suffix="Test.php">tests</directory>
+            <exclude>tests/Contracts</exclude>
+        </testsuite>
+        <testsuite name="contracts">
+            <directory suffix="Test.php">tests/Contracts</directory>
         </testsuite>
     </testsuites>
     <coverage>

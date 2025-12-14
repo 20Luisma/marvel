@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Creawebes\Rag\Observability\PrometheusMetrics;
+
 $traceId = resolve_trace_id();
 header('X-Trace-Id: ' . $traceId);
 
@@ -38,6 +40,8 @@ $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $origin = is_string($requestOrigin) ? trim($requestOrigin) : '';
 
+PrometheusMetrics::incrementRequests();
+
 header('Vary: Origin');
 
 if ($origin !== '' && !in_array($origin, $allowedOrigins, true)) {
@@ -63,6 +67,20 @@ header('Access-Control-Max-Age: 86400');
 if ($method === 'OPTIONS') {
     http_response_code(204);
     exit;
+}
+
+if ($method === 'GET' && $path === '/metrics') {
+    PrometheusMetrics::respond('rag-service');
+    log_request_event($path, 200, $requestStart);
+    return;
+}
+
+if ($path === '/metrics') {
+    http_response_code(405);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => 'Method not allowed'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    log_request_event($path, 405, $requestStart, 'method-not-allowed');
+    return;
 }
 
 if ($method === 'GET' && $path === '/health') {
@@ -101,10 +119,15 @@ if ($method === 'POST' && $path === '/rag/heroes') {
     $controller = $container['ragController'] ?? null;
     if ($controller instanceof \Creawebes\Rag\Controllers\RagController) {
         $controller->compareHeroes();
-        log_request_event($path, http_response_code(), $requestStart);
+        $status = http_response_code() ?: 200;
+        if ($status >= 500) {
+            PrometheusMetrics::incrementErrors();
+        }
+        log_request_event($path, $status, $requestStart);
         return;
     }
 
+    PrometheusMetrics::incrementErrors();
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Controlador RAG no disponible.'], JSON_UNESCAPED_UNICODE);
@@ -116,10 +139,15 @@ if ($method === 'POST' && $path === '/rag/heroes/upsert') {
     $controller = $container['ragController'] ?? null;
     if ($controller instanceof \Creawebes\Rag\Controllers\RagController) {
         $controller->upsertHero();
-        log_request_event($path, http_response_code(), $requestStart);
+        $status = http_response_code() ?: 200;
+        if ($status >= 500) {
+            PrometheusMetrics::incrementErrors();
+        }
+        log_request_event($path, $status, $requestStart);
         return;
     }
 
+    PrometheusMetrics::incrementErrors();
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Controlador RAG no disponible.'], JSON_UNESCAPED_UNICODE);
@@ -157,6 +185,7 @@ if ($method === 'POST' && $path === '/rag/agent') {
             log_request_event($path, 200, $requestStart);
             return;
         } catch (\Throwable $exception) {
+            PrometheusMetrics::incrementErrors();
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['error' => 'Error interno llamando al Marvel Agent.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -165,6 +194,7 @@ if ($method === 'POST' && $path === '/rag/agent') {
         }
     }
 
+    PrometheusMetrics::incrementErrors();
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Caso de uso Marvel Agent no disponible.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
