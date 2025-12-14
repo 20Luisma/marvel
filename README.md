@@ -117,9 +117,9 @@ Pipelines: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarC
 
 ## 🧪 Calidad y pruebas
 
-El proyecto implementa una **estrategia de testing multinivel** con **606 tests automatizados** y **1,307 assertions**:
+El proyecto implementa una **estrategia de testing multinivel** con **653 tests automatizados** y **1,435 assertions**:
 
-### Suite PHPUnit (606 tests)
+### Suite PHPUnit (653 tests)
 
 ```bash
 # Ejecutar todos los tests
