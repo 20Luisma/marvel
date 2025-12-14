@@ -964,7 +964,7 @@ composer audit --no-interaction
 
 ## 13. Testing completo (niveles Marvel)
 
-Marvel implementa más de **120 tests automatizados** cubriendo múltiples niveles.
+Marvel implementa más de **606 tests automatizados** con **1,307 assertions** cubriendo múltiples niveles.
 
 ### Estructura de tests
 
@@ -1124,7 +1124,7 @@ vendor/bin/phpunit tests/Albums/Domain
 # Solo tests de controladores
 vendor/bin/phpunit tests/Controllers
 
-# Cobertura (~70%, objetivo: 80%+)
+# Cobertura (90.28% ✅, supera objetivo 80%+)
 composer test:cov
 
 # Análisis estático (PHPStan nivel 6)

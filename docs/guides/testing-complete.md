@@ -2,13 +2,13 @@
 
 ## 📊 Resumen Ejecutivo
 
-Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre desde tests unitarios hasta E2E, pasando por seguridad, accesibilidad y rendimiento. El proyecto cuenta con **más de 117 tests automatizados** organizados en múltiples categorías.
+Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre desde tests unitarios hasta E2E, pasando por seguridad, accesibilidad y rendimiento. El proyecto cuenta con **606 tests automatizados** y **1,307 assertions** organizados en múltiples categorías.
 
 ### Cobertura Actual
 
-- **Tests PHPUnit**: 117+ archivos de test
-- **Tests E2E (Playwright)**: 6 tests (5 archivos)
-- **Cobertura de código**: ~70% (objetivo: 80%+)
+- **Tests PHPUnit**: 606 tests (1,307 assertions)
+- **Tests E2E (Playwright)**: 10 tests (7 archivos)
+- **Cobertura de código**: 90.28% ✅ (objetivo: 80%+)
 - **Análisis estático**: PHPStan nivel 6
 - **Accesibilidad**: Pa11y WCAG 2.1 AA
 - **Performance**: Lighthouse CI
@@ -711,7 +711,7 @@ npx playwright show-trace trace.zip
 
 | Métrica | Objetivo | Actual |
 |---------|----------|--------|
-| Cobertura | 80%+ | ~70% |
+| Cobertura | 80%+ | 90.28% ✅ |
 | PHPStan | Nivel 6 | Nivel 6 ✅ |
 | Tests E2E | 100% crítico | 100% ✅ |
 | Pa11y | 0 errores | 0 errores ✅ |
@@ -767,4 +767,4 @@ Clean Marvel Album implementa una **estrategia de testing integral** que valida:
 ✅ **Accesibilidad** (Pa11y WCAG 2.1 AA)  
 ✅ **Performance** (Lighthouse CI)  
 
-**Total: 120+ tests automatizados** que garantizan la calidad y estabilidad del proyecto.
+**Total: 606 tests automatizados con 1,307 assertions** que garantizan la calidad y estabilidad del proyecto.

@@ -315,7 +315,7 @@ require_once __DIR__ . '/../layouts/header.php';
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🧪 Calidad y Testing Multinivel</h3>
           <p>
-            El proyecto implementa una <strong>estrategia de testing multinivel</strong> con más de <strong>120 tests automatizados</strong>
+            El proyecto implementa una <strong>estrategia de testing multinivel</strong> con <strong>606 tests automatizados</strong> y <strong>1,307 assertions</strong>
             que cubren desde la lógica de negocio hasta la experiencia de usuario final.
           </p>
 
@@ -385,10 +385,10 @@ require_once __DIR__ . '/../layouts/header.php';
 
           <div class="grid gap-4 md:grid-cols-2 mt-4">
             <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
-              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Suite PHPUnit (117+ tests)</p>
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Suite PHPUnit (606 tests)</p>
               <ul class="space-y-2 text-sm text-gray-200">
                 <li><code>vendor/bin/phpunit --colors=always</code> — Ejecuta todos los tests.</li>
-                <li><code>composer test:cov</code> — Genera cobertura (~70%, objetivo: 80%+).</li>
+                <li><code>composer test:cov</code> — Genera cobertura (90.28% ✅, supera objetivo 80%+).</li>
                 <li><code>vendor/bin/phpstan analyse</code> — Análisis estático nivel 6.</li>
                 <li><code>vendor/bin/phpunit tests/Security</code> — Solo tests de seguridad.</li>
               </ul>
