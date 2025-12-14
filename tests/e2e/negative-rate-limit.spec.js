@@ -22,7 +22,7 @@ test.describe('Negative - Rate limit', () => {
     for (let i = 0; i < 11; i++) {
       lastResponse = await request.post('/login', {
         headers: { Accept: 'application/json', 'X-Forwarded-For': forwardedIp },
-        form: { _token: token, email: 'marvel@gmail.com', password: 'marvel2025' },
+        form: { _token: token, email: 'seguridadmarvel@gmail.com', password: 'seguridadmarvel2025' },
         maxRedirects: 0,
       });
     }
@@ -35,4 +35,3 @@ test.describe('Negative - Rate limit', () => {
     expect(body.error).toBe('rate_limited');
   });
 });
-
