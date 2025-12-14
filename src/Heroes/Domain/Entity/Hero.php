@@ -21,6 +21,8 @@ final class Hero
         private readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt
     ) {
+        $this->assertHeroId($heroId);
+        $this->assertAlbumId($albumId);
         $this->assertName($name);
         $this->assertImage($image);
     }
@@ -183,6 +185,20 @@ final class Hero
     {
         if (trim($image) === '') {
             throw new InvalidArgumentException('La imagen del héroe no puede estar vacía.');
+        }
+    }
+
+    private function assertHeroId(string $heroId): void
+    {
+        if (trim($heroId) === '') {
+            throw new InvalidArgumentException('El id del héroe no puede estar vacío.');
+        }
+    }
+
+    private function assertAlbumId(string $albumId): void
+    {
+        if (trim($albumId) === '') {
+            throw new InvalidArgumentException('El id del álbum no puede estar vacío.');
         }
     }
 }
