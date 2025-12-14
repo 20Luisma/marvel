@@ -31,6 +31,7 @@ use App\Controllers\Http\Request;
 use App\Controllers\NotificationController;
 use App\Controllers\PageController;
 use App\Controllers\RagProxyController;
+use App\Shared\Metrics\PrometheusMetrics;
 use RuntimeException;
 use Throwable;
 
@@ -45,6 +46,18 @@ final class Router
 
     public function handle(string $method, string $path): void
     {
+        PrometheusMetrics::incrementRequests();
+
+        if ($path === '/metrics') {
+            if ($method !== 'GET') {
+                JsonResponse::error('Método no permitido.', 405);
+                return;
+            }
+
+            PrometheusMetrics::respond('clean-marvel');
+            return;
+        }
+
         // Orden de seguridad:
         // 1) ApiFirewall → bloquea patrones maliciosos
         // 2) RateLimitMiddleware → protege de abusos/DoS

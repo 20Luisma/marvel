@@ -20,6 +20,10 @@ if (!file_exists($autoload)) {
 
 require_once $autoload;
 
+if (!defined('APP_START_TIME')) {
+    define('APP_START_TIME', time());
+}
+
 $envPath = $baseDir . '/.env';
 loadEnvIfAvailable($envPath);
 $_SERVER['__RAW_INPUT__'] = read_raw_input();

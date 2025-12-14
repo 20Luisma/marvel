@@ -14,6 +14,7 @@ if (!array_key_exists('MARVEL_RAW_BODY', $_SERVER)) {
 use App\Security\Http\SecurityHeaders;
 use App\Security\Http\CsrfMiddleware;
 use App\Shared\Http\Router;
+use App\Shared\Metrics\PrometheusMetrics;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -34,6 +35,10 @@ if (!function_exists('route')) {
 }
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+if ($requestPath === '/' || $requestPath === '/index.php') {
+    PrometheusMetrics::incrementRequests();
+}
 
 // CSRF middleware inicial para rutas POST de landing/home.
 $csrfMiddleware = new CsrfMiddleware($GLOBALS['__clean_marvel_container']['security']['logger'] ?? null);

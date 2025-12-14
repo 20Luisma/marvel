@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Http;
 
+use App\Shared\Metrics\PrometheusMetrics;
+
 final class JsonResponse
 {
     private const STATUS_SUCCESS = 'éxito';
@@ -48,6 +50,10 @@ final class JsonResponse
         // No interrumpimos la ejecución en CLI (PHPUnit) para permitir que los tests continúen.
         if (PHP_SAPI === 'cli') {
             return $payload;
+        }
+
+        if ($statusCode >= 500) {
+            PrometheusMetrics::incrementErrors();
         }
 
         http_response_code($statusCode);
