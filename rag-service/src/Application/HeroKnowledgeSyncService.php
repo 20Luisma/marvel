@@ -7,6 +7,8 @@ namespace Creawebes\Rag\Application;
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
 use Creawebes\Rag\Infrastructure\EmbeddingStore;
+use ErrorException;
+use RuntimeException;
 use Throwable;
 
 final class HeroKnowledgeSyncService
@@ -45,7 +47,30 @@ final class HeroKnowledgeSyncService
             return;
         }
 
-        $line = date('c') . ' ' . $message . PHP_EOL;
-        @file_put_contents($this->logFile, $line, FILE_APPEND);
+        $line = date('c') . ' ' . $message;
+        $file = $this->logFile;
+        $dir = dirname($file);
+
+        try {
+            set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
+                throw new ErrorException($message, 0, $severity, $file, $line);
+            });
+
+            if (!is_dir($dir)) {
+                if (!mkdir($dir, 0777, true) && !is_dir($dir)) {
+                    throw new RuntimeException('Cannot create dir: ' . $dir);
+                }
+            }
+
+            $bytes = file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX);
+            if ($bytes === false) {
+                throw new RuntimeException('Cannot write log file: ' . $file);
+            }
+        } catch (Throwable $e) {
+            error_log('[rag-service][log_write_failed] ' . $e->getMessage());
+            error_log('[rag-service][log_payload] ' . $line);
+        } finally {
+            restore_error_handler();
+        }
     }
 }

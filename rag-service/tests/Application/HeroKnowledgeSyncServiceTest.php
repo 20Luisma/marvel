@@ -26,8 +26,12 @@ final class HeroKnowledgeSyncServiceTest extends TestCase
 
     protected function tearDown(): void
     {
-        @unlink($this->kbFile);
-        @unlink($this->embeddingsFile);
+        if (is_file($this->kbFile)) {
+            unlink($this->kbFile);
+        }
+        if (is_file($this->embeddingsFile)) {
+            unlink($this->embeddingsFile);
+        }
     }
 
     public function test_upsert_persists_hero_and_embeddings(): void
