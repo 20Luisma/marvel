@@ -25,6 +25,8 @@ Un *Architectural Decision Record (ADR)* documenta decisiones técnicas que afec
 - [ADR-005: Elección de microservicios para OpenAI y RAG](ADR-005-microservicios-openai-rag.md)  
 - [ADR-006: Seguridad Fase 2 - Anti-replay, Rate Limit y Auth](ADR-006-seguridad-fase2.md)  
 - [ADR-007: Modularización del Sistema de Bootstrap](ADR-007-bootstrap-modularization.md)
+- [ADR-009: Circuit Breaker en la Aplicación Principal](ADR-009-circuit-breaker-app.md)
+- [ADR-010: Value Objects para Configuración Tipada](ADR-010-value-objects-config.md)
 
 ### Supersede ADR
 

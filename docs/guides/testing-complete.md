@@ -2,11 +2,11 @@
 
 ## 📊 Resumen Ejecutivo
 
-Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre desde tests unitarios hasta E2E, pasando por seguridad, accesibilidad y rendimiento. El proyecto cuenta con **606 tests automatizados** y **1,307 assertions** organizados en múltiples categorías.
+Clean Marvel Album implementa una **estrategia de testing multinivel** que cubre desde tests unitarios hasta E2E, pasando por seguridad, accesibilidad y rendimiento. El proyecto cuenta con **646 tests automatizados** y **1,411 assertions** organizados en múltiples categorías.
 
 ### Cobertura Actual
 
-- **Tests PHPUnit**: 606 tests (1,307 assertions)
+- **Tests PHPUnit**: 646 tests (1,411 assertions)
 - **Tests E2E (Playwright)**: 10 tests (7 archivos)
 - **Cobertura de código**: 90.28% ✅ (objetivo: 80%+)
 - **Análisis estático**: PHPStan nivel 6
@@ -95,8 +95,12 @@ tests/
 ├── Infrastructure/Http/
 │   ├── CurlHttpClientTest.php
 │   └── AuthGuardsTest.php
-└── Shared/Infrastructure/
-    └── Bus/EventBusTest.php
+├── Shared/Infrastructure/
+│   ├── Bus/EventBusTest.php
+│   └── Resilience/
+│       └── CircuitBreakerTest.php    # NEW: 12 tests de Circuit Breaker
+└── Bootstrap/Config/
+    └── SecurityConfigTest.php         # NEW: 22 tests de Value Object
 ```
 
 **Casos cubiertos**:
@@ -104,6 +108,8 @@ tests/
 - Clientes HTTP (con mocks)
 - Bus de eventos en memoria
 - Rate limiters con timestamp
+- **Circuit Breaker** (estados closed/open/half-open, fallbacks)
+- **SecurityConfig Value Object** (validación, factory methods)
 
 ---
 
@@ -219,6 +225,44 @@ tests/
 - Mocks de respuestas HTTP
 - Fallbacks cuando no hay credenciales
 - Validación de payloads enviados
+
+---
+
+### 6.5. Tests de Contrato y Schema OpenAPI
+
+**Ubicación**: `tests/Contracts/`
+
+**Propósito**: Validar que los contratos entre servicios sean consistentes y que el schema OpenAPI esté actualizado.
+
+**Tests implementados**:
+```
+tests/Contracts/
+├── OpenAiServiceContractTest.php     # Contrato con OpenAI service
+├── RagServiceContractTest.php        # Contrato con RAG service
+└── OpenApiSchemaValidationTest.php   # Validación del schema OpenAPI
+```
+
+#### **OpenAPI Schema Validation** (16 assertions)
+
+Valida que `docs/api/openapi.yaml` contenga:
+- ✅ Endpoints requeridos (`/albums`, `/heroes`, `/rag/heroes`, `/comics/generate`)
+- ✅ Schemas de componentes (`AlbumSummary`, `HeroSummary`, `CreateAlbumRequest`, etc.)
+- ✅ Campos obligatorios en cada schema
+- ✅ Estructura de request/response para cada endpoint
+
+**Ejecutar tests de schema**:
+```bash
+vendor/bin/phpunit tests/Contracts/OpenApiSchemaValidationTest.php
+```
+
+#### **Contract Tests con Servicios Reales**
+
+Los tests de contrato (`RagServiceContractTest`, `OpenAiServiceContractTest`) validan comunicación real con microservicios. Por defecto están **deshabilitados** para no requerir servicios activos en CI.
+
+**Ejecutar tests de contrato (requiere servicios activos)**:
+```bash
+RUN_CONTRACT_TESTS=1 vendor/bin/phpunit tests/Contracts/RagServiceContractTest.php
+```
 
 ---
 
@@ -767,4 +811,4 @@ Clean Marvel Album implementa una **estrategia de testing integral** que valida:
 ✅ **Accesibilidad** (Pa11y WCAG 2.1 AA)  
 ✅ **Performance** (Lighthouse CI)  
 
-**Total: 606 tests automatizados con 1,307 assertions** que garantizan la calidad y estabilidad del proyecto.
+**Total: 646 tests automatizados con 1,411 assertions** que garantizan la calidad y estabilidad del proyecto.

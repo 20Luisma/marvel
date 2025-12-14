@@ -964,7 +964,7 @@ composer audit --no-interaction
 
 ## 13. Testing completo (niveles Marvel)
 
-Marvel implementa más de **606 tests automatizados** con **1,307 assertions** cubriendo múltiples niveles.
+Marvel implementa más de **646 tests automatizados** con **1,411 assertions** cubriendo múltiples niveles.
 
 ### Estructura de tests
 
