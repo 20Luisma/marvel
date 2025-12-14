@@ -42,14 +42,15 @@ analyzessl5app\services\security\securityscanservice::analyzessl[
 	addheader,app\security\http\securityheaders::addheader1
 apply(app\security\http\securityheaders::apply7
 buildcsp+app\security\http\securityheaders::buildcspC
-ishttpsrequest1app\security\http\securityheaders::ishttpsrequestí
+ishttpsrequest1app\security\http\securityheaders::ishttpsrequest¯
 0app\heroes\application\usecase\createherousecaseL
 __construct=app\heroes\application\usecase\createherousecase::__constructD
 execute9app\heroes\application\usecase\createherousecase::executeN
-generateuuid>app\heroes\application\usecase\createherousecase::generateuuid"albumRepository"eventBus"heroRepository*?
+generateuuid>app\heroes\application\usecase\createherousecase::generateuuid"albumRepository"eventBus"heroRepository"	ragSyncer*?
 albumRepository,app\albums\domain\repository\albumrepository**
 eventBusapp\shared\domain\bus\eventbus*=
-heroRepository+app\heroes\domain\repository\herorepositoryý
+heroRepository+app\heroes\domain\repository\herorepository*5
+	ragSyncer(app\heroes\application\rag\heroragsyncerý
 Capp\activities\infrastructure\persistence\fileactivitylogrepository_
 __constructPapp\activities\infrastructure\persistence\fileactivitylogrepository::__constructO
 allHapp\activities\infrastructure\persistence\fileactivitylogrepository::allU
@@ -212,12 +213,13 @@ serviceUrl*
 
 serviceUrlstringx
 3app\notifications\domain\service\notificationsenderA
-send9app\notifications\domain\service\notificationsender::send¯
+send9app\notifications\domain\service\notificationsender::sendŒ
 7app\notifications\infrastructure\notificationrepositoryS
 __constructDapp\notifications\infrastructure\notificationrepository::__constructG
 clear>app\notifications\infrastructure\notificationrepository::clearW
 ensurestorageFapp\notifications\infrastructure\notificationrepository::ensurestorage_
-lastnotificationsJapp\notifications\infrastructure\notificationrepository::lastnotifications"filePath*
+lastnotificationsJapp\notifications\infrastructure\notificationrepository::lastnotifications[
+resolvefilepathHapp\notifications\infrastructure\notificationrepository::resolvefilepath"filePath*
 filePathstringŽ
 "app\monitoring\tokenmetricsserviceB
 calculatecost1app\monitoring\tokenmetricsservice::calculatecostF
@@ -409,11 +411,12 @@ httpClient2app\shared\infrastructure\http\httpclientinterface*
 repository**
 eventBusapp\shared\domain\bus\eventbus*:
 
-repository,app\albums\domain\repository\albumrepositoryø
+repository,app\albums\domain\repository\albumrepository¸
 app\albums\domain\entity\album:
 __construct+app\albums\domain\entity\album::__constructB
 actualizarcover/app\albums\domain\entity\album::actualizarcover2
-albumid'app\albums\domain\entity\album::albumid<
+albumid'app\albums\domain\entity\album::albumid>
+assertalbumid-app\albums\domain\entity\album::assertalbumid<
 assertnombre,app\albums\domain\entity\album::assertnombre8
 
 coverimage*app\albums\domain\entity\album::coverimage0
@@ -587,19 +590,23 @@ flasherror*app\controllers\authcontroller::flasherror.
 	showlogin)app\controllers\authcontroller::showlogin"authService"csrfTokenManager"ipBlockerService*,
 authServiceapp\security\auth\authservice*6
 csrfTokenManager"app\security\http\csrftokenmanager*=
-ipBlockerService)app\application\security\ipblockerservice•
+ipBlockerService)app\application\security\ipblockerservice×
 0app\heroes\application\usecase\updateherousecaseL
 __construct=app\heroes\application\usecase\updateherousecase::__constructD
-execute9app\heroes\application\usecase\updateherousecase::execute"heroRepository*=
-heroRepository+app\heroes\domain\repository\herorepositoryÙ
+execute9app\heroes\application\usecase\updateherousecase::execute"heroRepository"	ragSyncer*=
+heroRepository+app\heroes\domain\repository\herorepository*5
+	ragSyncer(app\heroes\application\rag\heroragsyncer`
+$app\bootstrap\appenvironmentresolver8
+resolve-app\bootstrap\appenvironmentresolver::resolveÙ
 .app\shared\infrastructure\bus\inmemoryeventbusB
 publish7app\shared\infrastructure\bus\inmemoryeventbus::publishF
 	subscribe9app\shared\infrastructure\bus\inmemoryeventbus::subscribe"handlers*
-handlersarrayê
-
+handlersarrayæ
 app\heroes\domain\entity\hero9
 __construct*app\heroes\domain\entity\hero::__construct1
-albumid&app\heroes\domain\entity\hero::albumid9
+albumid&app\heroes\domain\entity\hero::albumid=
+assertalbumid,app\heroes\domain\entity\hero::assertalbumid;
+assertheroid+app\heroes\domain\entity\hero::assertheroid9
 assertimage*app\heroes\domain\entity\hero::assertimage7
 
 assertname)app\heroes\domain\entity\hero::assertname9
@@ -937,7 +944,22 @@ getsummary;app\heatmap\infrastructure\httpheatmapapiclient::getsummaryS
 app\controllers\http\request2
 jsonbody&app\controllers\http\request::jsonbody4
 	wantshtml'app\controllers\http\request::wantshtml:
-withjsonbody*app\controllers\http\request::withjsonbodyd
+withjsonbody*app\controllers\http\request::withjsonbodyb
+(app\heroes\application\rag\heroragsyncer6
+sync.app\heroes\application\rag\heroragsyncer::syncË
+0app\heroes\infrastructure\rag\heroragsyncserviceL
+__construct=app\heroes\infrastructure\rag\heroragsyncservice::__construct<
+log5app\heroes\infrastructure\rag\heroragsyncservice::logR
+resolvebaseurl@app\heroes\infrastructure\rag\heroragsyncservice::resolvebaseurlT
+resolveendpointAapp\heroes\infrastructure\rag\heroragsyncservice::resolveendpoint>
+sync6app\heroes\infrastructure\rag\heroragsyncservice::sync"environment"
+httpClient"logFile"serviceUrlProvider"signer*
+environmentstring*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterface*
+logFilestring*3
+serviceUrlProviderapp\config\serviceurlprovider*B
+signer8app\shared\infrastructure\security\internalrequestsignerd
 'app\controllers\helpers\directoryhelper9
 ensure/app\controllers\helpers\directoryhelper::ensure²
 appenditeratoriteratoriterator*
