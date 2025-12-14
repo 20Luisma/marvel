@@ -23,7 +23,16 @@ final class SecurityConfig
             return $envHash;
         }
 
-        // Fallback solo para entornos de desarrollo/testing; configura ADMIN_PASSWORD_HASH en producción.
+        // En producción, exigir configuración explícita
+        $appEnv = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local');
+        if ($appEnv === 'prod' || $appEnv === 'production') {
+            throw new \RuntimeException(
+                'ADMIN_PASSWORD_HASH must be configured in production. ' .
+                'Generate with: php -r "echo password_hash(\'your-password\', PASSWORD_BCRYPT, [\'cost\' => 12]);"'
+            );
+        }
+
+        // Fallback SOLO para entornos local/test (nunca en producción)
         return password_hash('seguridadmarvel2025', PASSWORD_BCRYPT, ['cost' => 12]);
     }
 

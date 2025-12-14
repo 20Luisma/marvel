@@ -125,4 +125,33 @@ final class SecurityConfigTest extends TestCase
             }
         }
     }
+
+    public function test_get_admin_password_hash_throws_in_production_without_env(): void
+    {
+        $originalEnv = getenv('ADMIN_PASSWORD_HASH');
+        $originalAppEnv = getenv('APP_ENV');
+        
+        try {
+            putenv('ADMIN_PASSWORD_HASH');
+            unset($_ENV['ADMIN_PASSWORD_HASH']);
+            putenv('APP_ENV=prod');
+            $_ENV['APP_ENV'] = 'prod';
+            
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('ADMIN_PASSWORD_HASH must be configured in production');
+            
+            $this->config->getAdminPasswordHash();
+        } finally {
+            // Restore original values
+            if ($originalEnv !== false) {
+                putenv('ADMIN_PASSWORD_HASH=' . $originalEnv);
+            }
+            if ($originalAppEnv !== false) {
+                putenv('APP_ENV=' . $originalAppEnv);
+            } else {
+                putenv('APP_ENV');
+            }
+            unset($_ENV['APP_ENV']);
+        }
+    }
 }

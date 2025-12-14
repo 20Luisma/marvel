@@ -69,7 +69,7 @@ final class AuthController
 
         $this->ipBlockerService->registerFailedAttempt($email, $ip);
         $this->authService->logout();
-        $this->flashError('Credenciales inválidas. Usa marvel@gmail.com / marvel2025.');
+        $this->flashError('Credenciales inválidas.');
         $this->redirect('/login');
     }
 
