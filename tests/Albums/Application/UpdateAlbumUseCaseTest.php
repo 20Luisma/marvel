@@ -78,7 +78,12 @@ final class UpdateAlbumUseCaseTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Álbum no encontrado.');
 
-        $useCase->execute(new UpdateAlbumRequest('missing', 'Name', null, false));
+        try {
+            $useCase->execute(new UpdateAlbumRequest('missing', 'Name', null, false));
+        } finally {
+            self::assertSame(0, $repository->saveCalls());
+            self::assertSame([], $eventBus->events);
+        }
     }
 }
 

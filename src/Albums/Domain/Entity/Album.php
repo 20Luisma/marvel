@@ -17,6 +17,7 @@ final class Album
         private readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt
     ) {
+        $this->assertAlbumId($albumId);
         $this->assertNombre($nombre);
     }
 
@@ -32,6 +33,13 @@ final class Album
      */
     public static function fromPrimitives(array $data): self
     {
+        $albumIdRaw = $data['albumId'] ?? null;
+        $albumId = is_scalar($albumIdRaw) ? trim((string) $albumIdRaw) : '';
+
+        if ($albumId === '') {
+            throw new InvalidArgumentException('El campo albumId es obligatorio.');
+        }
+
         $nombre = (string) ($data['nombre'] ?? $data['name'] ?? '');
 
         $createdAtValue = (string) ($data['createdAt'] ?? '');
@@ -50,7 +58,7 @@ final class Album
         }
 
         return new self(
-            $data['albumId'],
+            $albumId,
             $nombre,
             self::normalizeCover($data['coverImage'] ?? $data['cover_image'] ?? null),
             $createdAt,
@@ -114,6 +122,13 @@ final class Album
     {
         if (trim($nombre) === '') {
             throw new InvalidArgumentException('El nombre del álbum no puede estar vacío.');
+        }
+    }
+
+    private function assertAlbumId(string $albumId): void
+    {
+        if (trim($albumId) === '') {
+            throw new InvalidArgumentException('El id del álbum no puede estar vacío.');
         }
     }
 

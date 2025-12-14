@@ -33,6 +33,22 @@ final class ActivityEntryTest extends TestCase
         ActivityEntry::create(ActivityScope::ALBUMS, null, 'Action', '   ');
     }
 
+    public function testCreateThrowsExceptionWhenActionIsEmpty(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('La acción de actividad no puede estar vacía.');
+
+        ActivityEntry::create(ActivityScope::ALBUMS, null, '   ', 'Título');
+    }
+
+    public function testCreateThrowsExceptionWhenHeroesScopeIsMissingContext(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('El contexto es obligatorio para el scope de héroes.');
+
+        ActivityEntry::create(ActivityScope::HEROES, null, 'Created', 'Nuevo héroe');
+    }
+
     public function testFromPrimitivesHandlesInvalidTimestamp(): void
     {
         $entry = ActivityEntry::fromPrimitives([
