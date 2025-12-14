@@ -29,8 +29,28 @@ final class JsonFileStructuredLogger implements StructuredLoggerInterface
             return;
         }
 
+        $level = 'INFO';
+        $normalizedEvent = strtolower($event);
+        if (
+            str_contains($normalizedEvent, 'error') ||
+            str_contains($normalizedEvent, 'exception') ||
+            str_contains($normalizedEvent, 'failed') ||
+            str_contains($normalizedEvent, 'fail')
+        ) {
+            $level = 'ERROR';
+        } elseif (
+            str_contains($normalizedEvent, 'warn') ||
+            str_contains($normalizedEvent, 'rate_limit') ||
+            str_contains($normalizedEvent, 'csrf') ||
+            str_contains($normalizedEvent, 'short_circuit') ||
+            str_contains($normalizedEvent, 'circuit.opened')
+        ) {
+            $level = 'WARN';
+        }
+
         $entry = [
             'timestamp' => date('c'),
+            'level' => $level,
             'trace_id' => $this->traceIdProvider->getTraceId(),
             'event' => $event,
         ] + $fields;

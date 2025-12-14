@@ -26,6 +26,7 @@ final class JsonFileRagTelemetry implements RagTelemetryInterface
 
         $entry = [
             'timestamp' => date('c'),
+            'level' => 'INFO',
             'trace_id' => $this->traceIdProvider->getTraceId(),
             'event' => $event,
             'retriever' => $retriever,

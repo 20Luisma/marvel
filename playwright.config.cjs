@@ -4,11 +4,14 @@ module.exports = defineConfig({
   testDir: 'tests/e2e',
   reporter: 'line',
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://127.0.0.1:8080',
     browserName: 'chromium',
-    headless: false,
+    headless: true,
     trace: 'on',
     video: 'on',
     screenshot: 'on',
+    launchOptions: {
+      args: ['--disable-crash-reporter', '--crash-dumps-dir=/tmp'],
+    },
   },
 });
