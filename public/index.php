@@ -62,7 +62,7 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 
     <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
-    <link rel="stylesheet" href="./assets/css/intro.css"<?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+    <link rel="stylesheet" href="./assets/css/intro.css" <?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
 </head>
 
 <body>
@@ -76,7 +76,7 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     </main>
 
     <p class="master-note-big">
-        PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA - BIG SCHOOL 2025
+        PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA - BIG SCHOOL 2025-2026
     </p>
     <p class="master-note-small">
         CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT)
