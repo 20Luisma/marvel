@@ -6,6 +6,16 @@ Es un sistema real desplegado y en evolución, con foco en mantenibilidad y esca
 
 ---
 
+## 📊 Presentación del TFM
+
+La presentación del Trabajo Fin de Máster está disponible en formato web interactivo en la siguiente dirección:
+
+🔗 https://contenido.creawebes.com/iamasterbigschool/presentation/tfm-presentation.html
+
+Esta presentación resume los objetivos, arquitectura, stack tecnológico, microservicios, despliegue y aprendizajes del proyecto.
+
+---
+
 ## Stack tecnológico
 - **Backend:** PHP 8.2
 - **Arquitectura:** Clean Architecture
