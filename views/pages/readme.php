@@ -278,7 +278,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
         <!-- REFACTOR ESTRUCTURAL v2.0 -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🔧 Refactor Estructural v2.0 (Diciembre 2025)</h3>
+          <h3 class="text-2xl text-white">🔧 Refactor Estructural v2.0 (Diciembre 2025 Enero 2026)</h3>
           <p>Consolidación de la arquitectura como implementación de Clean Architecture.</p>
           
           <div class="grid gap-3 md:grid-cols-2">
