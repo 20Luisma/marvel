@@ -172,7 +172,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
   <!-- FOOTER -->
   <footer class="site-footer">
-    <small>© creawebes 2025 · Clean Marvel Album</small>
+    <small>© creawebes 2025-2026 · Clean Marvel Album</small>
   </footer>
 
   <script>
