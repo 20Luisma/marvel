@@ -4,6 +4,8 @@
 **Clean Marvel Album** es un proyecto académico en **PHP 8.2** para gestionar álbumes y héroes del universo Marvel. Aplica **Arquitectura Limpia** para separar presentación, casos de uso, dominio e infraestructura, y se apoya en microservicios propios para integrar IA (OpenAI/RAG).  
 Es un sistema real desplegado y en evolución, con foco en mantenibilidad y escalabilidad.
 
+Repositorio (GitHub): https://github.com/20Luisma/marvel
+
 ---
 
 ## 📊 Presentación del TFM
@@ -106,6 +108,9 @@ php -S localhost:8082 -t public
 La aplicación principal y los microservicios están desplegados en un entorno propio.  
 Se mantiene la separación de servicios y la misma arquitectura que en local.  
 El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
+
+La aplicación está desplegada y accesible públicamente en:
+👉 https://contenido.creawebes.com/iamasterbigschool/
 
 ---
 
