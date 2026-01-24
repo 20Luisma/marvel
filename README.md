@@ -18,6 +18,16 @@ Esta presentación resume los objetivos, arquitectura, stack tecnológico, micro
 
 ---
 
+## 📖 README Extendido
+
+La versión extendida y visual de este README está disponible en:
+
+🔗 https://iamasterbigschool.contenido.creawebes.com/readme
+
+Incluye secciones adicionales sobre observabilidad, CI/CD, refactors estructurales, seguridad y más detalles técnicos del proyecto.
+
+---
+
 ## Stack tecnológico
 - **Backend:** PHP 8.2
 - **Arquitectura:** Clean Architecture
