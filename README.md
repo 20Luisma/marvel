@@ -110,7 +110,7 @@ Se mantiene la separación de servicios y la misma arquitectura que en local.
 El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
 
 La aplicación está desplegada y accesible públicamente en:
-👉 https://contenido.creawebes.com/iamasterbigschool/
+https://iamasterbigschool.contenido.creawebes.com/
 
 ---
 
