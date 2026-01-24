@@ -82,14 +82,17 @@
     </section>
 
     <section class="slide" data-slide="6">
-      <div class="slide-title">Microservicios e IA</div>
+      <div class="slide-title">Microservicios e IA (RAG real)</div>
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li>OpenAI Service: comunicación con OpenAI API</li>
-          <li>RAG Service: comparación de héroes con base de conocimiento local</li>
-          <li>La IA se integra como apoyo funcional, no como núcleo del dominio</li>
-          <li>Enfoque responsable y controlado del uso de IA</li>
+          <li><strong>OpenAI Service:</strong> gateway controlado hacia OpenAI API (claves centralizadas, CORS)</li>
+          <li><strong>RAG Service:</strong> implementa Retrieval-Augmented Generation real</li>
+          <li>Flujo RAG: Pregunta → Retriever (KB) → Contextos → LLM → Respuesta</li>
+          <li>Dos modos: léxico (bag-of-words) o vectorial (embeddings + coseno)</li>
+          <li>Fallback automático: si falla vectorial, usa léxico sin interrumpir</li>
+          <li>Marvel Agent: RAG técnico que responde sobre el propio proyecto</li>
+          <li>La IA se integra desacoplada, no como núcleo del dominio</li>
         </ul>
       </div>
       <span class="slide-number">06 / 10</span>

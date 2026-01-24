@@ -43,9 +43,40 @@ La resolución de endpoints por entorno se realiza desde `App\Config\ServiceUrlP
 ---
 
 ## Microservicios
-- **OpenAI Service (PHP):** expone `POST /v1/chat` y conecta con OpenAI API.
-- **RAG Service (PHP):** expone `POST /rag/heroes` para comparación de héroes con base de conocimiento local.
-- **Heatmap Service (Python/Flask):** registra eventos de clic para análisis de interacción; servicio en evolución.
+
+### OpenAI Service (PHP)
+Gateway controlado hacia OpenAI API. Expone `POST /v1/chat` y centraliza la gestión de claves, CORS y validación de payloads.
+
+### RAG Service (PHP) — Retrieval-Augmented Generation
+Microservicio que implementa un **RAG real** (Retrieval-Augmented Generation) con arquitectura desacoplada:
+
+**¿Qué es RAG?**  
+Patrón que combina recuperación de información (Retrieval) con generación de texto (Generation). En lugar de enviar solo la pregunta al LLM, primero se buscan fragmentos relevantes en una base de conocimiento y se inyectan como contexto en el prompt.
+
+**Flujo técnico:**
+```
+Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM → Respuesta
+```
+
+**Componentes implementados:**
+- **Knowledge Base:** archivos JSON en `storage/knowledge/` con información estructurada
+- **Embeddings:** vectores precalculados (OpenAI) en `storage/embeddings/` para búsqueda semántica
+- **Retriever léxico:** bolsa de palabras + similitud coseno (modo por defecto)
+- **Retriever vectorial:** embeddings + similitud coseno densa (activable con `RAG_USE_EMBEDDINGS=1`)
+- **Fallback automático:** si falla el modo vectorial, cae al léxico sin interrumpir el flujo
+- **Cliente LLM desacoplado:** comunica con `openai-service`, no directamente con OpenAI
+
+**Endpoints:**
+- `POST /rag/heroes` — Comparación de héroes Marvel usando KB de héroes
+- `POST /rag/agent` — Marvel Agent: responde preguntas técnicas sobre el proyecto usando su propia KB
+
+**Características de calidad:**
+- Telemetría de latencia y modo de retrieval
+- Tests unitarios completos
+- Generación offline de embeddings para no gastar tokens en producción
+
+### Heatmap Service (Python/Flask)
+Registra eventos de clic para análisis de interacción. Dockerizado en VM externa (Google Cloud).
 
 ---
 
