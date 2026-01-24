@@ -1,0 +1,13 @@
+# Trazabilidad (Requisito -> Caso de uso -> Implementacion -> Tests)
+
+Esta matriz se basa en los casos de uso documentados en `docs/architecture/USE_CASES.md` y enlaza archivos reales del repositorio. Si falta un test o una ruta no esta confirmada, se marca como pendiente.
+
+| Requisito | Caso de uso | Implementacion (archivo/clase) | Tests (archivo) | Estado |
+| --- | --- | --- | --- | --- |
+| REQ-ALB-01 Gestion de albums | Crear/Listar/Actualizar/Eliminar album | `src/Albums/Application/UseCase/CreateAlbumUseCase.php`, `src/Albums/Application/UseCase/ListAlbumsUseCase.php`, `src/Albums/Application/UseCase/UpdateAlbumUseCase.php`, `src/Albums/Application/UseCase/DeleteAlbumUseCase.php`, `src/Controllers/AlbumController.php` | `tests/Albums/Application/CreateAlbumUseCaseTest.php`, `tests/Albums/Application/ListAlbumsUseCaseTest.php`, `tests/Albums/Application/UpdateAlbumUseCaseTest.php`, `tests/Albums/Application/DeleteAlbumUseCaseTest.php` | Verificable |
+| REQ-HER-01 Gestion de heroes | Crear/Listar/Actualizar/Eliminar heroe | `src/Heroes/Application/UseCase/CreateHeroUseCase.php`, `src/Heroes/Application/UseCase/ListHeroesUseCase.php`, `src/Heroes/Application/UseCase/UpdateHeroUseCase.php`, `src/Heroes/Application/UseCase/DeleteHeroUseCase.php`, `src/Controllers/HeroController.php` | `tests/Heroes/Application/CreateHeroUseCaseTest.php`, `tests/Heroes/Application/ListHeroesUseCaseTest.php`, `tests/Heroes/Application/UpdateHeroUseCaseTest.php`, `tests/Heroes/Application/DeleteHeroUseCaseTest.php` | Verificable |
+| REQ-COM-01 Generar comic IA | Generar comic IA | `src/AI/OpenAIComicGenerator.php`, `src/Controllers/ComicController.php` | `tests/AI/OpenAIComicGeneratorTest.php`, `tests/Controllers/ComicControllerTest.php` | Verificable |
+| REQ-RAG-01 Comparar heroes RAG | Comparar heroes con `rag-service` | `src/Controllers/RagProxyController.php` | `tests/Controllers/RagProxyControllerTest.php`, `tests/Controllers/RagProxyControllerSecurityTest.php` | Verificable |
+| REQ-TTS-01 Narrar texto (TTS) | Narrar texto con ElevenLabs | `public/api/tts-elevenlabs.php`, `public/assets/js/comic.js` | TBD (pendiente de confirmar) | Pendiente |
+| REQ-ACC-01 Accesibilidad (WAVE) | Consultar accesibilidad | `public/api/accessibility-marvel.php`, `public/assets/js/panel-accessibility.js`, `src/Controllers/PageController.php` | TBD (pendiente de confirmar) | Pendiente |
+| REQ-PERF-01 Performance (PSI) | Consultar performance | `public/api/performance-marvel.php`, `public/assets/js/panel-performance.js`, `src/Controllers/PageController.php` | TBD (pendiente de confirmar) | Pendiente |

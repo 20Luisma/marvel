@@ -122,3 +122,18 @@ Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo, si
 - `docs/api/` — referencia de endpoints
 - `docs/guides/` — guías técnicas
 📚 La documentación técnica ampliada del proyecto se encuentra en `docs/README_TECHNICAL.md`.
+
+---
+
+## Documentación técnica y evidencias
+- `docs/README_TECHNICAL.md` — índice técnico y guías operativas.
+- `docs/evidence/README.md` — checklist de evidencias verificables y ubicacion de capturas.
+- `docs/guides/demo-script.md` — guion de demo reproducible (10-15 min).
+- `docs/TRACEABILITY.md` — trazabilidad requisito -> caso de uso -> implementacion -> tests.
+
+Estas piezas elevan la credibilidad del TFM porque convierten la narrativa en verificacion objetiva.
+Permiten demostrar que el sistema es ejecutable y revisable, no solo descriptivo.
+El guion de demo estandariza una prueba reproducible en tiempo limitado.
+La trazabilidad conecta requisitos con codigo y pruebas, lo que reduce ambiguedad.
+El paquete de evidencias centraliza capturas, salidas de comandos y enlaces.
+En conjunto, esto facilita que el tribunal valide el trabajo con criterios tecnicos claros.
