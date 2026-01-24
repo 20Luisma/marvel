@@ -684,6 +684,66 @@ heroesGrid.addEventListener('click', async (event) => {
 filterInput?.addEventListener('input', debounce(applyFilters, 200));
 orderSelect?.addEventListener('change', applyFilters);
 
+// ====== Reset Demo Button ======
+const resetDemoBtn = document.getElementById('reset-demo-btn');
+const resetDemoMessage = document.getElementById('reset-demo-message');
+
+function showResetMessage(text, isError = false) {
+  if (!resetDemoMessage) return;
+  resetDemoMessage.textContent = text;
+  resetDemoMessage.className = isError
+    ? 'rounded-lg p-3 text-sm font-medium bg-red-900/50 text-red-300 border border-red-700'
+    : 'rounded-lg p-3 text-sm font-medium bg-emerald-900/50 text-emerald-300 border border-emerald-700';
+  resetDemoMessage.classList.remove('hidden');
+  
+  setTimeout(() => {
+    resetDemoMessage.classList.add('hidden');
+  }, 5000);
+}
+
+if (resetDemoBtn) {
+  resetDemoBtn.addEventListener('click', async () => {
+    const confirmed = confirm(
+      '⚠️ ¿Restaurar datos de demo?\n\n' +
+      'Se eliminarán TODOS los álbumes y héroes actuales.\n' +
+      'Se restaurarán: 6 álbumes y 36 héroes.\n\n' +
+      '¡Esta acción no se puede deshacer!'
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    resetDemoBtn.disabled = true;
+    resetDemoBtn.textContent = '⏳ Restaurando...';
+    
+    try {
+      const response = await fetch('/api/reset-demo.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || 'No se pudieron restaurar los datos.');
+      }
+      
+      showResetMessage(`✅ Restaurados: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
+      
+      // Recargar héroes
+      fetchHeroes(albumId);
+      loadHeroActivityFromServer();
+      
+    } catch (error) {
+      showResetMessage(error.message, true);
+    } finally {
+      resetDemoBtn.disabled = false;
+      resetDemoBtn.textContent = '🔄 Restaurar datos de demo';
+    }
+  });
+}
+
 // ====== Init ======
 renderHeroActivityView(); // pintar estado inicial (por si hay log previo)
 fetchHeroes(albumId);

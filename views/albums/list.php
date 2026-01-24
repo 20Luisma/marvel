@@ -5,6 +5,7 @@
       <aside class="lg:col-span-1 self-start space-y-6">
         <?php require_once __DIR__ . '/../partials/create-album-form.php'; ?>
         <?php require_once __DIR__ . '/../partials/activity-box.php'; ?>
+        <?php require_once __DIR__ . '/../partials/reset-demo-box.php'; ?>
       </aside>
 
       <section class="lg:col-span-2 space-y-8">
