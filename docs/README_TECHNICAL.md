@@ -95,6 +95,8 @@ php bin/migrar-json-a-db.php
 
 Pipelines configurados para ejecutar: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), `deploy-ftp.yml` (deploy por FTP al hacer push a `main`; recomendado proteger `main` para que solo se pueda mergear si CI pasa), `rollback-ftp.yml` (rollback manual).
 
+Nota de coherencia: el runtime objetivo del proyecto es PHP 8.2, pero la CI usa PHP 8.4 para validar compatibilidad futura sin cambiar el objetivo del proyecto.
+
 - **Bundle size (JS/CSS)**: el job `sonarcloud` está configurado para ejecutar `php bin/generate-bundle-size.php` y publicar `public/assets/bundle-size.json`. La vista `/sonar` consume ese JSON para mostrar totales y top 5 sin necesitar `exec` en hosting.
 
 ---
