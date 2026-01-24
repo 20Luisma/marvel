@@ -75,8 +75,11 @@
       "label": "🧪 Ejecutar Tests PHPUnit",
       "type": "shell",
       "command": "vendor/bin/phpunit",
-      "args": ["--colors=always", "--testdox"],
-      "options": { "cwd": "${workspaceFolder}" },
+      "args": ["--colors=always", "--testdox", "--no-coverage"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "XDEBUG_MODE": "off" }
+      },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
