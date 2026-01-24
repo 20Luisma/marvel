@@ -11,160 +11,262 @@
 </head>
 <body>
   <div class="presentation" id="presentation">
+    <!-- SLIDE 1: Cover -->
     <section class="slide cover active" data-slide="1">
       <div class="meta">PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA – BIG SCHOOL</div>
       <div class="meta">2025–2026</div>
       <div class="divider"></div>
       <div class="title">Clean Marvel Album</div>
-      <div class="byline">CREATED BY MARTÍN PALLANTE CARDEO</div>
+      <div class="byline">MARTÍN PALLANTE CARDEO</div>
       <div class="byline">POWERED BY ALFRED (AI ASSISTANT)</div>
-      <span class="slide-number">01 / 10</span>
+      <span class="slide-number">01 / 12</span>
     </section>
 
+    <!-- SLIDE 2: El proyecto en números -->
     <section class="slide" data-slide="2">
-      <div class="slide-title">Contexto del proyecto</div>
+      <div class="slide-title">El proyecto en números</div>
+      <div class="divider"></div>
+      <div class="grid-3">
+        <div class="metric-card">
+          <div class="metric-value">15K+</div>
+          <div class="metric-label">Líneas de código</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">90+</div>
+          <div class="metric-label">Tests automatizados</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">85%</div>
+          <div class="metric-label">Code coverage</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">4</div>
+          <div class="metric-label">Capas de arquitectura</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">3</div>
+          <div class="metric-label">Microservicios</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">CI/CD</div>
+          <div class="metric-label">Deploy automático</div>
+        </div>
+      </div>
+      <span class="slide-number">02 / 12</span>
+    </section>
+
+    <!-- SLIDE 3: ¿Qué es Clean Marvel Album? -->
+    <section class="slide" data-slide="3">
+      <div class="slide-title">¿Qué es Clean Marvel Album?</div>
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li>Proyecto académico desarrollado en PHP 8.2</li>
-          <li>Gestión de álbumes y héroes del universo Marvel</li>
-          <li>Aplicación real desplegada, no un prototipo teórico</li>
-          <li>Enfoque en arquitectura, orden y buenas prácticas</li>
+          <li><strong>Aplicación web real</strong> desplegada en producción</li>
+          <li>Gestión de <em>álbumes y héroes</em> del universo Marvel</li>
+          <li>Desarrollada en <strong>PHP 8.2</strong> con arquitectura limpia</li>
+          <li>Integración de <strong>IA generativa</strong> para crear cómics</li>
+          <li>Base de referencia para <em>futuros proyectos profesionales</em></li>
         </ul>
       </div>
-      <span class="slide-number">02 / 10</span>
+      <a href="https://iamasterbigschool.contenido.creawebes.com" target="_blank" class="link-box">
+        <span class="url">iamasterbigschool.contenido.creawebes.com →</span>
+      </a>
+      <span class="slide-number">03 / 12</span>
     </section>
 
-    <section class="slide" data-slide="3">
+    <!-- SLIDE 4: Objetivo -->
+    <section class="slide" data-slide="4">
       <div class="slide-title">Objetivo del proyecto</div>
       <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li>Aplicar Arquitectura Limpia en un proyecto real</li>
-          <li>Separar dominio, aplicación, infraestructura y presentación</li>
-          <li>Integrar IA de forma desacoplada mediante microservicios</li>
-          <li>Servir como base sólida para proyectos futuros</li>
-        </ul>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Objetivos técnicos</div>
+          <ul class="list">
+            <li><strong>Aplicar Clean Architecture</strong> en un proyecto real</li>
+            <li>Separar dominio, aplicación, infraestructura y presentación</li>
+            <li>Integrar <em>IA de forma desacoplada</em></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Objetivos personales</div>
+          <ul class="list">
+            <li>Servir como <strong>base sólida</strong> para proyectos futuros</li>
+            <li>Demostrar <em>madurez técnica</em> adquirida</li>
+            <li>Documentar buenas prácticas de desarrollo</li>
+          </ul>
+        </div>
       </div>
-      <span class="slide-number">03 / 10</span>
+      <span class="slide-number">04 / 12</span>
     </section>
 
-    <section class="slide" data-slide="4">
+    <!-- SLIDE 5: Stack tecnológico -->
+    <section class="slide" data-slide="5">
       <div class="slide-title">Stack tecnológico</div>
       <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li>Backend: PHP 8.2</li>
-          <li>Arquitectura: Clean Architecture</li>
-          <li>Persistencia: JSON (local) y MySQL (hosting)</li>
-          <li>Microservicios: OpenAI Service y RAG Service (PHP)</li>
-          <li>Servicio externo documentado: Heatmap (Python/Flask)</li>
-          <li>Control de versiones: Git y GitHub</li>
-          <li>CI/CD configurado con GitHub Actions</li>
-        </ul>
+      <div class="grid-2">
+        <div class="card">
+          <ul class="list">
+            <li>🐘 <strong>PHP 8.2</strong> · Backend principal</li>
+            <li>🏛️ <strong>Clean Architecture</strong> · Estructura</li>
+            <li>💾 <strong>JSON / MySQL</strong> · Persistencia dual</li>
+            <li>🔐 <strong>Seguridad</strong> · CSRF, headers, bcrypt</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="list">
+            <li>🤖 <strong>OpenAI API</strong> · Generación de cómics</li>
+            <li>🧠 <strong>RAG Service</strong> · Retrieval-Augmented Generation</li>
+            <li>🔊 <strong>ElevenLabs</strong> · Text-to-Speech</li>
+            <li>📦 <strong>GitHub Actions</strong> · CI/CD automático</li>
+          </ul>
+        </div>
       </div>
-      <span class="slide-number">04 / 10</span>
+      <span class="slide-number">05 / 12</span>
     </section>
 
-    <section class="slide" data-slide="5">
-      <div class="slide-title">Arquitectura del sistema</div>
-      <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li>Separación estricta de capas</li>
-          <li>Dominio independiente de frameworks</li>
-          <li>Casos de uso claros y testeables</li>
-          <li>Infraestructura desacoplada</li>
-          <li>Resolución de servicios por entorno (local / hosting)</li>
-        </ul>
-      </div>
-      <span class="slide-number">05 / 10</span>
-    </section>
-
+    <!-- SLIDE 6: Arquitectura -->
     <section class="slide" data-slide="6">
-      <div class="slide-title">Microservicios e IA (RAG real)</div>
+      <div class="slide-title">Clean Architecture</div>
       <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li><strong>OpenAI Service:</strong> gateway controlado hacia OpenAI API (claves centralizadas, CORS)</li>
-          <li><strong>RAG Service:</strong> implementa Retrieval-Augmented Generation real</li>
-          <li>Flujo RAG: Pregunta → Retriever (KB) → Contextos → LLM → Respuesta</li>
-          <li>Dos modos: léxico (bag-of-words) o vectorial (embeddings + coseno)</li>
-          <li>Fallback automático: si falla vectorial, usa léxico sin interrumpir</li>
-          <li>Marvel Agent: RAG técnico que responde sobre el propio proyecto</li>
-          <li>La IA se integra desacoplada, no como núcleo del dominio</li>
-        </ul>
+      <div class="grid-2">
+        <div class="card">
+          <ul class="list">
+            <li><strong>Domain</strong> · Entidades puras, sin dependencias</li>
+            <li><strong>Application</strong> · Casos de uso del negocio</li>
+            <li><strong>Infrastructure</strong> · Repositorios, APIs externas</li>
+            <li><strong>Presentation</strong> · Vistas, controladores, JS</li>
+          </ul>
+        </div>
+        <div class="arch-diagram">
+┌─────────────────────────────────────┐
+│           <span class="hl">PRESENTATION</span>              │
+│     Views · Controllers · Assets    │
+├─────────────────────────────────────┤
+│           <span class="hl">APPLICATION</span>               │
+│     UseCases · DTOs · Services      │
+├─────────────────────────────────────┤
+│             <span class="hl">DOMAIN</span>                  │
+│   Entities · ValueObjects · Repos   │
+├─────────────────────────────────────┤
+│          <span class="hl">INFRASTRUCTURE</span>            │
+│     MySQL · JSON · OpenAI · RAG     │
+└─────────────────────────────────────┘</div>
       </div>
-      <span class="slide-number">06 / 10</span>
+      <span class="slide-number">06 / 12</span>
     </section>
 
+    <!-- SLIDE 7: Microservicios e IA -->
     <section class="slide" data-slide="7">
-      <div class="slide-title">Calidad, seguridad y despliegue</div>
+      <div class="slide-title">Microservicios e IA</div>
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li>CI configurado para tests, análisis y auditorías</li>
-          <li>SonarCloud para calidad de código</li>
-          <li>Playwright y Pa11y configurados para pruebas E2E y accesibilidad</li>
-          <li>Kubernetes documentado y preparado</li>
-          <li>Seguridad tratada como parte del diseño, no como añadido final</li>
+          <li><strong>OpenAI Service</strong> · Gateway controlado hacia OpenAI API</li>
+          <li><strong>RAG Service</strong> · Retrieval-Augmented Generation <em>real</em></li>
+          <li><strong>Flujo RAG</strong> · Pregunta → Retriever → Contextos → LLM → Respuesta</li>
+          <li><strong>Dual mode</strong> · Léxico o vectorial (embeddings + coseno)</li>
+          <li><strong>Marvel Agent</strong> · RAG técnico sobre el propio proyecto</li>
+          <li>La IA se integra <em>desacoplada</em>, no como núcleo del dominio</li>
         </ul>
       </div>
-      <span class="slide-number">07 / 10</span>
+      <span class="slide-number">07 / 12</span>
     </section>
 
+    <!-- SLIDE 8: Calidad y CI/CD -->
     <section class="slide" data-slide="8">
-      <div class="slide-title">Estado actual del proyecto</div>
+      <div class="slide-title">Testing, Seguridad y Despliegue</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card">
+          <ul class="list">
+            <li>🧪 <strong>PHPUnit</strong> · 90+ tests, 85% coverage</li>
+            <li>📊 <strong>SonarCloud</strong> · Análisis de calidad</li>
+            <li>🎭 <strong>Playwright</strong> · Tests E2E</li>
+            <li>♿ <strong>Pa11y</strong> · Auditoría de accesibilidad</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="list">
+            <li>🔐 <strong>CSRF tokens</strong> en todos los formularios</li>
+            <li>🛡️ <strong>Security headers</strong> · CSP, HSTS, XSS</li>
+            <li>🚀 <strong>GitHub Actions</strong> · Deploy automático</li>
+            <li>☸️ <strong>Kubernetes</strong> · Manifiestos preparados</li>
+          </ul>
+        </div>
+      </div>
+      <span class="slide-number">08 / 12</span>
+    </section>
+
+    <!-- SLIDE 9: Funcionalidades -->
+    <section class="slide" data-slide="9">
+      <div class="slide-title">Funcionalidades principales</div>
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li>Proyecto completo y funcional</li>
-          <li>Documentación técnica disponible</li>
-          <li>Arquitectura preparada para crecer</li>
-          <li>Código mantenible y ordenado</li>
-          <li>Base estable para evolución futura</li>
+          <li>📚 <strong>CRUD completo</strong> de álbumes y héroes con actividad</li>
+          <li>🎬 <strong>Generador de cómics</strong> con IA</li>
+          <li>🧠 <strong>Comparador RAG</strong> · Analiza y compara héroes</li>
+          <li>🔊 <strong>Text-to-Speech</strong> · Escucha los cómics generados</li>
+          <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
+          <li>📱 <strong>Responsive</strong> · Diseño adaptable</li>
         </ul>
       </div>
-      <span class="slide-number">08 / 10</span>
+      <span class="slide-number">09 / 12</span>
     </section>
 
-    <section class="slide" data-slide="9">
-      <div class="slide-title">Reflexión final</div>
+    <!-- SLIDE 10: Documentación -->
+    <section class="slide" data-slide="10">
+      <div class="slide-title">Documentación técnica</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card">
+          <ul class="list">
+            <li>📄 <strong>README.md</strong> · Guía de inicio rápido</li>
+            <li>🏗️ <strong>ARCHITECTURE.md</strong> · Diagramas y capas</li>
+            <li>🔐 <strong>SECURITY.md</strong> · Políticas y prácticas</li>
+            <li>🧪 <strong>COVERAGE.md</strong> · Métricas de tests</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="list">
+            <li>📚 <strong>/docs/guides/</strong> · Guías detalladas</li>
+            <li>🤖 <strong>/docs/ai/</strong> · Documentación de IA</li>
+            <li>☸️ <strong>/k8s/</strong> · Manifiestos Kubernetes</li>
+            <li>🌐 <strong>README web</strong> · Versión interactiva</li>
+          </ul>
+        </div>
+      </div>
+      <span class="slide-number">10 / 12</span>
+    </section>
+
+    <!-- SLIDE 11: Reflexión -->
+    <section class="slide" data-slide="11">
+      <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card scrollable">
-        <div class="reflexion">Este proyecto nació con la idea de convertirse en una base de trabajo y una guía personal para aplicar, de forma real, los conocimientos adquiridos y utilizarlos como punto de partida en futuros proyectos.
+        <div class="reflexion">Este proyecto nació con la idea de convertirse en una base de trabajo y una guía personal para aplicar, de forma real, los conocimientos adquiridos.
 
-Comenzó como un espacio práctico donde ir trasladando lo aprendido al código, casi como un cuaderno técnico llevado a la práctica, con el objetivo de comprender en profundidad cada concepto y su impacto real en un sistema.
+Comenzó como un espacio práctico donde ir trasladando lo aprendido al código, casi como un cuaderno técnico llevado a la práctica.
 
-Con el tiempo, ese ejercicio constante fue tomando forma de sistema.
-Un proyecto real, al que dediqué muchas horas, y que evolucionó en paralelo a mi manera de entender el desarrollo de software.
+<strong>Antes de este máster</strong>, mi enfoque estaba centrado en que el software funcionara.
+<strong>Hoy</strong>, este proyecto refleja un cambio: estructura, criterio, arquitectura, seguridad y responsabilidad técnica forman parte del proceso desde el inicio.
 
-Antes de este máster, mi enfoque estaba centrado principalmente en que el software funcionara.
-Hoy, este proyecto refleja un cambio claro: estructura, criterio, arquitectura, seguridad y responsabilidad técnica forman parte del proceso desde el inicio.
+Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
 
-Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva.
-Es, ante todo, una base sólida y reutilizable, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
-
-Este proyecto no responde a una carrera contra el calendario, sino al cierre natural de un proceso de aprendizaje intenso y consciente desarrollado a lo largo del máster.
-
-Más allá de las herramientas aprendidas, este máster ha supuesto un punto de inflexión en mi forma de pensar, diseñar y construir software.
-Y este proyecto es la evidencia más honesta de ese recorrido.</div>
+Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
       </div>
-      <span class="slide-number">09 / 10</span>
+      <span class="slide-number">11 / 12</span>
     </section>
 
-    <section class="slide" data-slide="10">
-      <div class="slide-title">Cierre</div>
+    <!-- SLIDE 12: Cierre -->
+    <section class="slide cover" data-slide="12">
+      <div class="title">Gracias</div>
       <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li>Proyecto completo y funcional</li>
-          <li>Base sólida para futuros desarrollos</li>
-          <li>Evolución técnica y personal</li>
-          <li>Fin</li>
-        </ul>
-      </div>
-      <span class="slide-number">10 / 10</span>
+      <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
+      <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
+        <span class="url">github.com/20Luisma/marvel →</span>
+      </a>
+      <span class="slide-number">12 / 12</span>
     </section>
   </div>
 
