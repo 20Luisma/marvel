@@ -124,7 +124,8 @@ const ACTIVITY_STYLES = {
   SELECCION: 'text-emerald-400 border-emerald-500/40',
   DESELECCION: 'text-slate-300 border-slate-500/40',
   COMIC: 'text-sky-300 border-sky-500/40',
-  CANCELADO: 'text-rose-300 border-rose-500/40'
+  CANCELADO: 'text-rose-300 border-rose-500/40',
+  RESTAURADO: 'text-amber-400 border-amber-500/40'
 };
 
 function sanitizeTtsText(rawText) {
@@ -1373,6 +1374,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         showResetMessage(`✅ Restaurados: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
+        
+        // Registrar actividad
+        recordActivity('RESTAURADO', `Datos demo: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
         
         // Recargar héroes
         loadHeroes();

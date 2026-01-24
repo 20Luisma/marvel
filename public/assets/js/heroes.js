@@ -69,7 +69,8 @@ const heroesEventBus = new EventTarget();
 const ACTIVITY_COLORS = {
   CREADO: 'text-emerald-400 border-emerald-500/40',
   EDITADO: 'text-sky-400 border-sky-500/40',
-  ELIMINADO: 'text-rose-400 border-rose-500/40'
+  ELIMINADO: 'text-rose-400 border-rose-500/40',
+  RESTAURADO: 'text-amber-400 border-amber-500/40'
 };
 
 const HERO_ACTIVITY_ENDPOINT = `/activity/heroes/${encodeURIComponent(albumId)}`;
@@ -730,6 +731,9 @@ if (resetDemoBtn) {
       }
       
       showResetMessage(`✅ Restaurados: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
+      
+      // Registrar actividad
+      recordHeroActivity('RESTAURADO', `Datos demo: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
       
       // Recargar héroes
       fetchHeroes(albumId);

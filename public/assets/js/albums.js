@@ -69,7 +69,8 @@ const initAlbumsPage = () => {
   const ACTIVITY_COLORS = {
     CREADO: 'text-emerald-400 border-emerald-500/40',
     EDITADO: 'text-sky-400 border-sky-500/40',
-    ELIMINADO: 'text-rose-400 border-rose-500/40'
+    ELIMINADO: 'text-rose-400 border-rose-500/40',
+    RESTAURADO: 'text-amber-400 border-amber-500/40'
   };
   const albumEventBus = new EventTarget();
 
@@ -953,6 +954,9 @@ const initAlbumsPage = () => {
         }
         
         showResetMessage(`✅ Restaurados: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
+        
+        // Registrar actividad
+        recordActivity('RESTAURADO', `Datos demo: ${result.restored.albums} álbumes y ${result.restored.heroes} héroes`);
         
         // Recargar álbumes
         fetchAlbums();
