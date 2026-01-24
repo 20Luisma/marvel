@@ -134,7 +134,7 @@ $activeTopAction = 'sentry';
   </main>
 
   <footer class="site-footer">
-    <small>© creawebes 2025 · Clean Marvel Album</small>
+    <small>© creawebes 2025-2026 · Clean Marvel Album</small>
   </footer>
 
   <script type="module" src="/assets/js/sentry.js"></script>

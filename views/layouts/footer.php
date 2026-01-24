@@ -9,7 +9,7 @@ $scripts = array_merge([$globalHeatmapScript], $scripts);
 
   <!-- FOOTER -->
   <footer class="site-footer" role="contentinfo">
-    <small>© creawebes 2025 · Clean Marvel Album</small>
+    <small>© creawebes 2025-2026 · Clean Marvel Album</small>
   </footer>
 
 <?php
