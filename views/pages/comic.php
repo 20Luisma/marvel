@@ -127,6 +127,8 @@ require_once __DIR__ . '/../layouts/header.php';
             <p id="comic-activity-title" class="text-sm text-gray-100 leading-tight">—</p>
           </div>
         </section>
+
+        <?php require_once __DIR__ . '/../partials/reset-demo-box.php'; ?>
       </aside>
 
       <!-- MAIN: Comic generation -->
