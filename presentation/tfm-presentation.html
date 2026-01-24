@@ -1,639 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clean Marvel Album - TFM | Martín Pallante</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1a365d;
-            --secondary: #2c5282;
-            --accent: #3182ce;
-            --text-dark: #1a202c;
-            --text-light: #4a5568;
-            --bg-light: #f7fafc;
-            --bg-white: #ffffff;
-            --border: #e2e8f0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        .presentation {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 60px 80px;
-            background: var(--bg-white);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(30px);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-
-        .slide-number {
-            position: absolute;
-            bottom: 30px;
-            right: 40px;
-            font-size: 14px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* Slide 1 - Cover */
-        .slide-cover {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .slide-cover .title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-
-        .slide-cover .subtitle {
-            font-size: 1.5rem;
-            font-weight: 400;
-            opacity: 0.9;
-            margin-bottom: 60px;
-        }
-
-        .slide-cover .academic-info {
-            font-size: 0.95rem;
-            font-weight: 400;
-            opacity: 0.75;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            line-height: 1.8;
-            margin-bottom: 40px;
-        }
-
-        .slide-cover .academic-info .institution {
-            font-weight: 500;
-            margin-top: 5px;
-        }
-
-        .slide-cover .author {
-            font-size: 1rem;
-            font-weight: 400;
-            opacity: 0.85;
-            border-top: 1px solid rgba(255,255,255,0.3);
-            padding-top: 30px;
-            margin-top: 20px;
-        }
-
-        .slide-cover .slide-number {
-            color: rgba(255,255,255,0.6);
-        }
-
-        /* Content slides */
-        .slide-content {
-            text-align: left;
-            max-width: 1000px;
-        }
-
-        .slide-header {
-            width: 100%;
-            margin-bottom: 50px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid var(--accent);
-        }
-
-        .slide-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--primary);
-            letter-spacing: -0.5px;
-        }
-
-        .slide-body {
-            width: 100%;
-        }
-
-        .bullet-list {
-            list-style: none;
-        }
-
-        .bullet-list > li {
-            font-size: 1.35rem;
-            line-height: 1.6;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            padding-left: 35px;
-            position: relative;
-        }
-
-        .bullet-list > li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 12px;
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        /* Nested list for Architecture slide */
-        .nested-list {
-            list-style: none;
-            margin-top: 15px;
-            margin-left: 10px;
-        }
-
-        .nested-list li {
-            font-size: 1.15rem;
-            color: var(--text-light);
-            margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .nested-list li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-size: 1.3rem;
-        }
-
-        /* Two column layout */
-        .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            width: 100%;
-        }
-
-        .column-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Architecture diagram */
-        .architecture-layers {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .layer {
-            background: var(--bg-light);
-            border: 2px solid var(--border);
-            border-left: 5px solid var(--accent);
-            padding: 20px 30px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--text-dark);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .layer:hover {
-            border-left-color: var(--primary);
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .layer-note {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 1.1rem;
-            color: var(--text-light);
-            font-style: italic;
-        }
-
-        /* Microservices cards */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            width: 100%;
-        }
-
-        .service-card {
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .service-name {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .service-tech {
-            font-size: 0.95rem;
-            color: var(--text-light);
-        }
-
-        .service-note {
-            grid-column: 1 / -1;
-            text-align: center;
-            font-size: 1.1rem;
-            color: var(--text-light);
-            margin-top: 10px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Closing slide */
-        .slide-closing {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .slide-closing .slide-title {
-            color: white;
-            border-bottom: none;
-            margin-bottom: 40px;
-        }
-
-        .slide-closing .bullet-list > li {
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .slide-closing .bullet-list > li::before {
-            background: rgba(255,255,255,0.8);
-        }
-
-        .slide-closing .slide-number {
-            color: rgba(255,255,255,0.6);
-        }
-
-        /* Navigation */
-        .nav-controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 100;
-        }
-
-        .nav-btn {
-            width: 50px;
-            height: 50px;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            color: var(--text-light);
-        }
-
-        .nav-btn:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        .slide-cover ~ .nav-controls .nav-btn,
-        .slide-closing ~ .nav-controls .nav-btn {
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        /* Progress bar */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 4px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-            z-index: 100;
-        }
-
-        /* Print styles */
-        @media print {
-            .slide {
-                page-break-after: always;
-                position: relative;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-            }
-            .nav-controls, .progress-bar {
-                display: none;
-            }
-        }
-
-        /* Keyboard hint */
-        .keyboard-hint {
-            position: fixed;
-            bottom: 30px;
-            left: 40px;
-            font-size: 12px;
-            color: var(--text-light);
-            opacity: 0.7;
-        }
-
-        .slide-cover .keyboard-hint,
-        .slide-closing .keyboard-hint {
-            color: rgba(255,255,255,0.5);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Marvel Album - TFM | Martín Pallante Cardeo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="progress-bar" id="progress"></div>
-    
-    <div class="presentation" id="presentation">
-        <!-- Slide 1: Cover -->
-        <div class="slide slide-cover active" data-slide="1">
-            <h1 class="title">Clean Marvel Album</h1>
-            <p class="subtitle">Trabajo Fin de Máster</p>
-            <div class="academic-info">
-                <p>Proyecto Final del Máster en Desarrollo de IA</p>
-                <p class="institution">Big School · 2025–2026</p>
-            </div>
-            <p class="author">Created by Martín Pallante · Powered by Alfred (AI Assistant)</p>
-            <span class="slide-number">1 / 9</span>
-        </div>
+  <div class="presentation" id="presentation">
+    <section class="slide cover active" data-slide="1">
+      <div class="meta">PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA – BIG SCHOOL</div>
+      <div class="meta">2025–2026</div>
+      <div class="divider"></div>
+      <div class="title">Clean Marvel Album</div>
+      <div class="byline">CREATED BY MARTÍN PALLANTE CARDEO</div>
+      <div class="byline">POWERED BY ALFRED (AI ASSISTANT)</div>
+      <span class="slide-number">01 / 10</span>
+    </section>
 
-        <!-- Slide 2: Objetivo del proyecto -->
-        <div class="slide" data-slide="2">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Objetivo del proyecto</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list">
-                        <li>Desarrollo de una aplicación real</li>
-                        <li>Aplicación de Arquitectura Limpia</li>
-                        <li>Integración de microservicios de IA</li>
-                        <li>Enfoque en mantenibilidad y escalabilidad</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">2 / 9</span>
-        </div>
+    <section class="slide" data-slide="2">
+      <div class="slide-title">Contexto del proyecto</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Proyecto académico desarrollado en PHP 8.2</li>
+          <li>Gestión de álbumes y héroes del universo Marvel</li>
+          <li>Aplicación real desplegada, no un prototipo teórico</li>
+          <li>Enfoque en arquitectura, orden y buenas prácticas</li>
+        </ul>
+      </div>
+      <span class="slide-number">02 / 10</span>
+    </section>
 
-        <!-- Slide 3: Stack tecnológico -->
-        <div class="slide" data-slide="3">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Stack tecnológico</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list">
-                        <li>PHP 8.2</li>
-                        <li>Clean Architecture</li>
-                        <li>JSON (local) y MySQL (hosting)</li>
-                        <li>Git / GitHub</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">3 / 9</span>
-        </div>
+    <section class="slide" data-slide="3">
+      <div class="slide-title">Objetivo del proyecto</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Aplicar Arquitectura Limpia en un proyecto real</li>
+          <li>Separar dominio, aplicación, infraestructura y presentación</li>
+          <li>Integrar IA de forma desacoplada mediante microservicios</li>
+          <li>Servir como base sólida para proyectos futuros</li>
+        </ul>
+      </div>
+      <span class="slide-number">03 / 10</span>
+    </section>
 
-        <!-- Slide 4: Arquitectura -->
-        <div class="slide" data-slide="4">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Arquitectura</h2>
-                </div>
-                <div class="slide-body">
-                    <div class="architecture-layers">
-                        <div class="layer">Presentación</div>
-                        <div class="layer">Aplicación</div>
-                        <div class="layer">Dominio</div>
-                        <div class="layer">Infraestructura</div>
-                    </div>
-                    <p class="layer-note">Dominio independiente de frameworks</p>
-                </div>
-            </div>
-            <span class="slide-number">4 / 9</span>
-        </div>
+    <section class="slide" data-slide="4">
+      <div class="slide-title">Stack tecnológico</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Backend: PHP 8.2</li>
+          <li>Arquitectura: Clean Architecture</li>
+          <li>Persistencia: JSON (local) y MySQL (hosting)</li>
+          <li>Microservicios: OpenAI Service y RAG Service (PHP)</li>
+          <li>Servicio externo documentado: Heatmap (Python/Flask)</li>
+          <li>Control de versiones: Git y GitHub</li>
+          <li>CI/CD configurado con GitHub Actions</li>
+        </ul>
+      </div>
+      <span class="slide-number">04 / 10</span>
+    </section>
 
-        <!-- Slide 5: Microservicios -->
-        <div class="slide" data-slide="5">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Microservicios</h2>
-                </div>
-                <div class="slide-body">
-                    <div class="services-grid">
-                        <div class="service-card">
-                            <div class="service-name">OpenAI Service</div>
-                            <div class="service-tech">PHP</div>
-                        </div>
-                        <div class="service-card">
-                            <div class="service-name">RAG Service</div>
-                            <div class="service-tech">PHP</div>
-                        </div>
-                        <div class="service-card">
-                            <div class="service-name">Heatmap Service</div>
-                            <div class="service-tech">Python / Flask</div>
-                        </div>
-                        <p class="service-note">Comunicación mediante API</p>
-                    </div>
-                </div>
-            </div>
-            <span class="slide-number">5 / 9</span>
-        </div>
+    <section class="slide" data-slide="5">
+      <div class="slide-title">Arquitectura del sistema</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Separación estricta de capas</li>
+          <li>Dominio independiente de frameworks</li>
+          <li>Casos de uso claros y testeables</li>
+          <li>Infraestructura desacoplada</li>
+          <li>Resolución de servicios por entorno (local / hosting)</li>
+        </ul>
+      </div>
+      <span class="slide-number">05 / 10</span>
+    </section>
 
-        <!-- Slide 6: Persistencia y despliegue -->
-        <div class="slide" data-slide="6">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Persistencia y despliegue</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list">
-                        <li>Desarrollo local con JSON</li>
-                        <li>Producción con MySQL</li>
-                        <li>Aplicación y microservicios desplegados</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">6 / 9</span>
-        </div>
+    <section class="slide" data-slide="6">
+      <div class="slide-title">Microservicios e IA</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>OpenAI Service: comunicación con OpenAI API</li>
+          <li>RAG Service: comparación de héroes con base de conocimiento local</li>
+          <li>La IA se integra como apoyo funcional, no como núcleo del dominio</li>
+          <li>Enfoque responsable y controlado del uso de IA</li>
+        </ul>
+      </div>
+      <span class="slide-number">06 / 10</span>
+    </section>
 
-        <!-- Slide 7: Aprendizajes -->
-        <div class="slide" data-slide="7">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Aprendizajes</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list">
-                        <li>Diseño de arquitectura limpia</li>
-                        <li>Integración de servicios externos</li>
-                        <li>Evolución progresiva del sistema</li>
-                        <li>Experiencia real de despliegue</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">7 / 9</span>
-        </div>
+    <section class="slide" data-slide="7">
+      <div class="slide-title">Calidad, seguridad y despliegue</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>CI configurado para tests, análisis y auditorías</li>
+          <li>SonarCloud para calidad de código</li>
+          <li>Playwright y Pa11y configurados para pruebas E2E y accesibilidad</li>
+          <li>Kubernetes documentado y preparado</li>
+          <li>Seguridad tratada como parte del diseño, no como añadido final</li>
+        </ul>
+      </div>
+      <span class="slide-number">07 / 10</span>
+    </section>
 
-        <!-- Slide 8: Proyección futura -->
-        <div class="slide" data-slide="8">
-            <div class="slide-content">
-                <div class="slide-header">
-                    <h2 class="slide-title">Proyección futura del proyecto</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list">
-                        <li>Clean Marvel Album ha sido diseñado como una base técnica y arquitectónica reutilizable</li>
-                        <li>El objetivo principal es servir como punto de partida para futuros desarrollos reales</li>
-                        <li>Permite iniciar nuevos proyectos a partir de una arquitectura sólida, escalable y probada</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">8 / 9</span>
-        </div>
+    <section class="slide" data-slide="8">
+      <div class="slide-title">Estado actual del proyecto</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Proyecto completo y funcional</li>
+          <li>Documentación técnica disponible</li>
+          <li>Arquitectura preparada para crecer</li>
+          <li>Código mantenible y ordenado</li>
+          <li>Base estable para evolución futura</li>
+        </ul>
+      </div>
+      <span class="slide-number">08 / 10</span>
+    </section>
 
-        <!-- Slide 9: Closing -->
-        <div class="slide slide-closing" data-slide="9">
-            <div class="slide-content" style="text-align: center;">
-                <div class="slide-header" style="border-bottom: 3px solid rgba(255,255,255,0.3);">
-                    <h2 class="slide-title">Cierre</h2>
-                </div>
-                <div class="slide-body">
-                    <ul class="bullet-list" style="display: inline-block; text-align: left;">
-                        <li>Proyecto completo y funcional</li>
-                        <li>Base sólida para futuras mejoras</li>
-                    </ul>
-                </div>
-            </div>
-            <span class="slide-number">9 / 9</span>
-        </div>
-    </div>
+    <section class="slide" data-slide="9">
+      <div class="slide-title">Reflexión final</div>
+      <div class="divider"></div>
+      <div class="card scrollable">
+        <div class="reflexion">Este proyecto no nació con la intención de ser un Trabajo Fin de Máster.
+Comenzó como una forma personal de aplicar lo que iba aprendiendo, casi como un cuaderno de notas técnicas llevado a la práctica.
 
-    <div class="nav-controls">
-        <button class="nav-btn" id="prevBtn" aria-label="Anterior">←</button>
-        <button class="nav-btn" id="nextBtn" aria-label="Siguiente">→</button>
-    </div>
+Con el tiempo, y sin darme cuenta, esas pruebas se transformaron en un sistema real.
+Un proyecto al que le dediqué muchas horas, noches y fines de semana, y que fue creciendo al mismo ritmo que lo hacía mi forma de entender el desarrollo de software.
 
-    <div class="keyboard-hint">← → para navegar</div>
+Antes de este máster, mi manera de programar estaba centrada en que las cosas funcionaran.
+Hoy, este proyecto refleja un cambio claro: orden, criterio, arquitectura, seguridad y responsabilidad técnica.
 
-    <script>
-        const slides = document.querySelectorAll('.slide');
-        const progress = document.getElementById('progress');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        let currentSlide = 0;
-        const totalSlides = slides.length;
+Clean Marvel Album no pretende ser un producto comercial ni una solución revolucionaria.
+Es, sobre todo, una guía personal de trabajo y una base sólida sobre la que construir cualquier proyecto futuro.
 
-        function updateSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) {
-                    slide.classList.add('active');
-                }
-            });
-            
-            // Update progress bar
-            const progressWidth = ((index + 1) / totalSlides) * 100;
-            progress.style.width = progressWidth + '%';
-            
-            currentSlide = index;
-        }
+Para mí, este máster ha sido abrir una puerta que no conocía.
+Un punto de inflexión que marca un antes y un después en cómo pienso, diseño y desarrollo software.
 
-        function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
-                updateSlide(currentSlide + 1);
-            }
-        }
+Y este proyecto es la prueba más honesta de ese camino recorrido.</div>
+      </div>
+      <span class="slide-number">09 / 10</span>
+    </section>
 
-        function prevSlide() {
-            if (currentSlide > 0) {
-                updateSlide(currentSlide - 1);
-            }
-        }
+    <section class="slide" data-slide="10">
+      <div class="slide-title">Cierre</div>
+      <div class="divider"></div>
+      <div class="card">
+        <ul class="list">
+          <li>Proyecto completo y funcional</li>
+          <li>Base sólida para futuros desarrollos</li>
+          <li>Evolución técnica y personal</li>
+          <li>Fin</li>
+        </ul>
+      </div>
+      <span class="slide-number">10 / 10</span>
+    </section>
+  </div>
 
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" aria-label="Anterior">←</button>
+    <button class="nav-btn" id="nextBtn" aria-label="Siguiente">→</button>
+  </div>
 
-        // Button navigation
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
+  <div class="hint">← → para navegar</div>
 
-        // Click navigation
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.nav-controls')) {
-                const clickX = e.clientX;
-                const windowWidth = window.innerWidth;
-                
-                if (clickX > windowWidth * 0.7) {
-                    nextSlide();
-                } else if (clickX < windowWidth * 0.3) {
-                    prevSlide();
-                }
-            }
-        });
-
-        // Initialize
-        updateSlide(0);
-    </script>
+  <script src="js/presentation.js"></script>
 </body>
 </html>
