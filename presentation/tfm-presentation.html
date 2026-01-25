@@ -281,27 +281,8 @@
       <span class="slide-number">12 / 15</span>
     </section>
 
-    <!-- SLIDE 13: Reflexión -->
+    <!-- SLIDE 13: Proyecto Vivo -->
     <section class="slide" data-slide="13">
-      <div class="slide-title">Reflexión personal</div>
-      <div class="divider"></div>
-      <div class="card scrollable">
-        <div class="reflexion">Este proyecto nació con la idea de convertirse en una base de trabajo y una guía personal para aplicar, de forma real, los conocimientos adquiridos.
-
-Comenzó como un espacio práctico donde ir trasladando lo aprendido al código, casi como un cuaderno técnico llevado a la práctica.
-
-<strong>Antes de este máster</strong>, mi enfoque estaba centrado en que el software funcionara.
-<strong>Hoy</strong>, este proyecto refleja un cambio: estructura, criterio, arquitectura, seguridad y responsabilidad técnica forman parte del proceso desde el inicio.
-
-Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
-
-Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
-      </div>
-      <span class="slide-number">13 / 15</span>
-    </section>
-
-    <!-- SLIDE 14: Proyecto Vivo -->
-    <section class="slide" data-slide="14">
       <div class="slide-title">Proyecto Vivo y Activo</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -317,15 +298,29 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           <ul class="list">
             <li>🚀 <strong>Deploy automático</strong> a producción</li>
             <li>⭐ <strong><span id="github-stars">--</span> stars</strong> en GitHub</li>
-            <li>� <strong><span id="github-forks">--</span> forks</strong> del proyecto</li>
+            <li>🔀 <strong><span id="github-forks">--</span> forks</strong> del proyecto</li>
             <li>💡 Demuestra que es un <strong>proyecto real</strong></li>
           </ul>
         </div>
       </div>
-      <div style="margin-top: 1.5rem; text-align: center; color: #666; font-size: 0.9rem;">
-        <span id="repo-link">
-          📂 Ver actividad completa en <a href="https://github.com/20Luisma/marvel" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">github.com/20Luisma/marvel</a>
-        </span>
+      <span class="slide-number">13 / 15</span>
+    </section>
+
+    <!-- SLIDE 14: Reflexión -->
+    <section class="slide" data-slide="14">
+      <div class="slide-title">Reflexión personal</div>
+      <div class="divider"></div>
+      <div class="card scrollable">
+        <div class="reflexion">Este proyecto nació con la idea de convertirse en una base de trabajo y una guía personal para aplicar, de forma real, los conocimientos adquiridos.
+
+Comenzó como un espacio práctico donde ir trasladando lo aprendido al código, casi como un cuaderno técnico llevado a la práctica.
+
+<strong>Antes de este máster</strong>, mi enfoque estaba centrado en que el software funcionara.
+<strong>Hoy</strong>, este proyecto refleja un cambio: estructura, criterio, arquitectura, seguridad y responsabilidad técnica forman parte del proceso desde el inicio.
+
+Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
+
+Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
       </div>
       <span class="slide-number">14 / 15</span>
     </section>
@@ -396,10 +391,10 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           }
         }
         
-        // Cargar datos cuando se llega a la slide 14
+        // Cargar datos cuando se llega a la slide 13
         const observer = new MutationObserver(() => {
           const activeSlide = document.querySelector('.slide.active');
-          if (activeSlide && activeSlide.dataset.slide === '14') {
+          if (activeSlide && activeSlide.dataset.slide === '13') {
             loadGitHubData();
           }
         });
@@ -410,10 +405,10 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           attributeFilter: ['class']
         });
         
-        // También intentar cargar si ya estamos en la slide 14
+        // También intentar cargar si ya estamos en la slide 13
         setTimeout(() => {
           const activeSlide = document.querySelector('.slide.active');
-          if (activeSlide && activeSlide.dataset.slide === '14') {
+          if (activeSlide && activeSlide.dataset.slide === '13') {
             loadGitHubData();
           }
         }, 100);
