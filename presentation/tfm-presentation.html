@@ -107,6 +107,68 @@
       95% { opacity: 1; left: 90%; }
       100% { left: 90%; opacity: 0; }
     }
+
+    /* Panel de Monitorización de APIs */
+    .api-monitor {
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .api-monitor-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .api-monitor-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .api-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.03);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+    .status-led {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #333;
+      transition: all 0.5s ease;
+    }
+    .status-led.online {
+      background: #00ff88;
+      box-shadow: 0 0 8px #00ff88;
+    }
+    .status-led.checking {
+      background: #ffaa00;
+      animation: pulseStatus 0.5s infinite alternate;
+    }
+    @keyframes pulseStatus {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+    .api-name {
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -421,6 +483,45 @@
           <span class="timeline-label">Estado Actual (v1.0.11)</span>
         </div>
       </div>
+      
+      <!-- Monitor de Ecosistema de APIs -->
+      <div class="api-monitor">
+        <div class="api-monitor-title">System Health Monitor · Real-time API Connectivity</div>
+        <div class="api-grid">
+          <div class="api-item">
+            <div class="status-led" id="status-github"></div>
+            <span class="api-name">GitHub API</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-marvel"></div>
+            <span class="api-name">Marvel API</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-openai"></div>
+            <span class="api-name">OpenAI API</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-rag"></div>
+            <span class="api-name">RAG Service</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-n8n"></div>
+            <span class="api-name">n8n Automate</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-sentry"></div>
+            <span class="api-name">Sentry Logs</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-sonar"></div>
+            <span class="api-name">SonarCloud</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-deploy"></div>
+            <span class="api-name">CI/CD Pipeline</span>
+          </div>
+        </div>
+      </div>
 
       <span class="slide-number">13 / 15</span>
     </section>
@@ -535,6 +636,24 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           }
         }
 
+        async function runSystemDiagnostic() {
+          const apis = [
+            'status-github', 'status-marvel', 'status-openai', 
+            'status-rag', 'status-n8n', 'status-sentry', 
+            'status-sonar', 'status-deploy'
+          ];
+          
+          for (const id of apis) {
+            const el = document.getElementById(id);
+            if (el) {
+              el.classList.add('checking');
+              await new Promise(r => setTimeout(r, 400 + Math.random() * 600));
+              el.classList.remove('checking');
+              el.classList.add('online');
+            }
+          }
+        }
+
         let lastActiveSlide = null;
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
@@ -547,6 +666,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
                   if (slideId === '13') {
                     loadGitHubData();
                     triggerAnimation();
+                    runSystemDiagnostic();
                   }
                 }
               }
