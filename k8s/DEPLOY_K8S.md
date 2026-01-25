@@ -21,28 +21,10 @@ Se asume un clúster con Ingress Controller NGINX y acceso a un registro de cont
 
 Use las etiquetas de los manifiestos (`:latest` por defecto) o sustituya por tags inmutables (`:sha-<commit>`, `:vX.Y.Z`):
 
-- **Aplicación principal** (Dockerfile de referencia; no existe un `Dockerfile` en la raíz del repositorio):
+- **Aplicación principal** (Usando el `Dockerfile` de la raíz):
 
-```Dockerfile
-FROM php:8.2-apache
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN a2enmod rewrite \
- && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf
-WORKDIR /var/www/html
-COPY composer.json composer.lock ./
-RUN php -r "copy('https://getcomposer.org/installer','composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && rm composer-setup.php \
-    && composer install --no-dev --optimize-autoloader --no-interaction
-COPY . .
-RUN chown -R www-data:www-data /var/www/html
-EXPOSE 8080
-CMD ["php","-S","0.0.0.0:8080","-t","public"]
-```
-
-Guarda este ejemplo como `Dockerfile.clean-marvel` (sin versionarlo) y construye la imagen con:
 ```bash
-docker build -f Dockerfile.clean-marvel -t 20luisma/clean-marvel:latest .
+docker build -t 20luisma/clean-marvel:latest .
 ```
 
 - **openai-service** (`openai-service/Dockerfile`):
