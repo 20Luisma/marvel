@@ -452,14 +452,15 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         let dataLoaded = false;
         
         async function loadGitHubData() {
-          if (dataLoaded) return;
+          // Usar un timestamp para evitar cacheo del navegador y obtener datos frescos
+          const cacheBuster = `?t=${new Date().getTime()}`;
           
           try {
-            const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}`);
+            const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}${cacheBuster}`);
             if (!repoResponse.ok) throw new Error('Repo not found');
             const repoData = await repoResponse.json();
             
-            const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=1`);
+            const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits${cacheBuster}&per_page=1`);
             const linkHeader = commitsResponse.headers.get('Link');
             let totalCommits = 1;
             if (linkHeader) {
@@ -469,12 +470,12 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
             
             let totalVersions = 0;
             try {
-              const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
+              const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases${cacheBuster}`);
               const releases = await releasesResponse.json();
               totalVersions = Array.isArray(releases) ? releases.length : 0;
               
               if (totalVersions === 0) {
-                const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags`);
+                const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}`);
                 const tags = await tagsResponse.json();
                 totalVersions = Array.isArray(tags) ? tags.length : 0;
               }
@@ -497,7 +498,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
               const latestTagLabel = document.querySelector('.timeline-item:last-child .timeline-label');
               if (latestTagLabel && totalVersions > 0) {
                 try {
-                  const tagsRes = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags?per_page=1`);
+                  const tagsRes = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}&per_page=1`);
                   const tags = await tagsRes.json();
                   if (tags && tags.length > 0) {
                     latestTagLabel.textContent = `Estado Actual (${tags[0].name})`;
