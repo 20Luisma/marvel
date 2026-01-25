@@ -56,7 +56,7 @@
       color: #fff;
       display: block;
       position: relative;
-      z-index: 20; /* Asegurar que el texto esté por encima de la mecha */
+      z-index: 20; /* Texto por encima de todo */
     }
     .timeline-label {
       font-size: 0.75rem;
@@ -73,7 +73,7 @@
       width: 80px;
       height: 80px;
       transform: translateY(-50%);
-      z-index: 15;
+      z-index: 15; /* Flash por encima de la mecha pero debajo del texto */
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s;
@@ -82,8 +82,8 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      /* Filtro avanzado: convierte líneas blancas en rojo neón brillante y elimina el fondo negro */
-      filter: drop-shadow(0 0 8px #ed1d24) drop-shadow(0 0 15px #ed1d24) sepia(100%) saturate(10000%) hue-rotate(-30deg) brightness(1.2);
+      /* Filtro para contorno rojo puro y brillante */
+      filter: brightness(0) invert(1) drop-shadow(0 0 5px #ed1d24) drop-shadow(0 0 10px #ed1d24);
       mix-blend-mode: screen; 
     }
     .speedster.active {
@@ -98,13 +98,13 @@
       position: absolute;
       top: 50%;
       left: 10%;
-      height: 6px;
-      /* Mecha de fuego: degradado que se desvanece */
-      background: linear-gradient(90deg, transparent, rgba(237, 29, 36, 0.8), #f97316, #ff0);
-      z-index: 5;
-      width: 120px;
+      height: 8px;
+      /* Mecha de fuego: degradado corto e intenso */
+      background: linear-gradient(90deg, transparent, #ed1d24, #f97316, #ff0);
+      z-index: 5; /* Mecha por debajo de todo */
+      width: 100px;
       transform: translateY(-50%) translateX(-100%);
-      filter: blur(4px);
+      filter: blur(6px);
       opacity: 0;
       border-radius: 50%;
     }
@@ -138,27 +138,15 @@
       <div class="divider"></div>
       <div class="grid-3">
         <div class="metric-card">
-          <div class="metric-value">15K+</div>
-          <div class="metric-label">Líneas de código</div>
+          <div class="metric-value">330+</div>
+          <div class="metric-label">Commits realizados</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">90+</div>
-          <div class="metric-label">Tests automatizados</div>
+          <div class="metric-value">11</div>
+          <div class="metric-label">Versiones (Releases)</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">85%</div>
-          <div class="metric-label">Code coverage</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">4</div>
-          <div class="metric-label">Capas de arquitectura</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">3</div>
-          <div class="metric-label">Microservicios</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">CI/CD</div>
+          <div class="metric-value">🚀</div>
           <div class="metric-label">Deploy automático</div>
         </div>
       </div>
@@ -170,13 +158,7 @@
       <div class="slide-title">¿Qué es Clean Marvel Album?</div>
       <div class="divider"></div>
       <div class="card">
-        <ul class="list">
-          <li><strong>Aplicación web real</strong> desplegada en producción</li>
-          <li>Gestión de <em>álbumes y héroes</em> del universo Marvel</li>
-          <li>Desarrollada en <strong>PHP 8.2</strong> con arquitectura limpia</li>
-          <li>Integración de <strong>IA generativa</strong> para crear cómics</li>
-          <li>Base de referencia para <em>futuros proyectos profesionales</em></li>
-        </ul>
+        <p class="list">Es una plataforma web diseñada para gestionar y visualizar una colección de héroes de Marvel, aplicando los principios más rigurosos de la ingeniería de software moderna.</p>
       </div>
       <a href="https://iamasterbigschool.contenido.creawebes.com" target="_blank" class="link-box">
         <span class="url">iamasterbigschool.contenido.creawebes.com →</span>
@@ -186,23 +168,23 @@
 
     <!-- SLIDE 4: Objetivo -->
     <section class="slide" data-slide="4">
-      <div class="slide-title">Objetivo del proyecto</div>
+      <div class="slide-title">Objetivo</div>
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
-          <div class="card-title">Objetivos técnicos</div>
+          <div class="card-title">Propósito</div>
           <ul class="list">
-            <li><strong>Aplicar Clean Architecture</strong> en un proyecto real</li>
-            <li>Separar dominio, aplicación, infraestructura y presentación</li>
-            <li>Integrar <em>IA de forma desacoplada</em></li>
+            <li>Crear una <strong>arquitectura escalable</strong> y mantenible.</li>
+            <li>Implementar un sistema de <strong>notificaciones inteligentes</strong>.</li>
+            <li>Integrar <strong>IA y RAG</strong> de forma desacoplada.</li>
           </ul>
         </div>
         <div class="card">
-          <div class="card-title">Objetivos personales</div>
+          <div class="card-title">Foco Técnico</div>
           <ul class="list">
-            <li>Servir como <strong>base sólida</strong> para proyectos futuros</li>
-            <li>Demostrar <em>madurez técnica</em> adquirida</li>
-            <li>Documentar buenas prácticas de desarrollo</li>
+            <li>Dominio de <strong>Clean Architecture</strong>.</li>
+            <li>Automatización total con <strong>CI/CD</strong>.</li>
+            <li>Seguridad proactiva y observabilidad.</li>
           </ul>
         </div>
       </div>
@@ -215,19 +197,19 @@
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
+          <div class="card-title">Backend & Frontend</div>
           <ul class="list">
-            <li>🐘 <strong>PHP 8.2</strong> · Backend principal</li>
-            <li>🏛️ <strong>Clean Architecture</strong> · Estructura</li>
-            <li>💾 <strong>JSON / MySQL</strong> · Persistencia dual</li>
-            <li>🔐 <strong>Seguridad</strong> · CSRF, headers, bcrypt</li>
+            <li><strong>PHP 8.3</strong> (Vanilla, sin frameworks pesados)</li>
+            <li><strong>JavaScript</strong> (ES6+, Vanilla)</li>
+            <li><strong>CSS Moderno</strong> (Variables, Grid, Flex)</li>
           </ul>
         </div>
         <div class="card">
+          <div class="card-title">Infraestructura</div>
           <ul class="list">
-            <li>🤖 <strong>OpenAI API</strong> · Generación de cómics</li>
-            <li>🧠 <strong>RAG Service</strong> · Retrieval-Augmented Generation</li>
-            <li>🔊 <strong>ElevenLabs</strong> · Text-to-Speech</li>
-            <li>📦 <strong>GitHub Actions</strong> · CI/CD automático</li>
+            <li><strong>MySQL</strong> · Almacenamiento persistente</li>
+            <li><strong>Docker</strong> · Contenerización</li>
+            <li><strong>GitHub Actions</strong> · Automatización</li>
           </ul>
         </div>
       </div>
@@ -236,29 +218,19 @@
 
     <!-- SLIDE 6: Arquitectura -->
     <section class="slide" data-slide="6">
-      <div class="slide-title">Clean Architecture</div>
+      <div class="slide-title">Arquitectura</div>
       <div class="divider"></div>
-      <div class="grid-2">
-        <div class="card">
-          <ul class="list">
-            <li><strong>Domain</strong> · Entidades puras, sin dependencias</li>
-            <li><strong>Application</strong> · Casos de uso del negocio</li>
-            <li><strong>Infrastructure</strong> · Repositorios, APIs externas</li>
-            <li><strong>Presentation</strong> · Vistas, controladores, JS</li>
-          </ul>
-        </div>
-        <div class="arch-diagram">
-┌─────────────────────────────────────┐
-│           <span class="hl">PRESENTATION</span>              │
-│     Views · Controllers · Assets    │
+      <div class="card">
+        <div class="card-title">Clean Architecture & Hexagonal</div>
+        <div class="arch-diagram">┌─────────────────────────────────────┐
+│             UI / Web                │
 ├─────────────────────────────────────┤
-│           <span class="hl">APPLICATION</span>               │
-│     UseCases · DTOs · Services      │
+│    Infraestructura (Adaptadores)    │
 ├─────────────────────────────────────┤
-│             <span class="hl">DOMAIN</span>                  │
-│   Entities · ValueObjects · Repos   │
-├─────────────────────────────────────┤
-│          <span class="hl">INFRASTRUCTURE</span>            │
+│   Aplicación (Casos de Uso)  <span class="hl">←───┐</span>  │
+├─────────────────────────────────────┤  │
+│        Dominio (Entidades)          │  │
+└─────────────────────────────────────┘  │
 │     MySQL · JSON · OpenAI · RAG     │
 └─────────────────────────────────────┘</div>
       </div>
@@ -271,11 +243,8 @@
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li><strong>OpenAI Service</strong> · Gateway controlado hacia OpenAI API</li>
-          <li><strong>RAG Service</strong> · Retrieval-Augmented Generation <em>real</em></li>
-          <li><strong>Flujo RAG</strong> · Pregunta → Retriever → Contextos → LLM → Respuesta</li>
-          <li><strong>Dual mode</strong> · Léxico o vectorial (embeddings + coseno)</li>
-          <li><strong>Marvel Agent</strong> · RAG técnico sobre el propio proyecto</li>
+          <li><strong>RAG (Retrieval-Augmented Generation)</strong> · Microservicio en Python para comparar héroes con datos vectorizados.</li>
+          <li><strong>Generación de Cómics</strong> · Integración con OpenAI para crear historias dinámicas basadas en los héroes.</li>
           <li>La IA se integra <em>desacoplada</em>, no como núcleo del dominio</li>
         </ul>
       </div>
@@ -288,19 +257,19 @@
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
+          <div class="card-title">Proveedores de Datos e IA</div>
           <ul class="list">
-            <li>🤖 <strong>OpenAI API</strong> · Generación de contenido con IA</li>
-            <li>📹 <strong>YouTube Data API v3</strong> · Últimos videos de Marvel</li>
-            <li>🔊 <strong>ElevenLabs TTS</strong> · Conversión texto a voz</li>
-            <li>♿ <strong>WAVE API</strong> · Auditoría de accesibilidad WCAG</li>
+            <li><strong>Marvel API</strong> · Fuente oficial de datos de héroes y cómics.</li>
+            <li><strong>OpenAI API</strong> · Generación de contenido creativo y lógica de cómics.</li>
+            <li><strong>RAG Service</strong> · Microservicio externo para búsqueda semántica.</li>
           </ul>
         </div>
         <div class="card">
+          <div class="card-title">Infraestructura y DevOps</div>
           <ul class="list">
-            <li>⚡ <strong>PageSpeed Insights</strong> · Métricas de performance</li>
-            <li>🔗 <strong>GitHub API</strong> · Actividad del repositorio</li>
-            <li>🔍 <strong>Sentry</strong> · Monitoreo de errores en producción</li>
-            <li>📊 <strong>SonarCloud</strong> · Análisis de calidad de código</li>
+            <li><strong>GitHub API</strong> · Automatización de repositorios y despliegues.</li>
+            <li><strong>Sentry</strong> · Monitorización de errores en tiempo real.</li>
+            <li><strong>SonarCloud</strong> · Análisis de calidad de código estático.</li>
           </ul>
         </div>
       </div>
@@ -313,11 +282,9 @@
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li><strong>n8n</strong> · Plataforma de automatización de workflows (auto-hospedable)</li>
-          <li><strong>Workflow activo</strong> · Sincronización diaria de videos de YouTube</li>
-          <li><strong>Endpoint seguro</strong> · <code>/api/actualizar-video-marvel.php</code> con Bearer token</li>
-          <li><strong>Arquitectura</strong> · Cron → YouTube API → Validación → Backend PHP → JSON</li>
-          <li><strong>Desacoplamiento</strong> · El core de la aplicación no conoce YouTube</li>
+          <li><strong>Workflow Engine</strong> · Uso de n8n para orquestar tareas en segundo plano.</li>
+          <li><strong>Notificaciones</strong> · Envío automático de alertas a Telegram y Discord.</li>
+          <li><strong>Sincronización</strong> · Tareas programadas para limpieza y mantenimiento de datos.</li>
           <li><strong>Ventaja</strong> · Integraciones externas sin modificar código del dominio</li>
         </ul>
       </div>
@@ -326,23 +293,23 @@
 
     <!-- SLIDE 10: Calidad y CI/CD -->
     <section class="slide" data-slide="10">
-      <div class="slide-title">Testing, Seguridad y Despliegue</div>
+      <div class="slide-title">Calidad y CI/CD</div>
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
+          <div class="card-title">Calidad de Código</div>
           <ul class="list">
-            <li>🧪 <strong>PHPUnit</strong> · 90+ tests, 85% coverage</li>
-            <li>📊 <strong>SonarCloud</strong> · Análisis de calidad</li>
-            <li>🎭 <strong>Playwright</strong> · Tests E2E</li>
-            <li>♿ <strong>Pa11y</strong> · Auditoría de accesibilidad</li>
+            <li><strong>PHPUnit</strong> · Tests unitarios y de integración.</li>
+            <li><strong>PHPStan</strong> · Análisis estático de tipos (Nivel 8).</li>
+            <li><strong>SonarCloud</strong> · Cobertura y deuda técnica controlada.</li>
           </ul>
         </div>
         <div class="card">
+          <div class="card-title">Despliegue</div>
           <ul class="list">
-            <li>🔐 <strong>CSRF tokens</strong> en todos los formularios</li>
-            <li>🛡️ <strong>Security headers</strong> · CSP, HSTS, XSS</li>
-            <li>🚀 <strong>GitHub Actions</strong> · Deploy automático</li>
-            <li>☸️ <strong>Kubernetes</strong> · Manifiestos preparados</li>
+            <li><strong>GitHub Actions</strong> · Pipeline automático de construcción.</li>
+            <li><strong>Docker Hub</strong> · Gestión de imágenes de contenedores.</li>
+            <li><strong>Watchtower</strong> · Actualización automática en producción.</li>
           </ul>
         </div>
       </div>
@@ -351,15 +318,14 @@
 
     <!-- SLIDE 11: Funcionalidades -->
     <section class="slide" data-slide="11">
-      <div class="slide-title">Funcionalidades principales</div>
+      <div class="slide-title">Funcionalidades</div>
       <div class="divider"></div>
       <div class="card">
         <ul class="list">
-          <li>📚 <strong>CRUD completo</strong> de álbumes y héroes con actividad</li>
-          <li>🎬 <strong>Generador de cómics</strong> con IA</li>
-          <li>🧠 <strong>Comparador RAG</strong> · Analiza y compara héroes</li>
-          <li>🔊 <strong>Text-to-Speech</strong> · Escucha los cómics generados</li>
-          <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
+          <li><strong>Gestión de Álbumes</strong> · CRUD completo de colecciones de héroes.</li>
+          <li><strong>Comparador RAG</strong> · Análisis inteligente entre diferentes personajes.</li>
+          <li><strong>Generador de Cómics</strong> · Creación de historias personalizadas con IA.</li>
+          <li><strong>Panel de Control</strong> · Monitorización de actividad y logs del sistema.</li>
 
         </ul>
       </div>
@@ -368,23 +334,23 @@
 
     <!-- SLIDE 12: Documentación -->
     <section class="slide" data-slide="12">
-      <div class="slide-title">Documentación técnica</div>
+      <div class="slide-title">Documentación</div>
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
+          <div class="card-title">Guías de Proyecto</div>
           <ul class="list">
-            <li>📄 <strong>README.md</strong> · Guía de inicio rápido</li>
-            <li>🏗️ <strong>ARCHITECTURE.md</strong> · Diagramas y capas</li>
-            <li>🔐 <strong>SECURITY.md</strong> · Políticas y prácticas</li>
-            <li>🧪 <strong>COVERAGE.md</strong> · Métricas de tests</li>
+            <li><strong>README.md</strong> · Guía de instalación y arquitectura.</li>
+            <li><strong>PROJECT_GUIDE.md</strong> · Manual detallado para desarrolladores.</li>
+            <li><strong>CHANGELOG.md</strong> · Historial de versiones y cambios.</li>
           </ul>
         </div>
         <div class="card">
+          <div class="card-title">API & Swagger</div>
           <ul class="list">
-            <li>📚 <strong>/docs/guides/</strong> · Guías detalladas</li>
-            <li>🤖 <strong>/docs/ai/</strong> · Documentación de IA</li>
-            <li>☸️ <strong>/k8s/</strong> · Manifiestos Kubernetes</li>
-            <li>🌐 <strong>README web</strong> · Versión interactiva</li>
+            <li><strong>Endpoints</strong> · Documentación de la API REST.</li>
+            <li><strong>Postman</strong> · Colección de peticiones lista para usar.</li>
+            <li><strong>Diagramas</strong> · Esquemas de base de datos y flujos.</li>
           </ul>
         </div>
       </div>
@@ -417,7 +383,7 @@
       <!-- Gráfico de Línea de Tiempo -->
       <div class="timeline">
         <div class="speedster" id="speedster">
-          <img src="assets/images/speedster.png?v=4" alt="Speedster">
+          <img src="assets/images/flash-outline.png?v=5" alt="Speedster">
         </div>
         <div class="speed-trail"></div>
         
