@@ -925,7 +925,277 @@ DEBUG_RAW_BODY=0
 
 ---
 
-## 12. Scripts CLI útiles (carpeta bin/)
+## 12. APIs externas utilizadas
+
+Marvel integra múltiples APIs externas para enriquecer la funcionalidad y demostrar integraciones reales con servicios de terceros.
+
+### Lista completa de APIs integradas
+
+| API | Proveedor | Propósito | Variable de entorno | Coste |
+|-----|-----------|-----------|---------------------|-------|
+| **OpenAI API** | OpenAI | Generación de cómics, comparación de héroes, agente conversacional | `OPENAI_API_KEY` | De pago |
+| **YouTube Data API v3** | Google | Obtener últimos videos de Marvel | `GOOGLE_YT_API_KEY` | Freemium |
+| **ElevenLabs TTS** | ElevenLabs | Conversión de texto a voz (narración de cómics) | `ELEVENLABS_API_KEY` | Freemium |
+| **WAVE API** | WebAIM | Auditoría de accesibilidad WCAG 2.1 AA | `WAVE_API_KEY` | De pago |
+| **PageSpeed Insights** | Google | Análisis de performance y Core Web Vitals | `PSI_API_KEY` | Gratis |
+| **GitHub API** | GitHub | Actividad de repositorio y Pull Requests | `GITHUB_API_KEY` | Gratis |
+| **Sentry** | Sentry.io | Monitoreo de errores en producción | `SENTRY_DSN`, `SENTRY_API_TOKEN` | Freemium |
+| **SonarCloud API** | SonarSource | Métricas de calidad de código | (via CI) | Freemium |
+
+### 1. OpenAI API
+
+**Propósito**: Generación de contenido con IA (cómics, comparaciones, agente conversacional).
+
+**Endpoints usados**:
+- `https://api.openai.com/v1/chat/completions`
+
+**Modelo por defecto**: `gpt-4o-mini` (configurable con `OPENAI_MODEL`)
+
+**Uso en el proyecto**:
+```php
+// src/AI/OpenAIComicGenerator.php
+// Genera cómics basados en héroes seleccionados
+$generator = new OpenAIComicGenerator($openAIServiceUrl);
+$comic = $generator->generate($heroes);
+```
+
+**Variables necesarias**:
+```env
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_SERVICE_URL=http://localhost:8081/v1/chat
+```
+
+**Nota**: Marvel usa un microservicio proxy (`openai-service`) que encapsula las llamadas a OpenAI para centralizar la lógica y proteger la API key.
+
+### 2. YouTube Data API v3
+
+**Propósito**: Obtener el último video publicado en el canal oficial de Marvel.
+
+**Endpoints usados**:
+- `https://www.googleapis.com/youtube/v3/search`
+
+**Uso en el proyecto**:
+- Integrado mediante workflow de **n8n** (ver sección 22)
+- Actualiza automáticamente `public/api/ultimo-video-marvel.json`
+- Consumido por `/api/marvel-movies.php`
+
+**Variables necesarias**:
+```env
+GOOGLE_YT_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+**Frecuencia de uso**: Diaria (via n8n cron job)
+
+### 3. ElevenLabs Text-to-Speech
+
+**Propósito**: Generar narración en audio de los cómics generados.
+
+**Endpoints usados**:
+- `https://api.elevenlabs.io/v1/text-to-speech/{voice_id}`
+
+**Configuración por defecto**:
+- Voz: **Charlie** (`EXAVITQu4vr4xnSDxMaL`)
+- Modelo: `eleven_multilingual_v2`
+
+**Uso en el proyecto**:
+```php
+// Generación de audio para cómics
+POST /elevenlabs-tts.php
+{
+  "text": "Contenido del cómic...",
+  "voice_id": "EXAVITQu4vr4xnSDxMaL"
+}
+```
+
+**Variables necesarias**:
+```env
+ELEVENLABS_API_KEY=sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ELEVENLABS_VOICE_ID=EXAVITQu4vr4xnSDxMaL
+```
+
+### 4. WAVE API (WebAIM)
+
+**Propósito**: Auditoría automática de accesibilidad web según estándares WCAG 2.1 AA.
+
+**Endpoints usados**:
+- `https://wave.webaim.org/api/request`
+
+**Uso en el proyecto**:
+```php
+// public/api/accessibility-marvel.php
+// Genera reporte de accesibilidad de la página principal
+```
+
+**Variables necesarias**:
+```env
+WAVE_API_KEY=xxxxxxxxxxxxxxxxxx
+```
+
+**Panel de visualización**: `/accessibility`
+
+### 5. PageSpeed Insights API
+
+**Propósito**: Análisis de performance, SEO y Core Web Vitals.
+
+**Endpoints usados**:
+- `https://www.googleapis.com/pagespeedonline/v5/runPagespeed`
+
+**Métricas obtenidas**:
+- First Contentful Paint (FCP)
+- Largest Contentful Paint (LCP)
+- Total Blocking Time (TBT)
+- Cumulative Layout Shift (CLS)
+- Speed Index
+
+**Uso en el proyecto**:
+```php
+// public/api/performance-marvel.php
+// Analiza rendimiento de la URL en producción
+```
+
+**Variables necesarias**:
+```env
+PSI_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+**Panel de visualización**: `/performance`
+
+**Nota**: Esta API es gratuita pero tiene límites de tasa (25,000 requests/día).
+
+### 6. GitHub API
+
+**Propósito**: Mostrar actividad reciente del repositorio (commits, PRs, CI status).
+
+**Endpoints usados**:
+- `https://api.github.com/repos/{owner}/{repo}/pulls`
+- `https://api.github.com/repos/{owner}/{repo}/commits`
+
+**Uso en el proyecto**:
+```php
+// public/api/github-activity.php
+// Obtiene últimos PRs y commits
+```
+
+**Variables necesarias**:
+```env
+GITHUB_API_KEY=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+**Panel de visualización**: `/panel-github`
+
+### 7. Sentry
+
+**Propósito**: Monitoreo de errores en producción y trazas de performance.
+
+**Configuración**:
+```php
+// En src/bootstrap.php
+use Sentry\ClientBuilder;
+use Sentry\SentrySdk;
+
+if ($sentryDsn) {
+    $client = ClientBuilder::create([
+        'dsn' => $sentryDsn,
+        'environment' => $appEnvironment,
+        'traces_sample_rate' => 0.2,
+    ])->getClient();
+    SentrySdk::setCurrentHub(new Hub($client));
+}
+```
+
+**Variables necesarias**:
+```env
+SENTRY_DSN=https://xxxxxx@xxxxxx.ingest.sentry.io/xxxxxx
+SENTRY_API_TOKEN=sntrys_xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+**Endpoints del proyecto**:
+- `public/api/sentry-metrics.php` → Obtiene métricas de errores
+- Panel de visualización: `/sentry`
+
+### 8. SonarCloud API
+
+**Propósito**: Análisis de calidad de código, cobertura, code smells y vulnerabilidades.
+
+**Integración**: Via GitHub Actions (CI/CD)
+
+**Métricas obtenidas**:
+- Cobertura de tests
+- Deuda técnica
+- Code smells
+- Bugs
+- Vulnerabilidades
+- Duplicación de código
+
+**Uso en el proyecto**:
+```php
+// public/api/sonar-metrics.php
+// Obtiene métricas del proyecto en SonarCloud
+```
+
+**Configuración**: `sonar-project.properties`
+
+**Panel de visualización**: `/sonar`
+
+### Resumen de costos y límites
+
+| API | Plan gratuito | Límites | Recomendación |
+|-----|---------------|---------|---------------|
+| OpenAI | No | Pay-per-token | Usar fallback a respuestas mock |
+| YouTube | Sí | 10,000 units/día | Suficiente para uso educativo |
+| ElevenLabs | Sí | 10,000 caracteres/mes | Suficiente para demo |
+| WAVE | No | Pay-per-request | Solo para auditorías esporádicas |
+| PageSpeed | Sí | 25,000 requests/día | Suficiente |
+| GitHub | Sí | 5,000 requests/hora | Suficiente |
+| Sentry | Sí | 5,000 eventos/mes | Suficiente para demo |
+| SonarCloud | Sí | Proyectos públicos | Gratis sin límite |
+
+### Patrón de integración recomendado
+
+Para cada API externa:
+
+1. **Encapsular en un servicio dedicado**
+   ```
+   src/Infrastructure/Http/
+   ├── GitHubClient.php
+   ├── SentryClient.php
+   └── ...
+   ```
+
+2. **Usar variables de entorno**
+   - Nunca hardcodear API keys
+   - Usar `.env.example` como plantilla
+
+3. **Implementar fallback**
+   ```php
+   if (!$apiKey) {
+       return $this->getMockResponse();
+   }
+   ```
+
+4. **Cachear respuestas** (cuando aplique)
+   - Evitar consumir cuota innecesariamente
+   - Usar TTL razonable (5-60 minutos)
+
+5. **Loggear uso**
+   - Registrar requests fallidos
+   - Monitorear cuotas consumidas
+
+### Cuándo añadir una API externa
+
+| Criterio | Añadir | No añadir |
+|----------|--------|-----------|
+| Enriquece la funcionalidad del dominio | Sí | - |
+| Necesaria para el MVP | Sí | - |
+| Solo para "lucirse" sin propósito | - | No |
+| Plan gratuito suficiente | Sí | - |
+| Requiere pago desde día 1 | Evaluar | - |
+| Tiene límites muy restrictivos | - | No |
+
+---
+
+## 13. Scripts CLI útiles (carpeta bin/)
 
 Marvel incluye scripts CLI reutilizables:
 
@@ -952,7 +1222,7 @@ find src tests -name '*.php' -print0 | xargs -0 -r -n1 -P4 php -l
 
 ---
 
-## 13. Testing completo (niveles Marvel)
+## 14. Testing completo (niveles Marvel)
 
 El repositorio incluye tests unitarios/integración, tests específicos de seguridad y tests E2E con Playwright.
 
@@ -1142,7 +1412,7 @@ composer validate
 
 ---
 
-## 14. Kubernetes (despliegue opcional)
+## 15. Kubernetes (despliegue opcional)
 
 Marvel incluye manifiestos K8s para orquestación avanzada.
 
@@ -1178,7 +1448,7 @@ k8s/
 
 ---
 
-## 15. Integraciones externas (patrón Marvel)
+## 16. Integraciones externas (patrón Marvel)
 
 Marvel integra varios servicios externos. Aquí está el patrón:
 
@@ -1264,7 +1534,7 @@ Todo lo anterior, más:
 
 ---
 
-## 16. ADRs (Architecture Decision Records)
+## 17. ADRs (Architecture Decision Records)
 
 Marvel documenta las decisiones arquitectónicas importantes usando **ADRs** (Architecture Decision Records).
 
@@ -1337,7 +1607,7 @@ docs/
 
 ---
 
-## 17. Configuración de VS Code (automatización local)
+## 18. Configuración de VS Code (automatización local)
 
 Marvel incluye configuraciones de VS Code que automatizan tareas repetitivas.
 
@@ -1416,7 +1686,7 @@ Marvel define tareas para ejecutar con `Ctrl+Shift+P` → "Tasks: Run Task":
 
 ---
 
-## 18. AGENTS.md (contexto para asistentes de IA)
+## 19. AGENTS.md (contexto para asistentes de IA)
 
 Marvel incluye un archivo `AGENTS.md` en la raíz que define reglas y contexto para asistentes de IA (Copilot, Claude, Codex, etc.).
 
@@ -1491,7 +1761,7 @@ mi-proyecto/
 
 ---
 
-## 19. Text-to-Speech con ElevenLabs
+## 20. Text-to-Speech con ElevenLabs
 
 Marvel integra **ElevenLabs** para convertir los resultados de IA (cómics generados, comparaciones RAG) en audio narrado.
 
@@ -1567,7 +1837,7 @@ async function narrateText(text) {
 
 ---
 
-## 20. Docker y contenedores para microservicios
+## 21. Docker y contenedores para microservicios
 
 Marvel usa Docker para empaquetar y desplegar los microservicios de IA de forma aislada.
 
@@ -1686,13 +1956,29 @@ services:
 
 ---
 
-## 21. Automatización con n8n
+## 22. Automatización con n8n
 
-Marvel incluye workflows de **n8n** para automatizar tareas recurrentes.
+Marvel incluye workflows de **n8n** para automatizar tareas recurrentes sin acoplar lógica externa al dominio de la aplicación.
 
 ### Qué es n8n
 
-n8n es una plataforma de automatización de workflows (similar a Zapier) que puede auto-hospedarse.
+n8n es una plataforma de automatización de workflows (similar a Zapier o Make) que puede **auto-hospedarse** y permite crear integraciones visuales entre servicios externos y tu aplicación.
+
+**Características clave**:
+- Open source y auto-hospedable
+- Editor visual de flujos (drag & drop)
+- +400 integraciones predefinidas
+- Ejecución programada (cron) o por eventos
+- Webhooks bidireccionales
+
+### ¿Por qué n8n en Marvel?
+
+Marvel usa n8n para:
+
+1. **Desacoplar integraciones externas** → El core de la aplicación no conoce los detalles de la API de YouTube
+2. **Actualizar contenido dinámico** → Videos recientes de Marvel sin intervención manual
+3. **Demostrar patrón webhook** → Endpoint PHP seguro que recibe datos externos
+4. **Reducir complejidad** → No añadir cron jobs al backend PHP
 
 ### Workflows incluidos
 
@@ -1701,42 +1987,274 @@ n8n/
 └── Daily Marvel YouTube Video Fetcher and Backend Sync.json
 ```
 
+### Arquitectura del workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    n8n Workflow                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  1. Trigger (Cron: diario a las 09:00 UTC)                  │
+│            ↓                                                 │
+│  2. HTTP Request → YouTube Data API v3                      │
+│     GET /search?channelId=UCvC4D8onUfXzvjTOM-dBfEA         │
+│     Query: últimos videos Marvel                            │
+│     Auth: GOOGLE_YT_API_KEY                                 │
+│            ↓                                                 │
+│  3. Procesamiento: extraer video más reciente               │
+│     - videoId                                                │
+│     - title                                                  │
+│     - thumbnail                                              │
+│     - publishedAt                                            │
+│            ↓                                                 │
+│  4. HTTP Request → Backend PHP                              │
+│     POST /api/actualizar-video-marvel.php                   │
+│     Headers:                                                 │
+│       Authorization: Bearer {MARVEL_UPDATE_TOKEN}           │
+│     Body: { videoId, title, thumbnail, publishedAt }        │
+│            ↓                                                 │
+│  5. Backend actualiza: public/api/ultimo-video-marvel.json  │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Endpoint del backend: actualizar-video-marvel.php
+
+El backend expone un endpoint específico para recibir actualizaciones desde n8n:
+
+```php
+// public/api/actualizar-video-marvel.php
+<?php
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+// 1. Validar token de autorización
+$authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+if (!str_starts_with($authHeader, 'Bearer ')) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Missing authorization']);
+    exit;
+}
+
+$token = substr($authHeader, 7);
+$expectedToken = getenv('MARVEL_UPDATE_TOKEN');
+
+if ($token !== $expectedToken) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid token']);
+    exit;
+}
+
+// 2. Obtener datos del video
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
+
+// 3. Validar estructura
+if (!isset($data['videoId'], $data['title'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Missing required fields']);
+    exit;
+}
+
+// 4. Guardar en JSON
+$videoData = [
+    'videoId' => $data['videoId'],
+    'title' => $data['title'],
+    'thumbnail' => $data['thumbnail'] ?? '',
+    'publishedAt' => $data['publishedAt'] ?? date('c'),
+    'lastUpdated' => date('c')
+];
+
+file_put_contents(
+    __DIR__ . '/ultimo-video-marvel.json',
+    json_encode($videoData, JSON_PRETTY_PRINT)
+);
+
+// 5. Responder éxito
+echo json_encode([
+    'status' => 'success',
+    'message' => 'Video updated successfully'
+]);
+```
+
+### Seguridad del endpoint
+
+**Control implementado**:
+
+1. **Autenticación Bearer Token**
+   ```env
+   MARVEL_UPDATE_TOKEN=super-secret-random-token-here
+   ```
+
+2. **Validación de estructura de datos**
+   - Campos obligatorios: `videoId`, `title`
+   - Sanitización de datos antes de guardar
+
+3. **Sin exposición pública**
+   - El endpoint requiere token para funcionar
+   - No aparece en navegación ni sitemap
+
+4. **Logging de accesos** (opcional)
+   ```php
+   // Registrar intentos de actualización
+   file_put_contents(
+       __DIR__ . '/../../storage/logs/video-updates.log',
+       date('Y-m-d H:i:s') . " - Video updated: " . $data['videoId'] . "\n",
+       FILE_APPEND
+   );
+   ```
+
 ### Ejemplo: Sincronización diaria de videos Marvel
 
-Este workflow:
-1. Se ejecuta diariamente (cron).
-2. Consulta la API de YouTube por nuevos videos de Marvel.
-3. Envía el video más reciente al backend Marvel.
-4. Actualiza `public/api/ultimo-video-marvel.json`.
+**Configuración del workflow**:
+
+```json
+{
+  "name": "Daily Marvel YouTube Video Fetcher",
+  "nodes": [
+    {
+      "type": "n8n-nodes-base.cron",
+      "parameters": {
+        "triggerTimes": {
+          "hour": 9,
+          "minute": 0
+        }
+      }
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "qs": {
+          "part": "snippet",
+          "channelId": "UCvC4D8onUfXzvjTOM-dBfEA",
+          "order": "date",
+          "maxResults": 1,
+          "key": "={{$env.GOOGLE_YT_API_KEY}}"
+        }
+      }
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://marvel.creawebes.com/api/actualizar-video-marvel.php",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer {{$env.MARVEL_UPDATE_TOKEN}}"
+        },
+        "body": {
+          "videoId": "={{$json.items[0].id.videoId}}",
+          "title": "={{$json.items[0].snippet.title}}",
+          "thumbnail": "={{$json.items[0].snippet.thumbnails.high.url}}",
+          "publishedAt": "={{$json.items[0].snippet.publishedAt}}"
+        }
+      }
+    }
+  ]
+}
+```
 
 ### Cómo importar un workflow
 
-1. Instala n8n: `npx n8n` o via Docker.
-2. Abre la interfaz web (por defecto `http://localhost:5678`).
-3. Ve a **Workflows → Import from File**.
-4. Selecciona el archivo JSON de `n8n/`.
-5. Configura las credenciales necesarias (API keys).
-6. Activa el workflow.
+1. **Instalar n8n**:
+   ```bash
+   # Vía NPM
+   npx n8n
+   
+   # O vía Docker
+   docker run -it --rm --name n8n -p 5678:5678 n8nio/n8n
+   ```
+
+2. **Acceder a la interfaz web**:
+   - URL: `http://localhost:5678`
+   - Crear cuenta inicial
+
+3. **Importar workflow**:
+   - Ir a **Workflows → Import from File**
+   - Seleccionar `n8n/Daily Marvel YouTube Video Fetcher and Backend Sync.json`
+   - Hacer clic en **Import**
+
+4. **Configurar credenciales**:
+   - En el nodo de YouTube → Añadir `GOOGLE_YT_API_KEY`
+   - En el nodo de Backend → Añadir `MARVEL_UPDATE_TOKEN`
+
+5. **Probar workflow**:
+   - Hacer clic en **Execute Workflow** (ejecución manual)
+   - Verificar que `ultimo-video-marvel.json` se actualiza
+
+6. **Activar workflow**:
+   - Toggle **Active** en la parte superior del workflow
+   - El workflow se ejecutará automáticamente según el cron configurado
 
 ### Variables necesarias en n8n
 
-| Credencial | Para qué |
-|------------|----------|
-| `GOOGLE_YT_API_KEY` | Consultar videos de YouTube |
-| `MARVEL_UPDATE_TOKEN` | Autenticar llamadas al backend |
+| Variable | Propósito | Obtención |
+|----------|-----------|-----------|
+| `GOOGLE_YT_API_KEY` | Consultar YouTube Data API v3 | [Console Cloud Google](https://console.cloud.google.com) |
+| `MARVEL_UPDATE_TOKEN` | Autenticar llamadas al backend PHP | Generar manualmente (token random) |
 
-### Cuándo usar n8n
+**Generar token seguro**:
+```bash
+# Linux/Mac
+openssl rand -hex 32
 
-| Tarea | Mejor opción |
-|-------|--------------|
-| Cron jobs simples | `crontab` o GitHub Actions |
-| Integraciones complejas (múltiples APIs) | n8n |
-| Workflows visuales para no-developers | n8n |
-| Tareas críticas en producción | Evaluar disponibilidad |
+# O en PHP
+php -r "echo bin2hex(random_bytes(32));"
+```
+
+### Configuración en producción
+
+**Opción 1: n8n auto-hospedado**
+```bash
+# Docker en servidor con persitencia
+docker run -d \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  n8nio/n8n
+```
+
+**Opción 2: n8n Cloud** (servicio SaaS)
+- URL: [https://n8n.cloud](https://n8n.cloud)
+- Plan gratuito: 5,000 ejecuciones/mes
+
+### Cuándo usar n8n vs alternativas
+
+| Tarea | Mejor opción | Razón |
+|-------|--------------|-------|
+| Cron jobs simples en el backend | `crontab` o GitHub Actions | Más simple |
+| Integración de 1 API externa | PHP directo | No requiere servicio adicional |
+| Integraciones complejas (múltiples APIs) | **n8n** | Editor visual, mantenibilidad |
+| Workflows visuales para no-developers | **n8n** | UI intuitiva |
+| Tareas críticas en producción | Evaluar | Requiere monitoreo de disponibilidad |
+| Proyecto educativo/demo | **n8n** | Muestra patrón moderno de integraciones |
+
+### Ventajas de n8n en Marvel
+
+✅ **Desacoplamiento**: El backend PHP no conoce YouTube  
+✅ **Mantenibilidad**: Cambiar la integración no requiere tocar el código  
+✅ **Observabilidad**: n8n incluye logs y métricas de ejecución  
+✅ **Escalabilidad**: Añadir nuevos workflows es trivial  
+✅ **Portabilidad**: El workflow JSON es versionable y transferible  
+
+### Desventajas a considerar
+
+⚠️ **Dependencia adicional**: Requiere n8n corriendo (proceso o Docker)  
+⚠️ **Complejidad operativa**: Un servicio más que mantener  
+⚠️ **Latencia**: Las actualizaciones no son instantáneas (según cron)  
+
+### Resumen
+
+n8n en Marvel demuestra cómo **externalizar integraciones** sin acoplar lógica al dominio. Es un patrón útil cuando:
+
+- Necesitas integrar servicios externos recurrentemente
+- Quieres que no-developers puedan modificar integraciones
+- Prefieres configuración visual sobre código
+
+Para proyectos simples, un **cron job directo en PHP** puede ser suficiente. n8n brilla cuando las integraciones crecen en complejidad.
 
 ---
 
-## 22. Las 10 Fases de Seguridad Marvel (detalle)
+## 23. Las 10 Fases de Seguridad Marvel (detalle)
 
 Marvel implementa un modelo de seguridad progresivo en **10 fases**. Aquí está el resumen de cada una:
 
@@ -1844,7 +2362,7 @@ Consultar `docs/security/security.md` para detalle completo de:
 
 ---
 
-## 23. Análisis de vulnerabilidades con Snyk
+## 24. Análisis de vulnerabilidades con Snyk
 
 Marvel integra **Snyk** para detectar vulnerabilidades en dependencias.
 
@@ -1916,7 +2434,7 @@ composer audit + Snyk (dependencias) + SonarCloud (código)
 
 ---
 
-## 24. APIs internas del dashboard (panel de métricas)
+## 25. APIs internas del dashboard (panel de métricas)
 
 Marvel expone varios endpoints para métricas y observabilidad, usados por los paneles de administración.
 
@@ -1992,7 +2510,7 @@ echo json_encode([
 
 ---
 
-## 25. Estructura interna de un microservicio
+## 26. Estructura interna de un microservicio
 
 Marvel separa la IA en microservicios independientes. Aquí está la estructura recomendada:
 
@@ -2115,7 +2633,7 @@ class RagProxyController
 
 ---
 
-## 26. Tests E2E con Playwright (ejemplo concreto)
+## 27. Tests E2E con Playwright (ejemplo concreto)
 
 Marvel usa **Playwright** para tests end-to-end que validan flujos completos en el navegador.
 
@@ -2292,7 +2810,7 @@ Pirámide de tests:
 
 ---
 
-## 27. Scripts CLI adicionales
+## 28. Scripts CLI adicionales
 
 Además de los scripts documentados, el repositorio incluye utilidades adicionales en `bin/`:
 
@@ -2369,7 +2887,7 @@ exit(0);
 
 ---
 
-## 28. Variables de entorno completas (.env.example actualizado)
+## 29. Variables de entorno completas (.env.example actualizado)
 
 Referencia completa de todas las variables de entorno del proyecto:
 
@@ -2439,7 +2957,7 @@ SNYK_ORG=                               # Organización en Snyk
 
 ---
 
-## 29. Los 3 Microservicios de Marvel (Arquitectura Completa)
+## 30. Los 3 Microservicios de Marvel (Arquitectura Completa)
 
 Marvel utiliza **3 microservicios externos** desacoplados del backend PHP principal. Cada uno tiene tecnología, despliegue y propósito diferente.
 
@@ -2881,6 +3399,9 @@ curl http://34.74.102.123:8080/health
 
 ---
 
-*Última actualización: 8 Diciembre 2025*  
+*Última actualización: 25 Enero 2026*  
 *Basado en Clean Marvel Album v2.1*  
-*Secciones 19-29 añadidas: ElevenLabs TTS, Docker, n8n, Fases de Seguridad, Snyk, APIs Dashboard, Microservicios internos, Playwright E2E, Scripts CLI, Variables de entorno, Arquitectura de los 3 Microservicios (OpenAI, RAG, Heatmap/Python/GCP)*
+*Sección 12 añadida: APIs Externas Utilizadas (OpenAI, YouTube, ElevenLabs, WAVE, PageSpeed, GitHub, Sentry, SonarCloud) con detalles de integración, costos y mejores prácticas*  
+*Sección 22 (n8n) expandida: Arquitectura de workflows, endpoint de backend, seguridad con Bearer tokens, ejemplos de configuración y mejores prácticas de implementación*  
+*Secciones anteriores: ElevenLabs TTS, Docker, Fases de Seguridad, Snyk, APIs Dashboard, Microservicios internos, Playwright E2E, Scripts CLI, Variables de entorno, Arquitectura de los 3 Microservicios*
+
