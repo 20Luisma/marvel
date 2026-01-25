@@ -82,8 +82,8 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      /* Filtro para convertir el contorno blanco en rojo fuego brillante */
-      filter: drop-shadow(0 0 10px #ed1d24) sepia(100%) saturate(10000%) hue-rotate(-30deg) brightness(1.5);
+      /* Filtro avanzado: convierte líneas blancas en rojo neón brillante y elimina el fondo negro */
+      filter: drop-shadow(0 0 8px #ed1d24) drop-shadow(0 0 15px #ed1d24) sepia(100%) saturate(10000%) hue-rotate(-30deg) brightness(1.2);
       mix-blend-mode: screen; 
     }
     .speedster.active {
@@ -98,21 +98,23 @@
       position: absolute;
       top: 50%;
       left: 10%;
-      height: 4px;
-      /* Efecto de mecha: un degradado corto que desaparece */
-      background: linear-gradient(90deg, transparent, #ed1d24, #f97316, #fff);
+      height: 6px;
+      /* Mecha de fuego: degradado que se desvanece */
+      background: linear-gradient(90deg, transparent, rgba(237, 29, 36, 0.8), #f97316, #ff0);
       z-index: 5;
-      width: 150px; /* Tamaño de la mecha */
+      width: 120px;
       transform: translateY(-50%) translateX(-100%);
-      filter: blur(2px);
+      filter: blur(4px);
       opacity: 0;
+      border-radius: 50%;
     }
     .speedster.active + .speed-trail {
       animation: mechaFollow 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
     }
     @keyframes mechaFollow {
-      0% { left: 10%; opacity: 1; }
-      90% { left: 90%; opacity: 1; }
+      0% { left: 10%; opacity: 0; }
+      5% { opacity: 1; }
+      95% { opacity: 1; left: 90%; }
       100% { left: 90%; opacity: 0; }
     }
   </style>
@@ -415,7 +417,7 @@
       <!-- Gráfico de Línea de Tiempo -->
       <div class="timeline">
         <div class="speedster" id="speedster">
-          <img src="assets/images/speedster.png?v=3" alt="Speedster">
+          <img src="assets/images/speedster.png?v=4" alt="Speedster">
         </div>
         <div class="speed-trail"></div>
         
