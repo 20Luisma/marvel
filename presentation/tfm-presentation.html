@@ -55,21 +55,25 @@
       font-weight: 800;
       color: #fff;
       display: block;
+      position: relative;
+      z-index: 20; /* Asegurar que el texto esté por encima de la mecha */
     }
     .timeline-label {
       font-size: 0.75rem;
       color: rgba(255,255,255,0.7);
       display: block;
       margin-top: 2px;
+      position: relative;
+      z-index: 20;
     }
     .speedster {
       position: absolute;
       top: 50%;
       left: 10%;
-      width: 70px;
-      height: 70px;
+      width: 80px;
+      height: 80px;
       transform: translateY(-50%);
-      z-index: 10;
+      z-index: 15;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s;
@@ -78,7 +82,8 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 0 15px rgba(237, 29, 36, 0.8)) brightness(1.3);
+      /* Filtro para convertir el contorno blanco en rojo fuego brillante */
+      filter: drop-shadow(0 0 10px #ed1d24) sepia(100%) saturate(10000%) hue-rotate(-30deg) brightness(1.5);
       mix-blend-mode: screen; 
     }
     .speedster.active {
@@ -86,28 +91,29 @@
       animation: runAcross 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
     }
     @keyframes runAcross {
-      0% { left: 10%; transform: translateY(-50%) scaleX(1); }
-      30% { left: 50%; transform: translateY(-50%) scaleX(1); }
-      60% { left: 90%; transform: translateY(-50%) scaleX(1); }
-      100% { left: 90%; transform: translateY(-50%) scaleX(1); }
+      0% { left: 10%; }
+      100% { left: 90%; }
     }
     .speed-trail {
       position: absolute;
       top: 50%;
       left: 10%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #ed1d24, #f97316);
+      height: 4px;
+      /* Efecto de mecha: un degradado corto que desaparece */
+      background: linear-gradient(90deg, transparent, #ed1d24, #f97316, #fff);
       z-index: 5;
-      width: 0;
-      transform: translateY(-50%);
-      box-shadow: 0 0 10px rgba(237, 29, 36, 0.5);
+      width: 150px; /* Tamaño de la mecha */
+      transform: translateY(-50%) translateX(-100%);
+      filter: blur(2px);
+      opacity: 0;
     }
     .speedster.active + .speed-trail {
-      animation: trailFollow 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+      animation: mechaFollow 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
     }
-    @keyframes trailFollow {
-      0% { width: 0; left: 10%; }
-      100% { width: 80%; left: 10%; }
+    @keyframes mechaFollow {
+      0% { left: 10%; opacity: 1; }
+      90% { left: 90%; opacity: 1; }
+      100% { left: 90%; opacity: 0; }
     }
   </style>
 </head>
@@ -409,7 +415,7 @@
       <!-- Gráfico de Línea de Tiempo -->
       <div class="timeline">
         <div class="speedster" id="speedster">
-          <img src="assets/images/speedster.png?v=2" alt="Speedster">
+          <img src="assets/images/speedster.png?v=3" alt="Speedster">
         </div>
         <div class="speed-trail"></div>
         
