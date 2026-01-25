@@ -523,11 +523,62 @@
         </div>
       </div>
 
-      <span class="slide-number">13 / 15</span>
+      <span class="slide-number">13 / 16</span>
     </section>
 
-    <!-- SLIDE 14: Reflexión -->
+    <!-- SLIDE 14: Ecosistema e Infraestructura -->
     <section class="slide" data-slide="14">
+      <div class="slide-title">Ecosistema e Infraestructura</div>
+      <div class="divider"></div>
+      
+      <div class="card">
+        <p class="list">El proyecto no es solo una aplicación aislada, sino un sistema orquestado que interactúa con múltiples servicios externos para garantizar datos reales, inteligencia y observabilidad.</p>
+      </div>
+
+      <!-- Monitor de Ecosistema de APIs -->
+      <div class="api-monitor" style="margin-top: 40px; padding: 25px;">
+        <div class="api-monitor-title">System Health Monitor · Real-time API Connectivity</div>
+        <div class="api-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-github"></div>
+            <span class="api-name" style="font-size: 0.9rem;">GitHub API (Repository Stats)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-marvel"></div>
+            <span class="api-name" style="font-size: 0.9rem;">Marvel API (Character Data)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-openai"></div>
+            <span class="api-name" style="font-size: 0.9rem;">OpenAI API (Generative AI)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-rag"></div>
+            <span class="api-name" style="font-size: 0.9rem;">RAG Service (Knowledge Base)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-n8n"></div>
+            <span class="api-name" style="font-size: 0.9rem;">n8n Automate (Workflows)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-sentry"></div>
+            <span class="api-name" style="font-size: 0.9rem;">Sentry Logs (Observability)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-sonar"></div>
+            <span class="api-name" style="font-size: 0.9rem;">SonarCloud (Code Quality)</span>
+          </div>
+          <div class="api-item" style="padding: 15px;">
+            <div class="status-led" id="status-deploy"></div>
+            <span class="api-name" style="font-size: 0.9rem;">CI/CD Pipeline (Automation)</span>
+          </div>
+        </div>
+      </div>
+
+      <span class="slide-number">14 / 16</span>
+    </section>
+
+    <!-- SLIDE 15: Reflexión -->
+    <section class="slide" data-slide="15">
       <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card scrollable">
@@ -541,7 +592,7 @@ Comenzó como un espacio práctico donde ir trasladando lo aprendido al código,
 Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
 
 Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
-      <span class="slide-number">14 / 15</span>
+      <span class="slide-number">15 / 16</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
@@ -666,6 +717,8 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
                   if (slideId === '13') {
                     loadGitHubData();
                     triggerAnimation();
+                  }
+                  if (slideId === '14') {
                     runSystemDiagnostic();
                   }
                 }
@@ -688,15 +741,15 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
       })();
     </script>
 
-    <!-- SLIDE 15: Cierre -->
-    <section class="slide cover" data-slide="15">
+    <!-- SLIDE 16: Cierre -->
+    <section class="slide cover" data-slide="16">
       <div class="title">Gracias</div>
       <div class="divider"></div>
       <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
       <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
         <span class="url">github.com/20Luisma/marvel →</span>
       </a>
-      <span class="slide-number">15 / 15</span>
+      <span class="slide-number">16 / 16</span>
     </section>
   </div>
 
