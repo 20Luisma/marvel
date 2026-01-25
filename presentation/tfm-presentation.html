@@ -70,24 +70,13 @@
       position: absolute;
       top: 50%;
       left: 10%;
-      width: 80px;
-      height: 80px;
+      width: 1px; /* Div invisible que sirve de guía */
+      height: 1px;
       transform: translateY(-50%);
-      z-index: 15; /* Flash por encima de la mecha pero debajo del texto */
+      z-index: 15;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .speedster img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      /* Filtro para contorno rojo puro y brillante */
-      filter: brightness(0) invert(1) drop-shadow(0 0 5px #ed1d24) drop-shadow(0 0 10px #ed1d24);
-      mix-blend-mode: screen; 
     }
     .speedster.active {
-      opacity: 1;
       animation: runAcross 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
     }
     @keyframes runAcross {
@@ -98,15 +87,16 @@
       position: absolute;
       top: 50%;
       left: 10%;
-      height: 8px;
-      /* Mecha de fuego: degradado corto e intenso */
-      background: linear-gradient(90deg, transparent, #ed1d24, #f97316, #ff0);
-      z-index: 5; /* Mecha por debajo de todo */
-      width: 100px;
+      height: 10px;
+      /* Mecha de fuego más intensa con cabeza brillante */
+      background: linear-gradient(90deg, transparent, #ed1d24, #f97316, #fff);
+      z-index: 5;
+      width: 120px;
       transform: translateY(-50%) translateX(-100%);
-      filter: blur(6px);
+      filter: blur(4px);
       opacity: 0;
-      border-radius: 50%;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(237, 29, 36, 0.6);
     }
     .speedster.active + .speed-trail {
       animation: mechaFollow 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
@@ -382,9 +372,7 @@
 
       <!-- Gráfico de Línea de Tiempo -->
       <div class="timeline">
-        <div class="speedster" id="speedster">
-          <img src="assets/images/flash-outline.png?v=5" alt="Speedster">
-        </div>
+        <div class="speedster" id="speedster"></div>
         <div class="speed-trail"></div>
         
         <div class="timeline-item">
