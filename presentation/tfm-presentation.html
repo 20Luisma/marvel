@@ -448,12 +448,10 @@ Comenzó como un espacio práctico donde ir trasladando lo aprendido al código,
 Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
 
 Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
-      </div>
       <span class="slide-number">14 / 15</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
-      // Cargar datos reales desde GitHub API al cargar la slide 14
       (function() {
         const GITHUB_API = 'https://api.github.com';
         const REPO_OWNER = '20Luisma';
@@ -465,130 +463,111 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           if (dataLoaded) return;
           
           try {
-            // Obtener info del repositorio
             const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}`);
+            if (!repoResponse.ok) throw new Error('Repo not found');
             const repoData = await repoResponse.json();
             
-            // Obtener commits (solo necesitamos el count)
             const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=1`);
             const linkHeader = commitsResponse.headers.get('Link');
             let totalCommits = 1;
-            
             if (linkHeader) {
               const match = linkHeader.match(/page=(\d+)>; rel="last"/);
               if (match) totalCommits = parseInt(match[1]);
             }
             
-            // Intentar obtener releases primero
             let totalVersions = 0;
             try {
               const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
               const releases = await releasesResponse.json();
-              totalVersions = releases.length || 0;
+              totalVersions = Array.isArray(releases) ? releases.length : 0;
               
-              // Si no hay releases, intentar obtener tags
               if (totalVersions === 0) {
                 const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags`);
                 const tags = await tagsResponse.json();
-                totalVersions = tags.length || 0;
+                totalVersions = Array.isArray(tags) ? tags.length : 0;
               }
             } catch (e) {
-              console.warn('Error obteniendo versiones:', e);
-              totalVersions = 0;
+              console.warn('Error versions:', e);
             }
             
-            // Actualizar UI
             document.getElementById('total-commits').textContent = totalCommits;
-            document.getElementById('total-releases').textContent = totalVersions > 0 ? totalVersions : '0';
+            document.getElementById('total-releases').textContent = totalVersions;
             document.getElementById('github-stars').textContent = repoData.stargazers_count || '0';
             document.getElementById('github-forks').textContent = repoData.forks_count || '0';
             
-            // Actualizar Timeline
-            const now = new Date();
             const timelineDateEl = document.getElementById('current-date-timeline');
             if (timelineDateEl) {
+              const now = new Date();
               const day = String(now.getDate()).padStart(2, '0');
               const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
               timelineDateEl.textContent = `${day} ${months[now.getMonth()]} ${now.getFullYear()}`;
               
-              // Intentar poner el tag más reciente en el label
-              const latestTag = document.querySelector('.timeline-item:last-child .timeline-label');
-              if (latestTag && totalVersions > 0) {
-                // Si tenemos tags, el primero suele ser el más reciente
+              const latestTagLabel = document.querySelector('.timeline-item:last-child .timeline-label');
+              if (latestTagLabel && totalVersions > 0) {
                 try {
-                  const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags`);
-                  const tags = await tagsResponse.json();
+                  const tagsRes = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags?per_page=1`);
+                  const tags = await tagsRes.json();
                   if (tags && tags.length > 0) {
-                    latestTag.textContent = `Estado Actual (${tags[0].name})`;
+                    latestTagLabel.textContent = `Estado Actual (${tags[0].name})`;
                   }
                 } catch (e) {}
               }
             }
             
-            // Calcular última actualización
             const lastUpdate = new Date(repoData.pushed_at);
-            const options = { 
-              day: '2-digit', 
-              month: '2-digit', 
-              year: 'numeric', 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false 
-            };
-            const timeText = lastUpdate.toLocaleString('es-ES', options);
-            
+            const timeText = lastUpdate.toLocaleString('es-ES', { 
+              day: '2-digit', month: '2-digit', year: 'numeric', 
+              hour: '2-digit', minute: '2-digit', hour12: false 
+            });
             document.getElementById('last-update').textContent = timeText;
             dataLoaded = true;
-            
           } catch (error) {
-            console.error('Error cargando datos de GitHub:', error);
-            document.getElementById('total-commits').textContent = '150+';
-            document.getElementById('total-releases').textContent = '5+';
-            document.getElementById('github-stars').textContent = '?';
-            document.getElementById('github-forks').textContent = '?';
-            document.getElementById('last-update').textContent = 'recientemente';
+            console.error('GitHub API Error:', error);
+            document.getElementById('total-commits').textContent = '330+';
+            document.getElementById('total-releases').textContent = '11';
+            document.getElementById('last-update').textContent = 'Recientemente';
           }
         }
         
-        // Cargar datos cuando se llega a la slide 13
-        let lastSlideId = null;
-        const observer = new MutationObserver(() => {
-          const activeSlide = document.querySelector('.slide.active');
-          if (!activeSlide) return;
-          
-          const currentSlideId = activeSlide.dataset.slide;
-          if (currentSlideId === lastSlideId) return; // Evitar bucle infinito
-          
-          lastSlideId = currentSlideId;
+        function triggerAnimation() {
           const speedster = document.getElementById('speedster');
-          
-          if (currentSlideId === '13') {
-            loadGitHubData();
-            if (speedster) {
-              speedster.classList.remove('active');
-              void speedster.offsetWidth; // Trigger reflow
-              speedster.classList.add('active');
+          if (speedster) {
+            speedster.classList.remove('active');
+            void speedster.offsetWidth; 
+            speedster.classList.add('active');
+          }
+        }
+
+        let lastActiveSlide = null;
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+              const target = mutation.target;
+              if (target.classList.contains('slide') && target.classList.contains('active')) {
+                const slideId = target.dataset.slide;
+                if (slideId !== lastActiveSlide) {
+                  lastActiveSlide = slideId;
+                  if (slideId === '13') {
+                    loadGitHubData();
+                    triggerAnimation();
+                  }
+                }
+              }
             }
-          } else {
-            if (speedster) speedster.classList.remove('active');
-          }
+          });
         });
-        
-        observer.observe(document.querySelector('.presentation'), {
-          attributes: true,
-          subtree: true,
-          attributeFilter: ['class']
+
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach(slide => {
+          observer.observe(slide, { attributes: true, attributeFilter: ['class'] });
         });
-        
-        // También intentar cargar si ya estamos en la slide 13
-        setTimeout(() => {
-          const activeSlide = document.querySelector('.slide.active');
-          const speedster = document.getElementById('speedster');
-          if (activeSlide && activeSlide.dataset.slide === '13') {
-            loadGitHubData();
-            if (speedster) speedster.classList.add('active');
-          }
-        }, 100);
+
+        // Initial check
+        const initialActive = document.querySelector('.slide.active');
+        if (initialActive && initialActive.dataset.slide === '13') {
+          loadGitHubData();
+          triggerAnimation();
+        }
       })();
     </script>
 
