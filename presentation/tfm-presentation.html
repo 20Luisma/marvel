@@ -378,19 +378,15 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
             
             // Calcular última actualización
             const lastUpdate = new Date(repoData.pushed_at);
-            const now = new Date();
-            const diffMs = now - lastUpdate;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            
-            let timeText;
-            if (diffHours < 1) {
-              timeText = 'hace minutos';
-            } else if (diffHours < 24) {
-              timeText = `hace ${diffHours}h`;
-            } else {
-              const diffDays = Math.floor(diffHours / 24);
-              timeText = `hace ${diffDays}d`;
-            }
+            const options = { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            };
+            const timeText = lastUpdate.toLocaleString('es-ES', options);
             
             document.getElementById('last-update').textContent = timeText;
             dataLoaded = true;
