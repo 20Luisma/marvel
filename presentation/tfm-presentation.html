@@ -307,23 +307,118 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
       <div class="grid-2">
         <div class="card">
           <ul class="list">
-            <li>📊 <strong>150+ commits</strong> documentados</li>
-            <li>🔄 <strong>Desarrollo continuo</strong> desde diciembre 2025</li>
-            <li>📦 <strong>Múltiples releases</strong> con changelog</li>
+            <li>📊 <strong><span id="total-commits">Cargando...</span> commits</strong> en el repositorio</li>
+            <li>🔄 <strong>Desarrollo continuo</strong> · Última actualización: <strong><span id="last-update">--</span></strong></li>
+            <li>📦 <strong><span id="total-releases">--</span> releases</strong> publicados</li>
             <li>✅ <strong>CI/CD automático</strong> en cada commit</li>
           </ul>
         </div>
         <div class="card">
           <ul class="list">
             <li>🚀 <strong>Deploy automático</strong> a producción</li>
-            <li>📈 <strong>Actividad visible</strong> en GitHub</li>
-            <li>🔍 <strong>Historial completo</strong> de cambios</li>
+            <li>⭐ <strong><span id="github-stars">--</span> stars</strong> en GitHub</li>
+            <li>� <strong><span id="github-forks">--</span> forks</strong> del proyecto</li>
             <li>💡 Demuestra que es un <strong>proyecto real</strong></li>
           </ul>
         </div>
       </div>
+      <div style="margin-top: 1.5rem; text-align: center; color: #666; font-size: 0.9rem;">
+        <span id="repo-link">
+          📂 Ver actividad completa en <a href="https://github.com/20Luisma/marvel" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">github.com/20Luisma/marvel</a>
+        </span>
+      </div>
       <span class="slide-number">14 / 15</span>
     </section>
+
+    <script nonce="<?= $cspNonce ?? '' ?>">
+      // Cargar datos reales desde GitHub API al cargar la slide 14
+      (function() {
+        const GITHUB_API = 'https://api.github.com';
+        const REPO_OWNER = '20Luisma';
+        const REPO_NAME = 'marvel';
+        
+        let dataLoaded = false;
+        
+        async function loadGitHubData() {
+          if (dataLoaded) return;
+          
+          try {
+            // Obtener info del repositorio
+            const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}`);
+            const repoData = await repoResponse.json();
+            
+            // Obtener commits (solo necesitamos el count)
+            const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=1`);
+            const linkHeader = commitsResponse.headers.get('Link');
+            let totalCommits = 1;
+            
+            if (linkHeader) {
+              const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+              if (match) totalCommits = parseInt(match[1]);
+            }
+            
+            // Obtener releases
+            const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
+            const releases = await releasesResponse.json();
+            
+            // Actualizar UI
+            document.getElementById('total-commits').textContent = totalCommits;
+            document.getElementById('total-releases').textContent = releases.length || '0';
+            document.getElementById('github-stars').textContent = repoData.stargazers_count || '0';
+            document.getElementById('github-forks').textContent = repoData.forks_count || '0';
+            
+            // Calcular última actualización
+            const lastUpdate = new Date(repoData.pushed_at);
+            const now = new Date();
+            const diffMs = now - lastUpdate;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            
+            let timeText;
+            if (diffHours < 1) {
+              timeText = 'hace minutos';
+            } else if (diffHours < 24) {
+              timeText = `hace ${diffHours}h`;
+            } else {
+              const diffDays = Math.floor(diffHours / 24);
+              timeText = `hace ${diffDays}d`;
+            }
+            
+            document.getElementById('last-update').textContent = timeText;
+            dataLoaded = true;
+            
+          } catch (error) {
+            console.error('Error cargando datos de GitHub:', error);
+            document.getElementById('total-commits').textContent = '150+';
+            document.getElementById('total-releases').textContent = '5+';
+            document.getElementById('github-stars').textContent = '?';
+            document.getElementById('github-forks').textContent = '?';
+            document.getElementById('last-update').textContent = 'recientemente';
+          }
+        }
+        
+        // Cargar datos cuando se llega a la slide 14
+        const observer = new MutationObserver(() => {
+          const activeSlide = document.querySelector('.slide.active');
+          if (activeSlide && activeSlide.dataset.slide === '14') {
+            loadGitHubData();
+          }
+        });
+        
+        observer.observe(document.querySelector('.presentation'), {
+          attributes: true,
+          subtree: true,
+          attributeFilter: ['class']
+        });
+        
+        // También intentar cargar si ya estamos en la slide 14
+        setTimeout(() => {
+          const activeSlide = document.querySelector('.slide.active');
+          if (activeSlide && activeSlide.dataset.slide === '14') {
+            loadGitHubData();
+          }
+        }, 100);
+      })();
+    </script>
 
     <!-- SLIDE 15: Cierre -->
     <section class="slide cover" data-slide="15">
