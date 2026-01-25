@@ -62,6 +62,53 @@
       display: block;
       margin-top: 2px;
     }
+    .speedster {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      width: 50px;
+      height: 50px;
+      transform: translateY(-50%);
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .speedster img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.8)) brightness(1.2);
+      /* Como la imagen tiene fondo blanco, intentamos quitarlo con mix-blend-mode */
+      mix-blend-mode: screen; 
+    }
+    .speedster.active {
+      opacity: 1;
+      animation: runAcross 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+    }
+    @keyframes runAcross {
+      0% { left: 10%; transform: translateY(-50%) scaleX(1); }
+      30% { left: 50%; transform: translateY(-50%) scaleX(1); }
+      60% { left: 90%; transform: translateY(-50%) scaleX(1); }
+      100% { left: 90%; transform: translateY(-50%) scaleX(1); }
+    }
+    .speed-trail {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #667eea);
+      z-index: 5;
+      width: 0;
+      transform: translateY(-50%);
+    }
+    .speedster.active + .speed-trail {
+      animation: trailFollow 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+    }
+    @keyframes trailFollow {
+      0% { width: 0; left: 10%; }
+      100% { width: 80%; left: 10%; }
+    }
   </style>
 </head>
 <body>
@@ -361,6 +408,11 @@
 
       <!-- Gráfico de Línea de Tiempo -->
       <div class="timeline">
+        <div class="speedster" id="speedster">
+          <img src="assets/images/speedster.png" alt="Speedster">
+        </div>
+        <div class="speed-trail"></div>
+        
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <span class="timeline-date">11 Nov 2025</span>
@@ -501,8 +553,17 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         // Cargar datos cuando se llega a la slide 13
         const observer = new MutationObserver(() => {
           const activeSlide = document.querySelector('.slide.active');
+          const speedster = document.getElementById('speedster');
+          
           if (activeSlide && activeSlide.dataset.slide === '13') {
             loadGitHubData();
+            if (speedster) {
+              speedster.classList.remove('active');
+              void speedster.offsetWidth; // Trigger reflow
+              speedster.classList.add('active');
+            }
+          } else {
+            if (speedster) speedster.classList.remove('active');
           }
         });
         
@@ -515,8 +576,10 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         // También intentar cargar si ya estamos en la slide 13
         setTimeout(() => {
           const activeSlide = document.querySelector('.slide.active');
+          const speedster = document.getElementById('speedster');
           if (activeSlide && activeSlide.dataset.slide === '13') {
             loadGitHubData();
+            if (speedster) speedster.classList.add('active');
           }
         }, 100);
       })();
