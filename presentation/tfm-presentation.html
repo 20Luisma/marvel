@@ -290,7 +290,7 @@
           <ul class="list">
             <li>📊 <strong><span id="total-commits">Cargando...</span> commits</strong> en el repositorio</li>
             <li>🔄 <strong>Desarrollo continuo</strong> · Última actualización: <strong><span id="last-update">--</span></strong></li>
-            <li>📦 <strong><span id="total-releases">--</span> releases</strong> publicados</li>
+            <li>📦 <strong><span id="total-releases">--</span> versiones</strong> publicadas</li>
             <li>✅ <strong>CI/CD automático</strong> en cada commit</li>
           </ul>
         </div>
@@ -352,13 +352,27 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
               if (match) totalCommits = parseInt(match[1]);
             }
             
-            // Obtener releases
-            const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
-            const releases = await releasesResponse.json();
+            // Intentar obtener releases primero
+            let totalVersions = 0;
+            try {
+              const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
+              const releases = await releasesResponse.json();
+              totalVersions = releases.length || 0;
+              
+              // Si no hay releases, intentar obtener tags
+              if (totalVersions === 0) {
+                const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags`);
+                const tags = await tagsResponse.json();
+                totalVersions = tags.length || 0;
+              }
+            } catch (e) {
+              console.warn('Error obteniendo versiones:', e);
+              totalVersions = 0;
+            }
             
             // Actualizar UI
             document.getElementById('total-commits').textContent = totalCommits;
-            document.getElementById('total-releases').textContent = releases.length || '0';
+            document.getElementById('total-releases').textContent = totalVersions > 0 ? totalVersions : '0';
             document.getElementById('github-stars').textContent = repoData.stargazers_count || '0';
             document.getElementById('github-forks').textContent = repoData.forks_count || '0';
             
