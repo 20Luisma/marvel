@@ -8,6 +8,61 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css?v=1.1">
+  <style>
+    .timeline {
+      margin-top: 40px;
+      position: relative;
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, #ed1d24 0%, #667eea 100%);
+      z-index: 1;
+      opacity: 0.3;
+    }
+    .timeline-item {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .timeline-dot {
+      width: 14px;
+      height: 14px;
+      background: #ed1d24;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      box-shadow: 0 0 15px rgba(237, 29, 36, 0.8);
+      border: 2px solid #fff;
+    }
+    .timeline-item:last-child .timeline-dot {
+      background: #667eea;
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+    }
+    .timeline-date {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #fff;
+      display: block;
+    }
+    .timeline-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      display: block;
+      margin-top: 2px;
+    }
+  </style>
 </head>
 <body>
   <div class="presentation" id="presentation">
@@ -303,6 +358,26 @@
           </ul>
         </div>
       </div>
+
+      <!-- Gráfico de Línea de Tiempo -->
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <span class="timeline-date">11 Nov 2025</span>
+          <span class="timeline-label">Primer Commit (Origen)</span>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <span class="timeline-date">22 Nov 2025</span>
+          <span class="timeline-label">Versión v1.0.0</span>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <span class="timeline-date" id="current-date-timeline">25 Ene 2026</span>
+          <span class="timeline-label">Estado Actual (v1.0.11)</span>
+        </div>
+      </div>
+
       <span class="slide-number">13 / 15</span>
     </section>
 
@@ -375,6 +450,28 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
             document.getElementById('total-releases').textContent = totalVersions > 0 ? totalVersions : '0';
             document.getElementById('github-stars').textContent = repoData.stargazers_count || '0';
             document.getElementById('github-forks').textContent = repoData.forks_count || '0';
+            
+            // Actualizar Timeline
+            const now = new Date();
+            const timelineDateEl = document.getElementById('current-date-timeline');
+            if (timelineDateEl) {
+              const day = String(now.getDate()).padStart(2, '0');
+              const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+              timelineDateEl.textContent = `${day} ${months[now.getMonth()]} ${now.getFullYear()}`;
+              
+              // Intentar poner el tag más reciente en el label
+              const latestTag = document.querySelector('.timeline-item:last-child .timeline-label');
+              if (latestTag && totalVersions > 0) {
+                // Si tenemos tags, el primero suele ser el más reciente
+                try {
+                  const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags`);
+                  const tags = await tagsResponse.json();
+                  if (tags && tags.length > 0) {
+                    latestTag.textContent = `Estado Actual (${tags[0].name})`;
+                  }
+                } catch (e) {}
+              }
+            }
             
             // Calcular última actualización
             const lastUpdate = new Date(repoData.pushed_at);
