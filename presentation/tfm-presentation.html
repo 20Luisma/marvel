@@ -452,7 +452,8 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         let dataLoaded = false;
         
         async function loadGitHubData() {
-          // Usar un timestamp para evitar cacheo del navegador y obtener datos frescos
+          if (dataLoaded) return; // Evitar múltiples peticiones y bloqueos por rate limit
+          
           const cacheBuster = `?t=${new Date().getTime()}`;
           
           try {
@@ -516,8 +517,11 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
             dataLoaded = true;
           } catch (error) {
             console.error('GitHub API Error:', error);
-            document.getElementById('total-commits').textContent = '330+';
+            // Valores de respaldo si falla la API (ej. por límite de peticiones)
+            document.getElementById('total-commits').textContent = '335+';
             document.getElementById('total-releases').textContent = '11';
+            document.getElementById('github-stars').textContent = '1';
+            document.getElementById('github-forks').textContent = '0';
             document.getElementById('last-update').textContent = 'Recientemente';
           }
         }
