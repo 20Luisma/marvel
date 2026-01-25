@@ -551,11 +551,18 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         }
         
         // Cargar datos cuando se llega a la slide 13
+        let lastSlideId = null;
         const observer = new MutationObserver(() => {
           const activeSlide = document.querySelector('.slide.active');
+          if (!activeSlide) return;
+          
+          const currentSlideId = activeSlide.dataset.slide;
+          if (currentSlideId === lastSlideId) return; // Evitar bucle infinito
+          
+          lastSlideId = currentSlideId;
           const speedster = document.getElementById('speedster');
           
-          if (activeSlide && activeSlide.dataset.slide === '13') {
+          if (currentSlideId === '13') {
             loadGitHubData();
             if (speedster) {
               speedster.classList.remove('active');
