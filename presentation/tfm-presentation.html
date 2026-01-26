@@ -110,64 +110,79 @@
 
     /* Panel de Monitorización de APIs */
     .api-monitor {
-      margin-top: 30px;
-      padding: 15px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 12px;
+      margin-top: 20px;
+      padding: 25px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
     .api-monitor-title {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 15px;
+      color: var(--accent);
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-weight: 700;
     }
     .api-monitor-title::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.1);
+      background: linear-gradient(90deg, rgba(96, 165, 250, 0.3), transparent);
     }
     .api-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
     .api-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       background: rgba(255,255,255,0.03);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+    .api-item:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
     }
     .status-led {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: #333;
       transition: all 0.5s ease;
+      flex-shrink: 0;
     }
     .status-led.online {
       background: #00ff88;
-      box-shadow: 0 0 8px #00ff88;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
     }
     .status-led.checking {
       background: #ffaa00;
       animation: pulseStatus 0.5s infinite alternate;
     }
     @keyframes pulseStatus {
-      from { opacity: 0.3; }
-      to { opacity: 1; }
+      from { opacity: 0.3; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1.1); }
     }
     .api-name {
-      color: rgba(255,255,255,0.8);
-      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+    .api-endpoint {
+      margin-left: auto;
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
     }
   </style>
 </head>
@@ -181,7 +196,7 @@
       <div class="title">Clean Marvel Album</div>
       <div class="byline">MARTÍN PALLANTE CARDEO</div>
       <div class="byline">POWERED BY ALFRED (AI ASSISTANT)</div>
-      <span class="slide-number">01 / 16</span>
+      <span class="slide-number">01 / 17</span>
     </section>
 
     <!-- SLIDE 2: El proyecto en números -->
@@ -214,7 +229,7 @@
           <div class="metric-label">Deploy automático</div>
         </div>
       </div>
-      <span class="slide-number">02 / 16</span>
+      <span class="slide-number">02 / 17</span>
     </section>
 
     <!-- SLIDE 3: ¿Qué es Clean Marvel Album? -->
@@ -233,7 +248,7 @@
       <a href="https://iamasterbigschool.contenido.creawebes.com" target="_blank" class="link-box">
         <span class="url">iamasterbigschool.contenido.creawebes.com →</span>
       </a>
-      <span class="slide-number">03 / 16</span>
+      <span class="slide-number">03 / 17</span>
     </section>
 
     <!-- SLIDE 4: Objetivo -->
@@ -258,7 +273,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">04 / 16</span>
+      <span class="slide-number">04 / 17</span>
     </section>
 
     <!-- SLIDE 5: Stack tecnológico -->
@@ -283,7 +298,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">05 / 16</span>
+      <span class="slide-number">05 / 17</span>
     </section>
 
     <!-- SLIDE 6: Arquitectura -->
@@ -313,7 +328,7 @@
 │     MySQL · JSON · OpenAI · RAG     │
 └─────────────────────────────────────┘</div>
       </div>
-      <span class="slide-number">06 / 16</span>
+      <span class="slide-number">06 / 17</span>
     </section>
 
     <!-- SLIDE 7: Microservicios e IA -->
@@ -329,7 +344,7 @@
           <li>�🔄 <strong>Dual mode</strong> · Búsqueda léxica o semántica según el entorno.</li>
         </ul>
       </div>
-      <span class="slide-number">07 / 16</span>
+      <span class="slide-number">07 / 17</span>
     </section>
 
     <!-- SLIDE 8: APIs Externas Utilizadas -->
@@ -354,7 +369,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">08 / 16</span>
+      <span class="slide-number">08 / 17</span>
     </section>
 
     <!-- SLIDE 9: Automatización con n8n -->
@@ -370,7 +385,7 @@
           <li><strong>Desacoplamiento</strong> · El core de la aplicación no conoce YouTube</li>
         </ul>
       </div>
-      <span class="slide-number">09 / 16</span>
+      <span class="slide-number">09 / 17</span>
     </section>
 
     <!-- SLIDE 10: Calidad y CI/CD -->
@@ -395,7 +410,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">10 / 16</span>
+      <span class="slide-number">10 / 17</span>
     </section>
 
     <!-- SLIDE 11: Funcionalidades -->
@@ -411,7 +426,7 @@
           <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
         </ul>
       </div>
-      <span class="slide-number">11 / 16</span>
+      <span class="slide-number">11 / 17</span>
     </section>
 
     <!-- SLIDE 12: Documentación -->
@@ -436,7 +451,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">12 / 16</span>
+      <span class="slide-number">12 / 17</span>
     </section>
 
     <!-- SLIDE 13: Proyecto Vivo -->
@@ -484,7 +499,7 @@
         </div>
       </div>
       
-      <span class="slide-number">13 / 16</span>
+      <span class="slide-number">13 / 17</span>
     </section>
 
     <!-- SLIDE 14: Ecosistema e Infraestructura -->
@@ -497,49 +512,88 @@
       </div>
 
       <!-- Monitor de Ecosistema de APIs -->
-      <div class="api-monitor" style="margin-top: 40px; padding: 25px;">
+      <div class="api-monitor">
         <div class="api-monitor-title">System Health Monitor · Real-time API Connectivity</div>
-        <div class="api-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
-          <div class="api-item" style="padding: 15px;">
+        <div class="api-grid">
+          <div class="api-item">
             <div class="status-led" id="status-github"></div>
-            <span class="api-name" style="font-size: 0.9rem;">GitHub API (Repository Stats)</span>
+            <span class="api-name">GitHub API</span>
+            <span class="api-endpoint">api.github.com</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-marvel"></div>
-            <span class="api-name" style="font-size: 0.9rem;">Marvel API (Character Data)</span>
+            <span class="api-name">Marvel API</span>
+            <span class="api-endpoint">gateway.marvel.com</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-openai"></div>
-            <span class="api-name" style="font-size: 0.9rem;">OpenAI API (Generative AI)</span>
+            <span class="api-name">OpenAI API</span>
+            <span class="api-endpoint">api.openai.com</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-rag"></div>
-            <span class="api-name" style="font-size: 0.9rem;">RAG Service (Knowledge Base)</span>
+            <span class="api-name">RAG Service</span>
+            <span class="api-endpoint">python.google_cloud</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-n8n"></div>
-            <span class="api-name" style="font-size: 0.9rem;">n8n Automate (Workflows)</span>
+            <span class="api-name">n8n Automate</span>
+            <span class="api-endpoint">workflow.n8n.io</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-sentry"></div>
-            <span class="api-name" style="font-size: 0.9rem;">Sentry Logs (Observability)</span>
+            <span class="api-name">Sentry Logs</span>
+            <span class="api-endpoint">sentry.io/api</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-sonar"></div>
-            <span class="api-name" style="font-size: 0.9rem;">SonarCloud (Code Quality)</span>
+            <span class="api-name">SonarCloud</span>
+            <span class="api-endpoint">sonarcloud.io</span>
           </div>
-          <div class="api-item" style="padding: 15px;">
+          <div class="api-item">
             <div class="status-led" id="status-deploy"></div>
-            <span class="api-name" style="font-size: 0.9rem;">CI/CD Pipeline (Automation)</span>
+            <span class="api-name">CI/CD Pipeline</span>
+            <span class="api-endpoint">gh-actions/deploy</span>
           </div>
         </div>
       </div>
 
-      <span class="slide-number">14 / 16</span>
+      <span class="slide-number">14 / 17</span>
     </section>
 
-    <!-- SLIDE 15: Reflexión -->
+    <!-- SLIDE 15: Extra · App Marvel -->
     <section class="slide" data-slide="15">
+      <div class="slide-title">Extra · App Marvel (cliente)</div>
+      <div class="divider"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <ul class="list">
+            <li>📱 <strong>App independiente</strong> construida como proyecto extra</li>
+            <li>🔌 <strong>Se alimenta</strong> de la API del álbum Marvel</li>
+            <li>⚡ <strong>Consumo real</strong> de endpoints y datos en producción</li>
+            <li>🧩 <strong>Demuestra</strong> reutilización y escalabilidad del backend</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="list">
+            <li>🧭 Navegación por héroes y colecciones</li>
+            <li>🧪 Ideal para <strong>validar UX</strong> y rendimiento de la API</li>
+            <li>📦 Repo público con evolución independiente</li>
+            <li>✅ Refuerza la idea de <strong>ecosistema real</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <a href="https://github.com/20Luisma/app-marvel" target="_blank" class="link-box" style="margin-top: 28px;">
+        <span class="url">github.com/20Luisma/app-marvel →</span>
+      </a>
+
+      <span class="slide-number">15 / 17</span>
+    </section>
+
+    <!-- SLIDE 16: Reflexión -->
+    <section class="slide" data-slide="16">
       <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card scrollable">
@@ -553,7 +607,7 @@ Comenzó como un espacio práctico donde ir trasladando lo aprendido al código,
 Clean Marvel Album no pretende ser un producto comercial ni una solución disruptiva. Es, ante todo, una <strong>base sólida y reutilizable</strong>, pensada como referencia para desarrollar futuros proyectos con una mentalidad más madura y profesional.
 
 Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
-      <span class="slide-number">15 / 16</span>
+      <span class="slide-number">16 / 17</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
@@ -655,11 +709,17 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
             'status-sonar', 'status-deploy'
           ];
           
+          // Reset status
+          apis.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.className = 'status-led';
+          });
+
           for (const id of apis) {
             const el = document.getElementById(id);
             if (el) {
               el.classList.add('checking');
-              await new Promise(r => setTimeout(r, 400 + Math.random() * 600));
+              await new Promise(r => setTimeout(r, 100 + Math.random() * 400));
               el.classList.remove('checking');
               el.classList.add('online');
             }
@@ -702,15 +762,15 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
       })();
     </script>
 
-    <!-- SLIDE 16: Cierre -->
-    <section class="slide cover" data-slide="16">
+    <!-- SLIDE 17: Cierre -->
+    <section class="slide cover" data-slide="17">
       <div class="title">Gracias</div>
       <div class="divider"></div>
       <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
       <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
         <span class="url">github.com/20Luisma/marvel →</span>
       </a>
-      <span class="slide-number">16 / 16</span>
+      <span class="slide-number">17 / 17</span>
     </section>
   </div>
 
