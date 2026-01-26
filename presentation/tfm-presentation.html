@@ -178,11 +178,74 @@
       color: rgba(255,255,255,0.9);
       font-weight: 500;
     }
-    .api-endpoint {
-      margin-left: auto;
-      font-family: monospace;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.3);
+    /* Showcase de App Móvil */
+    .mobile-showcase {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      height: 100%;
+    }
+    .mobile-info { flex: 1; }
+    .mobile-screens {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+      perspective: 1000px;
+      padding: 20px;
+      position: relative;
+    }
+    .phone-mockup {
+      width: 215px;
+      height: 440px;
+      background: #000;
+      border-radius: 40px;
+      border: 10px solid #1a1a1a;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 2px rgba(255,255,255,0.05);
+      overflow: hidden;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .phone-mockup img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+    }
+    .phone-mockup::before { /* Dynamic Island */
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 55px;
+      height: 16px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+      box-shadow: 0 0 2px rgba(255,255,255,0.1);
+    }
+    .screen-intro { 
+      transform: rotateY(-15deg) translateZ(-50px) translateX(-60px) translateY(-20px);
+      z-index: 1;
+      opacity: 0.7;
+    }
+    .screen-1 { 
+      transform: rotateY(-15deg) translateZ(0);
+      z-index: 2;
+    }
+    .screen-2 { 
+      transform: rotateY(-15deg) translateZ(50px) translateX(60px) translateY(20px);
+      z-index: 3;
+      margin-left: -120px;
+    }
+    .mobile-screens:hover .phone-mockup {
+      transform: rotateY(0) translateZ(20px) translateX(0) translateY(0);
+      margin-left: 10px;
+      opacity: 1;
+    }
+    @media (max-width: 1200px) {
+      .mobile-showcase { flex-direction: column; overflow: visible; }
+      .phone-mockup { width: 180px; height: 370px; }
     }
   </style>
 </head>
@@ -566,28 +629,36 @@
       <div class="slide-title">Extra · App Marvel (cliente)</div>
       <div class="divider"></div>
 
-      <div class="grid-2">
-        <div class="card">
-          <ul class="list">
-            <li>📱 <strong>App independiente</strong> construida como proyecto extra</li>
-            <li>🔌 <strong>Se alimenta</strong> de la API del álbum Marvel</li>
-            <li>⚡ <strong>Consumo real</strong> de endpoints y datos en producción</li>
-            <li>🧩 <strong>Demuestra</strong> reutilización y escalabilidad del backend</li>
-          </ul>
+      <div class="mobile-showcase">
+        <div class="mobile-info">
+          <div class="card" style="margin-bottom: 20px;">
+            <ul class="list">
+              <li>📱 <strong>App independiente</strong> construida con Flutter / Dart</li>
+              <li>🔌 <strong>Universal</strong> · Consume la misma API real del backend PHP</li>
+              <li>⚡ <strong>Validación</strong> de arquitectura desacoplada y escalabilidad</li>
+              <li>🧩 Demuestra un <strong>ecosistema digital completo</strong></li>
+            </ul>
+          </div>
+          <a href="https://github.com/20Luisma/app-marvel" target="_blank" class="link-box">
+            <span class="url">github.com/20Luisma/app-marvel →</span>
+          </a>
         </div>
-        <div class="card">
-          <ul class="list">
-            <li>🧭 Navegación por héroes y colecciones</li>
-            <li>🧪 Ideal para <strong>validar UX</strong> y rendimiento de la API</li>
-            <li>📦 Repo público con evolución independiente</li>
-            <li>✅ Refuerza la idea de <strong>ecosistema real</strong></li>
-          </ul>
+
+        <div class="mobile-screens">
+          <!-- Mockup 0: Intro (La más antigua) -->
+          <div class="phone-mockup screen-intro">
+            <img src="assets/app/screen-intro.png" alt="App Intro" onerror="this.src='https://via.placeholder.com/215x440/0f172a/60a5fa?text=Intro'">
+          </div>
+          <!-- Mockup 1: Listado -->
+          <div class="phone-mockup screen-1">
+            <img src="assets/app/screen-list.png" alt="App List View" onerror="this.src='https://via.placeholder.com/215x440/0f172a/60a5fa?text=Vista+Lista'">
+          </div>
+          <!-- Mockup 2: Detalle (La más reciente) -->
+          <div class="phone-mockup screen-2">
+            <img src="assets/app/screen-detail.png" alt="App Detail View" onerror="this.src='https://via.placeholder.com/215x440/0f172a/38bdf8?text=Vista+Detalle'">
+          </div>
         </div>
       </div>
-
-      <a href="https://github.com/20Luisma/app-marvel" target="_blank" class="link-box" style="margin-top: 28px;">
-        <span class="url">github.com/20Luisma/app-marvel →</span>
-      </a>
 
       <span class="slide-number">15 / 17</span>
     </section>
