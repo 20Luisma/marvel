@@ -224,18 +224,14 @@
       z-index: 10;
       box-shadow: 0 0 2px rgba(255,255,255,0.1);
     }
-    .screen-intro { z-index: 1; }
-    .screen-1 { z-index: 2; }
-    .screen-2 { z-index: 3; }
-    
     .mobile-screens .phone-mockup {
-      margin: 0 -15px; /* Ligero solapamiento elegante */
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      margin: 0 auto;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+      transform: scale(1.1);
     }
     
     .mobile-screens:hover .phone-mockup {
-      transform: translateY(-10px);
-      margin: 0 10px;
+      transform: scale(1.15) translateY(-5px);
     }
     @media (max-width: 1200px) {
       .mobile-showcase { flex-direction: column; overflow: visible; }
@@ -639,14 +635,8 @@
         </div>
 
         <div class="mobile-screens" id="app-carousel">
-          <div class="phone-mockup screen-intro">
-            <img src="assets/app/app-1.png" id="img-slot-1" alt="App Screen 1">
-          </div>
-          <div class="phone-mockup screen-1">
-            <img src="assets/app/app-2.png" id="img-slot-2" alt="App Screen 2">
-          </div>
-          <div class="phone-mockup screen-2">
-            <img src="assets/app/app-3.png" id="img-slot-3" alt="App Screen 3">
+          <div class="phone-mockup">
+            <img src="assets/app/app-1.png" id="img-slot-single" alt="App Screen">
           </div>
         </div>
       </div>
@@ -786,13 +776,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           
           carouselInterval = setInterval(() => {
             currentBase = (currentBase % totalImages) + 1;
-            const s1 = currentBase;
-            const s2 = (currentBase % totalImages) + 1;
-            const s3 = ((currentBase + 1) % totalImages) + 1;
-            
-            document.getElementById('img-slot-1').src = `assets/app/app-${s1}.png`;
-            document.getElementById('img-slot-2').src = `assets/app/app-${s2}.png`;
-            document.getElementById('img-slot-3').src = `assets/app/app-${s3}.png`;
+            document.getElementById('img-slot-single').src = `assets/app/app-${currentBase}.png`;
           }, 3000);
         }
 
