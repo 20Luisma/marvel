@@ -69,6 +69,7 @@ jobs:
             playwright-report/**
             openai-service/**
             rag-service/**
+            presentation/assets/app/**
 
   deploy_openai:
     name: Deploy openai-service
