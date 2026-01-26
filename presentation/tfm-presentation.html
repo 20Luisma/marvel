@@ -224,24 +224,18 @@
       z-index: 10;
       box-shadow: 0 0 2px rgba(255,255,255,0.1);
     }
-    .screen-intro { 
-      transform: rotateY(-15deg) translateZ(-50px) translateX(-60px) translateY(-20px);
-      z-index: 1;
-      opacity: 0.7;
+    .screen-intro { z-index: 1; }
+    .screen-1 { z-index: 2; }
+    .screen-2 { z-index: 3; }
+    
+    .mobile-screens .phone-mockup {
+      margin: 0 -15px; /* Ligero solapamiento elegante */
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
     }
-    .screen-1 { 
-      transform: rotateY(-15deg) translateZ(0);
-      z-index: 2;
-    }
-    .screen-2 { 
-      transform: rotateY(-15deg) translateZ(50px) translateX(60px) translateY(20px);
-      z-index: 3;
-      margin-left: -120px;
-    }
+    
     .mobile-screens:hover .phone-mockup {
-      transform: rotateY(0) translateZ(20px) translateX(0) translateY(0);
-      margin-left: 10px;
-      opacity: 1;
+      transform: translateY(-10px);
+      margin: 0 10px;
     }
     @media (max-width: 1200px) {
       .mobile-showcase { flex-direction: column; overflow: visible; }
@@ -644,18 +638,15 @@
           </a>
         </div>
 
-        <div class="mobile-screens">
-          <!-- Mockup 0: Intro (La más antigua) -->
+        <div class="mobile-screens" id="app-carousel">
           <div class="phone-mockup screen-intro">
-            <img src="assets/app/screen-intro.png" alt="App Intro" onerror="this.src='https://via.placeholder.com/215x440/0f172a/60a5fa?text=Intro'">
+            <img src="assets/app/app-1.png" id="img-slot-1" alt="App Screen 1">
           </div>
-          <!-- Mockup 1: Listado -->
           <div class="phone-mockup screen-1">
-            <img src="assets/app/screen-list.png" alt="App List View" onerror="this.src='https://via.placeholder.com/215x440/0f172a/60a5fa?text=Vista+Lista'">
+            <img src="assets/app/app-2.png" id="img-slot-2" alt="App Screen 2">
           </div>
-          <!-- Mockup 2: Detalle (La más reciente) -->
           <div class="phone-mockup screen-2">
-            <img src="assets/app/screen-detail.png" alt="App Detail View" onerror="this.src='https://via.placeholder.com/215x440/0f172a/38bdf8?text=Vista+Detalle'">
+            <img src="assets/app/app-3.png" id="img-slot-3" alt="App Screen 3">
           </div>
         </div>
       </div>
@@ -774,18 +765,8 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         }
 
         async function runSystemDiagnostic() {
-          const apis = [
-            'status-github', 'status-marvel', 'status-openai', 
-            'status-rag', 'status-n8n', 'status-sentry', 
-            'status-sonar', 'status-deploy'
-          ];
-          
-          // Reset status
-          apis.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.className = 'status-led';
-          });
-
+          const apis = ['status-github', 'status-marvel', 'status-openai', 'status-rag', 'status-n8n', 'status-sentry', 'status-sonar', 'status-deploy'];
+          apis.forEach(id => { const el = document.getElementById(id); if (el) el.className = 'status-led'; });
           for (const id of apis) {
             const el = document.getElementById(id);
             if (el) {
@@ -797,6 +778,24 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           }
         }
 
+        let carouselInterval = null;
+        function startAppCarousel() {
+          if (carouselInterval) clearInterval(carouselInterval);
+          let currentBase = 1;
+          const totalImages = 10;
+          
+          carouselInterval = setInterval(() => {
+            currentBase = (currentBase % totalImages) + 1;
+            const s1 = currentBase;
+            const s2 = (currentBase % totalImages) + 1;
+            const s3 = ((currentBase + 1) % totalImages) + 1;
+            
+            document.getElementById('img-slot-1').src = `assets/app/app-${s1}.png`;
+            document.getElementById('img-slot-2').src = `assets/app/app-${s2}.png`;
+            document.getElementById('img-slot-3').src = `assets/app/app-${s3}.png`;
+          }, 3000);
+        }
+
         let lastActiveSlide = null;
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
@@ -806,13 +805,9 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
                 const slideId = target.dataset.slide;
                 if (slideId !== lastActiveSlide) {
                   lastActiveSlide = slideId;
-                  if (slideId === '13') {
-                    loadGitHubData();
-                    triggerAnimation();
-                  }
-                  if (slideId === '14') {
-                    runSystemDiagnostic();
-                  }
+                  if (slideId === '13') { loadGitHubData(); triggerAnimation(); }
+                  if (slideId === '14') { runSystemDiagnostic(); }
+                  if (slideId === '15') { startAppCarousel(); } else { if (carouselInterval) clearInterval(carouselInterval); }
                 }
               }
             }
