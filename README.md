@@ -178,6 +178,6 @@ Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo, si
 ---
 
 ## ⚖️ Aviso Legal y Atribución
-- **Datos y Contenido:** Este proyecto utiliza la API oficial de Marvel para desarrolladores. Los datos, nombres e imágenes de los héroes son propiedad de **© 2026 MARVEL**.
+- **Datos y Contenido:** Todos los datos, nombres e imágenes de los héroes utilizados en este proyecto son propiedad de **© 2026 MARVEL**. Este es un proyecto fan-made con activos descargados.
 - **Propósito:** Este es un proyecto con fines **exclusivamente académicos y educativos**, desarrollado como Trabajo Final de Máster. No tiene ánimo de lucro ni objetivos comerciales.
-- **Atribución:** Data provided by Marvel. © 2026 MARVEL
+- **Atribución:** Assets property of © 2026 MARVEL
