@@ -175,4 +175,9 @@ Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo, si
 - `docs/README_TECHNICAL.md` — índice técnico y guías operativas.
 - `docs/evidence/README.md` — checklist de evidencias verificables y ubicacion de capturas.
 - `docs/guides/demo-script.md` — guion de demo reproducible (10-15 min).
-- `docs/TRACEABILITY.md` — trazabilidad requisito -> caso de uso -> implementacion -> tests.
+---
+
+## ⚖️ Aviso Legal y Atribución
+- **Datos y Contenido:** Este proyecto utiliza la API oficial de Marvel para desarrolladores. Los datos, nombres e imágenes de los héroes son propiedad de **© 2026 MARVEL**.
+- **Propósito:** Este es un proyecto con fines **exclusivamente académicos y educativos**, desarrollado como Trabajo Final de Máster. No tiene ánimo de lucro ni objetivos comerciales.
+- **Atribución:** Data provided by Marvel. © 2026 MARVEL

@@ -9,7 +9,11 @@ $scripts = array_merge([$globalHeatmapScript], $scripts);
 
   <!-- FOOTER -->
   <footer class="site-footer" role="contentinfo">
-    <small>© creawebes 2025-2026 · Clean Marvel Album</small>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+      <small>© creawebes 2025-2026 · Clean Marvel Album</small>
+      <small style="opacity: 0.7; font-size: 0.75rem;">Data provided by Marvel. © 2026 MARVEL</small>
+      <small style="opacity: 0.7; font-size: 0.75rem;">Proyecto con fines puramente académicos y educativos.</small>
+    </div>
   </footer>
 
 <?php
