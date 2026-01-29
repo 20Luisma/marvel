@@ -7,14 +7,30 @@ test.describe('Flujo Álbumes', () => {
     await page.goto('/albums', { waitUntil: 'domcontentloaded' });
 
     await page.fill('#album-name', uniqueName);
-    await page.click('button:has-text("Crear Álbum")');
+    await Promise.all([
+      page.waitForResponse((response) => {
+        return response.url().endsWith('/albums')
+          && response.request().method() === 'POST'
+          && response.status() === 201;
+      }),
+      page.click('button:has-text("Crear Álbum")'),
+    ]);
+
+    await expect(page.locator('#album-message')).toContainText('Álbum', { timeout: 10000 });
 
     const createdCard = page.locator('.album-card-title', { hasText: uniqueName });
-    await expect(createdCard).toBeVisible();
+    await expect(createdCard).toBeVisible({ timeout: 15000 });
 
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await Promise.all([
+      page.waitForResponse((response) => {
+        return response.url().endsWith('/albums')
+          && response.request().method() === 'GET'
+          && response.status() === 200;
+      }),
+      page.reload({ waitUntil: 'domcontentloaded' }),
+    ]);
 
     const persistedCard = page.locator('.album-card-title', { hasText: uniqueName });
-    await expect(persistedCard).toBeVisible();
+    await expect(persistedCard).toBeVisible({ timeout: 15000 });
   });
 });
