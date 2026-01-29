@@ -17,6 +17,11 @@ La calidad del proyecto se mantiene mediante PHPUnit, PHPStan y Composer scripts
   - `__github_client_factory` + banderas `GITHUB_REPO_BROWSER_TEST` y `PANEL_GITHUB_TEST` permiten probar `/api/github-repo-browser.php` y `views/pages/panel-github.php` sin llamar a GitHub.
 - Warnings esperados en consola: un mensaje de fallback PDO a JSON y un log de CSRF en tests de seguridad; no son fallos de producción.
 
+## Tests de alto impacto académico
+
+- **Integración aplicación + persistencia real**: `tests/Application/CreateHeroWithPersistenceAndNotificationTest.php` valida un caso de uso completo con repositorios DB reales y publicación de eventos.
+- **E2E con flujo real**: `tests/e2e/albums-flow.spec.js` cubre crear → persistir → recargar → renderizar desde la UI.
+
 ## Workflow recomendado
 
 1. Instala dependencias (`composer install`).  
