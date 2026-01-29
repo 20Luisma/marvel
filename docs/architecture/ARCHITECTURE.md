@@ -41,6 +41,22 @@ Dependencias siempre fluyen hacia el dominio. `App\Config\ServiceUrlProvider` re
 - Acciones rápidas en la cabecera permiten saltar entre paneles.
 
 ## Comunicación entre capas y servicios
+```mermaid
+sequenceDiagram
+  participant UI
+  participant Router
+  participant UseCase
+  participant Repo
+  participant EventBus
+  participant Handler
+  participant SideEffect
+  UI->>Router: HTTP Request
+  Router->>UseCase: execute()
+  UseCase->>Repo: find/save
+  UseCase->>EventBus: publish(event)
+  EventBus->>Handler: __invoke(event)
+  Handler->>SideEffect: notificación/registro
+```
 1. Petición HTTP entra por `public/index.php` y, para rutas distintas de `/`, delega en `public/home.php` donde `App\Shared\Http\Router` resuelve el controlador.
 2. El controlador delega en el caso de uso de la capa de Aplicación.
 3. El caso de uso manipula entidades y dispara eventos de dominio.
