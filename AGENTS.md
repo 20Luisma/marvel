@@ -154,6 +154,7 @@
 - **PHPStan:** `vendor/bin/phpstan analyse --memory-limit=1G`
 - **Security:** `bash bin/security-check.sh`
 - **Composer audit:** `composer audit --no-interaction`
+- **Code Review IA:** CodeRabbit (auditoría automática en PRs)
 - **Entorno de tests:** `tests/bootstrap.php` fija `APP_ENV=test` y `DB_DSN=sqlite::memory:` (sin depender de `.env`) y redirige avisos PHP a `sys_get_temp_dir()/phpunit-clean-marvel.log`. Los endpoints/vistas de GitHub aceptan fakes con `__github_client_factory` + banderas `GITHUB_REPO_BROWSER_TEST` / `PANEL_GITHUB_TEST` para correr PHPUnit sin red.
 
 ---
