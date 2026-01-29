@@ -449,6 +449,7 @@
           <ul class="list">
             <li>🧪 <strong>PHPUnit</strong> · 90+ tests, 85% coverage</li>
             <li>📊 <strong>SonarCloud</strong> · Análisis de calidad</li>
+            <li>🤖 <strong>CodeRabbit</strong> · Revisión por IA</li>
             <li>🎭 <strong>Playwright</strong> · Tests E2E</li>
             <li>♿ <strong>Pa11y</strong> · Auditoría de accesibilidad</li>
           </ul>
@@ -601,6 +602,11 @@
             <div class="status-led" id="status-sonar"></div>
             <span class="api-name">SonarCloud</span>
             <span class="api-endpoint">sonarcloud.io</span>
+          </div>
+          <div class="api-item">
+            <div class="status-led" id="status-coderabbit"></div>
+            <span class="api-name">CodeRabbit</span>
+            <span class="api-endpoint">coderabbit.ai/reviews</span>
           </div>
           <div class="api-item">
             <div class="status-led" id="status-deploy"></div>
@@ -770,7 +776,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
         }
 
         async function runSystemDiagnostic() {
-          const apis = ['status-github', 'status-marvel', 'status-openai', 'status-rag', 'status-n8n', 'status-sentry', 'status-sonar', 'status-deploy'];
+          const apis = ['status-github', 'status-marvel', 'status-openai', 'status-rag', 'status-n8n', 'status-sentry', 'status-sonar', 'status-coderabbit', 'status-deploy'];
           apis.forEach(id => { const el = document.getElementById(id); if (el) el.className = 'status-led'; });
           for (const id of apis) {
             const el = document.getElementById(id);

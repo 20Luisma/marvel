@@ -35,6 +35,7 @@ Incluye secciones adicionales sobre observabilidad, CI/CD, refactors estructural
 - **Microservicios:** OpenAI Service, RAG Service (PHP) y Heatmap Service (Python/Flask)
 - **Servicios externos:** OpenAI API
 - **Control de versiones:** Git / GitHub
+- **Auditoría de Código IA:** CodeRabbit (AI Code Reviewer)
 - **Despliegue:** entorno propio funcional (app + microservicios)
 
 ---
@@ -158,7 +159,7 @@ https://iamasterbigschool.contenido.creawebes.com/
 ## Proceso de desarrollo y autoría
 Proyecto realizado íntegramente por el autor como Trabajo Fin de Máster.  
 El desarrollo fue incremental: primero el dominio y la arquitectura, luego la integración con IA y finalmente el despliegue real.  
-Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo, sin modificar el enfoque técnico del proyecto.
+Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo (incluyendo **CodeRabbit** para revisiones de código automáticas en Pull Requests), sin modificar el enfoque técnico del proyecto.
 
 ---
 

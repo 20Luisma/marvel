@@ -93,7 +93,7 @@ php bin/migrar-json-a-db.php
 
 ## ⚙️ CI/CD – GitHub Actions
 
-Pipelines configurados para ejecutar: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), `deploy-ftp.yml` (deploy por FTP al hacer push a `main`; recomendado proteger `main` para que solo se pueda mergear si CI pasa), `rollback-ftp.yml` (rollback manual).
+Pipelines configurados para ejecutar: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), integración con **CodeRabbit** para revisiones de código asistidas por IA en cada Pull Request, `deploy-ftp.yml` (deploy por FTP al hacer push a `main`; recomendado proteger `main` para que solo se pueda mergear si CI pasa), `rollback-ftp.yml` (rollback manual).
 
 Nota de coherencia: el runtime objetivo del proyecto es PHP 8.2, pero la CI usa PHP 8.4 para validar compatibilidad futura sin cambiar el objetivo del proyecto.
 
@@ -168,6 +168,7 @@ npm run test:e2e:debug
 | Controladores | PHPUnit | Capa HTTP |
 | Infraestructura | PHPUnit | Repositorios, clientes HTTP, bus |
 | E2E | Playwright | Flujos críticos de usuario |
+| Code Review IA | CodeRabbit | Auditoría automática de cambios y lógica |
 | Accesibilidad | Pa11y (CI) | Auditoría WCAG 2.1 AA |
 | Performance | Lighthouse (CI) | Auditoría de rendimiento |
 

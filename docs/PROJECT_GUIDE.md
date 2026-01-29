@@ -459,6 +459,7 @@ Jobs adicionales al Nivel 2:
 | **Pa11y** | [Pa11y](https://pa11y.org/) | Accesibilidad WCAG 2.1 AA |
 | **Lighthouse** | [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) | Performance, SEO, accesibilidad |
 | **Playwright** | [Playwright](https://playwright.dev/) | Tests E2E reales |
+| **CodeRabbit** | [CodeRabbit](https://coderabbit.ai/) | Revisión de código por IA |
 | **Security audit** | `composer audit` | Vulnerabilidades en dependencias |
 | **Deploy automático** | FTP/SSH/K8s | Condicionado a checks previos (según configuración) |
 
