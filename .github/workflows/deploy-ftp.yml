@@ -15,6 +15,7 @@ jobs:
   deploy_app:
     name: Deploy app principal
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repo
@@ -53,11 +54,13 @@ jobs:
           state-name: ftp-state-app.json
 
           # 📌 Archivos/carpetas que NO deben subirse
+          # IMPORTANTE: Excluimos vendor/ para evitar timeouts por FTP (miles de archivos pequeños)
           exclude: |
             **/.git*
             **/.github/**
             node_modules/**
             tests/**
+            vendor/**
             .scannerwork/**
             coverage.xml
             pa11y-*.sh
@@ -69,12 +72,13 @@ jobs:
             playwright-report/**
             openai-service/**
             rag-service/**
-            presentation/assets/app/**
+            public/presentation/assets/app/**
 
   deploy_openai:
     name: Deploy openai-service
     runs-on: ubuntu-latest
     needs: deploy_app
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repo
@@ -105,11 +109,17 @@ jobs:
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-openai.json
+          exclude: |
+            vendor/**
+            node_modules/**
+            tests/**
+            **/.git*
 
   deploy_rag:
     name: Deploy rag-service
     runs-on: ubuntu-latest
     needs: deploy_openai
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repo
@@ -140,3 +150,8 @@ jobs:
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-rag.json
+          exclude: |
+            vendor/**
+            node_modules/**
+            tests/**
+            **/.git*
