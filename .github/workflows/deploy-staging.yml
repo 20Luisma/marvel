@@ -1,0 +1,136 @@
+name: Deploy Marvel a Hostinger (FTP) - Staging
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy_app:
+    name: Deploy app principal (staging)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generar bundle size (JS/CSS)
+        run: php bin/generate-bundle-size.php
+
+      - name: Crear archivo prueba (APP)
+        run: |
+          cat > DEPLOY_TEST_APP.txt <<EOF
+          Servicio: Clean Marvel Album (APP principal) - STAGING
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
+      ####################################################################
+      # 1) Deploy APP PRINCIPAL (staging)
+      ####################################################################
+      - name: Deploy app principal (staging)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          # 📌 RUTA REAL DEL PROYECTO COMPLETO EN HOSTINGER (STAGING)
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/
+
+          # 📌 Subimos TODO el proyecto (NO solo public)
+          local-dir: ./
+
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-app-staging.json
+
+          # 📌 Archivos/carpetas que NO deben subirse
+          exclude: |
+            **/.git*
+            **/.github/**
+            node_modules/**
+            tests/**
+            .scannerwork/**
+            coverage.xml
+            pa11y-*.sh
+            package-lock.json
+            package.json
+            playwright.config.cjs
+            test-results/**
+            blob-report/**
+            playwright-report/**
+            openai-service/**
+            rag-service/**
+            presentation/assets/app/**
+
+  deploy_openai:
+    name: Deploy openai-service (staging)
+    runs-on: ubuntu-latest
+    needs: deploy_app
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Crear archivo prueba (OPENAI)
+        run: |
+          cat > openai-service/DEPLOY_TEST_OPENAI.txt <<EOF
+          Servicio: openai-service - STAGING
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
+      ####################################################################
+      # 2) Deploy microservicio OPENAI (staging)
+      ####################################################################
+      - name: Deploy microservicio openai-service (staging)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/openai-service/
+          local-dir: ./openai-service/
+
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-openai-staging.json
+
+  deploy_rag:
+    name: Deploy rag-service (staging)
+    runs-on: ubuntu-latest
+    needs: deploy_openai
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Crear archivo prueba (RAG)
+        run: |
+          cat > rag-service/DEPLOY_TEST_RAG.txt <<EOF
+          Servicio: rag-service - STAGING
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          Mensaje: Si ves este archivo, el deploy funciona.
+          EOF
+
+      ####################################################################
+      # 3) Deploy microservicio RAG (staging)
+      ####################################################################
+      - name: Deploy microservicio rag-service (staging)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/rag-service/
+          local-dir: ./rag-service/
+
+          # ✅ Estado aislado (evita colisiones entre despliegues)
+          state-name: ftp-state-rag-staging.json
