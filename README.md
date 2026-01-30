@@ -12,7 +12,7 @@ Repositorio (GitHub): https://github.com/20Luisma/marvel
 
 La presentación del Trabajo Fin de Máster está disponible en formato web interactivo en la siguiente dirección:
 
-🔗 https://contenido.creawebes.com/iamasterbigschool/presentation/tfm-presentation.html
+🔗 https://iamasterbigschool.contenido.creawebes.com/presentation/tfm-presentation.html
 
 Esta presentación resume los objetivos, arquitectura, stack tecnológico, microservicios, despliegue y aprendizajes del proyecto.
 
