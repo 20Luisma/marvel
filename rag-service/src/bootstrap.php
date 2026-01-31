@@ -58,13 +58,7 @@ return (static function (): array {
         $host = strtolower(trim((string) $host));
         $host = $host !== '' ? explode(':', $host)[0] : '';
 
-        $hostingHosts = [
-            'iamasterbigschool.contenido.creawebes.com',
-            'openai-service.contenido.creawebes.com',
-            'rag-service.contenido.creawebes.com',
-        ];
-
-        if ($host !== '' && in_array($host, $hostingHosts, true)) {
+        if ($host !== '' && (str_contains($host, '.creawebes.com'))) {
             return 'hosting';
         }
 
@@ -117,9 +111,7 @@ return (static function (): array {
 
     $openAiEndpoint = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
     if (!is_string($openAiEndpoint) || trim($openAiEndpoint) === '') {
-        $openAiEndpoint = $environment === 'hosting'
-            ? 'https://openai-service.contenido.creawebes.com/v1/chat'
-            : 'http://localhost:8081/v1/chat';
+        $openAiEndpoint = 'http://localhost:8081/v1/chat';
     }
 
     $llmClientForCompare = new OpenAiHttpClient(
