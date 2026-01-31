@@ -1,1 +1,62 @@
-# Trigger commit
+name: Deploy Staging (PR Preview)
+
+on:
+  push:
+    branches:
+      - feature/staging-final
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy_staging:
+    name: Deploy to Staging Subdomains
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Crear archivo de auditoría del PR
+        run: |
+          cat > DEPLOY_STAGING_PR.txt <<EOF
+          Servicio: Clean Marvel Album (STAGING)
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Autor: ${{ github.actor }}
+          Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
+          EOF
+
+      - name: Deploy a Staging (Hostinger)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+
+          # 📌 RUTA RAÍZ DE STAGING
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/
+          
+          local-dir: ./
+          state-name: ftp-state-staging.json
+
+          exclude: |
+            **/.git*
+            **/.github/**
+            node_modules/**
+            .scannerwork/**
+            tests/**
+            **/*.log
+            pa11y-*.sh
+            package-lock.json
+            package.json
+            playwright.config.cjs
+            test-results/**
+            blob-report/**
+            playwright-report/**
+            coverage.xml
+            .phpunit.result.cache
