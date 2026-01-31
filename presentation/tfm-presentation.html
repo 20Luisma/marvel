@@ -248,7 +248,7 @@
       <div class="title">Clean Marvel Album</div>
       <div class="byline">MARTÍN PALLANTE CARDEO</div>
       <div class="byline">POWERED BY ALFRED (AI ASSISTANT)</div>
-      <span class="slide-number">01 / 18</span>
+      <span class="slide-number">01 / 19</span>
     </section>
 
     <!-- SLIDE 2: El proyecto en números -->
@@ -281,7 +281,7 @@
           <div class="metric-label">Deploy automático</div>
         </div>
       </div>
-      <span class="slide-number">02 / 18</span>
+      <span class="slide-number">02 / 19</span>
     </section>
 
     <!-- SLIDE 3: ¿Qué es Clean Marvel Album? -->
@@ -300,7 +300,7 @@
       <a href="https://iamasterbigschool.contenido.creawebes.com" target="_blank" class="link-box">
         <span class="url">iamasterbigschool.contenido.creawebes.com →</span>
       </a>
-      <span class="slide-number">03 / 18</span>
+      <span class="slide-number">03 / 19</span>
     </section>
 
     <!-- SLIDE 4: Objetivo -->
@@ -325,7 +325,7 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">04 / 18</span>
+      <span class="slide-number">04 / 19</span>
     </section>
 
     <!-- SLIDE 5: Stack tecnológico -->
@@ -338,19 +338,19 @@
             <li>🐘 <strong>PHP 8.2</strong> · Backend principal</li>
             <li>🏛️ <strong>Clean Architecture</strong> · Estructura</li>
             <li>💾 <strong>JSON / MySQL</strong> · Persistencia dual</li>
-            <li>� <strong>Docker</strong> · Contenerización total</li>
+            <li>🐳 <strong>Docker</strong> · Contenerización total</li>
           </ul>
         </div>
         <div class="card">
           <ul class="list">
             <li>🐍 <strong>Python</strong> · Microservicio de IA</li>
-            <li>� <strong>OpenAI API</strong> · Generación de cómics</li>
+            <li>🤖 <strong>OpenAI API</strong> · Generación de cómics</li>
             <li>🧠 <strong>RAG Service</strong> · Búsqueda semántica</li>
             <li>📦 <strong>GitHub Actions</strong> · CI/CD automático</li>
           </ul>
         </div>
       </div>
-      <span class="slide-number">05 / 18</span>
+      <span class="slide-number">05 / 19</span>
     </section>
 
     <!-- SLIDE 6: Arquitectura -->
@@ -380,11 +380,36 @@
 │     MySQL · JSON · OpenAI · RAG     │
 └─────────────────────────────────────┘</div>
       </div>
-      <span class="slide-number">06 / 18</span>
+      <span class="slide-number">06 / 19</span>
     </section>
 
-    <!-- SLIDE 7: Microservicios e IA -->
+    <!-- SLIDE 7: Estrategia de Mirroring -->
     <section class="slide" data-slide="7">
+      <div class="slide-title">Estrategia de Mirroring (Staging)</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Concepto de "Espejo"</div>
+          <ul class="list">
+            <li><strong>Paridad total:</strong> Entornos Local, Staging y Producción 100% idénticos.</li>
+            <li><strong>Código Agnóstico:</strong> El software es ciego a la ruta; se adapta vía <code>.env</code>.</li>
+            <li><strong>Aislamiento:</strong> Triada de microservicios propia para cada entorno.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Beneficios TFM</div>
+          <ul class="list">
+            <li><strong>Merge Seguro:</strong> El código validado en Staging sube a Main sin cambios manuales.</li>
+            <li><strong>Observabilidad Central:</strong> Métricas de IA (tokens) registradas en el storage principal.</li>
+            <li><strong>CI/CD Real:</strong> Deploy automático a subdominios de staging en cada push.</li>
+          </ul>
+        </div>
+      </div>
+      <span class="slide-number">07 / 19</span>
+    </section>
+
+    <!-- SLIDE 8: Microservicios e IA -->
+    <section class="slide" data-slide="8">
       <div class="slide-title">Microservicios e IA</div>
       <div class="divider"></div>
       <div class="card">
@@ -392,15 +417,15 @@
           <li>🐍 <strong>Heatmap Service</strong> · Microservicio en <strong>Python/Flask</strong> desplegado en <strong>Google Cloud</strong>.</li>
           <li>🧠 <strong>RAG Service</strong> · Motor de búsqueda vectorial para comparaciones inteligentes.</li>
           <li>🤖 <strong>OpenAI Service</strong> · Gateway controlado hacia LLM para generación de cómics.</li>
-          <li>� <strong>Docker Ecosystem</strong> · Todo el sistema está contenerizado y orquestado.</li>
-          <li>�🔄 <strong>Dual mode</strong> · Búsqueda léxica o semántica según el entorno.</li>
+          <li>⚙️ <strong>Docker Ecosystem</strong> · Todo el sistema está contenerizado y orquestado.</li>
+          <li>🔄 <strong>Dual mode</strong> · Búsqueda léxica o semántica según el entorno.</li>
         </ul>
       </div>
-      <span class="slide-number">07 / 18</span>
+      <span class="slide-number">08 / 19</span>
     </section>
 
-    <!-- SLIDE 8: APIs Externas Utilizadas -->
-    <section class="slide" data-slide="8">
+    <!-- SLIDE 9: APIs Externas Utilizadas -->
+    <section class="slide" data-slide="9">
       <div class="slide-title">APIs Externas Utilizadas</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -421,11 +446,11 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">08 / 18</span>
+      <span class="slide-number">09 / 19</span>
     </section>
 
-    <!-- SLIDE 9: Automatización con n8n -->
-    <section class="slide" data-slide="9">
+    <!-- SLIDE 10: Automatización con n8n -->
+    <section class="slide" data-slide="10">
       <div class="slide-title">Automatización con n8n</div>
       <div class="divider"></div>
       <div class="card">
@@ -437,11 +462,11 @@
           <li><strong>Desacoplamiento</strong> · El core de la aplicación no conoce YouTube</li>
         </ul>
       </div>
-      <span class="slide-number">09 / 18</span>
+      <span class="slide-number">10 / 19</span>
     </section>
 
-    <!-- SLIDE 10: Calidad y CI/CD -->
-    <section class="slide" data-slide="10">
+    <!-- SLIDE 11: Calidad y CI/CD -->
+    <section class="slide" data-slide="11">
       <div class="slide-title">Testing, Seguridad y Despliegue</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -463,11 +488,11 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">10 / 18</span>
+      <span class="slide-number">11 / 19</span>
     </section>
 
-    <!-- SLIDE 11: Funcionalidades -->
-    <section class="slide" data-slide="11">
+    <!-- SLIDE 12: Funcionalidades -->
+    <section class="slide" data-slide="12">
       <div class="slide-title">Funcionalidades principales</div>
       <div class="divider"></div>
       <div class="card">
@@ -479,11 +504,11 @@
           <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
         </ul>
       </div>
-      <span class="slide-number">11 / 18</span>
+      <span class="slide-number">12 / 19</span>
     </section>
 
-    <!-- SLIDE 12: Documentación -->
-    <section class="slide" data-slide="12">
+    <!-- SLIDE 13: Documentación -->
+    <section class="slide" data-slide="13">
       <div class="slide-title">Documentación técnica</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -504,11 +529,11 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">12 / 18</span>
+      <span class="slide-number">13 / 19</span>
     </section>
 
-    <!-- SLIDE 13: Proyecto Vivo -->
-    <section class="slide" data-slide="13">
+    <!-- SLIDE 14: Proyecto Vivo -->
+    <section class="slide" data-slide="14">
       <div class="slide-title">Proyecto Vivo y Activo</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -553,11 +578,11 @@
         </div>
       </div>
       
-      <span class="slide-number">13 / 18</span>
+      <span class="slide-number">14 / 19</span>
     </section>
 
-    <!-- SLIDE 14: Ecosistema e Infraestructura -->
-    <section class="slide" data-slide="14">
+    <!-- SLIDE 15: Ecosistema e Infraestructura -->
+    <section class="slide" data-slide="15">
       <div class="slide-title">Ecosistema e Infraestructura</div>
       <div class="divider"></div>
       
@@ -617,11 +642,11 @@
         </div>
       </div>
 
-      <span class="slide-number">14 / 18</span>
+      <span class="slide-number">15 / 19</span>
     </section>
 
-    <!-- SLIDE 15: Validación e Interoperabilidad -->
-    <section class="slide" data-slide="15">
+    <!-- SLIDE 16: Validación e Interoperabilidad -->
+    <section class="slide" data-slide="16">
       <div class="slide-title">Validación e Interoperabilidad</div>
       <div class="divider"></div>
 
@@ -647,11 +672,11 @@
         </div>
       </div>
 
-      <span class="slide-number">15 / 18</span>
+      <span class="slide-number">16 / 19</span>
     </section>
 
-    <!-- SLIDE 16: Reflexión -->
-    <section class="slide" data-slide="16">
+    <!-- SLIDE 17: Reflexión -->
+    <section class="slide" data-slide="17">
       <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card scrollable">
@@ -666,11 +691,11 @@ Clean Marvel Album no pretende ser un producto comercial ni una solución disrup
 
 Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>punto de inflexión</strong> en mi forma de pensar, diseñar y construir software.</div>
       </div>
-      <span class="slide-number">16 / 18</span>
+      <span class="slide-number">17 / 19</span>
     </section>
 
-    <!-- SLIDE 17: Aviso Legal -->
-    <section class="slide" data-slide="17">
+    <!-- SLIDE 18: Aviso Legal -->
+    <section class="slide" data-slide="18">
       <div class="slide-title">Aviso Legal y Atribuciones</div>
       <div class="divider"></div>
       <div class="card">
@@ -681,7 +706,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
           <p style="margin-top: 20px; font-weight: 700;">Assets property of © 2026 MARVEL</p>
         </div>
       </div>
-      <span class="slide-number">17 / 18</span>
+      <span class="slide-number">18 / 19</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
@@ -816,9 +841,9 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
                 const slideId = target.dataset.slide;
                 if (slideId !== lastActiveSlide) {
                   lastActiveSlide = slideId;
-                  if (slideId === '13') { loadGitHubData(); triggerAnimation(); }
-                  if (slideId === '14') { runSystemDiagnostic(); }
-                  if (slideId === '15') { startAppCarousel(); } else { if (carouselInterval) clearInterval(carouselInterval); }
+                  if (slideId === '14') { loadGitHubData(); triggerAnimation(); }
+                  if (slideId === '15') { runSystemDiagnostic(); }
+                  if (slideId === '16') { startAppCarousel(); } else { if (carouselInterval) clearInterval(carouselInterval); }
                 }
               }
             }
@@ -832,7 +857,7 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
 
         // Initial check
         const initialActive = document.querySelector('.slide.active');
-        if (initialActive && initialActive.dataset.slide === '13') {
+        if (initialActive && initialActive.dataset.slide === '14') {
           loadGitHubData();
           triggerAnimation();
         }
@@ -840,14 +865,14 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
     </script>
 
     <!-- SLIDE 18: Cierre -->
-    <section class="slide cover" data-slide="18">
+    <section class="slide cover" data-slide="19">
       <div class="title">Gracias</div>
       <div class="divider"></div>
       <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
       <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
         <span class="url">github.com/20Luisma/marvel →</span>
       </a>
-      <span class="slide-number">18 / 18</span>
+      <span class="slide-number">19 / 19</span>
     </section>
   </div>
 
