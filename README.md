@@ -154,6 +154,7 @@ El objetivo académico es demostrar un sistema real funcionando, no un prototipo
 ### Entornos Disponibles
 - **Producción:** https://iamasterbigschool.contenido.creawebes.com/
 - **Staging:** https://staging.contenido.creawebes.com/
+- **API Docs (Swagger):** https://iamasterbigschool.contenido.creawebes.com/api/docs.html
 
 ### 🛠️ Flujo de Ingeniería Profesional (CI/CD)
 
