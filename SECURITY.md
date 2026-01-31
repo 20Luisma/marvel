@@ -49,14 +49,25 @@ Para detalles sobre las medidas de seguridad implementadas en la aplicación (CS
 - [`docs/guides/authentication.md`](./docs/guides/authentication.md) — Autenticación y sesiones
 - [`k8s/SECURITY_HARDENING.md`](./k8s/SECURITY_HARDENING.md) — Hardening para Kubernetes
 
-## Reportar Vulnerabilidades
+---
 
-Si descubres una vulnerabilidad de seguridad, por favor repórtala de forma responsable:
+## 🚀 Decisiones de Diseño: Modo Demo y Observabilidad
 
-1. **No** abras un issue público
-2. Contacta directamente al mantenedor del proyecto
-3. Proporciona detalles suficientes para reproducir el problema
+Este proyecto opera en **Modo Demo/Guía**, lo que implica una postura de seguridad específica orientada a la transparencia y facilidad de uso académico.
+
+### 1. Endpoint de Reset (`public/api/reset-demo.php`)
+- **Estado:** Público de forma intencional.
+- **Racional:** Permite que cada usuario pueda restaurar el entorno a un estado inicial conocido antes de su exploración.
+- **Riesgo:** DoS lógico (denegación de servicio por reseteos frecuentes).
+- **Decisión:** Riesgo aceptado. En un entorno real, este endpoint requeriría privilegios de `SUPER_ADMIN` o acceso mediante túnel VPN.
+
+### 2. APIs de Métricas y Estado (`public/api/*`)
+- **Estado:** Abiertas para lectura.
+- **Racional:** Facilitar la observabilidad y demostrar la integración de herramientas como SonarCloud, Sentry y GitHub Metrics sin fricciones.
+- **Postura en Producción:** Estos datos deberían centralizarse en un sistema de monitorización interno (como Prometheus/Grafana) con acceso restringido.
 
 ---
+
+## Reportar Vulnerabilidades
 
 *Última actualización: Diciembre 2024*

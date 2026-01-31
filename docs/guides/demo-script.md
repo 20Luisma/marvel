@@ -60,6 +60,11 @@ php -S localhost:8082 -t public
 - Accesibilidad: abrir el panel y ejecutar WAVE.
 - Performance: abrir el panel y ejecutar PageSpeed.
 
+7) Reset de Demo (Limpieza)
+- Ejecutar la acción de "Restaurar Demo".
+- Verificar que los datos creados se eliminan y el sistema vuelve al estado inicial.
+- **Nota técnica:** Este endpoint es público por diseño para facilitar este flujo en la demo académica.
+
 ## Checklist de "que debe verse"
 - [ ] Home carga sin errores visibles.
 - [ ] Albums: alta y listado funcionan.
