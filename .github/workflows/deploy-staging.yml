@@ -98,7 +98,7 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/openai-service/
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/openai-service/
           local-dir: ./openai-service/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
@@ -139,7 +139,7 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/rag-service/
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/rag-service/
           local-dir: ./rag-service/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
