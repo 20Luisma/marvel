@@ -1,0 +1,26 @@
+# Redirigir todas las peticiones a public/index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Si el archivo o carpeta existe, servirlo directamente
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Denegar acceso a archivos sensibles
+    RewriteRule ^\.env$ - [F,L]
+    RewriteRule ^\.env\. - [F,L]
+    RewriteRule ^composer\.(json|lock)$ - [F,L]
+    RewriteRule ^src/ - [F,L]
+    RewriteRule ^doc/ - [F,L]
+    RewriteRule ^tests/ - [F,L]
+    
+    # Redirigir todo lo demás a public/index.php
+    RewriteRule ^(.*)$ public/index.php [QSA,L]
+</IfModule>
+
+# Bloquear acceso directo a archivos sensibles
+<FilesMatch "^\.env|composer\.(json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
