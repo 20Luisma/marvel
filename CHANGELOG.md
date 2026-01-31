@@ -1,3 +1,12 @@
+## [1.3.2](https://github.com/20Luisma/marvel/compare/v1.3.1...v1.3.2) (2026-01-31)
+
+
+### Bug Fixes
+
+* increase ftp deployment timeout to 10 minutes ([267883e](https://github.com/20Luisma/marvel/commit/267883e6e6d2dae3c86efc3faa085207237e331c))
+
+
+
 ## [1.3.1](https://github.com/20Luisma/marvel/compare/v1.3.0...v1.3.1) (2026-01-31)
 
 
@@ -77,10 +86,6 @@
 * add reset demo data functionality ([67a2755](https://github.com/20Luisma/marvel/commit/67a27552a2a0e61a57def75f9e1d27a3c0d6710b))
 * agregar datos dinámicos reales desde GitHub API en slide 14 ([cce13ab](https://github.com/20Luisma/marvel/commit/cce13ab8e429b29909eed47d831cb3190ead78fb))
 * register RESTAURADO activity when resetting demo data ([3c9adab](https://github.com/20Luisma/marvel/commit/3c9adab9c4064897e6424f9cbe56db287e9b1a97))
-
-
-
-## [1.0.10](https://github.com/20Luisma/marvel/compare/v1.0.9...v1.0.10) (2026-01-24)
 
 
 
