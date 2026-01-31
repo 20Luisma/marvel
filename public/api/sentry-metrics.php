@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * NOTA DE SEGURIDAD (TRANSPARENCIA):
+ * Este endpoint de métricas de errores es público para facilitar la observabilidad
+ * del estado de salud de la aplicación (Sentry) durante la demo.
+ * 
+ * En producción, el acceso a telemetría detallada debería estar restringido
+ * mediante tokens de sesión o acceso desde la red interna.
+ */
+
 use RuntimeException;
 
 if (stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html') !== false) {
