@@ -115,3 +115,13 @@ paths:
             application/json:
               schema:
                 type: object
+
+  /healthz.php:
+    get:
+      summary: Health Check (Liveness/Readiness)
+      description: Endpoint para monitoreo de salud del servicio (Kubernetes/Cloud).
+      responses:
+        '200':
+          description: Servicio saludable
+        '503':
+          description: Servicio degradado o con errores
