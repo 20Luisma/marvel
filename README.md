@@ -151,8 +151,11 @@ La aplicación principal y los microservicios están desplegados en un entorno p
 Se mantiene la separación de servicios y la misma arquitectura que en local.  
 El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
 
-La aplicación está desplegada y accesible públicamente en:
-https://iamasterbigschool.contenido.creawebes.com/
+### Entornos Disponibles
+- **Producción:** https://iamasterbigschool.contenido.creawebes.com/
+- **Staging (Pruebas):** https://staging.contenido.creawebes.com/
+
+El entorno de **Staging** se utiliza para validar cambios antes de su paso a producción, garantizando paridad total (Mirroring) entre ambos.
 
 ---
 
@@ -168,6 +171,7 @@ Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo (in
 - `docs/architecture/` — decisiones de arquitectura
 - `docs/api/` — referencia de endpoints
 - `docs/guides/` — guías técnicas
+- `docs/guides/entorno-staging-mirroring.md` — Paridad de entornos y CI/CD Staging
 📚 La documentación técnica ampliada del proyecto se encuentra en `docs/README_TECHNICAL.md`.
 
 ---

@@ -254,13 +254,21 @@ kubectl port-forward svc/clean-marvel 8080:80
 
 El proyecto está configurado para soportar **múltiples estrategias de despliegue**:
 
-| Entorno | Tecnología | Caso de uso |
-|---------|-----------|-------------|
 | **Local** | `php -S` | Desarrollo rápido |
 | **Hosting tradicional** | Apache/Nginx + FTP | Producción simple |
 | **Docker** | docker-compose | Desarrollo con dependencias |
 | **Kubernetes** | kubectl | Producción escalable |
 
+### 🪞 Estrategia de Mirroring (Paridad de Entornos)
+
+Para garantizar que el desarrollo, las pruebas y la producción sean idénticos, se ha implementado una arquitectura agnóstica al entorno:
+
+- **Agnosticismo Total:** Ninguna URL de servidor está escrita en el código; todo se resuelve vía `.env` y `ServiceUrlProvider`.
+- **Entorno de Staging automático:** Despliegue continuo a subdominios de pruebas (`staging.*`) mediante GitHub Actions.
+- **Microservicios en Espejo:** Cada entorno (Local/Staging/Prod) tiene su propia triada de microservicios aislados.
+- **Registro Cruzado:** Los microservicios registran métricas en el storage de la app principal correspondiente.
+
+Documentación detallada en: `docs/guides/entorno-staging-mirroring.md`.
 
 ---
 
