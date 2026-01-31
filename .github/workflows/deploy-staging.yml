@@ -1,19 +1,13 @@
-name: Deploy Marvel a Hostinger (FTP)
+name: Deploy Marvel a Hostinger (FTP) - Staging
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      motivo:
-        description: "Motivo del deploy"
-        required: false
-        default: "Deploy manual"
 
 jobs:
   deploy_app:
-    name: Deploy app principal
+    name: Deploy app principal (staging)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -27,15 +21,15 @@ jobs:
       - name: Crear archivo prueba (APP)
         run: |
           cat > DEPLOY_TEST_APP.txt <<EOF
-          Servicio: Clean Marvel Album (APP principal)
+          Servicio: Clean Marvel Album (APP principal) - STAGING
           Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
           Mensaje: Si ves este archivo, el deploy funciona.
           EOF
 
       ####################################################################
-      # 1) Deploy APP PRINCIPAL (server-dir: iamasterbigschool)
+      # 1) Deploy APP PRINCIPAL (staging)
       ####################################################################
-      - name: Deploy app principal (iamasterbigschool)
+      - name: Deploy app principal (staging)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -44,17 +38,17 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          # 📌 RUTA REAL DEL PROYECTO COMPLETO EN HOSTINGER
-          server-dir: /domains/contenido.creawebes.com/public_html/iamasterbigschool/
+          # 📌 RUTA REAL DEL PROYECTO COMPLETO EN HOSTINGER (STAGING)
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/
 
           # 📌 Subimos TODO el proyecto (NO solo public)
           local-dir: ./
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
-          state-name: ftp-state-app.json
+          state-name: ftp-state-app-staging.json
 
           # 📌 Archivos/carpetas que NO deben subirse
-          # IMPORTANTE: Excluimos vendor/ para evitar timeouts por FTP (miles de archivos pequeños)
+          # IMPORTANTE: Excluimos vendor/ porque subirlo por FTP es extremadamente lento y causa timeouts.
           exclude: |
             **/.git*
             **/.github/**
@@ -72,10 +66,10 @@ jobs:
             playwright-report/**
             openai-service/**
             rag-service/**
-            public/presentation/assets/app/**
+            presentation/assets/app/**
 
   deploy_openai:
-    name: Deploy openai-service
+    name: Deploy openai-service (staging)
     runs-on: ubuntu-latest
     needs: deploy_app
     timeout-minutes: 15
@@ -87,15 +81,32 @@ jobs:
       - name: Crear archivo prueba (OPENAI)
         run: |
           cat > openai-service/DEPLOY_TEST_OPENAI.txt <<EOF
-          Servicio: openai-service
+          Servicio: openai-service - STAGING
           Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
           Mensaje: Si ves este archivo, el deploy funciona.
           EOF
 
+      # Crear .htaccess de seguridad para proteger archivos sensibles
+      - name: Crear .htaccess de seguridad
+        run: |
+          cat > openai-service/.htaccess <<EOF
+          # Denegar acceso a archivos sensibles
+          <FilesMatch "^\.env|\.env\.*|composer\.(json|lock)$">
+              Order allow,deny
+              Deny from all
+          </FilesMatch>
+
+          # Denegar acceso a carpetas privadas
+          <IfModule mod_rewrite.c>
+              RewriteEngine On
+              RewriteRule ^(src|doc|tests|vendor)/ - [F,L]
+          </IfModule>
+          EOF
+
       ####################################################################
-      # 2) Deploy microservicio OPENAI
+      # 2) Deploy microservicio OPENAI COMPLETO a public/ (staging)
       ####################################################################
-      - name: Deploy microservicio openai-service
+      - name: Deploy microservicio openai-service (staging)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -104,19 +115,19 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
+          # 📌 Subimos TODO el microservicio dentro de public/
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/openai-service/
           local-dir: ./openai-service/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
-          state-name: ftp-state-openai.json
+          state-name: ftp-state-openai-staging.json
           exclude: |
             vendor/**
-            node_modules/**
             tests/**
             **/.git*
 
   deploy_rag:
-    name: Deploy rag-service
+    name: Deploy rag-service (staging)
     runs-on: ubuntu-latest
     needs: deploy_openai
     timeout-minutes: 15
@@ -128,15 +139,32 @@ jobs:
       - name: Crear archivo prueba (RAG)
         run: |
           cat > rag-service/DEPLOY_TEST_RAG.txt <<EOF
-          Servicio: rag-service
+          Servicio: rag-service - STAGING
           Fecha/hora (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')
           Mensaje: Si ves este archivo, el deploy funciona.
           EOF
 
+      # Crear .htaccess de seguridad para proteger archivos sensibles
+      - name: Crear .htaccess de seguridad
+        run: |
+          cat > rag-service/.htaccess <<EOF
+          # Denegar acceso a archivos sensibles
+          <FilesMatch "^\.env|\.env\.*|composer\.(json|lock)$">
+              Order allow,deny
+              Deny from all
+          </FilesMatch>
+
+          # Denegar acceso a carpetas privadas
+          <IfModule mod_rewrite.c>
+              RewriteEngine On
+              RewriteRule ^(src|doc|tests|vendor)/ - [F,L]
+          </IfModule>
+          EOF
+
       ####################################################################
-      # 3) Deploy microservicio RAG
+      # 3) Deploy microservicio RAG COMPLETO a public/ (staging)
       ####################################################################
-      - name: Deploy microservicio rag-service
+      - name: Deploy microservicio rag-service (staging)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -145,13 +173,13 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/rag-service/
+          # 📌 Subimos TODO el microservicio dentro de public/
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/rag-service/
           local-dir: ./rag-service/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
-          state-name: ftp-state-rag.json
+          state-name: ftp-state-rag-staging.json
           exclude: |
             vendor/**
-            node_modules/**
             tests/**
             **/.git*

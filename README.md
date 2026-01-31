@@ -12,7 +12,7 @@ Repositorio (GitHub): https://github.com/20Luisma/marvel
 
 La presentación del Trabajo Fin de Máster está disponible en formato web interactivo en la siguiente dirección:
 
-🔗 https://contenido.creawebes.com/iamasterbigschool/presentation/tfm-presentation.html
+🔗 https://iamasterbigschool.contenido.creawebes.com/presentation/tfm-presentation.html
 
 Esta presentación resume los objetivos, arquitectura, stack tecnológico, microservicios, despliegue y aprendizajes del proyecto.
 
@@ -146,13 +146,20 @@ php -S localhost:8082 -t public
 
 ---
 
-## Despliegue
-La aplicación principal y los microservicios están desplegados en un entorno propio.  
-Se mantiene la separación de servicios y la misma arquitectura que en local.  
-El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
+---
 
-La aplicación está desplegada y accesible públicamente en:
-https://iamasterbigschool.contenido.creawebes.com/
+## Despliegue e Infraestructura (CI/CD)
+El proyecto implementa un flujo de **Despliegue Continuo** profesional con múltiples entornos, automatizado mediante **GitHub Actions**:
+
+- **Staging:** https://staging.contenido.creawebes.com/
+  - Entorno de validación idéntico a producción.
+  - Se despliega automáticamente al abrir/actualizar una Pull Request hacia la rama `main`.
+  - Permite pruebas de integración y QA antes del mezclado definitivo.
+- **Producción:** https://iamasterbigschool.contenido.creawebes.com/
+  - Entorno final para el usuario.
+  - Se despliega automáticamente mediante merge en la rama `main`, condicionado al éxito de los tests unitarios.
+
+Se mantiene la separación estricta de servicios y microservicios en ambos entornos, gestionando la configuración mediante variables de entorno seguras.
 
 ---
 

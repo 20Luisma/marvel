@@ -1,4 +1,6 @@
 <?php
+// Test comment for staging workflow verification
+
 
 declare(strict_types=1);
 
