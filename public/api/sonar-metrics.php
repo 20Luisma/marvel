@@ -68,9 +68,9 @@ if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
     jsonErrorResponse(405, 'Método no permitido. Usa GET para consultar el panel de calidad.');
 }
 
-// Leemos configuración desde entorno
-$token = trim((string) (getenv('SONARCLOUD_TOKEN') ?: ($_ENV['SONARCLOUD_TOKEN'] ?? '')));
-$projectKey = trim((string) (getenv('SONARCLOUD_PROJECT_KEY') ?: ($_ENV['SONARCLOUD_PROJECT_KEY'] ?? '')));
+// Leemos configuración desde entorno (probamos todas las fuentes posibles)
+$token = trim((string) (getenv('SONARCLOUD_TOKEN') ?: ($_ENV['SONARCLOUD_TOKEN'] ?? ($_SERVER['SONARCLOUD_TOKEN'] ?? ''))));
+$projectKey = trim((string) (getenv('SONARCLOUD_PROJECT_KEY') ?: ($_ENV['SONARCLOUD_PROJECT_KEY'] ?? ($_SERVER['SONARCLOUD_PROJECT_KEY'] ?? ''))));
 
 // ⚠️ IMPORTANTE: en tu .env debe estar SONARCLOUD_PROJECT_KEY=20Luisma_marvel
 if ($token === '') {
