@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Clean Marvel Album API
+  description: >
+    Especificación de la API para el proyecto Clean Marvel Album (TFM).
+    Esta API permite la observabilidad del sistema, gestión del estado de la demo
+    y acceso a métricas de calidad y seguridad.
+  version: 1.0.0
+  contact:
+    name: Soporte TFM
+    url: https://github.com/20Luisma/marvel
+
+servers:
+  - url: https://iamasterbigschool.contenido.creawebes.com/api
+    description: Servidor de Producción
+  - url: https://staging.contenido.creawebes.com/api
+    description: Servidor de Staging
+  - url: http://localhost:8080/api
+    description: Servidor Local
+
+paths:
+  /reset-demo.php:
+    post:
+      summary: Restaurar estado de la demo
+      description: Elimina los datos dinámicos y restaura el volumen a su estado inicial.
+      responses:
+        '200':
+          description: Estado restaurado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Demo reset successfully.
+
+  /sonar-metrics.php:
+    get:
+      summary: Obtener métricas de SonarCloud
+      description: Retorna los indicadores de calidad de código, cobertura y bugs.
+      responses:
+        '200':
+          description: Métricas obtenidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bugs:
+                    type: integer
+                  vulnerabilities:
+                    type: integer
+                  coverage:
+                    type: string
+                  code_smells:
+                    type: integer
+
+  /security-metrics.php:
+    get:
+      summary: Obtener métricas de seguridad
+      description: Retorna el resumen de vulnerabilidades detectadas en el último escaneo.
+      responses:
+        '200':
+          description: Datos de seguridad obtenidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  critical:
+                    type: integer
+                  high:
+                    type: integer
+                  medium:
+                    type: integer
+
+  /sentry-metrics.php:
+    get:
+      summary: Obtener logs de errores (Sentry)
+      description: Listado de últimos eventos y errores capturados en producción.
+      responses:
+        '200':
+          description: Listado de errores obtenido
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /performance-marvel.php:
+    get:
+      summary: Métricas de rendimiento (PSI)
+      description: Obtiene los resultados de Google PageSpeed Insights para la Home.
+      responses:
+        '200':
+          description: Resultados de performance
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /accessibility-marvel.php:
+    get:
+      summary: Reporte de accesibilidad (Pa11y/WAVE)
+      description: Retorna los errores de accesibilidad detectados en la interfaz.
+      responses:
+        '200':
+          description: Reporte de accesibilidad obtenido
+          content:
+            application/json:
+              schema:
+                type: object
