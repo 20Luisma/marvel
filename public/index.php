@@ -79,7 +79,7 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
         PROYECTO FINAL DEL MÁSTER EN DESARROLLO DE IA - BIG SCHOOL 2025-2026
     </p>
     <p class="master-note-small">
-        CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT)
+        CREATED BY MARTIN PALLANTE · POWERED BY ALFRED (AI ASSISTANT) · [CI/CD OK]
     </p>
 
     <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
