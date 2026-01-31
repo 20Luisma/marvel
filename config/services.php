@@ -37,6 +37,22 @@ return [
                 'heroes_url' => 'https://rag-service.contenido.creawebes.com/rag/heroes',
             ],
         ],
+        'staging' => [
+            'app' => [
+                'host' => 'staging.contenido.creawebes.com',
+                'base_url' => 'https://staging.contenido.creawebes.com',
+            ],
+            'openai' => [
+                'host' => 'staging.contenido.creawebes.com',
+                'base_url' => 'https://staging.contenido.creawebes.com/openai-service',
+                'chat_url' => 'https://staging.contenido.creawebes.com/openai-service/v1/chat',
+            ],
+            'rag' => [
+                'host' => 'staging.contenido.creawebes.com',
+                'base_url' => 'https://staging.contenido.creawebes.com/rag-service',
+                'heroes_url' => 'https://staging.contenido.creawebes.com/rag-service/rag/heroes',
+            ],
+        ],
     ],
 ];
 
