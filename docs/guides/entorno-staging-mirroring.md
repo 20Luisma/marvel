@@ -37,20 +37,27 @@ Para que el Dashboard de IA funcione en Staging igual que en Producción, se han
 
 ---
 
-## 🔄 Flujo de Trabajo (CI/CD)
+## 🔄 Ciclo de Vida del Desarrollo (SDLC Profesional)
 
-### Despliegue a Staging automátizado
-Se ha implementado una GitHub Action (`.github/workflows/deploy-staging-pr.yml`) que:
-1. Se activa al realizar un Push a la rama `feature/staging-final`.
-2. Instala dependencias con Composer.
-3. Sube el código vía FTP a la carpeta `/public_html/clean-marvel-staging/`.
-4. Garantiza que el servidor de pruebas esté siempre actualizado con el último código del PR.
+Para trabajar como un ingeniero senior en las mejores empresas tecnológicas (FAANG/MAANG), seguimos este ciclo sistematizado:
 
-### Paso a Producción
-Cuando los cambios son validados en Staging:
-1. Se realiza un **Merge a `main`**.
-2. El código llega a producción (que tiene su propio `.env`).
-3. **Cero cambios manuales:** Al ser código agnóstico, el sistema empezará a usar las URLs de producción automáticamente.
+| Fase | Entorno | Propósito | URL |
+| :--- | :--- | :--- | :--- |
+| **1. Desarrollo** | **Local** | Programación rápida y tests unitarios. | `localhost:8080` |
+| **2. Validación** | **Staging** | Prueba de integración real en la nube ("Espejo"). | `staging.creawebes...` |
+| **3. Lanzamiento** | **Producción** | Entrega oficial y estable al usuario. | `iamasterbigschool...` |
+
+### Paso a paso para un nuevo cambio (Ej: Agente de Series)
+
+1.  **Exploración Local:** Programas el nuevo módulo de IA. El código auto-resuelve los servicios a `localhost`.
+2.  **Validación en la Nube:** Haces push a una rama `feature/` (ej: `feature/series-agent`). GitHub Actions lo despliega automáticamente en Staging.
+3.  **Auditoría de Espejo:** Verificas que el agente responde correctamente bajo el servidor real (Hostinger) y que los logs de IA se registran en el dashboard de Staging.
+4.  **Merge a Main (Producción):** Creas un Pull Request. Una vez aprobado, haces el merge a `main`. El mismo código se despliega en la web oficial y ahora, al detectar el host de producción, utiliza automáticamente los recursos VIP.
+
+### 🛡️ Beneficios de este flujo
+- **Cero Riesgos:** La rama `main` siempre es estable.
+- **Trazabilidad:** Cada cambio en producción tiene un PR y una validación previa.
+- **Eficiencia:** No hay configuraciones manuales tras el despliegue. El código es inteligente.
 
 ---
 
