@@ -98,8 +98,26 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/openai-service/
+          # 📌 Subimos el código privado a la raíz (SEGURIDAD)
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/openai-service/
           local-dir: ./openai-service/
+          exclude: |
+            public/**
+            vendor/**
+            tests/**
+            **/.git*
+
+      - name: Deploy public entry point (OPENAI staging)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+          # 📌 Solo el index.php va a la carpeta pública
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/openai-service/
+          local-dir: ./openai-service/public/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-openai-staging.json
@@ -139,8 +157,26 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
 
-          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/rag-service/
+          # 📌 Subimos el código privado a la raíz (SEGURIDAD)
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/rag-service/
           local-dir: ./rag-service/
+          exclude: |
+            public/**
+            vendor/**
+            tests/**
+            **/.git*
+
+      - name: Deploy public entry point (RAG staging)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+          # 📌 Solo el index.php va a la carpeta pública
+          server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/public/rag-service/
+          local-dir: ./rag-service/public/
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-rag-staging.json
