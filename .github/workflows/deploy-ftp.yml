@@ -42,6 +42,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
+          timeout: 600000
 
           # 📌 RUTA REAL DEL PROYECTO COMPLETO EN HOSTINGER
           server-dir: /domains/contenido.creawebes.com/public_html/iamasterbigschool/
@@ -99,6 +100,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
+          timeout: 600000
 
           server-dir: /domains/contenido.creawebes.com/public_html/openai-service/
           local-dir: ./openai-service/
@@ -134,6 +136,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
+          timeout: 600000
 
           server-dir: /domains/contenido.creawebes.com/public_html/rag-service/
           local-dir: ./rag-service/
