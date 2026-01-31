@@ -321,6 +321,19 @@
       },
       "problemMatcher": []
     },
+    {
+      "label": "Git | Sincronizar STAGING con MAIN",
+      "type": "shell",
+      "command": "echo '🔄 Sincronizando staging con main...'; git fetch origin; git checkout feature/staging-final; git pull origin feature/staging-final; git merge origin/main -m 'chore: sync staging with main'; git push origin feature/staging-final; echo '✅ Staging sincronizado y deploy disparado!'",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
 
     {
       "label": "Git | crear tag (versión y subir)",
