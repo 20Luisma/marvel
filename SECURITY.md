@@ -68,6 +68,11 @@ Este proyecto opera en **Modo Demo/Guía**, lo que implica una postura de seguri
 
 ---
 
+### 📜 Documentación de la API
+Para una referencia completa de los endpoints de observabilidad y su esquema de datos, consulta nuestra [Documentación OpenAPI/Swagger](https://iamasterbigschool.contenido.creawebes.com/api/docs.html).
+
+---
+
 ## Reportar Vulnerabilidades
 
 *Última actualización: Diciembre 2024*
