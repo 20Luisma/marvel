@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/20Luisma/marvel/compare/v1.2.0...v1.3.0) (2026-01-31)
+
+
+### Features
+
+* add 'Broche de Oro' visual seal to engineering workflow slide ([cd4f90b](https://github.com/20Luisma/marvel/commit/cd4f90b29a7ebfe14d582fac0f6f4710a6698545))
+
+
+
 # [1.2.0](https://github.com/20Luisma/marvel/compare/v1.0.11...v1.2.0) (2026-01-31)
 
 
@@ -72,10 +81,6 @@
 ### Features
 
 * **security:** harden auth, CSRF and credential management ([69e8081](https://github.com/20Luisma/marvel/commit/69e808188b679e62cc470178689da7ab7ad746c2))
-
-
-
-## [1.0.8](https://github.com/20Luisma/marvel/compare/v1.0.7...v1.0.8) (2025-12-08)
 
 
 
