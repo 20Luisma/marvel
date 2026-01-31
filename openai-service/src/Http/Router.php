@@ -125,10 +125,13 @@ class Router
             }
         }
 
+        // Fallback dinámico: Permitir el dominio actual y localhost
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        
         return [
             'http://localhost:8080',
-            'https://iamasterbigschool.contenido.creawebes.com',
-            'https://openai-service.contenido.creawebes.com',
+            $protocol . '://' . $host,
         ];
     }
 
