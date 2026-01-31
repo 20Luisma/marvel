@@ -10,6 +10,31 @@ use App\Security\Validation\JsonValidator;
 $rootPath = dirname(__DIR__, 2);
 require_once $rootPath . '/vendor/autoload.php';
 
+// Cargar .env si está disponible (importante para staging/hosting)
+if (class_exists(\Dotenv\Dotenv::class)) {
+    \Dotenv\Dotenv::createImmutable($rootPath)->safeLoad();
+} else {
+    // Fallback manual por si NO está instalado Dotenv
+    $envFile = $rootPath . '/.env';
+    if (is_file($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($lines !== false) {
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === '' || str_starts_with($line, '#')) continue;
+                if (!str_contains($line, '=')) continue;
+                [$name, $value] = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim(trim($value), " \t\n\r\0\x0B\"'");
+                if ($name !== '') {
+                    $_ENV[$name] = $value;
+                    putenv($name . '=' . $value);
+                }
+            }
+        }
+    }
+}
+
 header('Content-Type: application/json; charset=utf-8');
 
 $question = $_POST['question'] ?? null;
@@ -26,9 +51,15 @@ $ragUrl = $_ENV['RAG_SERVICE_URL'] ?? getenv('RAG_SERVICE_URL');
 if (!is_string($ragUrl) || trim($ragUrl) === '') {
     $host = $_SERVER['HTTP_HOST'] ?? '';
     $host = is_string($host) ? strtolower($host) : '';
-    $ragUrl = str_contains($host, 'creawebes.com')
-        ? 'https://rag-service.contenido.creawebes.com/rag/agent'
-        : 'http://localhost:8082/rag/agent';
+    
+    // Detectar si estamos en staging para usar el subdominio correcto
+    if (str_contains($host, 'staging.contenido.creawebes.com')) {
+        $ragUrl = 'https://rag-staging.contenido.creawebes.com/rag/agent';
+    } elseif (str_contains($host, 'creawebes.com')) {
+        $ragUrl = 'https://rag-service.contenido.creawebes.com/rag/agent';
+    } else {
+        $ragUrl = 'http://localhost:8082/rag/agent';
+    }
 }
 
 $payload = ['question' => $question];
