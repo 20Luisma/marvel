@@ -37,6 +37,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
+          timeout: 600000
 
           # 📌 RUTA RAÍZ DE STAGING
           server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/
