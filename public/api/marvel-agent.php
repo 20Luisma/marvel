@@ -47,20 +47,31 @@ if (!is_string($question) || trim($question) === '') {
 $sanitizer = new Sanitizer();
 $question = $sanitizer->sanitizeString($question);
 
-$ragUrl = $_ENV['RAG_SERVICE_URL'] ?? getenv('RAG_SERVICE_URL');
-if (!is_string($ragUrl) || trim($ragUrl) === '') {
+// 1. Intentar usar RAG_BASE_URL (lo más limpio)
+$ragBase = $_ENV['RAG_BASE_URL'] ?? getenv('RAG_BASE_URL');
+
+// 2. Si no existe, intentar deducirlo de RAG_SERVICE_URL quitando /rag/heroes
+if (!is_string($ragBase) || trim($ragBase) === '') {
+    $serviceUrl = $_ENV['RAG_SERVICE_URL'] ?? getenv('RAG_SERVICE_URL') ?? '';
+    $ragBase = str_replace('/rag/heroes', '', $serviceUrl);
+}
+
+// 3. Si seguimos sin base, detección por Host
+if (!is_string($ragBase) || trim($ragBase) === '') {
     $host = $_SERVER['HTTP_HOST'] ?? '';
     $host = is_string($host) ? strtolower($host) : '';
     
-    // Detectar si estamos en staging para usar el subdominio correcto
     if (str_contains($host, 'staging.contenido.creawebes.com')) {
-        $ragUrl = 'https://rag-staging.contenido.creawebes.com/rag/agent';
+        $ragBase = 'https://rag-staging.contenido.creawebes.com';
     } elseif (str_contains($host, 'creawebes.com')) {
-        $ragUrl = 'https://rag-service.contenido.creawebes.com/rag/agent';
+        $ragBase = 'https://rag-service.contenido.creawebes.com';
     } else {
-        $ragUrl = 'http://localhost:8082/rag/agent';
+        $ragBase = 'http://localhost:8082';
     }
 }
+
+// URL final siempre contra el endpoint de AGENTE
+$ragUrl = rtrim((string)$ragBase, '/') . '/rag/agent';
 
 $payload = ['question' => $question];
 try {
