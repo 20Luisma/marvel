@@ -176,6 +176,17 @@ Se ha utilizado documentación oficial y asistencia puntual de IA como apoyo (in
 
 ---
 
+## 🛡️ Seguridad y Modo Demo
+
+Este proyecto está diseñado como una **guía técnica y demo interactiva**, no como un sistema de producción con datos persistentes de usuario. Por ello, se han tomado decisiones de diseño específicas:
+
+- **Reset Público (`reset-demo.php`):** El endpoint de restauración de datos es público por diseño. Esto permite que cualquier usuario que explore la demo pueda limpiar el estado y comenzar una experiencia desde cero.
+- **Riesgos Aceptados:** Se reconoce el riesgo de DoS lógico (reseteos constantes), pero se acepta en favor de la usabilidad de la demo académica.
+- **APIs de Observabilidad:** Los endpoints bajo `public/api/*` permanecen abiertos para facilitar la monitorización y transparencia de la demo.
+
+> **Nota para entornos productivos:** En un sistema real, estos endpoints estarían protegidos por capas de autenticación (JWT/OAuth), Rate Limiting estricto y listas blancas de IP.
+
+---
 
 ## Documentación adicional
 - `docs/architecture/` — decisiones de arquitectura

@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/**
+ * NOTA DE SEGURIDAD (MODO DEMO):
+ * Este endpoint es público de forma INTENCIONAL en este proyecto académico.
+ * Permite a los usuarios limpiar y restaurar el estado de la demo para una nueva prueba.
+ * 
+ * Riesgos: DoS lógico por reseteos arbitrarios.
+ * Mitigación: Riesgo aceptado con fines didácticos y de guía personal.
+ * En un sistema productivo real, este acceso estaría protegido por autenticación,
+ * tokens de un solo uso o restricciones de IP.
+ */
+
 use App\Shared\Application\UseCase\ResetDemoDataUseCase;
 use Dotenv\Dotenv;
 
