@@ -9,6 +9,11 @@ on:
 jobs:
   release:
     name: Create GitHub Release
+    # Solo se dispara si es un trigger manual O si el commit en main contiene "release/"
+    # (Esto ocurre automáticamente en los merges de GitHub si la rama origen se llama release/...)
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'push' && contains(github.event.head_commit.message, 'release/'))
     runs-on: ubuntu-latest
     permissions:
       contents: write

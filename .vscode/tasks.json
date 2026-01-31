@@ -42,7 +42,9 @@
       "options": [
         "feature",
         "hotfix",
-        "release"
+        "release",
+        "release/v1.x.x",
+        "feature/staging-final"
       ]
     },
     {
@@ -223,6 +225,15 @@
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
+    {
+      "label": "Git | Ir a rama STAGING (feature/staging-final)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "git checkout feature/staging-final"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
 
     {
       "label": "Git | fusionar rama actual en main (si salió bien)",
@@ -295,6 +306,19 @@
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git | Crear Pull Request (PR) a main",
+      "type": "shell",
+      "command": "branch=$(git rev-parse --abbrev-ref HEAD); if [ \"$branch\" = \"main\" ]; then echo \"⚠️ Ya estás en main. No puedes crear un PR de main a main.\"; exit 1; fi; echo \"🚀 Preparando Pull Request para la rama: $branch...\"; if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then gh pr create --base main --head \"$branch\" --title \"feature: changes from $branch\" --body \"Pull request creado automáticamente desde VSCode Task.\"; else echo \"🌐 Abriendo navegador para crear el PR manualmente...\"; remote_url=$(git config --get remote.origin.url); remote_url=${remote_url%.git}; remote_url=${remote_url#git@github.com:}; remote_url=${remote_url#https://github.com/}; open \"https://github.com/${remote_url}/compare/main...${branch}?expand=1\"; fi",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": []
     },
 
