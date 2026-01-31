@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/20Luisma/marvel/compare/v0.2.0...v0.3.0) (2026-01-31)
+
+
+### Features
+
+* updated presentation with auto-release and fixed CI workflow ID ([9a018fc](https://github.com/20Luisma/marvel/commit/9a018fc8ac42d8a838eb25871461a28b20a94324))
+
+
+
 # [0.2.0](https://github.com/20Luisma/marvel/compare/v0.1.0...v0.2.0) (2026-01-31)
 
 
@@ -69,15 +78,6 @@
 
 
 ## [1.0.10](https://github.com/20Luisma/marvel/compare/v1.0.9...v1.0.10) (2026-01-24)
-
-
-
-## [1.0.9](https://github.com/20Luisma/marvel/compare/v1.0.8...v1.0.9) (2025-12-14)
-
-
-### Features
-
-* **security:** harden auth, CSRF and credential management ([69e8081](https://github.com/20Luisma/marvel/commit/69e808188b679e62cc470178689da7ab7ad746c2))
 
 
 
