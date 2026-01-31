@@ -278,6 +278,7 @@ Documentación detallada en: `docs/guides/entorno-staging-mirroring.md`.
 - CSRF en POST críticos, rate-limit/login throttling, firewall de payloads y sanitización de entrada.
 - Sesiones con TTL/lifetime, sellado IP/UA y anti-replay en modo observación; rutas sensibles con AuthMiddleware/guards.
 - Logs de seguridad con trace_id y secretos vía `.env` (app + microservicios); verificación previa a despliegue con `bin/security-check.sh` y workflow `security-check.yml`.
+- **Postura en Modo Demo:** Con el fin de facilitar la exploración académica, algunos endpoints (ej: `public/api/reset-demo.php` y consultas de métricas) permanecen abiertos. Esta es una decisión de diseño consciente para la demo; en producción real se aplicarían Auth riguroso y restricciones de red.
 - Detalle completo, fases y hardening futuro en `docs/security/security.md`.
 
 ---

@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * NOTA DE SEGURIDAD (TRANSPARENCIA):
+ * Este endpoint de métricas de seguridad es público para demostrar la capacidad
+ * de integración de escaneos automatizados en la demo.
+ * 
+ * En un entorno real, estos resultados (que pueden contener información sensible
+ * sobre la infraestructura) estarían protegidos tras un panel de administración.
+ */
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Services\Security\SecurityScanService;

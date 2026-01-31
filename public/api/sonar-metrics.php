@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * NOTA DE SEGURIDAD (TRANSPARENCIA):
+ * Este endpoint de métricas es público para facilitar la observabilidad de la demo.
+ * Permite visualizar el estado de calidad del código (SonarCloud) de forma directa.
+ * 
+ * En un entorno productivo real, el acceso a métricas internas debería estar restringido
+ * a redes privadas (intranet) o protegido mediante autenticación corporativa.
+ */
+
 use DateTimeImmutable;
 use DateTimeInterface;
 use Dotenv\Dotenv;
