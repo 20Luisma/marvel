@@ -5,8 +5,11 @@
 ## Contexto y propósito
 - **Clean Marvel Album** es un proyecto académico en **PHP 8.2** que aplica Arquitectura Limpia para gestionar álbumes y héroes Marvel, desacoplando la UI (`public/`, `views/`) y la infraestructura (`storage/`, adaptadores JSON).
 - El backend central orquesta **3 microservicios externos** propios y expone los casos de uso mediante controladores HTTP y vistas Twig-less.
-- La capa `App\Config\ServiceUrlProvider` resuelve automáticamente los endpoints según entorno (`local`, `hosting`).
+- La capa `App\Config\ServiceUrlProvider` resuelve automáticamente los endpoints según entorno (`local`, `hosting`, `staging`).
 - El tráfico hacia microservicios se firma con HMAC usando `INTERNAL_API_KEY` y las cabeceras `X-Internal-*`.
+- Se ha implementado una capa de seguridad extra con la cabecera `X-Mobile-Key` para evitar accesos no autorizados a endpoints sensibles.
+- El proyecto sigue principios de **Clean Architecture** y **DDD**, utilizando Value Objects para la identidad de las entidades.
+
 
 ### Capas Clean Architecture
 | Capa | Directorios clave | Responsabilidad |
@@ -82,8 +85,9 @@
 | 6 | Monitorización (SecurityLogger, Sentry) | Implementada |
 | 7 | Anti-replay (token sesión) | Modo observación |
 | 8 | Cabeceras avanzadas (CSP, CORP, COOP) | Implementada |
-| 9 | Gestión de secretos | En progreso (documentado) |
-| 10 | Tests automáticos seguridad | Planificado (documentado) |
+| 9 | Gestión de secretos y X-Mobile-Key | Implementada |
+| 10 | Semantic Release & Mirroring Staging | Implementada |
+
 
 > Detalle completo en `docs/security/security.md`
 
@@ -210,4 +214,5 @@ SNYK_API_KEY=
 > Mantén este documento actualizado cuando cambie la arquitectura, los microservicios o los comandos soportados.  
 > Para documentación ampliada, consultar `docs/PROJECT_GUIDE.md`.
 
-*Última sincronización: 8 Diciembre 2025*
+*Última sincronización: 01 Febrero 2026 (v1.3.2)*
+

@@ -469,11 +469,11 @@
     <!-- Summary Cards -->
     <div class="summary-grid">
       <div class="summary-card" style="border-top: 3px solid var(--accent-primary);">
-        <div class="summary-value">10</div>
+        <div class="summary-value">11</div>
         <div class="summary-label">Puntos de Mejora</div>
       </div>
       <div class="summary-card" style="border-top: 3px solid var(--accent-success);">
-        <div class="summary-value">44-63h</div>
+        <div class="summary-value">52-73h</div>
         <div class="summary-label">Esfuerzo Estimado</div>
       </div>
       <div class="summary-card" style="border-top: 3px solid var(--accent-warning);">
@@ -491,7 +491,7 @@
       <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
         <div class="priority-badge priority-high"></div>
         <h2 class="section-title">Alta Prioridad</h2>
-        <div class="section-meta">13-18 horas · Arquitectura + Testabilidad</div>
+        <div class="section-meta">21-28 horas · Arquitectura + IA Scalability</div>
         <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
       </div>
       
@@ -537,6 +537,20 @@
             <div class="improvement-impact">Testabilidad</div>
           </div>
         </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">4</div>
+          <div class="improvement-content">
+            <h3>Escalabilidad RAG: Vector DB (Enterprise)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Transición de JSON a base de datos vectorial (Qdrant/Pinecone). <strong>Caso de uso Legal:</strong> permite procesar terabytes de jurisprudencia y contratos con búsquedas semánticas en milisegundos.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">8-10h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">IA Scalability</div>
+          </div>
+        </div>
       </div>
     </section>
     
@@ -551,7 +565,7 @@
       
       <div class="improvements-grid">
         <div class="improvement-card">
-          <div class="improvement-number">4</div>
+          <div class="improvement-number">5</div>
           <div class="improvement-content">
             <h3>Healthchecks HTTP para Microservicios</h3>
             <div class="improvement-title-divider"></div>
@@ -565,7 +579,7 @@
         </div>
         
         <div class="improvement-card">
-          <div class="improvement-number">5</div>
+          <div class="improvement-number">6</div>
           <div class="improvement-content">
             <h3>CSP Estricta (sin unsafe-inline)</h3>
             <div class="improvement-title-divider"></div>
@@ -579,7 +593,7 @@
         </div>
         
         <div class="improvement-card">
-          <div class="improvement-number">6</div>
+          <div class="improvement-number">7</div>
           <div class="improvement-content">
             <h3>EventBus con Persistencia (Outbox)</h3>
             <div class="improvement-title-divider"></div>
@@ -605,7 +619,7 @@
       
       <div class="improvements-grid">
         <div class="improvement-card">
-          <div class="improvement-number">7</div>
+          <div class="improvement-number">8</div>
           <div class="improvement-content">
             <h3>Logger Centralizado con trace_id</h3>
             <div class="improvement-title-divider"></div>
@@ -619,7 +633,7 @@
         </div>
         
         <div class="improvement-card">
-          <div class="improvement-number">8</div>
+          <div class="improvement-number">9</div>
           <div class="improvement-content">
             <h3>Tests de Seguridad Ampliados</h3>
             <div class="improvement-title-divider"></div>
@@ -633,7 +647,7 @@
         </div>
         
         <div class="improvement-card">
-          <div class="improvement-number">9</div>
+          <div class="improvement-number">10</div>
           <div class="improvement-content">
             <h3>HSTS Preload + HMAC Enforcement</h3>
             <div class="improvement-title-divider"></div>
@@ -647,7 +661,7 @@
         </div>
         
         <div class="improvement-card">
-          <div class="improvement-number">10</div>
+          <div class="improvement-number">11</div>
           <div class="improvement-content">
             <h3>Rate Limiting Granular</h3>
             <div class="improvement-title-divider"></div>
@@ -681,26 +695,26 @@
         </thead>
         <tbody>
           <tr>
-            <td><span style="color: var(--accent-danger);">●</span> Evolución Arquitectónica</td>
-            <td>Abstracción de servicios y desacoplamiento LLM (#1, #2, #3)</td>
-            <td style="font-weight: 600;">18h</td>
+            <td><span style="color: var(--accent-danger);">●</span> Evolución e Inteligencia</td>
+            <td>Abstracción de servicios y Escalabilidad RAG Enterprise (#1, #2, #3, #4)</td>
+            <td style="font-weight: 600;">28h</td>
             <td style="text-align: right;"><span style="color: var(--accent-danger); font-size: 0.75rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 8px; border-radius: 4px;">CRÍTICA</span></td>
           </tr>
           <tr>
             <td><span style="color: var(--accent-warning);">●</span> Robustez y Observabilidad</td>
-            <td>Healthchecks, Seguridad CSP y EventBus (#4, #5, #6)</td>
+            <td>Healthchecks, Seguridad CSP y EventBus (#5, #6, #7)</td>
             <td style="font-weight: 600;">24h</td>
             <td style="text-align: right;"><span style="color: var(--accent-warning); font-size: 0.75rem; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px;">ALTA</span></td>
           </tr>
           <tr>
             <td><span style="color: var(--accent-primary);">●</span> Calidad y Hardening</td>
-            <td>Logging centralizado, Tests de seguridad y Rate Limiting (#7, #8, #9, #10)</td>
+            <td>Logging centralizado, Tests de seguridad y Rate Limiting (#8, #9, #10, #11)</td>
             <td style="font-weight: 600;">21h</td>
             <td style="text-align: right;"><span style="color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 8px; border-radius: 4px;">MEDIA</span></td>
           </tr>
           <tr class="total-row" style="background: rgba(255,255,255,0.03);">
             <td colspan="2"><strong style="color: #fff;">ESFUERZO TOTAL ESTIMADO</strong></td>
-            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">63h</strong></td>
+            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">73h</strong></td>
             <td style="text-align: right;"><strong style="color: var(--text-secondary); font-size: 0.8rem;">PROYECTO VIVO</strong></td>
           </tr>
         </tbody>
@@ -720,23 +734,23 @@
     <div class="roadmap">
       <div class="roadmap-phase">
         <div class="phase-number">Fase 1</div>
-        <div class="phase-title">Arquitectura</div>
-        <div class="phase-desc">Mejoras #1, #2, #3 · Código más testeable y mantenible</div>
+        <div class="phase-title">Arquitectura e IA</div>
+        <div class="phase-desc">Mejoras #1, #2, #3, #4 · Escalabilidad RAG Enterprise</div>
       </div>
       <div class="roadmap-phase">
         <div class="phase-number">Fase 2</div>
         <div class="phase-title">Observabilidad</div>
-        <div class="phase-desc">Mejoras #4, #7 · Visibilidad del estado del sistema</div>
+        <div class="phase-desc">Mejoras #5, #8 · Visibilidad del estado del sistema</div>
       </div>
       <div class="roadmap-phase">
         <div class="phase-number">Fase 3</div>
         <div class="phase-title">Seguridad</div>
-        <div class="phase-desc">Mejoras #5, #8, #9, #10 · Sistema hardened</div>
+        <div class="phase-desc">Mejoras #6, #9, #10, #11 · Sistema hardened</div>
       </div>
       <div class="roadmap-phase">
         <div class="phase-number">Fase 4</div>
         <div class="phase-title">Resiliencia</div>
-        <div class="phase-desc">Mejora #6 · Sistema tolerante a fallos</div>
+        <div class="phase-desc">Mejora #7 · Sistema tolerante a fallos</div>
       </div>
     </div>
     

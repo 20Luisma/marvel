@@ -1,4 +1,4 @@
-# 🚀 Informe de Consultoría Técnica: Futuras Mejoras
+# 🚀 Roadmap Tecnológico: Análisis de Evolución y Futuras Mejoras
 
 > **Proyecto:** Clean Marvel Album  
 > **Autor:** Martín Pallante Cardeo  
@@ -13,10 +13,10 @@ Este documento presenta un análisis técnico detallado de las mejoras identific
 
 | Prioridad | Mejoras | Horas Estimadas | Impacto Principal |
 |-----------|---------|-----------------|-------------------|
-| 🔴 Alta | 3 | 13-18h | Arquitectura + Testabilidad |
+| 🔴 Alta | 4 | 21-28h | Arquitectura + IA Scalability |
 | 🟠 Media | 3 | 16-24h | Seguridad + Observabilidad |
 | 🟡 Baja | 4 | 15-21h | Hardening + Calidad |
-| **TOTAL** | **10** | **44-63h** | Sistema productivo |
+| **TOTAL** | **11** | **52-73h** | Sistema productivo |
 
 ---
 
@@ -27,13 +27,14 @@ Este documento presenta un análisis técnico detallado de las mejoras identific
 | 1 | Refactor a Application Layer (Comics) | 🔴 Alta | 4-6h | Arquitectura |
 | 2 | Refactor a Application Layer (Album Covers) | 🔴 Alta | 3-4h | Arquitectura |
 | 3 | Cliente LLM desacoplado (`ChatClientInterface`) | 🔴 Alta | 6-8h | Testabilidad |
-| 4 | Healthchecks HTTP para Microservicios | 🟠 Media | 4-6h | Observabilidad |
-| 5 | CSP estricta sin `unsafe-inline` para scripts | 🟠 Media | 4-6h | Seguridad |
-| 6 | EventBus con persistencia (Outbox Pattern) | 🟠 Media | 8-12h | Resiliencia |
-| 7 | Logger centralizado con `trace_id` | 🟡 Baja | 3-4h | Observabilidad |
-| 8 | Tests de seguridad ampliados | 🟡 Baja | 6-8h | Seguridad |
-| 9 | HSTS Preload + HMAC enforcement | 🟡 Baja | 2-3h | Seguridad |
-| 10 | Rate Limiting granular por endpoint | 🟡 Baja | 4-6h | Seguridad |
+| 4 | **Escalabilidad RAG: de JSON a Vector DB (Enterprise)** | 🔴 Alta | 8-10h | IA Scalability |
+| 5 | Healthchecks HTTP para Microservicios | 🟠 Media | 4-6h | Observabilidad |
+| 6 | CSP estricta sin `unsafe-inline` para scripts | 🟠 Media | 4-6h | Seguridad |
+| 7 | EventBus con persistencia (Outbox Pattern) | 🟠 Media | 8-12h | Resiliencia |
+| 8 | Logger centralizado con `trace_id` | 🟡 Baja | 3-4h | Observabilidad |
+| 9 | Tests de seguridad ampliados | 🟡 Baja | 6-8h | Seguridad |
+| 10 | HSTS Preload + HMAC enforcement | 🟡 Baja | 2-3h | Seguridad |
+| 11 | Rate Limiting granular por endpoint | 🟡 Baja | 4-6h | Seguridad |
 
 ---
 
@@ -187,9 +188,51 @@ El patrón **Dependency Inversion** permite:
 
 ---
 
+### 4. Escalabilidad RAG: de JSON a Vector DB (Nivel Enterprise)
+
+**Esfuerzo estimado:** 8-10 horas
+
+#### Estado Actual vs Objetivo
+
+| Aspecto | Estado Actual (RAG Ligero) | Estado Objetivo (Enterprise) |
+|---------|----------------------------|------------------------------|
+| Almacenamiento | Archivos JSON en disco | Base de Datos Vectorial (Qdrant, Pinecone, pgvector) |
+| Búsqueda | Carga en memoria + bucle lineal (O(n)) | Búsqueda indexada HNSW (O(log n)) |
+| Capacidad | Megabytes (pocos docs) | Terabytes (gigas de info, millones de docs) |
+| Documentos | Documento completo | Fragmentación (Chunking) con solapamiento |
+
+#### Referencia en Código
+
+```php
+// rag-service/src/Infrastructure/Knowledge/MarvelAgentKnowledgeBase.php
+// Actualmente carga el JSON completo en el constructor.
+```
+
+#### Justificación Técnica
+
+Para escenarios reales como un buffet de abogados con gigas de información, el sistema actual llegaría al `memory_limit` de PHP rápidamente. La transición a un RAG Enterprise permite:
+- **Latencia Constante**: Tiempo de respuesta inferior a 100ms independientemente del volumen de datos.
+- **Chunking Semántico**: Dividir documentos largos para inyectar solo la parte relevante, ahorrando tokens y mejorando la precisión.
+- **Desacoplamiento total**: Gracias a la interfaz `KnowledgeBaseInterface`, solo es necesario crear un adaptador para la nueva DB vectorial.
+
+#### Entregables
+
+- [ ] `rag-service/src/Infrastructure/VectorDb/VectorDbClientInterface.php`
+- [ ] Implementación de `QdrantKnowledgeBase` o `PineconeKnowledgeBase`
+- [ ] Script de indexación masiva con **Semantic Chunking**
+- [ ] Integración en `rag-service` vía Inversión de Dependencias
+
+#### 💡 Caso de Uso: Sector Legal (Buffet de Abogados)
+Para escalar este sistema a un entorno profesional como un buffet de abogados con gigas de jurisprudencia y miles de contratos PDF, el roadmap incluiría:
+1.  **Ingesta Masiva**: OCR con Tesseract/AWS Textract para digitalizar expedientes físicos.
+2.  **Fragmentación Legal**: Divisores de texto inteligentes que respeten la estructura de los artículos y leyes (Chunking por contexto).
+3.  **Discovery Semántico**: Búsqueda indexada que permita al abogado preguntar: *"¿Qué sentencias previas tenemos sobre despido improcedente en el sector retail?"* y obtener la respuesta en milisegundos analizando terabytes de datos.
+
+---
+
 ## 🟠 Mejoras de Media Prioridad
 
-### 4. Healthchecks HTTP para Microservicios
+### 5. Healthchecks HTTP para Microservicios
 
 **Esfuerzo estimado:** 4-6 horas
 
@@ -241,7 +284,7 @@ El patrón **Dependency Inversion** permite:
 
 ---
 
-### 5. CSP Estricta (eliminar `unsafe-inline` en scripts)
+### 6. CSP Estricta (eliminar `unsafe-inline` en scripts)
 
 **Esfuerzo estimado:** 4-6 horas
 
@@ -276,7 +319,7 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-### 6. EventBus con Persistencia (Outbox Pattern)
+### 7. EventBus con Persistencia (Outbox Pattern)
 
 **Esfuerzo estimado:** 8-12 horas
 
@@ -319,7 +362,7 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ## 🟡 Mejoras de Baja Prioridad
 
-### 7. Logger Centralizado con `trace_id`
+### 8. Logger Centralizado con `trace_id`
 
 **Esfuerzo estimado:** 3-4 horas
 
@@ -339,7 +382,7 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-### 8. Tests de Seguridad Ampliados
+### 9. Tests de Seguridad Ampliados
 
 **Esfuerzo estimado:** 6-8 horas
 
@@ -361,7 +404,7 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-### 9. HSTS Preload + HMAC Enforcement
+### 10. HSTS Preload + HMAC Enforcement
 
 **Esfuerzo estimado:** 2-3 horas
 
@@ -379,7 +422,7 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-### 10. Rate Limiting Granular por Endpoint
+### 11. Rate Limiting Granular por Endpoint
 
 **Esfuerzo estimado:** 4-6 horas
 
@@ -399,19 +442,6 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-## 💰 Estimación Económica (Referencia Consultoría)
-
-> Esta sección demuestra capacidad de estimación profesional, no representa un presupuesto real.
-
-| Bloque | Horas | Tarifa Referencia | Subtotal |
-|--------|-------|-------------------|----------|
-| Alta Prioridad | 18h | €80/h | €1,440 |
-| Media Prioridad | 24h | €80/h | €1,920 |
-| Baja Prioridad | 21h | €80/h | €1,680 |
-| **TOTAL** | **63h** | - | **€5,040** |
-
----
-
 ## 📅 Roadmap Sugerido
 
 ### Fase 1: Arquitectura (Sprint 1-2)
@@ -419,15 +449,15 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 - Resultado: Código más testeable y mantenible
 
 ### Fase 2: Observabilidad (Sprint 3)
-- Mejoras #4, #7
+- Mejoras #5, #8
 - Resultado: Visibilidad del estado del sistema
 
 ### Fase 3: Seguridad (Sprint 4-5)
-- Mejoras #5, #8, #9, #10
+- Mejoras #6, #9, #10, #11
 - Resultado: Sistema hardened
 
 ### Fase 4: Resiliencia (Sprint 6)
-- Mejora #6
+- Mejora #7
 - Resultado: Sistema tolerante a fallos
 
 ---
@@ -436,11 +466,11 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 Este análisis demuestra:
 
-1. **Autocrítica técnica**: Identificación honesta de áreas de mejora
-2. **Visión de producto**: Roadmap claro con fases definidas
-3. **Capacidad de estimación**: Horas y costes realistas
-4. **Conocimiento de patrones**: Outbox, DI, Clean Architecture
-5. **Enfoque profesional**: Priorización basada en impacto
+1. **Autocrítica técnica**: Identificación honesta y transparente de áreas de mejora.
+2. **Evolución Arquitectónica**: Plan claro de crecimiento basado en patrones sólidos.
+3. **Planificación de Ingeniería**: Estimación realista de esfuerzos de mejora.
+4. **Conocimiento de patrones**: Aplicación avanzada de Outbox, DI y Clean Architecture.
+5. **Enfoque Académico**: Rigor en la separación de responsabilidades y mantenibilidad.
 
 > *"El software nunca está terminado, solo entregado. Un ingeniero maduro sabe identificar qué mejoraría con más tiempo."*
 

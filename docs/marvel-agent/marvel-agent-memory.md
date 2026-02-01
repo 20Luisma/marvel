@@ -38,10 +38,18 @@ El objetivo de este documento es:
   - `/albums`, `/heroes`: navegación principal de contenido Marvel.
   - `/comic`: generación de historias/cómics usando OpenAI.
   - `/seccion` (Secret Room): panel central técnico (Sonar, Sentry, Heatmap, etc.).
-  - `/agentia`: interfaz del **Marvel Agent** (chat técnico, inicialmente simulado).
+  - `/agentia`: interfaz del **Marvel Agent** (chat técnico conectado al microservicio RAG).
+  - `/presentation`: presentación interactiva del TFM con métricas en tiempo real.
+
+- **Entornos y Despliegue**:
+  - **Local**: para desarrollo y pruebas rápidas.
+  - **Staging**: entorno de pruebas pre-producción (`staging` subdominio) sincronizado automáticamente con `main`.
+  - **Producción**: entorno final estable optimizado para el usuario.
+  - **Estrategia de Mirroring (entorno espejo)**: garantiza que staging y producción compartan la misma estructura y lógica, validando cambios antes del despliegue final.
 
 En la práctica, Clean Marvel Album actúa como un sandbox técnico y proyecto de máster: combina generación creativa (cómics), paneles de observabilidad y microservicios IA. La elección de Clean Architecture permite que los microservicios cambien o evolucionen sin alterar la lógica de dominio, y facilita probar y desplegar en hosting o cloud con solo ajustar configuración y URLs.
-También funciona como un “laboratorio” para prácticas de CI/CD y observabilidad: el monolito orquesta paneles (Sonar, Sentry, GitHub, accesibilidad, performance) y expone proxies seguros que aíslan tokens y dependencias externas.
+También funciona como un “laboratorio” para prácticas de CI/CD y observabilidad: el monolito orquesta paneles (Sonar, Sentry, GitHub, accesibilidad, performance) y expone proxies seguros que aíslan tokens y dependencias externas. Desde la v1.3.0, cuenta con un flujo de **Semantic Release** que automatiza el versionado y el despliegue profesional.
+
 
 ---
 
@@ -231,9 +239,23 @@ Clean Marvel Album está pensado para moverse entre local y producción sin camb
     - `/rag/agent` para preguntas técnicas usando la memoria maestra (`storage/marvel_agent_kb.json`).
   - Ambos flujos reutilizan el mismo cliente hacia `openai-service` y se benefician de embeddings opcionales, con fallback léxico.
 
-### 2.7 Seguridad (v1.2.0 - CSP Hardening)
+- **Integridad del Dominio (DDD)**:
+  - Se han implementado **Value Objects** (`HeroId`, `AlbumId`) para garantizar la integridad de los datos en toda la aplicación.
+  - El sistema utiliza tipado estricto y validaciones de dominio para evitar estados inconsistentes.
+
+- **Flujo de Ingeniería Profesional**:
+  - **Versionado Semántico**: Uso de `standard-version` para gestionar etiquetas de Git y el CHANGELOG automáticamente.
+  - **CI/CD Robusto**: GitHub Actions ejecuta tests unitarios (PHPUnit), análisis estático (PHPStan nivel 7) y auditorías de seguridad en cada commit.
+  - **Mirroring Staging**: Existe una rama `staging` que se despliega automáticamente para validación interna antes de pasar a `main`.
+
+
+### 2.7 Seguridad (v1.3.2 - HMAC & Mobile Key)
 
 **Estado actual (académico)**: controles de hardening activos (CSP con nonce en `script-src`, CSRF, rate limit, sesión) con tests automatizados y guía de verificación.
+
+- **HMAC Interno**: Las comunicaciones entre la App y los microservicios están firmadas con HMAC usando una `INTERNAL_API_KEY`.
+- **X-Mobile-Key**: Se ha añadido una cabecera de seguridad obligatoria (`X-Mobile-Key`) para endpoints sensibles, permitiendo el acceso controlado desde aplicaciones externas o móviles sin comprometer la sesión web.
+
 
 #### Content Security Policy (CSP) con Nonces Dinámicos
 
@@ -302,9 +324,12 @@ vendor/bin/phpunit tests/Security/ --testdox
 
 - **QA frontend**: Playwright (`playwright.config.cjs`), Pa11y (`bin/pa11y-all.sh`), Lighthouse (`lighthouserc.json`), SonarCloud (ver ADR-003).
 
-- **CI/CD (GitHub Actions)**: jobs de PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright, SonarCloud; deploy/rollback FTP según pipelines definidos.
+- **CI/CD (GitHub Actions)**: jobs de PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright, SonarCloud; deploy/rollback FTP según pipelines definidos. Implementa **Semantic Release** para versionado automático (v1.3.x).
 
-- **Seguridad**: CSP con nonce en `script-src` (v1.2.0), CSRF, rate limiting, session security (ver `docs/security/security.md`).
+- **Seguridad**: CSP con nonce en `script-src` (v1.2.0), CSRF, rate limiting, session security, y autenticación por cabecera `X-Mobile-Key` (v1.3.0).
+
+
+- **RAG Scalability (Enterprise)**: La arquitectura está diseñada para evolucionar de un "RAG Ligero" (JSON) a un "RAG Enterprise" (Base de Datos Vectorial). Esto permitiría manejar gigas o teras de información (ej. jurisprudencia en un **buffet de abogados**, miles de contratos) manteniendo latencias de milisegundos mediante índices HNSW y estrategias de chunking semántico. Incluye el uso de OCR (AWS Textract) para digitalizar expedientes físicos.
 
 ---
 
