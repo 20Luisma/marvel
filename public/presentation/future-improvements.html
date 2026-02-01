@@ -14,11 +14,11 @@
       --text-primary: #ffffff;
       --text-secondary: rgba(255,255,255,0.7);
       --text-muted: rgba(255,255,255,0.5);
-      --accent-red: #e23636;
-      --accent-green: #00ff88;
-      --accent-yellow: #ffaa00;
-      --accent-blue: #3b82f6;
-      --border: rgba(255,255,255,0.08);
+      --accent-red: #475569; /* Slate 600 - más sobrio */
+      --accent-green: #94a3b8; /* Slate 400 */
+      --accent-yellow: #64748b; /* Slate 500 */
+      --accent-blue: #1e293b; /* Slate 800 */
+      --border: rgba(255,255,255,0.1);
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,11 +55,9 @@
     
     .header h1 {
       font-size: 2.5rem;
-      font-weight: 800;
+      font-weight: 700;
       margin-bottom: 10px;
-      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #fff;
     }
     
     .header p {
@@ -134,13 +132,16 @@
       flex-shrink: 0;
     }
     
-    .priority-high { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
-    .priority-medium { background: #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.5); }
-    .priority-low { background: #eab308; box-shadow: 0 0 15px rgba(234, 179, 8, 0.5); }
+    .priority-high { background: #64748b; }
+    .priority-medium { background: #94a3b8; }
+    .priority-low { background: #cbd5e1; }
     
     .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
     .section-meta {
@@ -175,13 +176,14 @@
     .improvement-number {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%);
-      border-radius: 12px;
+      background: #334155;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 1.1rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.8);
     }
     
     .improvement-content h3 {
@@ -234,9 +236,9 @@
     
     /* Budget Section */
     .budget-section {
-      background: linear-gradient(135deg, rgba(226, 54, 54, 0.1) 0%, rgba(226, 54, 54, 0.02) 100%);
-      border: 1px solid var(--accent-red);
-      border-radius: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       padding: 40px;
       margin-top: 50px;
     }
@@ -297,7 +299,7 @@
     .budget-total {
       text-align: center;
       padding-top: 20px;
-      border-top: 2px solid var(--accent-red);
+      border-top: 2px solid rgba(255,255,255,0.1);
     }
     
     .budget-total-value {
@@ -422,9 +424,9 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <div class="header-meta">Análisis Técnico y Evolutivo</div>
-      <h1>🚀 Futuras Mejoras</h1>
-      <p>Análisis técnico detallado sobre la evolución arquitectónica y funcional del proyecto Clean Marvel Album</p>
+      <div class="header-meta">Documentación Técnica de Evolución</div>
+      <h1>Evolución Técnica y Próximos Pasos</h1>
+      <p>Análisis detallado sobre la hoja de ruta arquitectónica y funcional del proyecto Clean Marvel Album</p>
     </header>
     
     <!-- Summary Cards -->
@@ -628,19 +630,19 @@
         </thead>
         <tbody>
           <tr>
-            <td><span style="color: #ef4444;">●</span> Evolución Arquitectónica</td>
+            <td><span style="color: #64748b;">●</span> Evolución Arquitectónica</td>
             <td>Abstracción de servicios y desacoplamiento LLM (#1, #2, #3)</td>
             <td>18h</td>
             <td style="text-align: right;">Crítica</td>
           </tr>
           <tr>
-            <td><span style="color: #f97316;">●</span> Robustez y Observabilidad</td>
+            <td><span style="color: #94a3b8;">●</span> Robustez y Observabilidad</td>
             <td>Healthchecks, Seguridad CSP y EventBus (#4, #5, #6)</td>
             <td>24h</td>
             <td style="text-align: right;">Alta</td>
           </tr>
           <tr>
-            <td><span style="color: #eab308;">●</span> Calidad y Hardening</td>
+            <td><span style="color: #cbd5e1;">●</span> Calidad y Hardening</td>
             <td>Logging centralizado, Tests de seguridad y Rate Limiting (#7, #8, #9, #10)</td>
             <td>21h</td>
             <td style="text-align: right;">Media</td>
