@@ -37,12 +37,14 @@ jobs:
         run: php -S 0.0.0.0:8080 -t public >/tmp/surgical-server.log 2>&1 &
         env:
           APP_ENV: testing
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
 
       - name: 🔬 Ejecutar Test Quirúrgico (PRE-DEPLOY)
         run: npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          INTERNAL_KEY: ${{ secrets.INTERNAL_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
           RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
           # Usamos staging para validar que los microservicios externos están vivos
           PLAYWRIGHT_BASE_URL: http://localhost:8080
