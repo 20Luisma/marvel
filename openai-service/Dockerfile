@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.5.3RC1-fpm
 
 # 1) Instalar dependencias del sistema y extensiones PHP necesarias
 RUN apt-get update && apt-get install -y \
