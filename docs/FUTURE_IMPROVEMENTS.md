@@ -27,7 +27,8 @@ Este documento presenta un análisis técnico detallado de las mejoras identific
 | 🔴 Alta | 4 | 21-28h | Arquitectura + IA Scalability |
 | 🟠 Media | 3 | 16-24h | Seguridad + Observabilidad |
 | 🟡 Baja | 4 | 15-21h | Hardening + Calidad |
-| **TOTAL** | **11** | **52-73h** | Sistema productivo |
+| 🛡️ Premium | 5 | 30-45h | Hardening Enterprise (Nivel Banco) |
+| **TOTAL** | **16** | **82-118h** | Sistema Grado Bancario |
 
 ---
 
@@ -453,7 +454,38 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 ---
 
-## 📅 Roadmap Sugerido
+## �️ Fase 5: Hardening Enterprise (Nivel Bancario)
+
+Para escalar este proyecto a sectores altamente regulados (Banca, FinTech, Salud), el roadmap técnico incluye las siguientes implementaciones de seguridad avanzada:
+
+### 12. WAF (Web Application Firewall) Perimetral
+- **Objetivo**: Filtrar tráfico malicioso antes de que toque la infraestructura de Hostinger/Google Cloud.
+- **Implementación**: Integración con **Cloudflare Enterprise** o **AWS WAF**.
+- **Impacto**: Protección contra ataques Zero-Day, inyecciones SQL complejas y mitigación de DDoS avanzada.
+
+### 13. Cifrado de Datos "At Rest" (AES-256)
+- **Objetivo**: Asegurar que los datos en la base de datos MySQL y los archivos JSON sean ilegibles si el almacenamiento físico se ve comprometido.
+- **Implementación**: Capa de cifrado simétrico transparente en los Repositorios de Dominio.
+- **Impacto**: Confidencialidad total de la información de los usuarios y héroes.
+
+### 14. MFA (Multi-Factor Authentication) para Administración
+- **Objetivo**: Eliminar el riesgo de compromiso de cuentas mediante el robo de contraseñas.
+- **Implementación**: Integración con protocolos **TOTP** (Google Authenticator) o llaves físicas (Yubikey).
+- **Impacto**: Acceso blindado a las funciones críticas del sistema.
+
+### 15. SIEM (Security Information and Event Management)
+- **Objetivo**: Detección de intrusos basada en anomalías de comportamiento.
+- **Implementación**: Centralización de logs en **ElasticSearch/Kibana** con reglas de alerta proactivas.
+- **Impacto**: Capacidad de respuesta ante incidentes en tiempo real.
+
+### 16. Auditoría de Cumplimiento (Compliance Readiness)
+- **Objetivo**: Certificar que el sistema cumple con estándares internacionales.
+- **Alcance**: Preparación para certificaciones **SOC2 Type II** y **PCI-DSS** (en caso de integrar pagos).
+- **Impacto**: Garantía de confianza para partners corporativos de alto nivel.
+
+---
+
+## �📅 Roadmap Sugerido
 
 ### Fase 1: Arquitectura (Sprint 1-2)
 - Mejoras #1, #2, #3
@@ -470,6 +502,10 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 ### Fase 4: Resiliencia (Sprint 6)
 - Mejora #7
 - Resultado: Sistema tolerante a fallos
+
+### Fase 5: Hardening Enterprise (Sprint 7-8)
+- Mejoras #12, #13, #14, #15, #16
+- Resultado: Sistema de Grado Bancario certificado
 
 ---
 
