@@ -23,7 +23,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, dom, json, pdo, sqlite
+          extensions: mbstring, dom, json, pdo, sqlite, curl
 
       - name: Install dependencies
         run: |
@@ -52,6 +52,7 @@ jobs:
           APP_ENV: testing
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
 
       - name: 🔬 Ejecutar Test Quirúrgico (PRE-DEPLOY)
         run: |
