@@ -1,0 +1,46 @@
+name: 🛡️ Security Sentinel Watchdog
+
+on:
+  schedule:
+    # Corre semanalmente los domingos a las 00:00 UTC (Bajo coste, alta seguridad)
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # Permite ejecución manual
+
+jobs:
+  security-audit:
+    name: 🔍 Auditoría de Dependencias y Código
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: 📦 Composer Security Audit
+        run: composer security:audit || echo "⚠️ Se encontraron vulnerabilidades en dependencias PHP"
+
+      - name: 📦 NPM Security Audit
+        run: npm audit || echo "⚠️ Se encontraron vulnerabilidades en dependencias JS"
+
+  production-hardening-check:
+    name: 🏰 Verificación de Hardening en Producción
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Playwright
+        run: npm ci && npx playwright install --with-deps chromium
+
+      - name: 🕵️‍♂️ Scan for Exposed Secrets & Configs
+        run: npx playwright test tests/security/hardening-check.spec.js
+        env:
+          APP_URL: https://iamasterbigschool.contenido.creawebes.com
