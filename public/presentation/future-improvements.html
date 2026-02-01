@@ -48,17 +48,21 @@
     }
     
     .divider {
-      height: 1px;
-      width: 120px;
-      background: linear-gradient(90deg, var(--accent-primary), transparent);
+      height: 2px;
+      width: 100px;
+      background: var(--accent-primary);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
       margin: 15px auto;
+      border-radius: 2px;
     }
     
     .divider-left {
-      height: 1px;
-      width: 120px;
-      background: linear-gradient(90deg, var(--accent-primary), transparent);
+      height: 2px;
+      width: 80px;
+      background: var(--accent-primary);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
       margin: 10px 0 20px 0;
+      border-radius: 2px;
     }
     
     .header-meta {
@@ -208,9 +212,19 @@
     }
     
     .improvement-content h3 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .improvement-title-divider {
+      height: 2px;
+      width: 40px;
+      background: var(--accent-primary);
+      margin-bottom: 12px;
+      border-radius: 2px;
+      opacity: 0.6;
     }
     
     .improvement-content p {
@@ -486,6 +500,7 @@
           <div class="improvement-number">1</div>
           <div class="improvement-content">
             <h3>Refactor a Application Layer (Comics)</h3>
+            <div class="improvement-title-divider"></div>
             <p>Mover la lógica de generación de cómics del controller a un servicio de aplicación dedicado <code>GenerateComicService</code>. Mejora la separación de responsabilidades y facilita testing unitario.</p>
           </div>
           <div class="improvement-meta">
@@ -499,6 +514,7 @@
           <div class="improvement-number">2</div>
           <div class="improvement-content">
             <h3>Refactor a Application Layer (Album Covers)</h3>
+            <div class="improvement-title-divider"></div>
             <p>Extraer la lógica de subida de portadas a <code>AlbumCoverUploadService</code> con abstracción de filesystem. Permite testing sin I/O real y cambio de estrategia de almacenamiento.</p>
           </div>
           <div class="improvement-meta">
@@ -512,6 +528,7 @@
           <div class="improvement-number">3</div>
           <div class="improvement-content">
             <h3>Cliente LLM Desacoplado</h3>
+            <div class="improvement-title-divider"></div>
             <p>Implementar <code>ChatClientInterface</code> para desacoplar el proveedor de IA. Permite sustituir OpenAI por otro proveedor sin modificar la lógica de negocio.</p>
           </div>
           <div class="improvement-meta">
@@ -537,6 +554,7 @@
           <div class="improvement-number">4</div>
           <div class="improvement-content">
             <h3>Healthchecks HTTP para Microservicios</h3>
+            <div class="improvement-title-divider"></div>
             <p>Implementar endpoints <code>/health</code> y <code>/ready</code> en cada microservicio (OpenAI, RAG, Heatmap) con métricas de latencia y errores.</p>
           </div>
           <div class="improvement-meta">
@@ -550,6 +568,7 @@
           <div class="improvement-number">5</div>
           <div class="improvement-content">
             <h3>CSP Estricta (sin unsafe-inline)</h3>
+            <div class="improvement-title-divider"></div>
             <p>Eliminar el fallback a <code>unsafe-inline</code> en scripts y garantizar nonces obligatorios en todas las vistas para protección XSS completa.</p>
           </div>
           <div class="improvement-meta">
@@ -563,6 +582,7 @@
           <div class="improvement-number">6</div>
           <div class="improvement-content">
             <h3>EventBus con Persistencia (Outbox)</h3>
+            <div class="improvement-title-divider"></div>
             <p>Implementar patrón Outbox para garantizar entrega de eventos. Los eventos se persisten en tabla antes de procesarse, permitiendo reintentos y trazabilidad.</p>
           </div>
           <div class="improvement-meta">
@@ -588,6 +608,7 @@
           <div class="improvement-number">7</div>
           <div class="improvement-content">
             <h3>Logger Centralizado con trace_id</h3>
+            <div class="improvement-title-divider"></div>
             <p>Implementar <code>CentralLogger</code> que inyecte trace_id en cada request para correlacionar logs entre servicios.</p>
           </div>
           <div class="improvement-meta">
@@ -601,6 +622,7 @@
           <div class="improvement-number">8</div>
           <div class="improvement-content">
             <h3>Tests de Seguridad Ampliados</h3>
+            <div class="improvement-title-divider"></div>
             <p>Añadir tests para verificar CSP headers, HSTS, rate limiting y sanitización XSS en todos los endpoints.</p>
           </div>
           <div class="improvement-meta">
@@ -614,6 +636,7 @@
           <div class="improvement-number">9</div>
           <div class="improvement-content">
             <h3>HSTS Preload + HMAC Enforcement</h3>
+            <div class="improvement-title-divider"></div>
             <p>Añadir directiva preload a HSTS y modo estricto que rechace requests sin firma HMAC válida.</p>
           </div>
           <div class="improvement-meta">
@@ -627,6 +650,7 @@
           <div class="improvement-number">10</div>
           <div class="improvement-content">
             <h3>Rate Limiting Granular</h3>
+            <div class="improvement-title-divider"></div>
             <p>Configurar límites específicos por endpoint: 10 req/min para <code>/api/comic</code>, 1 req/min para <code>/api/reset-demo</code>.</p>
           </div>
           <div class="improvement-meta">
