@@ -329,7 +329,7 @@ vendor/bin/phpunit tests/Security/ --testdox
 - **Seguridad**: CSP con nonce en `script-src` (v1.2.0), CSRF, rate limiting, session security, y autenticación por cabecera `X-Mobile-Key` (v1.3.0).
 
 
-- **RAG Scalability (Enterprise)**: La arquitectura está diseñada para evolucionar de un "RAG Ligero" (JSON) a un "RAG Enterprise" (Base de Datos Vectorial). Esto permitiría manejar gigas o teras de información (ej. jurisprudencia, miles de contratos) manteniendo latencias de milisegundos mediante índices HNSW y estrategias de chunking semántico.
+- **RAG Scalability (Enterprise)**: La arquitectura está diseñada para evolucionar de un "RAG Ligero" (JSON) a un "RAG Enterprise" (Base de Datos Vectorial). Esto permitiría manejar gigas o teras de información (ej. jurisprudencia en un **buffet de abogados**, miles de contratos) manteniendo latencias de milisegundos mediante índices HNSW y estrategias de chunking semántico. Incluye el uso de OCR (AWS Textract) para digitalizar expedientes físicos.
 
 ---
 
