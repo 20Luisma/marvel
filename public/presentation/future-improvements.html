@@ -8,27 +8,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0a0a0f;
-      --bg-secondary: #12121a;
-      --bg-card: rgba(255,255,255,0.03);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255,255,255,0.7);
-      --text-muted: rgba(255,255,255,0.5);
-      --accent-red: #475569; /* Slate 600 - más sobrio */
-      --accent-green: #94a3b8; /* Slate 400 */
-      --accent-yellow: #64748b; /* Slate 500 */
-      --accent-blue: #1e293b; /* Slate 800 */
-      --border: rgba(255,255,255,0.1);
+      --bg-primary: #050508;
+      --bg-secondary: #0a0a12;
+      --bg-card: rgba(30, 41, 59, 0.4);
+      --bg-card-hover: rgba(30, 41, 59, 0.6);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-primary: #3b82f6; 
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-danger: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-blur: blur(12px);
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-primary);
+      background: radial-gradient(circle at top center, #1e293b 0%, #050508 100%);
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.6;
+      background-attachment: fixed;
     }
     
     .container {
@@ -49,8 +52,9 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 3px;
-      color: var(--accent-red);
+      color: var(--accent-primary);
       margin-bottom: 15px;
+      font-weight: 600;
     }
     
     .header h1 {
@@ -94,14 +98,15 @@
     
     .summary-card:hover {
       transform: translateY(-5px);
-      border-color: var(--accent-red);
-      box-shadow: 0 20px 40px rgba(226, 54, 54, 0.1);
+      border-color: var(--accent-primary);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+      background: var(--bg-card-hover);
     }
     
     .summary-value {
       font-size: 2.5rem;
       font-weight: 800;
-      color: var(--accent-red);
+      color: #fff;
       line-height: 1;
       margin-bottom: 8px;
     }
@@ -159,31 +164,34 @@
     .improvement-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
+      backdrop-filter: var(--glass-blur);
       border-radius: 16px;
-      padding: 25px;
+      padding: 30px;
       display: grid;
       grid-template-columns: auto 1fr auto;
-      gap: 20px;
+      gap: 25px;
       align-items: start;
       transition: all 0.3s ease;
     }
     
     .improvement-card:hover {
-      border-color: rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.05);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: var(--bg-card-hover);
+      transform: translateX(5px);
     }
     
     .improvement-number {
-      width: 40px;
-      height: 40px;
-      background: #334155;
-      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.8);
+      font-size: 1.1rem;
+      color: var(--accent-primary);
     }
     
     .improvement-content h3 {
@@ -199,9 +207,10 @@
     }
     
     .improvement-content code {
-      background: rgba(226, 54, 54, 0.15);
-      color: var(--accent-red);
+      background: rgba(30, 41, 59, 0.8);
+      color: #fff;
       padding: 2px 8px;
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 4px;
       font-size: 0.85rem;
       font-family: 'SF Mono', Consolas, monospace;
@@ -215,7 +224,7 @@
     .improvement-hours {
       font-size: 1.3rem;
       font-weight: 700;
-      color: var(--accent-green);
+      color: var(--accent-success);
     }
     
     .improvement-hours-label {
@@ -345,7 +354,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: var(--accent-red);
+      background: var(--accent-primary);
       border-radius: 16px 16px 0 0;
     }
     
@@ -353,7 +362,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: var(--accent-red);
+      color: var(--accent-primary);
       margin-bottom: 10px;
     }
     
@@ -385,7 +394,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: var(--accent-red);
+      color: var(--accent-primary);
       text-decoration: none;
       font-weight: 600;
       margin-top: 20px;
@@ -431,19 +440,19 @@
     
     <!-- Summary Cards -->
     <div class="summary-grid">
-      <div class="summary-card">
+      <div class="summary-card" style="border-top: 3px solid var(--accent-primary);">
         <div class="summary-value">10</div>
         <div class="summary-label">Puntos de Mejora</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card" style="border-top: 3px solid var(--accent-success);">
         <div class="summary-value">44-63h</div>
         <div class="summary-label">Esfuerzo Estimado</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card" style="border-top: 3px solid var(--accent-warning);">
         <div class="summary-value">85%</div>
         <div class="summary-label">Cobertura Objetivo</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card" style="border-top: 3px solid var(--accent-danger);">
         <div class="summary-value">ALTO</div>
         <div class="summary-label">Impacto Global</div>
       </div>
@@ -613,51 +622,51 @@
     </section>
     
     <!-- Technical Note Section -->
-    <section class="budget-section">
+    <section class="budget-section" style="background: rgba(30, 41, 59, 0.3); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.05);">
       <div class="budget-header">
-        <h2>🛠️ Planificación del Esfuerzo</h2>
-        <p>Distribución estimada de carga de trabajo por bloques técnicos</p>
+        <h2 style="color: #fff; font-weight: 700;">🛠️ Planificación del Esfuerzo</h2>
+        <p style="color: var(--text-secondary);">Distribución estimada de carga de trabajo por bloques técnicos</p>
       </div>
       
       <table class="budget-table">
         <thead>
           <tr>
-            <th>Bloque</th>
-            <th>Dimensiones de Mejora</th>
-            <th>Esfuerzo (h)</th>
-            <th style="text-align: right;">Prioridad</th>
+            <th style="color: var(--accent-primary);">Bloque</th>
+            <th style="color: var(--accent-primary);">Dimensiones de Mejora</th>
+            <th style="color: var(--accent-primary);">Esfuerzo (h)</th>
+            <th style="text-align: right; color: var(--accent-primary);">Prioridad</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span style="color: #64748b;">●</span> Evolución Arquitectónica</td>
+            <td><span style="color: var(--accent-danger);">●</span> Evolución Arquitectónica</td>
             <td>Abstracción de servicios y desacoplamiento LLM (#1, #2, #3)</td>
-            <td>18h</td>
-            <td style="text-align: right;">Crítica</td>
+            <td style="font-weight: 600;">18h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-danger); font-size: 0.75rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 8px; border-radius: 4px;">CRÍTICA</span></td>
           </tr>
           <tr>
-            <td><span style="color: #94a3b8;">●</span> Robustez y Observabilidad</td>
+            <td><span style="color: var(--accent-warning);">●</span> Robustez y Observabilidad</td>
             <td>Healthchecks, Seguridad CSP y EventBus (#4, #5, #6)</td>
-            <td>24h</td>
-            <td style="text-align: right;">Alta</td>
+            <td style="font-weight: 600;">24h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-warning); font-size: 0.75rem; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px;">ALTA</span></td>
           </tr>
           <tr>
-            <td><span style="color: #cbd5e1;">●</span> Calidad y Hardening</td>
+            <td><span style="color: var(--accent-primary);">●</span> Calidad y Hardening</td>
             <td>Logging centralizado, Tests de seguridad y Rate Limiting (#7, #8, #9, #10)</td>
-            <td>21h</td>
-            <td style="text-align: right;">Media</td>
+            <td style="font-weight: 600;">21h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 8px; border-radius: 4px;">MEDIA</span></td>
           </tr>
-          <tr class="total-row">
-            <td colspan="2"><strong>ESFUERZO TOTAL ESTIMADO</strong></td>
-            <td><strong>63h</strong></td>
-            <td style="text-align: right;"><strong>PROYECTO VIVO</strong></td>
+          <tr class="total-row" style="background: rgba(255,255,255,0.03);">
+            <td colspan="2"><strong style="color: #fff;">ESFUERZO TOTAL ESTIMADO</strong></td>
+            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">63h</strong></td>
+            <td style="text-align: right;"><strong style="color: var(--text-secondary); font-size: 0.8rem;">PROYECTO VIVO</strong></td>
           </tr>
         </tbody>
       </table>
       
-      <div class="disclaimer">
-        <div class="disclaimer-title">⚠️ Nota de Propósito</div>
-        <p>Este análisis demuestra la capacidad de identificar deuda técnica y planificar la evolución del software. El enfoque es puramente técnico y académico.</p>
+      <div class="disclaimer" style="background: rgba(245, 158, 11, 0.05); border-left: 4px solid var(--accent-warning);">
+        <div class="disclaimer-title" style="color: var(--accent-warning);">⚠️ Nota de Propósito</div>
+        <p style="color: var(--text-secondary);">Este análisis demuestra la capacidad de identificar deuda técnica y planificar la evolución del software de manera profesional.</p>
       </div>
     </section>
     
