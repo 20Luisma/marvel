@@ -41,6 +41,6 @@ jobs:
         run: npm ci && npx playwright install --with-deps chromium
 
       - name: 🕵️‍♂️ Scan for Exposed Secrets & Configs
-        run: npx playwright test tests/security/hardening-check.spec.js
+        run: npx playwright test tests/Security/hardening-check.spec.js
         env:
           APP_URL: https://iamasterbigschool.contenido.creawebes.com
