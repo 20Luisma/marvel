@@ -1,0 +1,93 @@
+const { test, expect } = require('@playwright/test');
+
+/**
+ * 🏥 SUITE DE DIAGNÓSTICO QUIRÚRGICO (PRE-DEPLOYMENT)
+ * Este test es el guardián de la producción. Si falla, el deploy se detiene.
+ */
+
+test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
+
+  test.beforeEach(async ({ page }) => {
+    // Aumentamos el timeout para operaciones de IA que pueden ser lentas
+    test.setTimeout(60000);
+  });
+
+  // 1. VERIFICACIÓN DE APIS BASE
+  test('APIs Críticas: Las rutas base deben responder 200', async ({ request }) => {
+    const criticalPaths = [
+      '/api/heroes',
+      '/api/marvel-agent.php',
+      '/api/ai-token-metrics.php',
+      '/api/sonar-metrics.php'
+    ];
+
+    for (const path of criticalPaths) {
+      const response = await request.get(path);
+      expect(response.status(), `La API en ${path} está caída!`).toBe(200);
+    }
+  });
+
+  // 2. AGENTE IA (RAG)
+  test('IA Agent: Debe ser capaz de razonar y responder (RAG Check)', async ({ page }) => {
+    await page.goto('/comic'); // El agente suele estar accesible desde aquí o tiene su propia sección
+    
+    // Asumimos que hay un chat o un botón para invocar al agente
+    // Basado en el código, el agente se suele consultar vía API o en el comparador
+    const response = await page.request.post('/api/marvel-agent.php', {
+      data: { query: '¿Qué es Clean Marvel Album?' }
+    });
+    
+    expect(response.ok()).toBeTruthy();
+    const data = await response.json();
+    expect(data.answer, 'El Agente IA no devolvió una respuesta').toBeDefined();
+    expect(data.answer.length).toBeGreaterThan(10);
+  });
+
+  // 3. COMPARADOR DE HÉROES
+  test('Comparador: Debe analizar dos héroes y devolver una conclusión', async ({ page }) => {
+    const response = await page.request.post('/api/marvel-agent.php', {
+      data: { 
+        query: 'compara a Iron Man con Spider-Man',
+        context: 'compare_heroes'
+      }
+    });
+
+    expect(response.ok()).toBeTruthy();
+    const data = await response.json();
+    expect(data.answer).toContain('Iron Man');
+    expect(data.answer).toContain('Spider-Man');
+  });
+
+  // 4. CRUD DE ÁLBUMES (CREAR Y ELIMINAR)
+  test('Ciclo CRUD: Debe poder crear un álbum y luego eliminarlo', async ({ page }) => {
+    await page.goto('/');
+    
+    // Crear álbum
+    await page.fill('#album-name', 'TEST_ALBUM_QUIRURGICO');
+    await page.click('#album-form button[type="submit"]');
+    
+    // Esperamos a que aparezca en el grid
+    const albumCard = page.locator('.album-card', { hasText: 'TEST_ALBUM_QUIRURGICO' });
+    await expect(albumCard).toBeVisible({ timeout: 10000 });
+
+    // Eliminar álbum 
+    // Primero hay que interceptar el confirm de window.confirm
+    page.on('dialog', dialog => dialog.accept());
+    
+    // El botón eliminar está dentro de las acciones de la tarjeta
+    const deleteBtn = albumCard.locator('button.btn-danger');
+    await deleteBtn.click();
+
+    // Verificamos que desaparezca
+    await expect(albumCard).not.toBeVisible({ timeout: 10000 });
+  });
+
+  // 5. SISTEMA DE RESET (MÁQUINA DEL TIEMPO)
+  test('Demo Reset: El endpoint de restauración debe funcionar', async ({ request }) => {
+    const response = await request.get('/api/reset-demo.php');
+    expect(response.ok()).toBeTruthy();
+    const data = await response.json();
+    expect(data.status).toBe('success');
+  });
+
+});
