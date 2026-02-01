@@ -146,15 +146,18 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Seed JSON storage
+      - name: Seed storage
         run: |
-          mkdir -p storage/json
+          mkdir -p storage/json storage/logs
           if [ -d storage.example ]; then
             cp -r storage.example/* storage/json/ || true
             for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+              basename_f=$(basename "$f")
+              [ -f "$f" ] && cp -n "$f" "storage/$basename_f" || true
             done
           fi
+          # Permisos para que PHP pueda escribir
+          chmod -R 777 storage
 
       - name: Install Node dependencies
         run: npm ci
@@ -211,15 +214,18 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Seed JSON storage
+      - name: Seed storage
         run: |
-          mkdir -p storage/json
+          mkdir -p storage/json storage/logs
           if [ -d storage.example ]; then
             cp -r storage.example/* storage/json/ || true
             for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+              basename_f=$(basename "$f")
+              [ -f "$f" ] && cp -n "$f" "storage/$basename_f" || true
             done
           fi
+          # Permisos para que PHP pueda escribir
+          chmod -R 777 storage
 
       - name: Start PHP server
         run: php -S 0.0.0.0:8080 -t public public/index.php >/tmp/php-server-lh.log 2>&1 &
@@ -246,19 +252,23 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          extensions: mbstring, dom, json, pdo, sqlite, curl
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Seed JSON storage
+      - name: Seed storage
         run: |
-          mkdir -p storage/json
+          mkdir -p storage/json storage/logs
           if [ -d storage.example ]; then
             cp -r storage.example/* storage/json/ || true
             for f in storage.example/*.json; do
-              [ -f "$f" ] && cp -n "$f" "storage/$(basename "$f")" || true
+              basename_f=$(basename "$f")
+              [ -f "$f" ] && cp -n "$f" "storage/$basename_f" || true
             done
           fi
+          # Permisos para que PHP pueda escribir
+          chmod -R 777 storage
 
       - name: Setup Node.js 18
         uses: actions/setup-node@v4
@@ -294,12 +304,23 @@ jobs:
 
       - name: Start PHP server
         run: php -S 0.0.0.0:8080 -t public >/tmp/php-server.log 2>&1 &
+        env:
+          APP_ENV: testing
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
+          RAG_BASE_URL: https://rag-staging.contenido.creawebes.com
 
       - name: Wait for PHP server
         run: sleep 5
 
       - name: Run Playwright tests
         run: npx playwright test tests/e2e --config=playwright.config.cjs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
+          RAG_BASE_URL: https://rag-staging.contenido.creawebes.com
 
       - name: Upload Playwright artifacts
         if: always()
