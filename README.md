@@ -89,6 +89,18 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 ### Heatmap Service (Python/Flask)
 Registra eventos de clic para análisis de interacción. Dockerizado en VM externa (Google Cloud).
 
+## CI/CD & Quality Gate (Filtro Quirúrgico) 🛡️
+
+El proyecto implementa un flujo de **DevSecOps** avanzado mediante GitHub Actions, diseñado para garantizar que ninguna versión inestable llegue a producción:
+
+- **Quality Gate (Puerta de Calidad):** Un paso obligatorio antes del despliegue que ejecuta un **Surgical E2E Test Suite**.
+- **Surgical Smoke Testing:** Suite de tests críticos que validan en tiempo real:
+    - Estado de las APIs vitales.
+    - Conectividad y razonamiento del **Agente IA (RAG)**.
+    - Integridad del Ciclo CRUD de álbumes.
+    - Persistencia y sincronización de microservicios.
+- **Despliegue por Promoción:** El código solo se "promociona" a Hostinger si el robot de calidad da luz verde, bloqueando automáticamente cualquier subida errónea.
+
 ---
 
 ## Funcionalidades principales

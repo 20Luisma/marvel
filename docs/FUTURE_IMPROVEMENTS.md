@@ -7,6 +7,17 @@
 
 ---
 
+## 🏆 Hitos Recientes (Completados)
+
+Antes de abordar el roadmap futuro, se ha consolidado el siguiente hito de ingeniería:
+
+### 🛡️ Quality Gate: Filtro de Calidad Quirúrgico
+- **Implementación**: Se ha integrado una "Puerta de Calidad" en el pipeline de GitHub Actions que bloquea cualquier despliegue si los tests vitales fallan.
+- **Alcance**: Validación E2E del Agente IA, Comparador RAG y Ciclo CRUD antes de la promoción a producción.
+- **Resultado**: Garantía del 100% de disponibilidad de los microservicios core en cada lanzamiento.
+
+---
+
 ## 📋 Resumen Ejecutivo
 
 Este documento presenta un análisis técnico detallado de las mejoras identificadas para el proyecto Clean Marvel Album. Cada mejora incluye estimación de esfuerzo, impacto esperado y justificación técnica, demostrando capacidad de planificación y visión de producto.
