@@ -786,60 +786,62 @@ Más allá de las herramientas aprendidas, este máster ha supuesto un <strong>p
       <div class="slide-title">Futuras mejoras</div>
       <div class="divider"></div>
       
-      <!-- Resumen Ejecutivo -->
-      <div class="grid-3" style="margin-bottom: 20px;">
-        <div class="metric-card" style="padding: 15px;">
-          <div class="metric-value" style="font-size: 2rem;">10</div>
-          <div class="metric-label">Mejoras identificadas</div>
+      <!-- Resumen Ejecutivo compacto -->
+      <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <div class="metric-card" style="padding: 12px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: row; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+          <div class="metric-value" style="font-size: 1.8rem; color: #fff;">10</div>
+          <div class="metric-label" style="font-size: 0.75rem; opacity: 0.7;">PUNTOS DE MEJORA</div>
         </div>
-        <div class="metric-card" style="padding: 15px;">
-          <div class="metric-value" style="font-size: 2rem;">44-63h</div>
-          <div class="metric-label">Horas estimadas</div>
+        <div class="metric-card" style="padding: 12px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: row; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+          <div class="metric-value" style="font-size: 1.8rem; color: #00ff88;">44-63h</div>
+          <div class="metric-label" style="font-size: 0.75rem; opacity: 0.7;">ESFUERZO ESTIMADO</div>
         </div>
-        <div class="metric-card" style="padding: 15px;">
-          <div class="metric-value" style="font-size: 2rem;">€5,040</div>
-          <div class="metric-label">Presupuesto referencia</div>
+        <div class="metric-card" style="padding: 12px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: row; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+          <div class="metric-value" style="font-size: 1.8rem; color: #ef4444;">ALTO</div>
+          <div class="metric-label" style="font-size: 0.75rem; opacity: 0.7;">IMPACTO TÉCNICO</div>
         </div>
       </div>
       
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title" style="display: flex; align-items: center; gap: 10px;">
-            <span style="width: 10px; height: 10px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 10px rgba(239,68,68,0.5);"></span>
-            Alta Prioridad · 13-18h
+      <!-- Grid de 3 columnas para prioridades -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+        <!-- ALTA -->
+        <div class="card" style="padding: 18px; border-top: 3px solid #ef4444; background: rgba(239, 68, 68, 0.03);">
+          <div class="card-title" style="font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: #ef4444; font-weight: 800; letter-spacing: 1px;">
+            CRÍTICA · 13-18h
           </div>
-          <ul class="list" style="font-size: 0.85rem;">
-            <li><strong>#1</strong> Refactor <code>ComicController</code> → <code>GenerateComicService</code></li>
-            <li><strong>#2</strong> Refactor <code>AlbumController</code> → <code>AlbumCoverUploadService</code></li>
-            <li><strong>#3</strong> Cliente LLM desacoplado · <code>ChatClientInterface</code></li>
+          <ul class="list" style="font-size: 0.8rem; margin: 0; padding-left: 15px;">
+            <li style="margin-bottom: 6px;">Refactor Application Layer</li>
+            <li style="margin-bottom: 6px;">Client LLM Desacoplado</li>
+            <li>Abstracción Filesystem</li>
           </ul>
         </div>
-        <div class="card">
-          <div class="card-title" style="display: flex; align-items: center; gap: 10px;">
-            <span style="width: 10px; height: 10px; background: #f97316; border-radius: 50%; box-shadow: 0 0 10px rgba(249,115,22,0.5);"></span>
-            Media Prioridad · 16-24h
+        <!-- MEDIA -->
+        <div class="card" style="padding: 18px; border-top: 3px solid #f97316; background: rgba(249, 115, 22, 0.03);">
+          <div class="card-title" style="font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: #f97316; font-weight: 800; letter-spacing: 1px;">
+            ALTA · 16-24h
           </div>
-          <ul class="list" style="font-size: 0.85rem;">
-            <li><strong>#4</strong> Healthchecks HTTP para microservicios</li>
-            <li><strong>#5</strong> CSP estricta sin <code>unsafe-inline</code></li>
-            <li><strong>#6</strong> EventBus con persistencia · Patrón Outbox</li>
+          <ul class="list" style="font-size: 0.8rem; margin: 0; padding-left: 15px;">
+            <li style="margin-bottom: 6px;">Healthchecks Proactivos</li>
+            <li style="margin-bottom: 6px;">Seguridad CSP Estricta</li>
+            <li>EventBus con Persistencia</li>
+          </ul>
+        </div>
+        <!-- BAJA -->
+        <div class="card" style="padding: 18px; border-top: 3px solid #eab308; background: rgba(234, 179, 8, 0.03);">
+          <div class="card-title" style="font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: #eab308; font-weight: 800; letter-spacing: 1px;">
+            MEDIA · 15-21h
+          </div>
+          <ul class="list" style="font-size: 0.8rem; margin: 0; padding-left: 15px;">
+            <li style="margin-bottom: 6px;">Logger Centralizado</li>
+            <li style="margin-bottom: 6px;">HSTS Preload + HMAC</li>
+            <li>Rate Limiting Granular</li>
           </ul>
         </div>
       </div>
       
-      <div class="card" style="margin-top: 15px; border-left: 4px solid #eab308; background: rgba(234,179,8,0.05);">
-        <div class="card-title" style="display: flex; align-items: center; gap: 10px; color: #eab308;">
-          <span style="width: 10px; height: 10px; background: #eab308; border-radius: 50%; box-shadow: 0 0 10px rgba(234,179,8,0.5);"></span>
-          Baja Prioridad · 15-21h
-        </div>
-        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin: 0;">
-          <strong>#7</strong> Logger centralizado · <strong>#8</strong> Tests de seguridad · <strong>#9</strong> HSTS Preload + HMAC · <strong>#10</strong> Rate Limiting granular
-        </p>
-      </div>
-      
-      <!-- Enlace al informe completo -->
-      <a href="future-improvements.html" target="_blank" class="link-box" style="margin-top: 20px;">
-        <span class="url">📋 Ver informe de consultoría completo con presupuesto →</span>
+      <!-- Enlace compacto -->
+      <a href="future-improvements.html" target="_blank" class="link-box" style="margin-top: 20px; padding: 12px; display: block; border: 1px dashed rgba(255,255,255,0.2);">
+        <span class="url" style="font-size: 0.85rem; text-align: center; width: 100%; display: block;">📋 Ver análisis evolutivo completo →</span>
       </a>
       
       <span class="slide-number">19 / 21</span>
