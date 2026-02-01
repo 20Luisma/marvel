@@ -45,7 +45,20 @@
       text-align: center;
       margin-bottom: 50px;
       padding-bottom: 30px;
-      border-bottom: 1px solid var(--border);
+    }
+    
+    .divider {
+      height: 1px;
+      width: 120px;
+      background: linear-gradient(90deg, var(--accent-primary), transparent);
+      margin: 15px auto;
+    }
+    
+    .divider-left {
+      height: 1px;
+      width: 120px;
+      background: linear-gradient(90deg, var(--accent-primary), transparent);
+      margin: 10px 0 20px 0;
     }
     
     .header-meta {
@@ -435,6 +448,7 @@
     <header class="header">
       <div class="header-meta">Documentación Técnica de Evolución</div>
       <h1>Evolución Técnica y Próximos Pasos</h1>
+      <div class="divider"></div>
       <p>Análisis detallado sobre la hoja de ruta arquitectónica y funcional del proyecto Clean Marvel Album</p>
     </header>
     
@@ -460,10 +474,11 @@
     
     <!-- Alta Prioridad -->
     <section class="section">
-      <div class="section-header">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
         <div class="priority-badge priority-high"></div>
         <h2 class="section-title">Alta Prioridad</h2>
         <div class="section-meta">13-18 horas · Arquitectura + Testabilidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
       </div>
       
       <div class="improvements-grid">
@@ -510,10 +525,11 @@
     
     <!-- Media Prioridad -->
     <section class="section">
-      <div class="section-header">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
         <div class="priority-badge priority-medium"></div>
         <h2 class="section-title">Media Prioridad</h2>
         <div class="section-meta">16-24 horas · Seguridad + Observabilidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
       </div>
       
       <div class="improvements-grid">
@@ -560,10 +576,11 @@
     
     <!-- Baja Prioridad -->
     <section class="section">
-      <div class="section-header">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
         <div class="priority-badge priority-low"></div>
         <h2 class="section-title">Baja Prioridad</h2>
         <div class="section-meta">15-21 horas · Hardening + Calidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
       </div>
       
       <div class="improvements-grid">
@@ -625,6 +642,7 @@
     <section class="budget-section" style="background: rgba(30, 41, 59, 0.3); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.05);">
       <div class="budget-header">
         <h2 style="color: #fff; font-weight: 700;">🛠️ Planificación del Esfuerzo</h2>
+        <div class="divider"></div>
         <p style="color: var(--text-secondary);">Distribución estimada de carga de trabajo por bloques técnicos</p>
       </div>
       
@@ -671,7 +689,10 @@
     </section>
     
     <!-- Roadmap -->
-    <h2 style="text-align: center; margin-top: 50px; margin-bottom: 25px;">📅 Roadmap Sugerido</h2>
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 25px;">
+        <h2 style="margin-bottom: 10px;">📅 Roadmap Sugerido</h2>
+        <div class="divider"></div>
+    </div>
     <div class="roadmap">
       <div class="roadmap-phase">
         <div class="phase-number">Fase 1</div>
