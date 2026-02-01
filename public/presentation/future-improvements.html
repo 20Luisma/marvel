@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futuras Mejoras | Clean Marvel Album - TFM</title>
+  <meta name="description" content="Análisis técnico de evolución: 10 mejoras priorizadas con estimaciones de esfuerzo para Clean Marvel Album">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #050508;
+      --bg-secondary: #0a0a12;
+      --bg-card: rgba(30, 41, 59, 0.4);
+      --bg-card-hover: rgba(30, 41, 59, 0.6);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-primary: #3b82f6; 
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-danger: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-blur: blur(12px);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top center, #1e293b 0%, #050508 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-attachment: fixed;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+    }
+    
+    .divider {
+      height: 2px;
+      width: 100px;
+      background: var(--accent-primary);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+      margin: 15px auto;
+      border-radius: 2px;
+    }
+    
+    .divider-left {
+      height: 2px;
+      width: 80px;
+      background: var(--accent-primary);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+      margin: 10px 0 20px 0;
+      border-radius: 2px;
+    }
+    
+    .header-meta {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent-primary);
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* Summary Cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 50px;
+    }
+    
+    @media (max-width: 900px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 500px) {
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+    
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .summary-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-primary);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+      background: var(--bg-card-hover);
+    }
+    
+    .summary-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    
+    .summary-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    /* Section */
+    .section {
+      margin-bottom: 50px;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .priority-badge {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .priority-high { background: #64748b; }
+    .priority-medium { background: #94a3b8; }
+    .priority-low { background: #cbd5e1; }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .section-meta {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    /* Improvement Cards */
+    .improvements-grid {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .improvement-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 16px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 25px;
+      align-items: start;
+      transition: all 0.3s ease;
+    }
+    
+    .improvement-card:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: var(--bg-card-hover);
+      transform: translateX(5px);
+    }
+    
+    .improvement-number {
+      width: 44px;
+      height: 44px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent-primary);
+    }
+    
+    .improvement-content h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .improvement-title-divider {
+      height: 2px;
+      width: 40px;
+      background: var(--accent-primary);
+      margin-bottom: 12px;
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+    
+    .improvement-content p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .improvement-content code {
+      background: rgba(30, 41, 59, 0.8);
+      color: #fff;
+      padding: 2px 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+    
+    .improvement-meta {
+      text-align: right;
+      min-width: 100px;
+    }
+    
+    .improvement-hours {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-success);
+    }
+    
+    .improvement-hours-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    
+    .improvement-impact {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.05);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    
+    /* Budget Section */
+    .budget-section {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-top: 50px;
+    }
+    
+    .budget-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .budget-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .budget-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    .budget-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    
+    .budget-table th,
+    .budget-table td {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .budget-table th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
+    .budget-table td {
+      font-size: 0.95rem;
+    }
+    
+    .budget-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .budget-table .total-row {
+      background: rgba(255,255,255,0.05);
+      font-weight: 700;
+    }
+    
+    .budget-table .total-row td {
+      font-size: 1.1rem;
+    }
+    
+    .budget-total {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 2px solid rgba(255,255,255,0.1);
+    }
+    
+    .budget-total-value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent-red);
+    }
+    
+    .budget-total-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+    
+    /* Roadmap */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 50px;
+    }
+    
+    @media (max-width: 900px) {
+      .roadmap { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 500px) {
+      .roadmap { grid-template-columns: 1fr; }
+    }
+    
+    .roadmap-phase {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 25px;
+      position: relative;
+    }
+    
+    .roadmap-phase::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-primary);
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .phase-number {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-primary);
+      margin-bottom: 10px;
+    }
+    
+    .phase-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .phase-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .footer p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .back-link:hover {
+      gap: 12px;
+    }
+    
+    /* Disclaimer */
+    .disclaimer {
+      background: rgba(255, 170, 0, 0.1);
+      border-left: 4px solid var(--accent-yellow);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 25px;
+      margin-top: 30px;
+    }
+    
+    .disclaimer-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-yellow);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .disclaimer p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-meta">Documentación Técnica de Evolución</div>
+      <h1>Evolución Técnica y Próximos Pasos</h1>
+      <div class="divider"></div>
+      <p>Análisis detallado sobre la hoja de ruta arquitectónica y funcional del proyecto Clean Marvel Album</p>
+    </header>
+    
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <div class="summary-card" style="border-top: 3px solid var(--accent-primary);">
+        <div class="summary-value">10</div>
+        <div class="summary-label">Puntos de Mejora</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--accent-success);">
+        <div class="summary-value">44-63h</div>
+        <div class="summary-label">Esfuerzo Estimado</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--accent-warning);">
+        <div class="summary-value">85%</div>
+        <div class="summary-label">Cobertura Objetivo</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--accent-danger);">
+        <div class="summary-value">ALTO</div>
+        <div class="summary-label">Impacto Global</div>
+      </div>
+    </div>
+    
+    <!-- Alta Prioridad -->
+    <section class="section">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
+        <div class="priority-badge priority-high"></div>
+        <h2 class="section-title">Alta Prioridad</h2>
+        <div class="section-meta">13-18 horas · Arquitectura + Testabilidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
+      </div>
+      
+      <div class="improvements-grid">
+        <div class="improvement-card">
+          <div class="improvement-number">1</div>
+          <div class="improvement-content">
+            <h3>Refactor a Application Layer (Comics)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Mover la lógica de generación de cómics del controller a un servicio de aplicación dedicado <code>GenerateComicService</code>. Mejora la separación de responsabilidades y facilita testing unitario.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Arquitectura</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">2</div>
+          <div class="improvement-content">
+            <h3>Refactor a Application Layer (Album Covers)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Extraer la lógica de subida de portadas a <code>AlbumCoverUploadService</code> con abstracción de filesystem. Permite testing sin I/O real y cambio de estrategia de almacenamiento.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">3-4h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Arquitectura</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">3</div>
+          <div class="improvement-content">
+            <h3>Cliente LLM Desacoplado</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Implementar <code>ChatClientInterface</code> para desacoplar el proveedor de IA. Permite sustituir OpenAI por otro proveedor sin modificar la lógica de negocio.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">6-8h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Testabilidad</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Media Prioridad -->
+    <section class="section">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
+        <div class="priority-badge priority-medium"></div>
+        <h2 class="section-title">Media Prioridad</h2>
+        <div class="section-meta">16-24 horas · Seguridad + Observabilidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
+      </div>
+      
+      <div class="improvements-grid">
+        <div class="improvement-card">
+          <div class="improvement-number">4</div>
+          <div class="improvement-content">
+            <h3>Healthchecks HTTP para Microservicios</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Implementar endpoints <code>/health</code> y <code>/ready</code> en cada microservicio (OpenAI, RAG, Heatmap) con métricas de latencia y errores.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Observabilidad</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">5</div>
+          <div class="improvement-content">
+            <h3>CSP Estricta (sin unsafe-inline)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Eliminar el fallback a <code>unsafe-inline</code> en scripts y garantizar nonces obligatorios en todas las vistas para protección XSS completa.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Seguridad</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">6</div>
+          <div class="improvement-content">
+            <h3>EventBus con Persistencia (Outbox)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Implementar patrón Outbox para garantizar entrega de eventos. Los eventos se persisten en tabla antes de procesarse, permitiendo reintentos y trazabilidad.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">8-12h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Resiliencia</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Baja Prioridad -->
+    <section class="section">
+      <div class="section-header" style="flex-wrap: wrap; margin-bottom: 15px;">
+        <div class="priority-badge priority-low"></div>
+        <h2 class="section-title">Baja Prioridad</h2>
+        <div class="section-meta">15-21 horas · Hardening + Calidad</div>
+        <div class="divider-left" style="width: 100%; flex-basis: 100%;"></div>
+      </div>
+      
+      <div class="improvements-grid">
+        <div class="improvement-card">
+          <div class="improvement-number">7</div>
+          <div class="improvement-content">
+            <h3>Logger Centralizado con trace_id</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Implementar <code>CentralLogger</code> que inyecte trace_id en cada request para correlacionar logs entre servicios.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">3-4h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Observabilidad</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">8</div>
+          <div class="improvement-content">
+            <h3>Tests de Seguridad Ampliados</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Añadir tests para verificar CSP headers, HSTS, rate limiting y sanitización XSS en todos los endpoints.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">6-8h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Seguridad</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">9</div>
+          <div class="improvement-content">
+            <h3>HSTS Preload + HMAC Enforcement</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Añadir directiva preload a HSTS y modo estricto que rechace requests sin firma HMAC válida.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">2-3h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Seguridad</div>
+          </div>
+        </div>
+        
+        <div class="improvement-card">
+          <div class="improvement-number">10</div>
+          <div class="improvement-content">
+            <h3>Rate Limiting Granular</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Configurar límites específicos por endpoint: 10 req/min para <code>/api/comic</code>, 1 req/min para <code>/api/reset-demo</code>.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Seguridad</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Technical Note Section -->
+    <section class="budget-section" style="background: rgba(30, 41, 59, 0.3); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.05);">
+      <div class="budget-header">
+        <h2 style="color: #fff; font-weight: 700;">🛠️ Planificación del Esfuerzo</h2>
+        <div class="divider"></div>
+        <p style="color: var(--text-secondary);">Distribución estimada de carga de trabajo por bloques técnicos</p>
+      </div>
+      
+      <table class="budget-table">
+        <thead>
+          <tr>
+            <th style="color: var(--accent-primary);">Bloque</th>
+            <th style="color: var(--accent-primary);">Dimensiones de Mejora</th>
+            <th style="color: var(--accent-primary);">Esfuerzo (h)</th>
+            <th style="text-align: right; color: var(--accent-primary);">Prioridad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="color: var(--accent-danger);">●</span> Evolución Arquitectónica</td>
+            <td>Abstracción de servicios y desacoplamiento LLM (#1, #2, #3)</td>
+            <td style="font-weight: 600;">18h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-danger); font-size: 0.75rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 8px; border-radius: 4px;">CRÍTICA</span></td>
+          </tr>
+          <tr>
+            <td><span style="color: var(--accent-warning);">●</span> Robustez y Observabilidad</td>
+            <td>Healthchecks, Seguridad CSP y EventBus (#4, #5, #6)</td>
+            <td style="font-weight: 600;">24h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-warning); font-size: 0.75rem; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px;">ALTA</span></td>
+          </tr>
+          <tr>
+            <td><span style="color: var(--accent-primary);">●</span> Calidad y Hardening</td>
+            <td>Logging centralizado, Tests de seguridad y Rate Limiting (#7, #8, #9, #10)</td>
+            <td style="font-weight: 600;">21h</td>
+            <td style="text-align: right;"><span style="color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 8px; border-radius: 4px;">MEDIA</span></td>
+          </tr>
+          <tr class="total-row" style="background: rgba(255,255,255,0.03);">
+            <td colspan="2"><strong style="color: #fff;">ESFUERZO TOTAL ESTIMADO</strong></td>
+            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">63h</strong></td>
+            <td style="text-align: right;"><strong style="color: var(--text-secondary); font-size: 0.8rem;">PROYECTO VIVO</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="disclaimer" style="background: rgba(245, 158, 11, 0.05); border-left: 4px solid var(--accent-warning);">
+        <div class="disclaimer-title" style="color: var(--accent-warning);">⚠️ Nota de Propósito</div>
+        <p style="color: var(--text-secondary);">Este análisis demuestra la capacidad de identificar deuda técnica y planificar la evolución del software de manera profesional.</p>
+      </div>
+    </section>
+    
+    <!-- Roadmap -->
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 25px;">
+        <h2 style="margin-bottom: 10px;">📅 Roadmap Sugerido</h2>
+        <div class="divider"></div>
+    </div>
+    <div class="roadmap">
+      <div class="roadmap-phase">
+        <div class="phase-number">Fase 1</div>
+        <div class="phase-title">Arquitectura</div>
+        <div class="phase-desc">Mejoras #1, #2, #3 · Código más testeable y mantenible</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-number">Fase 2</div>
+        <div class="phase-title">Observabilidad</div>
+        <div class="phase-desc">Mejoras #4, #7 · Visibilidad del estado del sistema</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-number">Fase 3</div>
+        <div class="phase-title">Seguridad</div>
+        <div class="phase-desc">Mejoras #5, #8, #9, #10 · Sistema hardened</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-number">Fase 4</div>
+        <div class="phase-title">Resiliencia</div>
+        <div class="phase-desc">Mejora #6 · Sistema tolerante a fallos</div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Documento generado como parte del Trabajo Fin de Máster — Clean Marvel Album</p>
+      <p style="margin-top: 5px;">Martín Pallante Cardeo · Febrero 2026</p>
+      <a href="tfm-presentation.html" class="back-link">← Volver a la presentación</a>
+    </footer>
+  </div>
+</body>
+</html>

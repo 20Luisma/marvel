@@ -194,6 +194,7 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - `docs/api/` — referencia de endpoints
 - `docs/guides/` — guías técnicas
 - `docs/guides/entorno-staging-mirroring.md` — Paridad de entornos y CI/CD Staging
+- 🚀 `docs/FUTURE_IMPROVEMENTS.md` — **Informe de consultoría: 10 mejoras priorizadas con estimaciones**
 📚 La documentación técnica ampliada del proyecto se encuentra en `docs/README_TECHNICAL.md`.
 
 ---
