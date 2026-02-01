@@ -261,6 +261,18 @@
       "problemMatcher": []
     },
     {
+      "label": "Git | push rama actual (sin merge)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "branch=$(git rev-parse --abbrev-ref HEAD); echo \"📤 Subiendo rama $branch a origin...\"; git push origin \"$branch\""
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
       "label": "Git | push seguro (subir a GitHub la rama actual)",
       "type": "shell",
       "command": "bash",

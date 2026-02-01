@@ -35,6 +35,10 @@ Cada microservicio (`openai-service`, `rag-service`) tiene su propio subdominio 
 Para que el Dashboard de IA funcione en Staging igual que en Producción, se han configurado rutas de log cruzadas en el `.env`:
 - El `rag-service` de Staging escribe sus tokens en la carpeta `storage/ai/` de la aplicación principal de Staging mediante la variable `AI_TOKENS_LOG_PATH` y `TOKENS_LOG_PATH`.
 
+#### Recomendación directa (para que no te vuelva a pasar)
+- **Local/Staging:** `AI_TOKENS_LOG_PATH` vacío (o relativo).
+- **Producción:** `AI_TOKENS_LOG_PATH` con **ruta absoluta** al `storage/ai/tokens.log` central de la app principal.
+
 ---
 
 ## 🔄 Ciclo de Vida del Desarrollo (SDLC Profesional)
