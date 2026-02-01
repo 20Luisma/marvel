@@ -30,6 +30,7 @@ Un *Architectural Decision Record (ADR)* documenta decisiones técnicas que afec
 - [ADR-011: EventBus síncrono en memoria](ADR-011-eventbus-sincrono.md)
 - [ADR-012: Monitoreo Continuo Proactivo en Producción](ADR-012-monitoreo-continuo-produccion.md)
 - [ADR-013: Security Sentinel Watchdog y Hardening](ADR-013-security-sentinel-watchdog.md)
+- [ADR-014: Filtro Quirúrgico: Quality Gate para Despliegue](ADR-014-filtro-quirurgico-quality-gate.md)
 
 ### Supersede ADR
 
