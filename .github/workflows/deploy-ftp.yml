@@ -29,6 +29,19 @@ jobs:
         run: |
           composer install --no-interaction
           npm ci
+          
+      - name: Seed storage
+        run: |
+          mkdir -p storage/json storage/logs
+          if [ -d storage.example ]; then
+            cp -r storage.example/* storage/json/ || true
+            for f in storage.example/*.json; do
+              basename_f=$(basename "$f")
+              [ -f "$f" ] && cp -n "$f" "storage/$basename_f" || true
+            done
+          fi
+          # Permisos para que PHP pueda escribir
+          chmod -R 777 storage
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
@@ -41,7 +54,9 @@ jobs:
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
 
       - name: 🔬 Ejecutar Test Quirúrgico (PRE-DEPLOY)
-        run: npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs
+        run: |
+          sleep 5
+          npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
