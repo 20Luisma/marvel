@@ -75,16 +75,16 @@ body {
 }
 
 .divider {
-  height: 2px;
-  width: 120px;
-  background: var(--accent);
-  box-shadow: 0 0 10px rgba(96, 165, 250, 0.4);
-  border-radius: 2px;
-  margin: 5px 0 10px 0;
+  height: 3px;
+  width: 150px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.6), 0 0 30px rgba(96, 165, 250, 0.3);
+  border-radius: 3px;
+  margin: 12px 0 18px 0;
 }
 
 .cover .divider {
-  margin: 15px auto;
+  margin: 20px auto;
 }
 
 .card {
