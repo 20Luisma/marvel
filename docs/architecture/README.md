@@ -28,6 +28,8 @@ Un *Architectural Decision Record (ADR)* documenta decisiones técnicas que afec
 - [ADR-009: Circuit Breaker en la Aplicación Principal](ADR-009-circuit-breaker-app.md)
 - [ADR-010: Value Objects para Configuración Tipada](ADR-010-value-objects-config.md)
 - [ADR-011: EventBus síncrono en memoria](ADR-011-eventbus-sincrono.md)
+- [ADR-012: Monitoreo Continuo Proactivo en Producción](ADR-012-monitoreo-continuo-produccion.md)
+- [ADR-013: Security Sentinel Watchdog y Hardening](ADR-013-security-sentinel-watchdog.md)
 
 ### Supersede ADR
 
