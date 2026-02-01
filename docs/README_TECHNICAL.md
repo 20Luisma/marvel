@@ -101,7 +101,7 @@ El proyecto implementa un flujo de **entrega continua (Continuous Delivery)** co
     - **IA Check**: Verificación semántica de que el **Agente IA** y el **Comparador RAG** responden coherentemente.
     - **Ciclo CRUD**: Creación y eliminación de álbumes para asegurar la integridad de la persistencia.
     - **Promotion Control**: Si el test falla, el despliegue se aborta automáticamente, protegiendo el entorno de producción.
-- **👁️ Monitoreo Continuo (monitoring.yml)**: Sistema de **Vigilancia 24/7** que ejecuta el Filtro Quirúrgico cada 6 horas directamente sobre la URL de producción. Esto garantiza que, si una API externa (OpenAI) cae o el servidor se queda sin recursos horas después del deploy, el sistema genere una alerta automática.
+- **👁️ Monitoreo Continuo (monitoring.yml)**: Sistema de **Vigilancia 24/7** (configurable). Actualmente en **Modo Demo**, ejecutando el Filtro Quirúrgico cada 3 días directamente sobre la URL de producción. Esto garantiza que errores externos (OpenAI) o de infraestructura se detecten automáticamente con un coste mínimo de tokens.
 
 Nota de coherencia: el runtime objetivo del proyecto es PHP 8.2, pero la CI usa PHP 8.4 para validar compatibilidad futura sin cambiar el objetivo del proyecto.
 
