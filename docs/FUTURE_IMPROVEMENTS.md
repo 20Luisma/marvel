@@ -222,6 +222,12 @@ Para escenarios reales como un buffet de abogados con gigas de información, el 
 - [ ] Script de indexación masiva con **Semantic Chunking**
 - [ ] Integración en `rag-service` vía Inversión de Dependencias
 
+#### 💡 Caso de Uso: Sector Legal (Buffet de Abogados)
+Para escalar este sistema a un entorno profesional como un buffet de abogados con gigas de jurisprudencia y miles de contratos PDF, el roadmap incluiría:
+1.  **Ingesta Masiva**: OCR con Tesseract/AWS Textract para digitalizar expedientes físicos.
+2.  **Fragmentación Legal**: Divisores de texto inteligentes que respeten la estructura de los artículos y leyes (Chunking por contexto).
+3.  **Discovery Semántico**: Búsqueda indexada que permita al abogado preguntar: *"¿Qué sentencias previas tenemos sobre despido improcedente en el sector retail?"* y obtener la respuesta en milisegundos analizando terabytes de datos.
+
 ---
 
 ## 🟠 Mejoras de Media Prioridad
@@ -442,10 +448,10 @@ El fallback a `unsafe-inline` debilita la protección CSP cuando no hay nonce di
 
 | Bloque | Horas | Tarifa Referencia | Subtotal |
 |--------|-------|-------------------|----------|
-| Alta Prioridad | 18h | €80/h | €1,440 |
+| Alta Prioridad | 28h | €80/h | €2,240 |
 | Media Prioridad | 24h | €80/h | €1,920 |
 | Baja Prioridad | 21h | €80/h | €1,680 |
-| **TOTAL** | **63h** | - | **€5,040** |
+| **TOTAL** | **73h** | - | **€5,840** |
 
 ---
 
