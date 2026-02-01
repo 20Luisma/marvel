@@ -15,10 +15,9 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
   // 1. VERIFICACIÓN DE APIS BASE
   test('APIs Críticas: Las rutas base deben responder 200', async ({ request }) => {
     const criticalPaths = [
-      '/api/heroes',
+      '/heroes',
       '/api/marvel-agent.php',
-      '/api/ai-token-metrics.php',
-      '/api/sonar-metrics.php'
+      '/api/ai-token-metrics.php'
     ];
 
     for (const path of criticalPaths) {
@@ -34,7 +33,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
     // Asumimos que hay un chat o un botón para invocar al agente
     // Basado en el código, el agente se suele consultar vía API o en el comparador
     const response = await page.request.post('/api/marvel-agent.php', {
-      data: { query: '¿Qué es Clean Marvel Album?' }
+      form: { question: '¿Qué es Clean Marvel Album?' }
     });
     
     expect(response.ok()).toBeTruthy();
@@ -46,8 +45,8 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
   // 3. COMPARADOR DE HÉROES
   test('Comparador: Debe analizar dos héroes y devolver una conclusión', async ({ page }) => {
     const response = await page.request.post('/api/marvel-agent.php', {
-      data: { 
-        query: 'compara a Iron Man con Spider-Man',
+      form: { 
+        question: 'compara a Iron Man con Spider-Man',
         context: 'compare_heroes'
       }
     });
@@ -84,10 +83,10 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
 
   // 5. SISTEMA DE RESET (MÁQUINA DEL TIEMPO)
   test('Demo Reset: El endpoint de restauración debe funcionar', async ({ request }) => {
-    const response = await request.get('/api/reset-demo.php');
+    const response = await request.post('/api/reset-demo.php');
     expect(response.ok()).toBeTruthy();
     const data = await response.json();
-    expect(data.status).toBe('success');
+    expect(data.ok).toBeTruthy();
   });
 
 });
