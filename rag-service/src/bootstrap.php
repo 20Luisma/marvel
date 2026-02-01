@@ -111,7 +111,11 @@ return (static function (): array {
 
     $openAiEndpoint = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
     if (!is_string($openAiEndpoint) || trim($openAiEndpoint) === '') {
-        $openAiEndpoint = 'http://localhost:8081/v1/chat';
+        if ($environment === 'hosting') {
+            $openAiEndpoint = 'https://openai-service.contenido.creawebes.com/v1/chat';
+        } else {
+            $openAiEndpoint = 'http://localhost:8081/v1/chat';
+        }
     }
 
     $llmClientForCompare = new OpenAiHttpClient(
