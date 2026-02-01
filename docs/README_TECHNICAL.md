@@ -91,9 +91,16 @@ php bin/migrar-json-a-db.php
 
 ---
 
-## ⚙️ CI/CD – GitHub Actions
+## ⚙️ CI/CD – GitHub Actions & Quality Gates
 
-Pipelines configurados para ejecutar: `ci.yml` (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud, bundle size estático), integración con **CodeRabbit** para revisiones de código asistidas por IA en cada Pull Request, `deploy-ftp.yml` (deploy por FTP al hacer push a `main`; recomendado proteger `main` para que solo se pueda mergear si CI pasa), `rollback-ftp.yml` (rollback manual).
+El proyecto implementa un flujo de **entrega continua (Continuous Delivery)** con un enfoque de **seguridad y calidad quirúrgica**:
+
+- **`ci.yml`**: Integración continua que valida cada commit (PHPUnit, PHPStan, Pa11y, Lighthouse, Playwright E2E, SonarCloud).
+- **🛡️ Quality Gate (deploy-ftp.yml)**: Antes de subir a producción (Hostinger), se ejecuta un **"Filtro Quincenal"** (Surgical Production Check). Este paso arranca un servidor efímero y valida los flujos vitales del negocio:
+    - **Salud de APIs**: Comprobación de endpoints críticos (`/heroes`, metrics, etc.).
+    - **IA Check**: Verificación semántica de que el **Agente IA** y el **Comparador RAG** responden coherentemente.
+    - **Ciclo CRUD**: Creación y eliminación de álbumes para asegurar la integridad de la persistencia.
+    - **Promotion Control**: Si el test falla, el despliegue se aborta automáticamente, protegiendo el entorno de producción.
 
 Nota de coherencia: el runtime objetivo del proyecto es PHP 8.2, pero la CI usa PHP 8.4 para validar compatibilidad futura sin cambiar el objetivo del proyecto.
 
