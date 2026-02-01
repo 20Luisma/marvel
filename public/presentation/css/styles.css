@@ -293,15 +293,24 @@ body {
 
 /* Reflexion */
 .reflexion {
-  font-size: 1.12rem;
-  line-height: 1.7;
+  font-size: 1.05rem;
+  line-height: 1.6;
   color: var(--text);
-  white-space: pre-line;
+}
+
+.reflexion p {
+  margin-bottom: 1rem;
+}
+
+.reflexion p:last-child {
+  margin-bottom: 0;
 }
 
 .reflexion strong {
   color: var(--accent);
 }
+
+
 
 /* Link */
 .link-box {
