@@ -2919,6 +2919,9 @@ INTERNAL_API_KEY=change-me-strong-random  # Clave para firma HMAC entre servicio
 OPENAI_SERVICE_URL=http://localhost:8081/v1/chat    # URL del microservicio OpenAI
 RAG_SERVICE_URL=http://localhost:8082/rag/heroes    # URL del microservicio RAG
 # RAG_LOG_PATH=/ruta/absoluta/al/rag-service/storage/ai/tokens.log  # Opcional
+# AI_TOKENS_LOG_PATH (rag-service): dejar vacío en local/staging si usas rutas relativas.
+# En producción, configurar ruta absoluta al storage central de la app principal:
+# AI_TOKENS_LOG_PATH=/ruta/absoluta/a/tu/app/storage/ai/tokens.log
 
 ## ============ EXTERNAL APIS ============
 OPENAI_API_KEY=your-openai-key-here     # API key de OpenAI
@@ -3405,4 +3408,3 @@ curl http://34.74.102.123:8080/health
 *Sección 12 añadida: APIs Externas Utilizadas (OpenAI, YouTube, ElevenLabs, WAVE, PageSpeed, GitHub, Sentry, SonarCloud) con detalles de integración, costos y mejores prácticas*  
 *Sección 22 (n8n) expandida: Arquitectura de workflows, endpoint de backend, seguridad con Bearer tokens, ejemplos de configuración y mejores prácticas de implementación*  
 *Secciones anteriores: ElevenLabs TTS, Docker, Fases de Seguridad, Snyk, APIs Dashboard, Microservicios internos, Playwright E2E, Scripts CLI, Variables de entorno, Arquitectura de los 3 Microservicios*
-
