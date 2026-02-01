@@ -1,0 +1,41 @@
+name: Production Continuous Monitoring
+
+on:
+  schedule:
+    # Corre cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Permite ejecución manual para pruebas
+
+jobs:
+  monitor-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Surgical Monitoring Check (Production)
+        run: npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.monitoring.config.cjs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_PROD || secrets.RAG_SERVICE_URL_STAGING }}
+          RAG_BASE_URL: https://rag.creawebes.com # URL de producción del RAG
+          APP_URL: https://iamasterbigschool.contenido.creawebes.com
+
+      - name: Upload Report on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-failure-report
+          path: playwright-report/
