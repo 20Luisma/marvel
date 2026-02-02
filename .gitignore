@@ -78,6 +78,7 @@ phpunit.xml.dist
 *.old
 /.env
 /openai-service/.env
+/rag-service/.env
 
 # -----------------------------
 # 🔥 NUEVAS EXCLUSIONES IMPORTANTES
