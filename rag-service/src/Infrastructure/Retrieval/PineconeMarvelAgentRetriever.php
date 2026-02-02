@@ -11,6 +11,14 @@ use Creawebes\Rag\Application\Rag\MarvelAgentRetrieverInterface;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Implementación de RAG Enterprise utilizando Pinecone como base de datos vectorial.
+ * 
+ * Esta clase se encarga de:
+ * 1. Vectorizar la consulta del usuario mediante OpenAI.
+ * 2. Realizar una búsqueda de similitud semántica en la nube de Pinecone.
+ * 3. Gestionar un fallback automático hacia un motor local si la nube no está disponible.
+ */
 final class PineconeMarvelAgentRetriever implements MarvelAgentRetrieverInterface
 {
     private readonly string $apiKey;
