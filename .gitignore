@@ -77,8 +77,11 @@ phpunit.xml.dist
 *.bakup
 *.old
 /.env
+/.env.staging
 /openai-service/.env
+/openai-service/.env.staging
 /rag-service/.env
+/rag-service/.env.staging
 
 # -----------------------------
 # 🔥 NUEVAS EXCLUSIONES IMPORTANTES
