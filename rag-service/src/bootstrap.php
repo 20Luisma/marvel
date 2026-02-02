@@ -138,18 +138,29 @@ return (static function (): array {
     $agentUseEmbeddings = filter_var($_ENV['AGENT_USE_EMBEDDINGS'] ?? getenv('AGENT_USE_EMBEDDINGS'), FILTER_VALIDATE_BOOL) === true;
     $agentAutoRefresh = filter_var($_ENV['AGENT_EMBEDDINGS_AUTOREFRESH'] ?? getenv('AGENT_EMBEDDINGS_AUTOREFRESH'), FILTER_VALIDATE_BOOL) === true;
 
-    $agentRetriever = $agentUseEmbeddings
-        ? new VectorMarvelAgentRetriever(
-            $agentKb,
-            $agentEmbeddingStore,
+    $pineconeMode = filter_var($_ENV['PINECONE_MODE'] ?? getenv('PINECONE_MODE'), FILTER_VALIDATE_BOOL) === true;
+
+    if ($pineconeMode) {
+        $agentRetriever = new \Creawebes\Rag\Infrastructure\Retrieval\PineconeMarvelAgentRetriever(
             new OpenAiEmbeddingClient(),
             $agentLexicalRetriever,
-            $similarity,
-            useEmbeddings: $agentUseEmbeddings,
-            autoRefreshEmbeddings: $agentAutoRefresh,
-            telemetry: $telemetry,
-        )
-        : $agentLexicalRetriever;
+            telemetry: $telemetry
+        );
+    } else {
+        $agentRetriever = $agentUseEmbeddings
+            ? new VectorMarvelAgentRetriever(
+                $agentKb,
+                $agentEmbeddingStore,
+                new OpenAiEmbeddingClient(),
+                $agentLexicalRetriever,
+                $similarity,
+                useEmbeddings: $agentUseEmbeddings,
+                autoRefreshEmbeddings: $agentAutoRefresh,
+                telemetry: $telemetry,
+            )
+            : $agentLexicalRetriever;
+    }
+
 
     $agentUseCase = new AskMarvelAgentUseCase($agentRetriever, $llmClientForAgent);
 
