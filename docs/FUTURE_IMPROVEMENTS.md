@@ -16,6 +16,11 @@ Antes de abordar el roadmap futuro, se ha consolidado el siguiente hito de ingen
 - **Alcance**: Validación E2E del Agente IA, Comparador RAG y Ciclo CRUD antes de la promoción a producción.
 - **Resultado**: Garantía del 100% de disponibilidad de los microservicios core en cada lanzamiento.
 
+### ☁️ Escalabilidad RAG: Migración a Vector DB (Enterprise)
+- **Implementación**: Transición del sistema de almacenamiento local (JSON) a una infraestructura Cloud nativa con **Pinecone**.
+- **Tecnología**: Búsqueda vectorial con embeddings de OpenAI (1536 dimensiones) y métrica de similitud coseno.
+- **Resultado**: Capacidad de búsqueda semántica a escala empresarial con latencia mínima, desacoplada del servidor físico.
+
 ---
 
 ## 📋 Resumen Ejecutivo
@@ -39,7 +44,7 @@ Este documento presenta un análisis técnico detallado de las mejoras identific
 | 1 | Refactor a Application Layer (Comics) | 🔴 Alta | 4-6h | Arquitectura |
 | 2 | Refactor a Application Layer (Album Covers) | 🔴 Alta | 3-4h | Arquitectura |
 | 3 | Cliente LLM desacoplado (`ChatClientInterface`) | 🔴 Alta | 6-8h | Testabilidad |
-| 4 | **Escalabilidad RAG: de JSON a Vector DB (Enterprise)** | 🔴 Alta | 8-10h | IA Scalability |
+| 4 | **Escalabilidad RAG: de JSON a Vector DB (Enterprise)** | ✅ | **Completado** | IA Scalability |
 | 5 | Healthchecks HTTP para Microservicios | 🟠 Media | 4-6h | Observabilidad |
 | 6 | CSP estricta sin `unsafe-inline` para scripts | 🟠 Media | 4-6h | Seguridad |
 | 7 | EventBus con persistencia (Outbox Pattern) | 🟠 Media | 8-12h | Resiliencia |
