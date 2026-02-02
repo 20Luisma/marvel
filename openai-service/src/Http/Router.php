@@ -227,7 +227,11 @@ class Router
             }
         }
 
-        return explode('/', $value)[0];
+        // Strip path if any
+        $value = explode('/', $value)[0];
+
+        // Strip port if any (e.g. localhost:8082 -> localhost)
+        return explode(':', $value)[0];
     }
 
     private function rawInput(): string

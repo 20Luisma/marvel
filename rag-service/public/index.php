@@ -280,7 +280,11 @@ function normalize_host(?string $host): string
         }
     }
 
-    return explode('/', $value)[0];
+    // Strip path if any
+    $value = explode('/', $value)[0];
+    
+    // Strip port if any (e.g. localhost:8080 -> localhost)
+    return explode(':', $value)[0];
 }
 
 function log_request_event(string $path, int $statusCode, float $startTime, ?string $error = null): void
