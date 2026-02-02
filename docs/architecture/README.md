@@ -29,8 +29,9 @@ Un *Architectural Decision Record (ADR)* documenta decisiones técnicas que afec
 - [ADR-010: Value Objects para Configuración Tipada](ADR-010-value-objects-config.md)
 - [ADR-011: EventBus síncrono en memoria](ADR-011-eventbus-sincrono.md)
 - [ADR-012: Monitoreo Continuo Proactivo en Producción](ADR-012-monitoreo-continuo-produccion.md)
-- [ADR-013: Security Sentinel Watchdog y Hardening](ADR-013-security-sentinel-watchdog.md)
-- [ADR-014: Filtro Quirúrgico: Quality Gate para Despliegue](ADR-014-filtro-quirurgico-quality-gate.md)
+- [ADR-013: Security Sentinel Watchdog y Hardening](ADR-013-security-sentinel-watchdog.md)  
+- [ADR-014: Filtro Quirúrgico: Quality Gate para Despliegue](ADR-014-filtro-quirurgico-quality-gate.md)  
+- [ADR-015: RAG Enterprise con Pinecone (Vector Database)](ADR-015-enterprise-rag-pinecone.md)  
 
 ### Supersede ADR
 

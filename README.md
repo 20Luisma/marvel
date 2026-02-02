@@ -70,12 +70,12 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 ```
 
 **Componentes implementados:**
-- **Knowledge Base:** archivos JSON en `storage/knowledge/` con información estructurada
-- **Embeddings:** vectores precalculados (OpenAI) en `storage/embeddings/` para búsqueda semántica
-- **Retriever léxico:** bolsa de palabras + similitud coseno (modo por defecto)
-- **Retriever vectorial:** embeddings + similitud coseno densa (activable con `RAG_USE_EMBEDDINGS=1`)
-- **Fallback automático:** si falla el modo vectorial, cae al léxico sin interrumpir el flujo
-- **Cliente LLM desacoplado:** comunica con `openai-service`, no directamente con OpenAI
+- **Knowledge Base Master:** Información estructurada en archivos JSON que sirven de fuente de verdad.
+- **RAG Local (Modo Ligero):** Búsqueda vectorial local usando embeddings JSON precalculados. Ideal para entornos aislados o de bajo consumo.
+- **RAG Enterprise (Modo Cloud):** Integración con **Pinecone (Vector Database)**. Los embeddings se almacenan en la nube para máxima escalabilidad y rendimiento semántico profesional.
+- **Embeddings:** Vectores de 1536 dimensiones generados con OpenAI (`text-embedding-3-small`).
+- **Retriever Híbrido:** Conmutación automática entre Pinecone (Cloud) y el motor local (JSON) en caso de fallo, garantizando alta disponibilidad.
+- **Cliente LLM desacoplado:** Comunicación segura con `openai-service` mediante firma HMAC.
 
 **Endpoints:**
 - `POST /rag/heroes` — Comparación de héroes Marvel usando KB de héroes

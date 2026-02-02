@@ -447,32 +447,70 @@
 
     <!-- SLIDE 8: Microservicios e IA -->
     <section class="slide" data-slide="8">
-      <div class="slide-title">Microservicios e IA</div>
+      <div class="slide-title">Ecosistema de Microservicios</div>
       <div class="divider"></div>
-      <div class="card">
-        <ul class="list">
-          <li>🐍 <strong>Heatmap Service</strong> · Microservicio en <strong>Python/Flask</strong> desplegado en <strong>Google Cloud</strong>.</li>
-          <li>🧠 <strong>RAG Service</strong> · Motor de búsqueda vectorial para comparaciones inteligentes.</li>
-          <li>🤖 <strong>OpenAI Service</strong> · Gateway controlado hacia LLM para generación de cómics.</li>
-          <li>⚙️ <strong>Docker Ecosystem</strong> · Todo el sistema está contenerizado y orquestado.</li>
-          <li>🔄 <strong>Dual mode</strong> · Búsqueda léxica o semántica según el entorno.</li>
-          <li>📈 <strong>Escalabilidad Enterprise</strong> · Preparado para manejar gigas de info (ej. sector legal) mediante Vector DBs.</li>
-        </ul>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Arquitectura Distribuida</div>
+          <ul class="list">
+            <li>🐍 <strong>Heatmap Service</strong> · Analítica en Python (GCP).</li>
+            <li>🤖 <strong>OpenAI Service</strong> · Proxy seguro a la API.</li>
+            <li>🧠 <strong>RAG Service</strong> · Cerebro del Agente IA.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Ventajas</div>
+          <ul class="list">
+            <li><strong>Escalabilidad</strong> independiente.</li>
+            <li><strong>Aislamiento</strong> de errores.</li>
+            <li>Mix de tecnologías (PHP + Python).</li>
+          </ul>
+        </div>
       </div>
       <span class="slide-number">08 / 24</span>
     </section>
 
-    <!-- SLIDE 9: APIs Externas Utilizadas -->
+    <!-- SLIDE 9: RAG Evolution -->
     <section class="slide" data-slide="9">
+      <div class="slide-title">Evolución RAG: Del Local al Enterprise</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card" style="border-top: 4px solid #ed1d24;">
+          <div class="card-title">1. RAG Local (Modo Ligero)</div>
+          <ul class="list">
+            <li><strong>Tecnología:</strong> Archivos JSON + Similitud Coseno.</li>
+            <li><strong>Portabilidad:</strong> Zero-dependencies externas.</li>
+            <li><strong>Escenario:</strong> Desarrollo y prototipado.</li>
+            <li><strong>Resiliencia:</strong> Actúa como <em>fallback</em> automático.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top: 4px solid #667eea;">
+          <div class="card-title">2. RAG Enterprise (Modo Cloud)</div>
+          <ul class="list">
+            <li><strong>Tecnología:</strong> **Pinecone (Vector Database)**.</li>
+            <li><strong>Dimensiones:</strong> 1536 (OpenAI Embeddings).</li>
+            <li><strong>Escalabilidad:</strong> Millones de vectores en la nube.</li>
+            <li><strong>Rendimiento:</strong> Latencia constante y desacoplada.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 20px; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea;">
+         <p style="margin:0; font-style: italic; text-align: center;">"Arquitectura híbrida que prioriza la nube pero garantiza el servicio mediante el motor local."</p>
+      </div>
+      <span class="slide-number">09 / 24</span>
+    </section>
+
+    <!-- SLIDE 10: APIs Externas Utilizadas -->
+    <section class="slide" data-slide="10">
       <div class="slide-title">APIs Externas Utilizadas</div>
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card">
           <ul class="list">
             <li>🤖 <strong>OpenAI API</strong> · Generación de contenido con IA</li>
+            <li>🧠 <strong>Pinecone Cloud</strong> · Base de datos vectorial RAG</li>
             <li>📹 <strong>YouTube Data API v3</strong> · Últimos videos de Marvel</li>
             <li>🔊 <strong>ElevenLabs TTS</strong> · Conversión texto a voz</li>
-            <li>♿ <strong>WAVE API</strong> · Auditoría de accesibilidad WCAG</li>
           </ul>
         </div>
         <div class="card">
@@ -484,11 +522,11 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">09 / 24</span>
+      <span class="slide-number">10 / 24</span>
     </section>
 
-    <!-- SLIDE 10: Automatización con n8n -->
-    <section class="slide" data-slide="10">
+    <!-- SLIDE 11: Automatización con n8n -->
+    <section class="slide" data-slide="11">
       <div class="slide-title">Automatización con n8n</div>
       <div class="divider"></div>
       <div class="card">
@@ -500,11 +538,11 @@
           <li><strong>Desacoplamiento</strong> · El core de la aplicación no conoce YouTube</li>
         </ul>
       </div>
-      <span class="slide-number">10 / 24</span>
+      <span class="slide-number">11 / 24</span>
     </section>
 
-    <!-- SLIDE 11: Calidad y CI/CD -->
-    <section class="slide" data-slide="11">
+    <!-- SLIDE 12: Calidad y CI/CD -->
+    <section class="slide" data-slide="12">
       <div class="slide-title">Testing, Seguridad y Despliegue</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -535,11 +573,11 @@
         </p>
       </div>
 
-      <span class="slide-number">11 / 24</span>
+      <span class="slide-number">12 / 24</span>
     </section>
 
-    <!-- SLIDE 12: Funcionalidades -->
-    <section class="slide" data-slide="12">
+    <!-- SLIDE 13: Funcionalidades -->
+    <section class="slide" data-slide="13">
       <div class="slide-title">Funcionalidades principales</div>
       <div class="divider"></div>
       <div class="card">
@@ -551,11 +589,11 @@
           <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
         </ul>
       </div>
-      <span class="slide-number">12 / 24</span>
+      <span class="slide-number">13 / 24</span>
     </section>
 
-    <!-- SLIDE 13: Flujo de Ingeniería -->
-    <section class="slide" data-slide="13">
+    <!-- SLIDE 14: Flujo de Ingeniería -->
+    <section class="slide" data-slide="14">
       <div class="slide-title">Flujo de Ingeniería Profesional</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -589,11 +627,11 @@
         </div>
       </div>
 
-      <span class="slide-number">13 / 24</span>
+      <span class="slide-number">14 / 24</span>
     </section>
-    
-    <!-- SLIDE 14: Filtro Quirúrgico -->
-    <section class="slide" data-slide="14">
+
+    <!-- SLIDE 15: Filtro Quirúrgico -->
+    <section class="slide" data-slide="15">
       <div class="slide-title">🛡️ Filtro de Calidad Quirúrgico</div>
       <div class="divider"></div>
       <div class="card" style="border-left: 5px solid #00d4ff;">
@@ -615,11 +653,11 @@
           "No es solo automatización, es <strong>confianza técnica garantizada</strong>."
         </div>
       </div>
-      <span class="slide-number">14 / 24</span>
+      <span class="slide-number">15 / 24</span>
     </section>
 
-    <!-- SLIDE 15: Monitoreo Continuo -->
-    <section class="slide" data-slide="15">
+    <!-- SLIDE 16: Monitoreo Continuo -->
+    <section class="slide" data-slide="16">
       <div class="slide-title">👁️ Monitoreo Continuo (24/7 Watchdog)</div>
       <div class="divider"></div>
       <div class="card" style="border-left: 5px solid #00ff88; background: rgba(0, 255, 136, 0.02);">
@@ -641,7 +679,7 @@
           "Arquitectura resiliente: detectamos el fallo antes que el usuario."
         </div>
       </div>
-      <span class="slide-number">15 / 24</span>
+      <span class="slide-number">16 / 24</span>
     </section>
 
     <section class="slide" data-slide="17">
@@ -861,7 +899,7 @@
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #ef4444;">Refactor Application Layer</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #ef4444;">Client LLM Desacoplado</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #ef4444;">Abstracción Filesystem</li>
-            <li style="padding-left: 10px; border-left: 2px solid #ef4444;">RAG Enterprise (Vector DB)</li>
+            <li style="padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ RAG Enterprise (Pinecone)</li>
           </ul>
         </div>
         <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);">
@@ -904,7 +942,7 @@
           <p style="margin-top: 20px; font-weight: 700;">Assets property of © 2026 MARVEL</p>
         </div>
       </div>
-      <span class="slide-number">22 / 24</span>
+      <span class="slide-number">23 / 24</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
@@ -1062,15 +1100,15 @@
       })();
     </script>
 
-    <!-- SLIDE 21: Cierre -->
-    <section class="slide cover" data-slide="22">
+    <!-- SLIDE 24: Cierre -->
+    <section class="slide cover" data-slide="24">
       <div class="title">Gracias</div>
       <div class="divider"></div>
       <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
       <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
         <span class="url">github.com/20Luisma/marvel →</span>
       </a>
-      <span class="slide-number">23 / 24</span>
+      <span class="slide-number">24 / 24</span>
     </section>
   </div>
 
