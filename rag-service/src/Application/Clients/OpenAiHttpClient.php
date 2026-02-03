@@ -239,7 +239,7 @@ final class OpenAiHttpClient implements LlmClientInterface
                 throw new RuntimeException('Microservicio OpenAI no disponible: ' . $message);
             }
 
-            $this->logUsage($decoded);
+            $this->logUsage($decoded, (int) round((microtime(true) - $requestStart) * 1000));
 
             $contentKeys = ['content', 'answer', 'text'];
             foreach ($contentKeys as $key) {
@@ -293,7 +293,7 @@ final class OpenAiHttpClient implements LlmClientInterface
         }
 
         // Registrar uso también para formato directo
-        $this->logUsage($decoded);
+        $this->logUsage($decoded, (int) round((microtime(true) - $requestStart) * 1000));
 
         $this->circuitBreaker?->onSuccess();
         $this->logger->log('llm.request', [
@@ -308,7 +308,7 @@ final class OpenAiHttpClient implements LlmClientInterface
     /**
      * @param array<string, mixed> $decoded
      */
-    private function logUsage(array $decoded): void
+    private function logUsage(array $decoded, int $latencyMs = 0): void
     {
         $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
         if (!is_array($usage)) {
@@ -331,7 +331,7 @@ final class OpenAiHttpClient implements LlmClientInterface
             'prompt_tokens' => (int)($usage['prompt_tokens'] ?? 0),
             'completion_tokens' => (int)($usage['completion_tokens'] ?? 0),
             'total_tokens' => (int)($usage['total_tokens'] ?? 0),
-            'latency_ms' => 0, // We don't track latency here yet, could add it
+            'latency_ms' => $latencyMs,
             'tools_used' => 0,
             'success' => true,
             'error' => null,
