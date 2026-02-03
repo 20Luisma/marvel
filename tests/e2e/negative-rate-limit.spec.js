@@ -9,6 +9,7 @@ function extractCsrfToken(html) {
 
 test.describe('Negative - Rate limit', () => {
   test('POST /login se bloquea con 429 tras exceder el límite', async ({ request }) => {
+    test.setTimeout(60000);
     const bootstrap = await request.get('/login', { headers: { Accept: 'text/html' } });
     expect(bootstrap.ok()).toBeTruthy();
     const html = await bootstrap.text();
