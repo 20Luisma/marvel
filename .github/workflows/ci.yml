@@ -10,6 +10,7 @@ on:
       - 'feature/*'
       - 'hotfix/*'
       - 'release/*'
+      - staging
   pull_request:
     branches:
       - main
