@@ -470,38 +470,63 @@
       <span class="slide-number">08 / 25</span>
     </section>
 
-    <!-- SLIDE 9: RAG Evolution -->
+    <!-- SLIDE 9: RAG Híbrido -->
     <section class="slide" data-slide="9">
-      <div class="slide-title">Evolución RAG: Del Local al Enterprise</div>
+      <div class="slide-title">Arquitectura RAG Híbrida</div>
       <div class="divider"></div>
       <div class="grid-2">
         <div class="card" style="border-top: 4px solid #ed1d24;">
-          <div class="card-title">1. RAG Local (Modo Ligero)</div>
+          <div class="card-title">1. RAG Local (Héroes)</div>
           <ul class="list">
-            <li><strong>Tecnología:</strong> Archivos JSON + Similitud Coseno.</li>
-            <li><strong>Portabilidad:</strong> Zero-dependencies externas.</li>
-            <li><strong>Escenario:</strong> Desarrollo y prototipado.</li>
-            <li><strong>Resiliencia:</strong> Actúa como <em>fallback</em> automático.</li>
+            <li><strong>Propósito:</strong> Comparación y Creación de Cómics.</li>
+            <li><strong>Datos:</strong> Base local <code>heroes.json</code>.</li>
+            <li><strong>Motor:</strong> Similitud Coseno + PHP puro.</li>
+            <li><strong>Ventaja:</strong> Latencia ultra-baja (< 300ms).</li>
           </ul>
         </div>
         <div class="card" style="border-top: 4px solid #667eea;">
-          <div class="card-title">2. RAG Enterprise (Modo Cloud)</div>
+          <div class="card-title">2. RAG Enterprise (Agentia)</div>
           <ul class="list">
-            <li><strong>Tecnología:</strong> **Pinecone (Vector Database)**.</li>
-            <li><strong>Dimensiones:</strong> 1536 (OpenAI Embeddings).</li>
-            <li><strong>Escalabilidad:</strong> Millones de vectores en la nube.</li>
-            <li><strong>Rendimiento:</strong> Latencia constante y desacoplada.</li>
+            <li><strong>Propósito:</strong> Consulta técnica y documentación.</li>
+            <li><strong>Datos:</strong> <strong>Pinecone Cloud</strong> DB Vectorial.</li>
+            <li><strong>Motor:</strong> OpenAI Embeddings (1536 dim).</li>
+            <li><strong>Ventaja:</strong> Escalabilidad infinita en la nube.</li>
           </ul>
         </div>
       </div>
       <div class="card" style="margin-top: 20px; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea;">
-         <p style="margin:0; font-style: italic; text-align: center;">"Arquitectura híbrida que prioriza la nube pero garantiza el servicio mediante el motor local."</p>
+         <p style="margin:0; font-style: italic; text-align: center;">"Diseño inteligente: alta velocidad para datos locales y alta potencia para conocimiento global."</p>
       </div>
       <span class="slide-number">09 / 25</span>
     </section>
 
-    <!-- SLIDE 10: APIs Externas Utilizadas -->
+    <!-- SLIDE 10: Flujo RAG -->
     <section class="slide" data-slide="10">
+      <div class="slide-title">Evolución: Del JSON al Vector Cloud</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Resiliencia y Fallback Automático</div>
+          <ul class="list">
+            <li><strong>Agentia (Cloud First):</strong> Prioriza la precisión de Pinecone.</li>
+            <li><strong>Failover Inteligente:</strong> Si Pinecone falla, conmuta al instante a la <strong>Knowledge Base local (JSON)</strong>.</li>
+            <li><strong>Continuidad:</strong> El usuario nunca recibe un error, solo una respuesta desde la base de datos de respaldo.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Observabilidad IA</div>
+          <ul class="list">
+            <li>Trazabilidad total de cada consulta (Trace ID).</li>
+            <li>Registro de <strong>consumo de tokens</strong> unificado.</li>
+            <li>Métricas de latencia comparativas entre local v/s nube.</li>
+          </ul>
+        </div>
+      </div>
+      <span class="slide-number">10 / 25</span>
+    </section>
+
+    <!-- SLIDE 11: APIs Externas Utilizadas -->
+    <section class="slide" data-slide="11">
       <div class="slide-title">APIs Externas Utilizadas</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -522,11 +547,11 @@
           </ul>
         </div>
       </div>
-      <span class="slide-number">10 / 25</span>
+      <span class="slide-number">11 / 25</span>
     </section>
 
-    <!-- SLIDE 11: Automatización con n8n -->
-    <section class="slide" data-slide="11">
+    <!-- SLIDE 12: Automatización con n8n -->
+    <section class="slide" data-slide="12">
       <div class="slide-title">Automatización con n8n</div>
       <div class="divider"></div>
       <div class="card">
@@ -538,11 +563,11 @@
           <li><strong>Desacoplamiento</strong> · El core de la aplicación no conoce YouTube</li>
         </ul>
       </div>
-      <span class="slide-number">11 / 25</span>
+      <span class="slide-number">12 / 25</span>
     </section>
 
-    <!-- SLIDE 12: Calidad y CI/CD -->
-    <section class="slide" data-slide="12">
+    <!-- SLIDE 13: Calidad y CI/CD -->
+    <section class="slide" data-slide="13">
       <div class="slide-title">Testing, Seguridad y Despliegue</div>
       <div class="divider"></div>
       <div class="grid-2">
@@ -573,11 +598,11 @@
         </p>
       </div>
 
-      <span class="slide-number">12 / 25</span>
+      <span class="slide-number">13 / 25</span>
     </section>
 
-    <!-- SLIDE 13: Funcionalidades -->
-    <section class="slide" data-slide="13">
+    <!-- SLIDE 14: Funcionalidades -->
+    <section class="slide" data-slide="14">
       <div class="slide-title">Funcionalidades principales</div>
       <div class="divider"></div>
       <div class="card">
@@ -589,7 +614,7 @@
           <li>🔄 <strong>Restaurar Demo</strong> · Reset de datos con un clic</li>
         </ul>
       </div>
-      <span class="slide-number">13 / 25</span>
+      <span class="slide-number">14 / 25</span>
     </section>
 
     <!-- SLIDE 14: Flujo de Ingeniería -->
@@ -786,8 +811,8 @@
           </div>
           <div class="api-item">
             <div class="status-led" id="status-rag"></div>
-            <span class="api-name">RAG Service</span>
-            <span class="api-endpoint">python.google_cloud</span>
+            <span class="api-name">Pinecone Cloud</span>
+            <span class="api-endpoint">rag-service/enterprise</span>
           </div>
           <div class="api-item">
             <div class="status-led" id="status-n8n"></div>
