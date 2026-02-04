@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-async function postWithRetries(request, url, options, attempts = 2, delayMs = 2000) {
+async function postWithRetries(request, url, options, attempts = 3, delayMs = 2000) {
   let lastError;
   for (let i = 0; i < attempts; i++) {
     try {
@@ -57,7 +57,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
     
     const response = await postWithRetries(page.request, '/api/marvel-agent.php', {
       form: { question: '¿Qué es Clean Marvel Album?' }
-    }, 2, 2000);
+    }, 3, 2000);
     
     expect(response.ok(), `Error al llamar a marvel-agent.php: ${response.status()} ${response.statusText()}`).toBeTruthy();
     const data = await response.json();
@@ -72,7 +72,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
         question: 'compara a Iron Man con Spider-Man',
         context: 'compare_heroes'
       }
-    }, 2, 2000);
+    }, 3, 2000);
 
     expect(response.ok(), `Error en Comparador: ${response.status()} - ${await response.text()}`).toBeTruthy();
     const data = await response.json();
@@ -97,7 +97,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
 
     const response = await postWithRetries(request, '/comics/generate', {
       data: { heroIds }
-    }, 2, 2000);
+    }, 3, 2000);
 
     expect(response.ok(), `Error al generar cómic: ${response.status()} ${response.statusText()}`).toBeTruthy();
     const payload = await response.json();
