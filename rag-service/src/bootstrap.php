@@ -112,7 +112,12 @@ return (static function (): array {
     $openAiEndpoint = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
     if (!is_string($openAiEndpoint) || trim($openAiEndpoint) === '') {
         if ($environment === 'hosting') {
-            $openAiEndpoint = 'https://openai-service.contenido.creawebes.com/v1/chat';
+            $host = $_SERVER['HTTP_HOST'] ?? '';
+            if (str_contains($host, 'staging')) {
+                $openAiEndpoint = 'https://openai-staging.contenido.creawebes.com/v1/chat';
+            } else {
+                $openAiEndpoint = 'https://openai-service.contenido.creawebes.com/v1/chat';
+            }
         } else {
             $openAiEndpoint = 'http://localhost:8081/v1/chat';
         }

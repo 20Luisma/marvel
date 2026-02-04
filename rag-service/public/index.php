@@ -188,8 +188,9 @@ if ($method === 'POST' && $path === '/rag/agent') {
             PrometheusMetrics::incrementErrors();
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => 'Error interno llamando al Marvel Agent.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            log_request_event($path, 500, $requestStart, 'agent-error');
+            $errorMessage = $exception->getMessage();
+            echo json_encode(['error' => 'Error interno llamando al Marvel Agent: ' . $errorMessage], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            log_request_event($path, 500, $requestStart, 'agent-error: ' . $errorMessage);
             return;
         }
     }
