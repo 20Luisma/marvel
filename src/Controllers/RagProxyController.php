@@ -20,7 +20,18 @@ final class RagProxyController
         private readonly string $ragServiceUrl,
         ?string $internalToken
     ) {
-        $caller = is_string($_SERVER['HTTP_HOST'] ?? null) ? trim((string) $_SERVER['HTTP_HOST']) : 'clean-marvel-app';
+        $callerOverride = trim((string) ($_ENV['INTERNAL_CALLER'] ?? getenv('INTERNAL_CALLER') ?? ''));
+        $caller = $callerOverride;
+        if ($caller === '') {
+            $appUrl = trim((string) ($_ENV['APP_PUBLIC_URL'] ?? getenv('APP_PUBLIC_URL') ?? $_ENV['APP_URL'] ?? getenv('APP_URL') ?? ''));
+            if ($appUrl !== '') {
+                $parsedHost = parse_url($appUrl, PHP_URL_HOST);
+                $caller = is_string($parsedHost) && $parsedHost !== '' ? $parsedHost : $appUrl;
+            }
+        }
+        if ($caller === '') {
+            $caller = is_string($_SERVER['HTTP_HOST'] ?? null) ? trim((string) $_SERVER['HTTP_HOST']) : 'clean-marvel-app';
+        }
         $this->signer = is_string($internalToken) && $internalToken !== ''
             ? new InternalRequestSigner($internalToken, $caller !== '' ? $caller : 'clean-marvel-app')
             : null;
