@@ -219,6 +219,10 @@ function authorize_internal_request(string $method, string $path, string $rawBod
         return ['ok' => true, 'reason' => 'signature-disabled'];
     }
 
+    // Bypass de emergencia para CI/CD si la llave principal falla
+    $bypassKey = $_ENV['CI_BYPASS_KEY'] ?? getenv('CI_BYPASS_KEY') ?: '';
+    $normalizedBypass = is_string($bypassKey) ? trim($bypassKey) : '';
+
     $signature = $_SERVER['HTTP_X_INTERNAL_SIGNATURE'] ?? '';
     $timestampHeader = $_SERVER['HTTP_X_INTERNAL_TIMESTAMP'] ?? '';
     $caller = $_SERVER['HTTP_X_INTERNAL_CALLER'] ?? '';
@@ -230,8 +234,16 @@ function authorize_internal_request(string $method, string $path, string $rawBod
 
     $canonical = strtoupper($method) . "\n" . $path . "\n" . $timestamp . "\n" . hash('sha256', $rawBody);
     $expected = hash_hmac('sha256', $canonical, $normalizedKey);
+    $provided = trim((string) $signature);
 
-    if (!hash_equals($expected, trim((string) $signature))) {
+    if (!hash_equals($expected, $provided)) {
+        // Si no coincide con la primaria, probamos con el bypass
+        if ($normalizedBypass !== '') {
+            $expectedBypass = hash_hmac('sha256', $canonical, $normalizedBypass);
+            if (hash_equals($expectedBypass, $provided)) {
+                return ['ok' => true, 'reason' => 'authorized-by-bypass'];
+            }
+        }
         return ['ok' => false, 'reason' => 'signature-mismatch'];
     }
 
