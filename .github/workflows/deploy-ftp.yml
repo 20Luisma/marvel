@@ -56,6 +56,31 @@ jobs:
           RAG_SERVICE_URL: https://rag-service.contenido.creawebes.com/rag/heroes
           RAG_BASE_URL: https://rag-service.contenido.creawebes.com
 
+      - name: 🔎 Diagnóstico rápido microservicios (prod)
+        run: |
+          set -euo pipefail
+          echo "== RAG health =="
+          curl -sS -i https://rag-service.contenido.creawebes.com/health || true
+          echo
+          echo "== RAG agent (signed) =="
+          body='{"question":"ping"}'
+          ts=$(date +%s)
+          body_hash=$(printf "%s" "$body" | openssl dgst -sha256 | awk '{print $2}')
+          canonical=$(printf "POST\n/rag/agent\n%s\n%s" "$ts" "$body_hash")
+          signature=$(printf "%s" "$canonical" | openssl dgst -sha256 -hmac "$INTERNAL_API_KEY" | awk '{print $2}')
+          curl -sS -i https://rag-service.contenido.creawebes.com/rag/agent \
+            -H "Content-Type: application/json" \
+            -H "X-Internal-Signature: ${signature}" \
+            -H "X-Internal-Timestamp: ${ts}" \
+            -H "X-Internal-Caller: ${INTERNAL_CALLER}" \
+            --data "$body" || true
+          echo
+          echo "== OpenAI service (prod) =="
+          curl -sS -i https://openai-service.contenido.creawebes.com/v1/chat || true
+        env:
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          INTERNAL_CALLER: iamasterbigschool.contenido.creawebes.com
+
       - name: 🔬 Ejecutar Test Quirúrgico (PRE-DEPLOY)
         run: |
           sleep 5
