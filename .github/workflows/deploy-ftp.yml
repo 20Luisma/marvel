@@ -58,8 +58,7 @@ jobs:
       - name: 🔬 Ejecutar Test Quirúrgico (PRE-DEPLOY)
         run: |
           sleep 5
-          echo "Saltando test para subir el bypass de seguridad al servidor..."
-          # npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs
+          npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
