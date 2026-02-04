@@ -62,10 +62,18 @@ return (static function (): array {
             return 'hosting';
         }
 
+        // Si estamos en CI (GitHub Actions) o local
         return 'local';
     };
 
     $environment = $resolveEnvironment();
+
+    // Log de diagnóstico para el microservicio OpenAI
+    $logOpenAiError = function(string $message) use ($rootPath) {
+        $logFile = $rootPath . '/storage/logs/openai_error.log';
+        @mkdir(dirname($logFile), 0775, true);
+        @file_put_contents($logFile, date('c') . " - " . $message . PHP_EOL, FILE_APPEND);
+    };
 
     $knowledgeBase = new HeroJsonKnowledgeBase($rootPath . '/storage/knowledge/heroes.json');
     $similarity = new CosineSimilarity();
