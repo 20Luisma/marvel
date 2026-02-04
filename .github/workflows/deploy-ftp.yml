@@ -52,6 +52,7 @@ jobs:
           APP_ENV: testing
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          INTERNAL_CALLER: iamasterbigschool.contenido.creawebes.com
           RAG_SERVICE_URL: https://rag-service.contenido.creawebes.com/rag/heroes
           RAG_BASE_URL: https://rag-service.contenido.creawebes.com
 
@@ -62,6 +63,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
+          INTERNAL_CALLER: iamasterbigschool.contenido.creawebes.com
           RAG_SERVICE_URL: https://rag-service.contenido.creawebes.com/rag/heroes
           RAG_BASE_URL: https://rag-service.contenido.creawebes.com
           # Usamos staging para validar que los microservicios externos están vivos
