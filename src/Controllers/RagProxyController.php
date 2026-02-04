@@ -20,10 +20,12 @@ final class RagProxyController
         private readonly string $ragServiceUrl,
         ?string $internalToken
     ) {
-        $callerOverride = trim((string) ($_ENV['INTERNAL_CALLER'] ?? getenv('INTERNAL_CALLER') ?? ''));
+        $envCaller = $_ENV['INTERNAL_CALLER'] ?? null;
+        $callerOverride = trim((string) ($envCaller !== null ? $envCaller : (getenv('INTERNAL_CALLER') ?: '')));
         $caller = $callerOverride;
         if ($caller === '') {
-            $appUrl = trim((string) ($_ENV['APP_PUBLIC_URL'] ?? getenv('APP_PUBLIC_URL') ?? $_ENV['APP_URL'] ?? getenv('APP_URL') ?? ''));
+            $envAppUrl = $_ENV['APP_PUBLIC_URL'] ?? $_ENV['APP_URL'] ?? null;
+            $appUrl = trim((string) ($envAppUrl !== null ? $envAppUrl : (getenv('APP_PUBLIC_URL') ?: getenv('APP_URL') ?: '')));
             if ($appUrl !== '') {
                 $parsedHost = parse_url($appUrl, PHP_URL_HOST);
                 $caller = is_string($parsedHost) && $parsedHost !== '' ? $parsedHost : $appUrl;
