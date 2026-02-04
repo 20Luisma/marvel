@@ -46,15 +46,28 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .env for Surgical Server
+        run: |
+          cat > .env <<EOF
+          APP_ENV=testing
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY=${{ secrets.INTERNAL_KEY }}
+          INTERNAL_CALLER=iamasterbigschool.contenido.creawebes.com
+          RAG_SERVICE_URL=https://rag-service.contenido.creawebes.com/rag/heroes
+          RAG_BASE_URL=https://rag-service.contenido.creawebes.com
+          EOF
+          echo "✅ .env creado para tests quirúrgicos"
+
       - name: Start Surgical Server
-        run: php -S 0.0.0.0:8080 -t public >/tmp/surgical-server.log 2>&1 &
-        env:
-          APP_ENV: testing
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
-          INTERNAL_CALLER: iamasterbigschool.contenido.creawebes.com
-          RAG_SERVICE_URL: https://rag-service.contenido.creawebes.com/rag/heroes
-          RAG_BASE_URL: https://rag-service.contenido.creawebes.com
+        run: |
+          # Exportar variables para que el proceso en background las herede
+          export APP_ENV=testing
+          export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
+          export INTERNAL_API_KEY="${{ secrets.INTERNAL_KEY }}"
+          export INTERNAL_CALLER="iamasterbigschool.contenido.creawebes.com"
+          export RAG_SERVICE_URL="https://rag-service.contenido.creawebes.com/rag/heroes"
+          export RAG_BASE_URL="https://rag-service.contenido.creawebes.com"
+          php -S 0.0.0.0:8080 -t public >/tmp/surgical-server.log 2>&1 &
 
       - name: 🔎 Diagnóstico rápido microservicios (prod)
         run: |
