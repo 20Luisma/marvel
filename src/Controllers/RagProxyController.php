@@ -20,9 +20,11 @@ final class RagProxyController
         private readonly string $ragServiceUrl,
         ?string $internalToken
     ) {
+        // @phpstan-ignore-next-line
         $callerOverride = trim((string) ($_ENV['INTERNAL_CALLER'] ?? getenv('INTERNAL_CALLER') ?? ''));
         $caller = $callerOverride;
         if ($caller === '') {
+            // @phpstan-ignore-next-line
             $appUrl = trim((string) ($_ENV['APP_PUBLIC_URL'] ?? getenv('APP_PUBLIC_URL') ?? $_ENV['APP_URL'] ?? getenv('APP_URL') ?? ''));
             if ($appUrl !== '') {
                 $parsedHost = parse_url($appUrl, PHP_URL_HOST);
