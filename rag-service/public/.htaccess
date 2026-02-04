@@ -5,6 +5,9 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Route API calls to index.php
+# Route all non-file requests to index.php (SPA-style)
+RewriteRule ^health$ index.php [QSA,L]
+RewriteRule ^metrics$ index.php [QSA,L]
 RewriteRule ^api/(.*)$ index.php [QSA,L]
 RewriteRule ^rag/(.*)$ index.php [QSA,L]
+
