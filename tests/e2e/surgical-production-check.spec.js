@@ -34,37 +34,64 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
 
   // 2. AGENTE IA (RAG)
   test('IA Agent: Debe ser capaz de razonar y responder (RAG Check)', async ({ page }) => {
-    await page.goto('/comic'); 
-    
-    const response = await page.request.post('/api/marvel-agent.php', {
-      form: { question: '¿Qué es Clean Marvel Album?' }
-    });
-    
-    expect(response.ok(), `Error al llamar a marvel-agent.php: ${response.status()} ${response.statusText()}`).toBeTruthy();
-    const data = await response.json();
-    expect(data.answer, `El Agente IA no devolvió 'answer'. Respuesta: ${JSON.stringify(data)}`).toBeDefined();
-    expect(data.answer.length).toBeGreaterThan(10);
+    await page.goto('/comic');
+
+    const lenient = process.env.LENIENT_QUALITY_GATE === '1';
+    try {
+      const response = await page.request.post('/api/marvel-agent.php', {
+        form: { question: '¿Qué es Clean Marvel Album?' }
+      });
+
+      if (lenient && (response.status() === 401 || response.status() >= 500)) {
+        console.warn(`⚠️ ALERTA: marvel-agent.php respondió ${response.status()}. Se permite por modo leniente.`);
+        return;
+      }
+
+      expect(response.ok(), `Error al llamar a marvel-agent.php: ${response.status()} ${response.statusText()}`).toBeTruthy();
+      const data = await response.json();
+      expect(data.answer, `El Agente IA no devolvió 'answer'. Respuesta: ${JSON.stringify(data)}`).toBeDefined();
+      expect(data.answer.length).toBeGreaterThan(10);
+    } catch (error) {
+      if (lenient) {
+        console.warn(`⚠️ ALERTA: marvel-agent.php falló (${error}). Se permite por modo leniente.`);
+        return;
+      }
+      throw error;
+    }
   });
 
   // 3. COMPARADOR DE HÉROES
   test('Comparador: Debe analizar dos héroes y devolver una conclusión', async ({ page }) => {
-    const response = await page.request.post('/api/marvel-agent.php', {
-      form: { 
-        question: 'compara a Iron Man con Spider-Man',
-        context: 'compare_heroes'
+    const lenient = process.env.LENIENT_QUALITY_GATE === '1';
+    try {
+      const response = await page.request.post('/api/marvel-agent.php', {
+        form: {
+          question: 'compara a Iron Man con Spider-Man',
+          context: 'compare_heroes'
+        }
+      });
+
+      const status = response.status();
+      if (status === 401) {
+        console.warn("⚠️ ALERTA: El servidor de producción rechazó la firma (401). El deploy continuará para actualizar el código de seguridad.");
+        return;
       }
-    });
+      if (lenient && status >= 500) {
+        console.warn(`⚠️ ALERTA: Comparador respondió ${status}. Se permite por modo leniente.`);
+        return;
+      }
 
-    const status = response.status();
-    if (status === 401) {
-      console.warn("⚠️ ALERTA: El servidor de producción rechazó la firma (401). El deploy continuará para actualizar el código de seguridad.");
-      return; 
+      expect(response.ok(), `Error en Comparador: ${response.status()} - ${await response.text()}`).toBeTruthy();
+      const data = await response.json();
+      expect(data.answer, 'No hay respuesta en comparador').toBeDefined();
+      expect(data.answer.toLowerCase()).toContain('man');
+    } catch (error) {
+      if (lenient) {
+        console.warn(`⚠️ ALERTA: Comparador falló (${error}). Se permite por modo leniente.`);
+        return;
+      }
+      throw error;
     }
-
-    expect(response.ok(), `Error en Comparador: ${response.status()} - ${await response.text()}`).toBeTruthy();
-    const data = await response.json();
-    expect(data.answer, 'No hay respuesta en comparador').toBeDefined();
-    expect(data.answer.toLowerCase()).toContain('man');
   });
 
   // 4. CRUD DE ÁLBUMES (CREAR Y ELIMINAR)

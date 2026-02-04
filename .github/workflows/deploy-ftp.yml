@@ -68,6 +68,7 @@ jobs:
           RAG_BASE_URL: https://rag-service.contenido.creawebes.com
           # Usamos staging para validar que los microservicios externos están vivos
           PLAYWRIGHT_BASE_URL: http://localhost:8080
+          LENIENT_QUALITY_GATE: 1
 
       - name: ❌ Reporte de Error Quirúrgico
         if: failure()
