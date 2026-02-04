@@ -1,5 +1,24 @@
 const { test, expect } = require('@playwright/test');
 
+async function postWithRetries(request, url, options, attempts = 2, delayMs = 2000) {
+  let lastError;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const response = await request.post(url, options);
+      if (response.ok()) {
+        return response;
+      }
+      lastError = new Error(`HTTP ${response.status()} ${response.statusText()}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (i + 1 < attempts) {
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+  throw lastError;
+}
+
 /**
  * 🏥 SUITE DE DIAGNÓSTICO QUIRÚRGICO (PRE-DEPLOYMENT)
  * Este test es el guardián de la producción. Si falla, el deploy se detiene.
@@ -9,7 +28,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
 
   test.beforeEach(async ({ page }) => {
     // Aumentamos el timeout para operaciones de IA que pueden ser lentas
-    test.setTimeout(60000);
+    test.setTimeout(120000);
   });
 
   test('APIs Críticas: Las rutas base deben responder 200', async ({ request }) => {
@@ -35,66 +54,62 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
   // 2. AGENTE IA (RAG)
   test('IA Agent: Debe ser capaz de razonar y responder (RAG Check)', async ({ page }) => {
     await page.goto('/comic');
-
-    const lenient = process.env.LENIENT_QUALITY_GATE === '1';
-    try {
-      const response = await page.request.post('/api/marvel-agent.php', {
-        form: { question: '¿Qué es Clean Marvel Album?' }
-      });
-
-      if (lenient && (response.status() === 401 || response.status() >= 500)) {
-        console.warn(`⚠️ ALERTA: marvel-agent.php respondió ${response.status()}. Se permite por modo leniente.`);
-        return;
-      }
-
-      expect(response.ok(), `Error al llamar a marvel-agent.php: ${response.status()} ${response.statusText()}`).toBeTruthy();
-      const data = await response.json();
-      expect(data.answer, `El Agente IA no devolvió 'answer'. Respuesta: ${JSON.stringify(data)}`).toBeDefined();
-      expect(data.answer.length).toBeGreaterThan(10);
-    } catch (error) {
-      if (lenient) {
-        console.warn(`⚠️ ALERTA: marvel-agent.php falló (${error}). Se permite por modo leniente.`);
-        return;
-      }
-      throw error;
-    }
+    
+    const response = await postWithRetries(page.request, '/api/marvel-agent.php', {
+      form: { question: '¿Qué es Clean Marvel Album?' }
+    }, 2, 2000);
+    
+    expect(response.ok(), `Error al llamar a marvel-agent.php: ${response.status()} ${response.statusText()}`).toBeTruthy();
+    const data = await response.json();
+    expect(data.answer, `El Agente IA no devolvió 'answer'. Respuesta: ${JSON.stringify(data)}`).toBeDefined();
+    expect(data.answer.length).toBeGreaterThan(10);
   });
 
   // 3. COMPARADOR DE HÉROES
   test('Comparador: Debe analizar dos héroes y devolver una conclusión', async ({ page }) => {
-    const lenient = process.env.LENIENT_QUALITY_GATE === '1';
-    try {
-      const response = await page.request.post('/api/marvel-agent.php', {
-        form: {
-          question: 'compara a Iron Man con Spider-Man',
-          context: 'compare_heroes'
-        }
-      });
+    const response = await postWithRetries(page.request, '/api/marvel-agent.php', {
+      form: {
+        question: 'compara a Iron Man con Spider-Man',
+        context: 'compare_heroes'
+      }
+    }, 2, 2000);
 
-      const status = response.status();
-      if (status === 401) {
-        console.warn("⚠️ ALERTA: El servidor de producción rechazó la firma (401). El deploy continuará para actualizar el código de seguridad.");
-        return;
-      }
-      if (lenient && status >= 500) {
-        console.warn(`⚠️ ALERTA: Comparador respondió ${status}. Se permite por modo leniente.`);
-        return;
-      }
-
-      expect(response.ok(), `Error en Comparador: ${response.status()} - ${await response.text()}`).toBeTruthy();
-      const data = await response.json();
-      expect(data.answer, 'No hay respuesta en comparador').toBeDefined();
-      expect(data.answer.toLowerCase()).toContain('man');
-    } catch (error) {
-      if (lenient) {
-        console.warn(`⚠️ ALERTA: Comparador falló (${error}). Se permite por modo leniente.`);
-        return;
-      }
-      throw error;
-    }
+    expect(response.ok(), `Error en Comparador: ${response.status()} - ${await response.text()}`).toBeTruthy();
+    const data = await response.json();
+    expect(data.answer, 'No hay respuesta en comparador').toBeDefined();
+    expect(data.answer.toLowerCase()).toContain('man');
   });
 
-  // 4. CRUD DE ÁLBUMES (CREAR Y ELIMINAR)
+  // 4. GENERACIÓN DE CÓMIC CON IA
+  test('Cómic: Debe generar historia y viñetas con IA', async ({ request }) => {
+    const heroesResponse = await request.get('/heroes');
+    expect(heroesResponse.ok(), `No se pudo obtener héroes: ${heroesResponse.status()} ${heroesResponse.statusText()}`).toBeTruthy();
+    const heroesPayload = await heroesResponse.json();
+    const heroes = Array.isArray(heroesPayload?.datos) ? heroesPayload.datos : [];
+    expect(heroes.length, 'No hay héroes disponibles para generar cómic').toBeGreaterThan(0);
+
+    const heroIds = heroes
+      .map(hero => hero?.heroId)
+      .filter(id => typeof id === 'string' && id.trim() !== '')
+      .slice(0, 2);
+
+    expect(heroIds.length, 'No se encontraron heroIds válidos para el cómic').toBeGreaterThan(0);
+
+    const response = await postWithRetries(request, '/comics/generate', {
+      data: { heroIds }
+    }, 2, 2000);
+
+    expect(response.ok(), `Error al generar cómic: ${response.status()} ${response.statusText()}`).toBeTruthy();
+    const payload = await response.json();
+    expect(payload?.estado, `Respuesta inválida en cómic: ${JSON.stringify(payload)}`).toBe('éxito');
+    const story = payload?.datos?.story || {};
+    expect(typeof story.summary).toBe('string');
+    expect(story.summary.length).toBeGreaterThan(10);
+    expect(Array.isArray(story.panels)).toBeTruthy();
+    expect(story.panels.length).toBeGreaterThan(0);
+  });
+
+  // 5. CRUD DE ÁLBUMES (CREAR Y ELIMINAR)
   test('Ciclo CRUD: Debe poder crear un álbum y luego eliminarlo', async ({ page }) => {
     await page.goto('/');
     
@@ -118,7 +133,7 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
     await expect(albumCard).not.toBeVisible({ timeout: 10000 });
   });
 
-  // 5. SISTEMA DE RESET (MÁQUINA DEL TIEMPO)
+  // 6. SISTEMA DE RESET (MÁQUINA DEL TIEMPO)
   test('Demo Reset: El endpoint de restauración debe funcionar', async ({ request }) => {
     const response = await request.post('/api/reset-demo.php');
     expect(response.ok()).toBeTruthy();
