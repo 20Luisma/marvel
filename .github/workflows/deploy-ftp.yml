@@ -210,3 +210,4 @@ jobs:
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-rag.json
 # Triggering re-run to verify RAG diagnostic
+# Retry at Wed Feb  4 20:06:22 CET 2026
