@@ -285,7 +285,7 @@
       <div class="divider"></div>
       <div class="byline">MARTÍN PALLANTE CARDEO</div>
       <div class="byline">POWERED BY ALFRED (AI ASSISTANT)</div>
-      <span class="slide-number">01 / 25</span>
+      <span class="slide-number">01 / 26</span>
     </section>
 
     <!-- SLIDE 2: El proyecto en números -->
@@ -842,11 +842,40 @@
         </div>
       </div>
 
-      <span class="slide-number">19 / 25</span>
+      <span class="slide-number">19 / 26</span>
+    </section>
+    
+    <!-- SLIDE 20: Seguridad HMAC -->
+    <section class="slide" data-slide="20">
+      <div class="slide-title">🔐 Seguridad de Grado Militar: Firma HMAC</div>
+      <div class="divider"></div>
+      <div class="card" style="border-left: 5px solid #ed1d24; background: rgba(237, 29, 36, 0.05);">
+        <div class="card-title">Interoperabilidad Protegida y Cifrada</div>
+        <p style="margin-bottom: 20px; font-size: 1.05rem;">
+          Implementación de un protocolo de <strong>Zero Trust Architecture</strong> para la comunicación entre microservicios:
+        </p>
+        <div class="grid-2">
+          <ul class="list">
+            <li>🔑 <strong>Firma HMAC-SHA256</strong>: Cada petición viaja firmada con una clave maestra sincronizada.</li>
+            <li>⏱️ <strong>Timestamping & Nonce</strong>: Protección robusta contra ataques de <em>Replay</em> y <em>Man-in-the-Middle</em>.</li>
+          </ul>
+          <ul class="list">
+            <li>🛡️ <strong>Sincronización CI/CD</strong>: La clave se inyecta dinámicamente en el ciclo de testeo y despliegue.</li>
+            <li>🚫 <strong>Rechazo Automático</strong>: Cualquier petición sin firma válida es bloqueada instantáneamente (401 Unauthorized).</li>
+          </ul>
+        </div>
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #ed1d24; border: 1px dashed rgba(237, 29, 36, 0.3);">
+          // Headers de seguridad detectados:<br>
+          X-Internal-Signature: 8f3c...6e2a<br>
+          X-Internal-Timestamp: 1770315237<br>
+          X-Internal-Caller: marvel-app-main
+        </div>
+      </div>
+      <span class="slide-number">20 / 26</span>
     </section>
 
-    <!-- SLIDE 17: Validación e Interoperabilidad -->
-    <section class="slide" data-slide="20">
+    <!-- SLIDE 21: Validación e Interoperabilidad -->
+    <section class="slide" data-slide="21">
       <div class="slide-title">Validación e Interoperabilidad</div>
       <div class="divider"></div>
 
@@ -872,11 +901,11 @@
         </div>
       </div>
 
-      <span class="slide-number">20 / 25</span>
+      <span class="slide-number">21 / 26</span>
     </section>
 
-    <!-- SLIDE 18: Reflexión -->
-    <section class="slide" data-slide="21">
+    <!-- SLIDE 22: Reflexión -->
+    <section class="slide" data-slide="22">
       <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card">
@@ -892,11 +921,11 @@
           <p><strong>Lo que más me impactó:</strong> descubrir que una arquitectura bien pensada no solo beneficia a los humanos, sino también a las herramientas de IA. A lo largo del desarrollo, utilicé varios asistentes de inteligencia artificial, y todos <em>navegaron el proyecto con fluidez</em>, entendiendo la estructura, sugiriendo mejoras coherentes y respetando los patrones establecidos. Fue como si el código limpio hablara un idioma universal. <strong>La buena arquitectura enamora hasta a las máquinas.</strong></p>
         </div>
       </div>
-      <span class="slide-number">21 / 25</span>
+      <span class="slide-number">22 / 26</span>
     </section>
 
-    <!-- SLIDE 19: Futuras Mejoras -->
-    <section class="slide centered" data-slide="22">
+    <!-- SLIDE 23: Futuras Mejoras -->
+    <section class="slide centered" data-slide="23">
       <div class="slide-title">Evolución técnica y próximos pasos</div>
       <div class="divider"></div>
       
@@ -952,11 +981,11 @@
         </a>
       </div>
       
-      <span class="slide-number">22 / 25</span>
+      <span class="slide-number">23 / 26</span>
     </section>
 
-    <!-- SLIDE 20: Aviso Legal -->
-    <section class="slide" data-slide="23">
+    <!-- SLIDE 24: Aviso Legal -->
+    <section class="slide" data-slide="24">
       <div class="slide-title">Aviso Legal y Atribuciones</div>
       <div class="divider"></div>
       <div class="card">
@@ -967,7 +996,7 @@
           <p style="margin-top: 20px; font-weight: 700;">Assets property of © 2026 MARVEL</p>
         </div>
       </div>
-      <span class="slide-number">22 / 25</span>
+      <span class="slide-number">24 / 26</span>
     </section>
 
     <script nonce="<?= $cspNonce ?? '' ?>">
@@ -1104,7 +1133,7 @@
                   lastActiveSlide = slideId;
                   if (slideId === '18') { loadGitHubData(); triggerAnimation(); }
                   if (slideId === '19') { runSystemDiagnostic(); }
-                  if (slideId === '20') { startAppCarousel(); } else { if (carouselInterval) clearInterval(carouselInterval); }
+                  if (slideId === '21') { startAppCarousel(); } else { if (carouselInterval) clearInterval(carouselInterval); }
                 }
               }
             }
@@ -1125,15 +1154,15 @@
       })();
     </script>
 
-    <!-- SLIDE 24: Cierre -->
-    <section class="slide cover" data-slide="24">
+    <!-- SLIDE 26: Cierre -->
+    <section class="slide cover" data-slide="26">
       <div class="title">Gracias</div>
       <div class="divider"></div>
       <div class="byline">Proyecto completo · Arquitectura sólida · Evolución profesional</div>
       <a href="https://github.com/20Luisma/marvel" target="_blank" class="link-box" style="margin-top: 32px;">
         <span class="url">github.com/20Luisma/marvel →</span>
       </a>
-      <span class="slide-number">25 / 25</span>
+      <span class="slide-number">26 / 26</span>
     </section>
   </div>
 
