@@ -303,14 +303,30 @@ jobs:
           });
           EOF
 
+      - name: Create .env for Playwright Server
+        run: |
+          cat > .env <<EOF
+          APP_ENV=testing
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY=${{ secrets.INTERNAL_KEY }}
+          INTERNAL_CALLER=iamasterbigschool.contenido.creawebes.com
+          RAG_SERVICE_URL=https://rag-service.contenido.creawebes.com/rag/heroes
+          RAG_BASE_URL=https://rag-service.contenido.creawebes.com
+          OPENAI_SERVICE_URL=https://openai-service.contenido.creawebes.com/v1/chat
+          EOF
+          echo "✅ .env creado para tests de Playwright"
+
       - name: Start PHP server
-        run: php -S 0.0.0.0:8080 -t public >/tmp/php-server.log 2>&1 &
-        env:
-          APP_ENV: testing
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
-          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
-          RAG_BASE_URL: https://rag-staging.contenido.creawebes.com
+        run: |
+          # Exportar variables para que el proceso en background las herede
+          export APP_ENV=testing
+          export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
+          export INTERNAL_API_KEY="${{ secrets.INTERNAL_KEY }}"
+          export INTERNAL_CALLER="iamasterbigschool.contenido.creawebes.com"
+          export RAG_SERVICE_URL="https://rag-service.contenido.creawebes.com/rag/heroes"
+          export RAG_BASE_URL="https://rag-service.contenido.creawebes.com"
+          export OPENAI_SERVICE_URL="https://openai-service.contenido.creawebes.com/v1/chat"
+          php -S 0.0.0.0:8080 -t public >/tmp/php-server.log 2>&1 &
 
       - name: Wait for PHP server
         run: sleep 5
@@ -320,8 +336,10 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY: ${{ secrets.INTERNAL_KEY }}
-          RAG_SERVICE_URL: ${{ secrets.RAG_SERVICE_URL_STAGING }}
-          RAG_BASE_URL: https://rag-staging.contenido.creawebes.com
+          INTERNAL_CALLER: iamasterbigschool.contenido.creawebes.com
+          RAG_SERVICE_URL: https://rag-service.contenido.creawebes.com/rag/heroes
+          RAG_BASE_URL: https://rag-service.contenido.creawebes.com
+          OPENAI_SERVICE_URL: https://openai-service.contenido.creawebes.com/v1/chat
 
       - name: Upload Playwright artifacts
         if: always()
