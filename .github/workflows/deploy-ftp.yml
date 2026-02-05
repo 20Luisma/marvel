@@ -52,7 +52,8 @@ jobs:
           APP_ENV=testing
           OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
           INTERNAL_API_KEY=${{ secrets.INTERNAL_KEY }}
-          INTERNAL_CALLER=CI-Surgical-Deploy
+          INTERNAL_CALLER=iamasterbigschool.contenido.creawebes.com
+          SKIP_TOKEN_LOG=true
           RAG_SERVICE_URL=https://rag-service.contenido.creawebes.com/rag/heroes
           RAG_BASE_URL=https://rag-service.contenido.creawebes.com
           OPENAI_SERVICE_URL=https://openai-service.contenido.creawebes.com/v1/chat
@@ -65,7 +66,8 @@ jobs:
           export APP_ENV=testing
           export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
           export INTERNAL_API_KEY="${{ secrets.INTERNAL_KEY }}"
-          export INTERNAL_CALLER="CI-Surgical-Deploy"
+          export INTERNAL_CALLER="iamasterbigschool.contenido.creawebes.com"
+          export SKIP_TOKEN_LOG="true"
           export RAG_SERVICE_URL="https://rag-service.contenido.creawebes.com/rag/heroes"
           export RAG_BASE_URL="https://rag-service.contenido.creawebes.com"
           export OPENAI_SERVICE_URL="https://openai-service.contenido.creawebes.com/v1/chat"

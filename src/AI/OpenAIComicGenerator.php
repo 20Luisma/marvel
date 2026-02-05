@@ -325,8 +325,8 @@ PROMPT,
      */
     private function logUsageIfAvailable(array $decoded, ?string $fallbackModel, float $startedAt): void
     {
-        // No registrar uso si la llamada proviene de CI/Tests Quirúrgicos
-        if (str_contains(strtolower($this->internalCaller), 'ci-') || str_contains(strtolower($this->internalCaller), 'test')) {
+        // No registrar uso si SKIP_TOKEN_LOG está activo (entornos de CI/CD)
+        if (filter_var($_ENV['SKIP_TOKEN_LOG'] ?? getenv('SKIP_TOKEN_LOG'), FILTER_VALIDATE_BOOL)) {
             return;
         }
 
