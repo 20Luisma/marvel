@@ -325,6 +325,11 @@ PROMPT,
      */
     private function logUsageIfAvailable(array $decoded, ?string $fallbackModel, float $startedAt): void
     {
+        // No registrar uso si la llamada proviene de CI/Tests Quirúrgicos
+        if (str_contains(strtolower($this->internalCaller), 'ci-') || str_contains(strtolower($this->internalCaller), 'test')) {
+            return;
+        }
+
         $latency = max(0, (int) round((microtime(true) - $startedAt) * 1000));
 
         $usage = $this->extractUsage($decoded);
