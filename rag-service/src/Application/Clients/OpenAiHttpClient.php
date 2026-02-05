@@ -310,6 +310,11 @@ final class OpenAiHttpClient implements LlmClientInterface
      */
     private function logUsage(array $decoded, int $latencyMs = 0): void
     {
+        // No registrar uso si la llamada proviene de CI/Tests Quirúrgicos
+        if (str_contains(strtolower($this->internalCaller), 'ci-') || str_contains(strtolower($this->internalCaller), 'test')) {
+            return;
+        }
+
         $usage = $decoded['usage'] ?? $decoded['raw']['usage'] ?? null;
         if (!is_array($usage)) {
             if ($this->debugEnabled) {
