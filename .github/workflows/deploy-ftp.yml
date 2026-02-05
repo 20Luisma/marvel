@@ -55,6 +55,7 @@ jobs:
           INTERNAL_CALLER=iamasterbigschool.contenido.creawebes.com
           RAG_SERVICE_URL=https://rag-service.contenido.creawebes.com/rag/heroes
           RAG_BASE_URL=https://rag-service.contenido.creawebes.com
+          OPENAI_SERVICE_URL=https://openai-service.contenido.creawebes.com/v1/chat
           EOF
           echo "✅ .env creado para tests quirúrgicos"
 
@@ -67,6 +68,7 @@ jobs:
           export INTERNAL_CALLER="iamasterbigschool.contenido.creawebes.com"
           export RAG_SERVICE_URL="https://rag-service.contenido.creawebes.com/rag/heroes"
           export RAG_BASE_URL="https://rag-service.contenido.creawebes.com"
+          export OPENAI_SERVICE_URL="https://openai-service.contenido.creawebes.com/v1/chat"
           php -S 0.0.0.0:8080 -t public >/tmp/surgical-server.log 2>&1 &
 
       - name: 🔎 Diagnóstico rápido microservicios (prod)
