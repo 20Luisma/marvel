@@ -36,7 +36,25 @@ function resolve_allowed_origins(): array
 
 $allowedOrigins = resolve_allowed_origins();
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+// Detectar y eliminar el prefijo de la carpeta si existe (Base Path)
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$basePath = dirname($scriptName);
+if ($basePath === '/') $basePath = '';
+
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+// Si el path empieza por el basePath (como en el hosting), lo quitamos
+if ($basePath !== '' && str_starts_with($path, $basePath)) {
+    $path = substr($path, strlen($basePath));
+}
+
+// Si después de quitar el basePath seguimos en la carpeta public, la quitamos también
+if (str_starts_with($path, '/public')) {
+    $path = substr($path, 7);
+}
+if ($path === '') $path = '/';
+
 $requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $origin = is_string($requestOrigin) ? trim($requestOrigin) : '';
 

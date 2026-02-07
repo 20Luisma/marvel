@@ -1,5 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # EXCEPCIONES PARA MICROSERVICIOS (Vital para Staging/Production)
+    RewriteCond %{REQUEST_URI} ^/openai-service [OR]
+    RewriteCond %{REQUEST_URI} ^/rag-service
+    RewriteRule ^ - [L]
+
     # Redirigir la raíz a public/
     RewriteRule ^$ public/ [L]
     # Redirigir todo lo demás a public/ si no existe en la raíz
