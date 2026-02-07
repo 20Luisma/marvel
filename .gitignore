@@ -103,3 +103,6 @@ pa11y-results/
 *.webm
 *.zip
 *.mp4
+coverage.xml
+test-report.xml
+storage/rate_limit/*.json
