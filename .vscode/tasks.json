@@ -470,6 +470,33 @@
     },
 
     /* =========================================================
+       🚀 DEPLOY PLAN B (Local -> Hostinger)
+       ========================================================= */
+    {
+      "label": "🚀 PLAN B: Deploy Local Atómico (Hostinger)",
+      "type": "shell",
+      "command": "./bin/start-dashboard.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "↩️ PLAN B: Rollback Atómico (Hostinger)",
+      "type": "shell",
+      "command": "./bin/rollback.sh",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DEPLOY_PASS": "REDACTED_SSH_PASS"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
+    /* =========================================================
        🤖 CLI CODEX
        ========================================================= */
     {
