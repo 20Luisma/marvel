@@ -148,7 +148,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-          timeout: 1800000
+          timeout: 3600000
           log-level: verbose
 
           # 📌 RUTA REAL DEL PROYECTO COMPLETO EN HOSTINGER
@@ -158,7 +158,7 @@ jobs:
           local-dir: ./
 
           # ✅ Estado aislado (evita colisiones entre despliegues)
-          state-name: ftp-state-app.json
+          state-name: ftp-state-app-v2.json
 
           # 📌 Archivos/carpetas que NO deben subirse
           exclude: |
