@@ -18,6 +18,7 @@ $sections = [
         'href' => '/readme',
         'cta' => 'Leer README',
     ],
+
     [
         'title' => 'SonarCloud',
         'tag' => 'Calidad del código',
