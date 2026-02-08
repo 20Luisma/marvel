@@ -163,6 +163,8 @@ cd rag-service
 php -S localhost:8082 -t public
 ```
 
+
+
 ---
 
 ## Despliegue

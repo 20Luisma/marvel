@@ -67,8 +67,8 @@
     {
       "label": "🚀 Iniciar servidor PHP (8080)",
       "type": "shell",
-      "command": "php",
-      "args": ["-S", "localhost:8080", "-t", "public"],
+      "command": "./bin/dev-server.sh",
+      "args": ["start", "app"],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -414,33 +414,53 @@
     {
       "label": "🤖 Run OpenAI Service (8081)",
       "type": "shell",
-      "command": "php",
-      "args": ["-S", "localhost:8081", "-t", "public"],
-      "options": { "cwd": "${workspaceFolder}/openai-service" },
-      "isBackground": true,
+      "command": "./bin/dev-server.sh",
+      "args": ["start", "openai"],
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "🧬 Run RAG Service (8082)",
       "type": "shell",
-      "command": "php",
-      "args": ["-S", "localhost:8082", "-t", "public"],
-      "options": { "cwd": "${workspaceFolder}/rag-service" },
-      "isBackground": true,
+      "command": "./bin/dev-server.sh",
+      "args": ["start", "rag"],
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "🚀 Run All Services (8080 + 8081 + 8082)",
-      "dependsOn": [
-        "🚀 Iniciar servidor PHP (8080)",
-        "🤖 Run OpenAI Service (8081)",
-        "🧬 Run RAG Service (8082)"
-      ],
-      "dependsOrder": "parallel",
+      "type": "shell",
+      "command": "./bin/dev-server.sh",
+      "args": ["start"],
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "🧹 Limpiar Puertos (Stop All)",
+      "type": "shell",
+      "command": "./bin/dev-server.sh",
+      "args": ["stop"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "📊 Ver Estado de Servicios",
+      "type": "shell",
+      "command": "./bin/dev-server.sh",
+      "args": ["status"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "🔄 Reiniciar Todo",
+      "type": "shell",
+      "command": "./bin/dev-server.sh",
+      "args": ["restart"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" }
     },
     {
       "label": "SSH: VM Heatmap",
@@ -475,7 +495,8 @@
     {
       "label": "🖥️ ABRIR PANEL DE CONTROL (Visual Deploy)",
       "type": "shell",
-      "command": "killall php 2>/dev/null || true; nohup php -S localhost:8080 -t public > /dev/null 2>&1 & (cd openai-service && nohup php -S localhost:8081 -t public > /dev/null 2>&1 &); (cd rag-service && nohup php -S localhost:8082 -t public > /dev/null 2>&1 &); sleep 3; open http://localhost:8080/deploy-dashboard.php",
+      "command": "./bin/dev-server.sh restart && sleep 1 && open http://localhost:8080/deploy-dashboard.php",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": {
         "reveal": "always",
         "panel": "new",
