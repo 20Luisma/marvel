@@ -25,4 +25,6 @@ require_once __DIR__ . '/../helpers.php';
   <?php endforeach; ?>
 </head>
 <body class="<?= e($bodyClass) ?>">
+  <!-- 🛡️ SENTINEL DEMO BANNER -->
+  <div class="sentinel-banner">🛡️ SENTINEL MODE ACTIVE: PROTECTED DEPLOYMENT v4.0</div>
   <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
