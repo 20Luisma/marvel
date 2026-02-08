@@ -470,29 +470,17 @@
     },
 
     /* =========================================================
-       🚀 DEPLOY PLAN B (Local -> Hostinger)
+       🚀 DEPLOY LOCAL (Hostinger via ZIP + SSH)
        ========================================================= */
     {
-      "label": "🚀 PLAN B: Deploy Local Atómico (Hostinger)",
+      "label": "🖥️ ABRIR PANEL DE CONTROL (Visual Deploy)",
       "type": "shell",
-      "command": "./bin/start-dashboard.sh",
-      "options": {
-        "cwd": "${workspaceFolder}"
+      "command": "killall php 2>/dev/null || true; nohup php -S localhost:8080 -t public > /dev/null 2>&1 & (cd openai-service && nohup php -S localhost:8081 -t public > /dev/null 2>&1 &); (cd rag-service && nohup php -S localhost:8082 -t public > /dev/null 2>&1 &); sleep 3; open http://localhost:8080/deploy-dashboard.php",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "clear": true
       },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "↩️ PLAN B: Rollback Atómico (Hostinger)",
-      "type": "shell",
-      "command": "./bin/rollback.sh",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "DEPLOY_PASS": "20Septiembre1981@"
-        }
-      },
-      "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
 
