@@ -21,22 +21,6 @@ body {
   min-height: 100vh;
 }
 
-/* 🛡️ SENTINEL BANNER - Demo Visual */
-.sentinel-banner {
-  background: linear-gradient(90deg, #f59e0b, #eab308, #fbbf24);
-  color: #000;
-  text-align: center;
-  padding: 10px 15px;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-}
-
 .skip-link {
   position: absolute;
   left: 1rem;
