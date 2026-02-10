@@ -34,7 +34,7 @@ final class SecurityHeaders
         self::addHeader('X-Permitted-Cross-Domain-Policies', 'none', $isTest, $collector);
 
         if (self::isHttpsRequest()) {
-            self::addHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains', $isTest, $collector);
+            self::addHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload', $isTest, $collector);
         }
 
         self::addHeader('Content-Security-Policy', self::buildCsp($nonce), $isTest, $collector);
