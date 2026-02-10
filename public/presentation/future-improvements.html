@@ -646,17 +646,17 @@
           </div>
         </div>
         
-        <div class="improvement-card">
-          <div class="improvement-number">10</div>
+        <div class="improvement-card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+          <div class="improvement-number" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #10b981;">✓</div>
           <div class="improvement-content">
-            <h3>HSTS Preload + HMAC Enforcement</h3>
-            <div class="improvement-title-divider"></div>
-            <p>Añadir directiva preload a HSTS y modo estricto que rechace requests sin firma HMAC válida.</p>
+            <h3 style="color: #10b981;">✅ HSTS Preload + HMAC Strict Mode</h3>
+            <div class="improvement-title-divider" style="background: #10b981;"></div>
+            <p>Directiva <code>preload</code> añadida a HSTS. HMAC Strict Mode implementado como opt-in (<code>HMAC_STRICT_MODE=true</code>): si se activa y no hay clave configurada, el sistema rechaza peticiones (fail-closed) en lugar de permitir acceso abierto.</p>
           </div>
           <div class="improvement-meta">
-            <div class="improvement-hours">2-3h</div>
-            <div class="improvement-hours-label">Estimado</div>
-            <div class="improvement-impact">Seguridad</div>
+            <div class="improvement-hours" style="color: #10b981;">✓ Done</div>
+            <div class="improvement-hours-label">Completado</div>
+            <div class="improvement-impact" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Seguridad</div>
           </div>
         </div>
         

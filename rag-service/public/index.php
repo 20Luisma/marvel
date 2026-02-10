@@ -239,6 +239,11 @@ function authorize_internal_request(string $method, string $path, string $rawBod
     $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
     $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
     if ($normalizedKey === '') {
+        // HMAC Strict Mode (fail-closed): si está activado y no hay clave, rechazar
+        $strictMode = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
+        if ($strictMode === 'true') {
+            return ['ok' => false, 'reason' => 'hmac-strict-no-key'];
+        }
         return ['ok' => true, 'reason' => 'signature-disabled'];
     }
 
