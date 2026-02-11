@@ -900,13 +900,15 @@
           <ul class="list">
             <li>🛡️ <strong>Sincronización CI/CD</strong>: La clave se inyecta dinámicamente en el ciclo de testeo y despliegue.</li>
             <li>🚫 <strong>Rechazo Automático</strong>: Cualquier petición sin firma válida es bloqueada instantáneamente (401 Unauthorized).</li>
+            <li>🔍 <strong>Distributed Tracing</strong>: Cada petición lleva un <code>trace_id</code> único que se propaga entre microservicios para correlacionar logs end-to-end.</li>
           </ul>
         </div>
         <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #ed1d24; border: 1px dashed rgba(237, 29, 36, 0.3);">
-          // Headers de seguridad detectados:<br>
+          // Headers de seguridad y observabilidad detectados:<br>
           X-Internal-Signature: 8f3c...6e2a<br>
           X-Internal-Timestamp: 1770315237<br>
-          X-Internal-Caller: marvel-app-main
+          X-Internal-Caller: marvel-app-main<br>
+          <span style="color: #10b981;">X-Trace-Id: a1b2c3d4-e5f6-7890-abcd-ef1234567890</span>
         </div>
       </div>
       <span class="slide-number">22 / 27</span>
