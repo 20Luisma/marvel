@@ -618,17 +618,17 @@
       </div>
       
       <div class="improvements-grid">
-        <div class="improvement-card">
-          <div class="improvement-number">8</div>
+        <div class="improvement-card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+          <div class="improvement-number" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #10b981;">✓</div>
           <div class="improvement-content">
-            <h3>Logger Centralizado con trace_id</h3>
-            <div class="improvement-title-divider"></div>
-            <p>Implementar <code>CentralLogger</code> que inyecte trace_id en cada request para correlacionar logs entre servicios.</p>
+            <h3 style="color: #10b981;">✅ Logger Centralizado con trace_id</h3>
+            <div class="improvement-title-divider" style="background: #10b981;"></div>
+            <p>Propagación end-to-end del <code>X-Trace-Id</code> entre microservicios. Excepciones logueadas con trace_id en <code>app-errors.log</code>. Permite correlacionar peticiones entre App, RAG y OpenAI Service.</p>
           </div>
           <div class="improvement-meta">
-            <div class="improvement-hours">3-4h</div>
-            <div class="improvement-hours-label">Estimado</div>
-            <div class="improvement-impact">Observabilidad</div>
+            <div class="improvement-hours" style="color: #10b981;">✓ Done</div>
+            <div class="improvement-hours-label">Completado</div>
+            <div class="improvement-impact" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Observabilidad</div>
           </div>
         </div>
         
