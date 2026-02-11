@@ -15,6 +15,9 @@ Documentación completa de todas las medidas de seguridad implementadas en el pr
 - Security Headers
 - CSP con nonces
 - HMAC para microservicios
+- HSTS Preload (directiva `preload` en Strict-Transport-Security)
+- HMAC Strict Mode (fail-closed opt-in)
+- Distributed Tracing (`X-Trace-Id` propagado entre microservicios)
 - Otros controles documentados en el archivo.
 
 ### 2. `docs/security/security_verification.md`
