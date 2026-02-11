@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Creawebes\Rag\Tests\Infrastructure;
 
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+
 use Creawebes\Rag\Application\Contracts\EmbeddingClientInterface;
 use Creawebes\Rag\Application\Contracts\KnowledgeBaseInterface;
 use Creawebes\Rag\Application\Contracts\RetrieverInterface;
@@ -89,6 +91,68 @@ final class VectorHeroRetrieverTest extends TestCase
         $saved = $store->loadAll();
         $this->assertArrayHasKey('hero-1', $saved);
         $this->assertArrayHasKey('hero-2', $saved);
+    }
+
+    public function testFallsBackWhenEmbeddingClientReturnsEmptyQueryVector(): void
+    {
+        $storePath = $this->createTempPath();
+        $store = new EmbeddingStore($storePath);
+        $store->saveAll([
+            'hero-1' => [1.0, 0.0],
+            'hero-2' => [0.0, 1.0],
+        ]);
+
+        $knowledgeBase = $this->createKnowledgeBase([
+            'hero-1' => ['heroId' => 'hero-1', 'nombre' => 'Volador', 'contenido' => 'Vuelo supersónico'],
+            'hero-2' => ['heroId' => 'hero-2', 'nombre' => 'Sigilo', 'contenido' => 'Invisible en la noche'],
+        ]);
+
+        $fallback = new CountingFallbackRetriever([
+            ['heroId' => 'hero-1', 'nombre' => 'Volador', 'contenido' => 'Vuelo supersónico', 'score' => 0.5],
+            ['heroId' => 'hero-2', 'nombre' => 'Sigilo', 'contenido' => 'Invisible', 'score' => 0.3],
+        ]);
+
+        // embedText devuelve vector vacío → debe activar fallback
+        $client = new FakeEmbeddingClient([]);
+
+        $retriever = new VectorHeroRetriever(
+            $knowledgeBase, $store, $client, $fallback, new CosineSimilarity(),
+            useEmbeddings: true
+        );
+
+        $result = $retriever->retrieve(['hero-1', 'hero-2'], 'pregunta cualquiera', 2);
+
+        $this->assertSame(1, $fallback->calls, 'Debe usar fallback léxico cuando embedText devuelve vector vacío.');
+        $this->assertCount(2, $result);
+    }
+
+    public function testFallsBackWhenEmbeddingsDisabled(): void
+    {
+        $storePath = $this->createTempPath();
+        $store = new EmbeddingStore($storePath);
+
+        $knowledgeBase = $this->createKnowledgeBase([
+            'hero-1' => ['heroId' => 'hero-1', 'nombre' => 'Volador', 'contenido' => 'Vuelo supersónico'],
+            'hero-2' => ['heroId' => 'hero-2', 'nombre' => 'Sigilo', 'contenido' => 'Invisible'],
+        ]);
+
+        $fallback = new CountingFallbackRetriever([
+            ['heroId' => 'hero-1', 'nombre' => 'Volador', 'contenido' => 'Vuelo supersónico', 'score' => 0.5],
+            ['heroId' => 'hero-2', 'nombre' => 'Sigilo', 'contenido' => 'Invisible', 'score' => 0.3],
+        ]);
+
+        $client = new FakeEmbeddingClient([1.0, 0.0]);
+
+        // useEmbeddings: false → debe ir directo al fallback
+        $retriever = new VectorHeroRetriever(
+            $knowledgeBase, $store, $client, $fallback, new CosineSimilarity(),
+            useEmbeddings: false
+        );
+
+        $result = $retriever->retrieve(['hero-1', 'hero-2'], 'pregunta', 2);
+
+        $this->assertSame(1, $fallback->calls, 'Debe usar fallback cuando embeddings está deshabilitado.');
+        $this->assertCount(2, $result);
     }
 
     private function createTempPath(): string

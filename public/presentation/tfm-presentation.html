@@ -170,6 +170,14 @@
       background: #ffaa00;
       animation: pulseStatus 0.5s infinite alternate;
     }
+    .status-led.offline {
+      background: #ff4444;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    }
+    .status-led.integrated {
+      background: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
     @keyframes pulseStatus {
       from { opacity: 0.3; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1.1); }
@@ -298,11 +306,11 @@
           <div class="metric-label">Líneas de código</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">165+</div>
-          <div class="metric-label">Tests automatizados</div>
+          <div class="metric-value">152+</div>
+          <div class="metric-label">Archivos de test (PHPUnit + E2E)</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">85%</div>
+          <div class="metric-value">90%</div>
           <div class="metric-label">Code coverage (src/)</div>
         </div>
         <div class="metric-card">
@@ -411,7 +419,7 @@
 │     UseCases · DTOs · Services      │
 ├─────────────────────────────────────┤
 │             <span class="hl">DOMAIN</span>                  │
-│   Entities · ValueObjects · Repos   │
+│     Entities · Events · Repos       │
 ├─────────────────────────────────────┤
 │          <span class="hl">INFRASTRUCTURE</span>            │
 │     MySQL · JSON · OpenAI · RAG     │
@@ -490,7 +498,7 @@
             <li><strong>Propósito:</strong> Consulta técnica y documentación.</li>
             <li><strong>Datos:</strong> <strong>Pinecone Cloud</strong> DB Vectorial.</li>
             <li><strong>Motor:</strong> OpenAI Embeddings (1536 dim).</li>
-            <li><strong>Ventaja:</strong> Escalabilidad infinita en la nube.</li>
+            <li><strong>Ventaja:</strong> Escalabilidad cloud-native sin dependencia de disco local.</li>
           </ul>
         </div>
       </div>
@@ -573,7 +581,7 @@
       <div class="grid-2">
         <div class="card">
           <ul class="list">
-            <li>🧪 <strong>PHPUnit</strong> · 90+ tests, 85% coverage</li>
+            <li>🧪 <strong>PHPUnit</strong> · 152 archivos de test, 90% coverage (src/)</li>
             <li>📊 <strong>SonarCloud</strong> · Análisis de calidad</li>
             <li>🤖 <strong>CodeRabbit</strong> · Revisión por IA</li>
             <li>🎭 <strong>Playwright</strong> · Tests E2E</li>
@@ -645,9 +653,9 @@
       <div class="release-seal">
         <div class="seal-icon">🏆</div>
         <div>
-          <div class="seal-text-main">Broche de Oro: Ciclo de Vida Cerrado</div>
+          <div class="seal-text-main">Ciclo de Vida Cerrado</div>
           <div class="seal-text-sub">
-            Estrategia de <strong>Release Management</strong> profesional. Despliegue continuo en entornos aislados (<code>Staging</code> y <code>Producción</code>) con control de versiones físico (Vault) y etiquetas semánticas, garantizando trazabilidad total.
+            Estrategia de <strong>Release Management</strong> profesional. Despliegue continuo en entornos aislados (<code>Staging</code> y <code>Producción</code>) con etiquetas semánticas (Git tags) y trazabilidad vía historial de commits.
           </div>
         </div>
       </div>
@@ -675,7 +683,7 @@
           </ul>
         </div>
         <div style="margin-top: 20px; text-align: center; font-style: italic; color: #00d4ff;">
-          "No es solo automatización, es <strong>confianza técnica garantizada</strong>."
+          "Si los tests no pasan, el código no sube a producción."
         </div>
       </div>
       <span class="slide-number">16 / 27</span>
@@ -701,14 +709,14 @@
           </ul>
         </div>
         <div style="margin-top: 20px; text-align: center; color: #00ff88; font-weight: 600;">
-          "Arquitectura resiliente: detectamos el fallo antes que el usuario."
+          "Monitoreo automatizado: si un servicio falla, lo sabemos en el siguiente ciclo de verificación."
         </div>
       </div>
       <span class="slide-number">17 / 27</span>
     </section>
 
     <section class="slide" data-slide="18">
-      <div class="slide-title">🚀 Sentinel Command: Enterprise Release System</div>
+      <div class="slide-title">🚀 Sentinel Command: Sistema de Deploy con Quality Gate</div>
       <div class="divider"></div>
       
       <div class="card" style="border-left: 5px solid #38bdf8; background: rgba(56, 189, 248, 0.02); margin-bottom: 20px;">
@@ -830,49 +838,50 @@
 
       <!-- Monitor de Ecosistema de APIs -->
       <div class="api-monitor">
-        <div class="api-monitor-title">System Health Monitor · Real-time API Connectivity</div>
+        <div class="api-monitor-title">Ecosistema Integrado · Verificación en Tiempo Real</div>
+        <div style="text-align:center; font-size:0.65rem; color:rgba(255,255,255,0.4); margin-bottom:8px;">🟢 Online (verificado) · 🔵 Integrada (sin CORS) · 🔴 No disponible</div>
         <div class="api-grid">
-          <div class="api-item">
+          <div class="api-item" data-check-url="https://api.github.com/repos/20Luisma/marvel" data-check-mode="cors">
             <div class="status-led" id="status-github"></div>
             <span class="api-name">GitHub API</span>
             <span class="api-endpoint">api.github.com</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-url="https://iamasterbigschool.contenido.creawebes.com/" data-check-mode="no-cors">
             <div class="status-led" id="status-marvel"></div>
-            <span class="api-name">Marvel API</span>
-            <span class="api-endpoint">gateway.marvel.com</span>
+            <span class="api-name">App Producción</span>
+            <span class="api-endpoint">creawebes.com</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-openai"></div>
             <span class="api-name">OpenAI API</span>
             <span class="api-endpoint">api.openai.com</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-rag"></div>
             <span class="api-name">Pinecone Cloud</span>
             <span class="api-endpoint">rag-service/enterprise</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-n8n"></div>
             <span class="api-name">n8n Automate</span>
             <span class="api-endpoint">workflow.n8n.io</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-sentry"></div>
             <span class="api-name">Sentry Logs</span>
             <span class="api-endpoint">sentry.io/api</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-url="https://sonarcloud.io/api/project_badges/measure?project=20Luisma_marvel&metric=coverage" data-check-mode="cors">
             <div class="status-led" id="status-sonar"></div>
             <span class="api-name">SonarCloud</span>
             <span class="api-endpoint">sonarcloud.io</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-coderabbit"></div>
             <span class="api-name">CodeRabbit</span>
             <span class="api-endpoint">coderabbit.ai/reviews</span>
           </div>
-          <div class="api-item">
+          <div class="api-item" data-check-url="https://api.github.com/repos/20Luisma/marvel/actions/runs?per_page=1" data-check-mode="cors">
             <div class="status-led" id="status-deploy"></div>
             <span class="api-name">CI/CD Pipeline</span>
             <span class="api-endpoint">gh-actions/deploy</span>
@@ -880,22 +889,26 @@
         </div>
       </div>
 
+      <div style="text-align:center; font-size:0.65rem; color:rgba(255,255,255,0.35); margin-top:10px; font-style:italic;">
+        Los indicadores verdes realizan peticiones <code style="font-size:0.6rem; color:#00ff88;">fetch()</code> reales a cada API desde este navegador. Los azules son servicios que bloquean CORS y se verifican vía CI/CD.
+      </div>
+
       <span class="slide-number">21 / 27</span>
     </section>
     
     <!-- SLIDE 20: Seguridad HMAC -->
     <section class="slide" data-slide="22">
-      <div class="slide-title">🔐 Seguridad de Grado Militar: Firma HMAC</div>
+      <div class="slide-title">🔐 Seguridad Inter-Servicios: Firma HMAC-SHA256</div>
       <div class="divider"></div>
       <div class="card" style="border-left: 5px solid #ed1d24; background: rgba(237, 29, 36, 0.05);">
         <div class="card-title">Interoperabilidad Protegida y Cifrada</div>
         <p style="margin-bottom: 20px; font-size: 1.05rem;">
-          Implementación de un protocolo de <strong>Zero Trust Architecture</strong> para la comunicación entre microservicios:
+          Protocolo de <strong>verificación de firma</strong> para la comunicación segura entre microservicios:
         </p>
         <div class="grid-2">
           <ul class="list">
             <li>🔑 <strong>Firma HMAC-SHA256</strong>: Cada petición viaja firmada con una clave maestra sincronizada.</li>
-            <li>⏱️ <strong>Timestamping & Nonce</strong>: Protección robusta contra ataques de <em>Replay</em> y <em>Man-in-the-Middle</em>.</li>
+            <li>⏱️ <strong>Timestamping (tolerancia 5 min)</strong>: Protección contra ataques de <em>Replay</em> con ventana temporal configurable.</li>
           </ul>
           <ul class="list">
             <li>🛡️ <strong>Sincronización CI/CD</strong>: La clave se inyecta dinámicamente en el ciclo de testeo y despliegue.</li>
@@ -1009,7 +1022,7 @@
           <ul style="font-size: 0.8rem; color: #cbd5e1; list-style: none; padding: 0;">
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Logging Centralizado (trace_id)</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ HSTS Preload + HMAC</li>
-            <li style="padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Rate Limiting Granular</li>
+            <li style="padding-left: 10px; border-left: 2px solid #f59e0b;">Rate Limiting Granular (por endpoint)</li>
           </ul>
         </div>
       </div>
@@ -1137,15 +1150,40 @@
         }
 
         async function runSystemDiagnostic() {
-          const apis = ['status-github', 'status-marvel', 'status-openai', 'status-rag', 'status-n8n', 'status-sentry', 'status-sonar', 'status-coderabbit', 'status-deploy'];
-          apis.forEach(id => { const el = document.getElementById(id); if (el) el.className = 'status-led'; });
-          for (const id of apis) {
-            const el = document.getElementById(id);
-            if (el) {
-              el.classList.add('checking');
-              await new Promise(r => setTimeout(r, 100 + Math.random() * 400));
-              el.classList.remove('checking');
-              el.classList.add('online');
+          const items = document.querySelectorAll('.api-item[data-check-mode]');
+          // Reset all LEDs
+          items.forEach(item => {
+            const led = item.querySelector('.status-led');
+            if (led) led.className = 'status-led';
+          });
+
+          for (const item of items) {
+            const led = item.querySelector('.status-led');
+            if (!led) continue;
+            const mode = item.dataset.checkMode;
+            const url = item.dataset.checkUrl;
+
+            led.classList.add('checking');
+
+            if (mode === 'integrated') {
+              // APIs sin CORS: marcamos como integradas (azul) — honestidad
+              await new Promise(r => setTimeout(r, 150));
+              led.classList.remove('checking');
+              led.classList.add('integrated');
+            } else if (url) {
+              // APIs verificables: fetch real
+              try {
+                const opts = mode === 'no-cors'
+                  ? { mode: 'no-cors', signal: AbortSignal.timeout(5000) }
+                  : { signal: AbortSignal.timeout(5000) };
+                const res = await fetch(url, opts);
+                led.classList.remove('checking');
+                // no-cors siempre devuelve status 0 (opaque), pero si no lanza error, el servidor respondió
+                led.classList.add(res.ok || res.type === 'opaque' ? 'online' : 'offline');
+              } catch {
+                led.classList.remove('checking');
+                led.classList.add('offline');
+              }
             }
           }
         }
