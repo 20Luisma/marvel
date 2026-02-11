@@ -51,9 +51,24 @@ final class SecurityBootstrap
         }
         $defaultWindow = (int) $defaultWindowRaw;
         $routeLimits = [
-            '/login' => ['max' => 10, 'window' => 60],
-            '/api/rag/heroes' => ['max' => 20, 'window' => 60],
-            '/agentia' => ['max' => 20, 'window' => 60],
+            // Autenticación: protección contra fuerza bruta
+            '/login'             => ['max' => 10,  'window' => 60],
+
+            // Endpoints de IA: costosos (tokens OpenAI), límite estricto
+            '/api/rag/heroes'    => ['max' => 10,  'window' => 60],
+            '/agentia'           => ['max' => 10,  'window' => 60],
+            '/comics/generate'   => ['max' => 5,   'window' => 60],
+
+            // Paneles de observabilidad: consultas moderadas
+            '/secret-heatmap'    => ['max' => 30,  'window' => 60],
+            '/panel-github'      => ['max' => 20,  'window' => 60],
+            '/panel-performance' => ['max' => 20,  'window' => 60],
+            '/panel-accessibility' => ['max' => 20, 'window' => 60],
+            '/panel-repo-marvel' => ['max' => 20,  'window' => 60],
+
+            // Admin: operaciones destructivas, muy restringidas
+            '/admin/seed-all'    => ['max' => 2,   'window' => 60],
+            '/dev/tests/run'     => ['max' => 3,   'window' => 60],
         ];
 
         $rateLimiter = new RateLimiter(
