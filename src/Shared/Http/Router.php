@@ -98,7 +98,25 @@ final class Router
                 JsonResponse::error('Endpoint no encontrado.', 404);
             }
         } catch (Throwable $exception) {
-            // TODO: log de la excepción con trace_id en un logger centralizado
+            $traceId = $_SERVER['X_TRACE_ID'] ?? '-';
+            $logDir = dirname(__DIR__, 2) . '/storage/logs';
+            if (!is_dir($logDir)) {
+                @mkdir($logDir, 0775, true);
+            }
+            @file_put_contents(
+                $logDir . '/app-errors.log',
+                sprintf(
+                    "[%s] trace_id=%s path=%s method=%s error=%s file=%s:%d\n",
+                    date('Y-m-d H:i:s'),
+                    is_string($traceId) ? $traceId : '-',
+                    $path,
+                    $method,
+                    $exception->getMessage(),
+                    $exception->getFile(),
+                    $exception->getLine()
+                ),
+                FILE_APPEND
+            );
             JsonResponse::error('Error inesperado en el servidor.', 500);
         }
     }

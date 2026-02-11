@@ -130,6 +130,12 @@ final class RagProxyController
                 ? $this->signer->sign('POST', $this->ragServiceUrl, $encodedPayload)
                 : [];
 
+            // Propagar trace_id al microservicio RAG
+            $traceId = $_SERVER['X_TRACE_ID'] ?? null;
+            if (is_string($traceId) && $traceId !== '') {
+                $requestHeaders['X-Trace-Id'] = $traceId;
+            }
+
             $response = $this->httpClient->postJson(
                 $this->ragServiceUrl,
                 $encodedPayload,

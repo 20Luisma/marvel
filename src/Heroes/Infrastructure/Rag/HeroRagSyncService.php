@@ -50,13 +50,19 @@ final class HeroRagSyncService implements HeroRagSyncer
             ? $this->signer->sign('POST', $endpoint, $rawBody)
             : [];
 
+        // Propagar trace_id al microservicio RAG
+        $traceId = $_SERVER['X_TRACE_ID'] ?? null;
+        if (is_string($traceId) && $traceId !== '') {
+            $headers['X-Trace-Id'] = $traceId;
+        }
+
         try {
             $response = $this->httpClient->postJson($endpoint, $rawBody, $headers, timeoutSeconds: 12, retries: 1);
             if ($response->statusCode >= 400) {
-                $this->log(sprintf('RAG sync error HTTP %d: %s', $response->statusCode, $response->body));
+                $this->log(sprintf('RAG sync error HTTP %d trace_id=%s: %s', $response->statusCode, $traceId ?? '-', $response->body));
             }
         } catch (Throwable $exception) {
-            $this->log('RAG sync falló: ' . $exception->getMessage());
+            $this->log(sprintf('RAG sync falló trace_id=%s: %s', $traceId ?? '-', $exception->getMessage()));
         }
     }
 
