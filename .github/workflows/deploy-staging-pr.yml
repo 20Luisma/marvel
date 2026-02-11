@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/staging-final
+      - staging-final
       - staging
   pull_request:
     types: [opened, synchronize, reopened]
