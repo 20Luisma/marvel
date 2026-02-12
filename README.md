@@ -48,8 +48,15 @@ La aplicación se organiza en cuatro capas con responsabilidades claras:
 - **Dominio:** entidades y contratos
 - **Infraestructura:** repositorios, adaptadores externos y persistencia
 
-La capa de dominio es independiente de frameworks y de HTTP, lo que mejora la testabilidad y reduce el acoplamiento.  
-La resolución de endpoints por entorno se realiza desde `App\Config\ServiceUrlProvider` (`local` vs `hosting`).
+La capa de dominio es independiente de frameworks y de HTTP, lo que mejora la testabilidad y reduce el acoplamiento.
+
+### 🧩 Arquitectura Evolutiva (Últimas Mejoras Senior)
+Recientemente el proyecto ha evolucionado para alcanzar un estándar de ingeniería **Senior**:
+- **Skinny Controllers**: Los controladores se han vaciado de lógica de negocio, delegando toda la orquestación a la **Capa de Aplicación** (`UseCases`).
+- **Abstracción de Filesystem**: Se ha implementado una `FilesystemInterface` para desacoplar el almacenamiento de imágenes del disco duro, permitiendo una migración inmediata a **AWS S3** o **Google Cloud Storage** sin tocar el código de negocio.
+- **Dependency Inversion (DIP)**: Se han desacoplado los clientes de IA y almacenamiento usando interfaces, garantizando que el sistema sea agnóstico a proveedores externos.
+
+---
 
 ---
 
