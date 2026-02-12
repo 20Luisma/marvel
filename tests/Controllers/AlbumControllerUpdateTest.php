@@ -9,6 +9,8 @@ use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
+use App\Shared\Domain\Filesystem\FilesystemInterface;
 use App\Albums\Domain\Entity\Album;
 use App\Albums\Domain\Repository\AlbumRepository;
 use App\Heroes\Domain\Repository\HeroRepository;
@@ -125,12 +127,20 @@ final class AlbumControllerUpdateTest extends TestCase
 
     private function createController(): AlbumController
     {
+        $findAlbum = new FindAlbumUseCase($this->repository);
+        $updateAlbum = new UpdateAlbumUseCase($this->repository, $this->eventBus);
+        
         return new AlbumController(
             new ListAlbumsUseCase($this->repository),
             new CreateAlbumUseCase($this->repository),
-            new UpdateAlbumUseCase($this->repository, $this->eventBus),
+            $updateAlbum,
             new DeleteAlbumUseCase($this->repository, $this->heroRepository),
-            new FindAlbumUseCase($this->repository)
+            $findAlbum,
+            new UploadAlbumCoverUseCase(
+                $this->createMock(FilesystemInterface::class),
+                $findAlbum,
+                $updateAlbum
+            )
         );
     }
 

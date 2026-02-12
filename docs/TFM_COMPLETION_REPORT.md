@@ -118,6 +118,16 @@ El controlador de cómics acumulaba demasiada lógica de negocio (orquestación 
 ### Solución implementada
 Se ha extraído la lógica a un nuevo **Servicio de Aplicación**: `GenerateComicUseCase`. El controlador ahora es "Skinny", delegando el 100% de la lógica a la capa superior.
 
+## 📂 Abstracción de Filesystem (DIP en Almacenamiento)
+
+### Problema resuelto
+La subida de portadas de álbumes estaba acoplada a funciones nativas de PHP (`move_uploaded_file`), impidiendo el testeo unitario limpio y la portabilidad a nubes como AWS S3 sin reescribir la lógica.
+
+### Solución implementada
+- **FilesystemInterface**: Define un contrato para guardar archivos y obtener URLs.
+- **LocalFilesystem**: Implementación concreta para desarrollo local y hosting tradicional.
+- **UploadAlbumCoverUseCase**: Orquesta la subida (validación, nombres seguros, persistencia) desacoplando la lógica de negocio de la infraestructura física.
+
 ### Archivos clave
 | Archivo | Responsabilidad |
 |---------|----------------|

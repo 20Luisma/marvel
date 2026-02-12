@@ -12,6 +12,10 @@ use App\Albums\Application\UseCase\CreateAlbumUseCase;
 use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
+use App\Shared\Domain\Filesystem\FilesystemInterface;
+use App\Application\Comics\GenerateComicUseCase;
+use App\AI\ComicGeneratorInterface;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
 use App\Albums\Infrastructure\Persistence\FileAlbumRepository;
 use App\Config\ServiceUrlProvider;
@@ -439,6 +443,15 @@ final class RouterTest extends TestCase
                 'listActivity' => new ListActivityLogUseCase($this->activityRepo),
                 'recordActivity' => new RecordActivityUseCase($this->activityRepo),
                 'clearActivity' => new ClearActivityLogUseCase($this->activityRepo),
+                'generateComic' => new GenerateComicUseCase(
+                    $this->createMock(ComicGeneratorInterface::class),
+                    new FindHeroUseCase($this->heroRepo)
+                ),
+                'uploadAlbumCover' => new UploadAlbumCoverUseCase(
+                    $this->createMock(FilesystemInterface::class),
+                    new FindAlbumUseCase($this->albumRepo),
+                    new UpdateAlbumUseCase($this->albumRepo, $this->eventBus)
+                ),
             ],
             'ai' => ['comicGenerator' => $comicStub],
         ];

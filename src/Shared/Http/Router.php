@@ -548,6 +548,7 @@ final class Router
                 $useCases['updateAlbum'],
                 $useCases['deleteAlbum'],
                 $useCases['findAlbum'],
+                $useCases['uploadAlbumCover'],
             );
         }
 

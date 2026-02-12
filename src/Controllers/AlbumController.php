@@ -11,6 +11,7 @@ use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
 use App\Shared\Http\JsonResponse;
 use App\Security\Sanitizer;
 use App\Security\Validation\InputSanitizer;
@@ -30,6 +31,7 @@ final class AlbumController
         private readonly UpdateAlbumUseCase $updateAlbum,
         private readonly DeleteAlbumUseCase $deleteAlbum,
         private readonly FindAlbumUseCase $findAlbum,
+        private readonly UploadAlbumCoverUseCase $uploadAlbumCover,
     ) {
     }
 
@@ -159,75 +161,16 @@ final class AlbumController
             return;
         }
 
-        $uploadDir = $this->albumUploadDir();
-
         try {
-            DirectoryHelper::ensure($uploadDir);
-        } catch (RuntimeException $exception) {
-            JsonResponse::error($exception->getMessage(), 500);
-            return;
-        }
-
-        $sanitizedAlbumId = preg_replace('/[^A-Za-z0-9\-]/', '', $albumId) ?: $albumId;
-        try {
-            $filename = sprintf('%s-%s.%s', $sanitizedAlbumId, bin2hex(random_bytes(6)), $extension);
+            $result = $this->uploadAlbumCover->execute($albumId, $tmpPath, $extension);
+            JsonResponse::success($result, 201);
+        } catch (InvalidArgumentException $exception) {
+            JsonResponse::error($exception->getMessage(), 404);
         } catch (Throwable $exception) {
-            JsonResponse::error('No se pudo generar el nombre del archivo.', 500);
-            return;
+            JsonResponse::error('No se pudo subir la portada: ' . $exception->getMessage(), 500);
         }
-
-        $destination = rtrim($uploadDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
-
-        if (!move_uploaded_file($tmpPath, $destination)) {
-            JsonResponse::error('No se pudo guardar el archivo.', 500);
-            return;
-        }
-
-        $coverUrl = $this->albumUploadUrlPrefix() . $filename;
-
-        $this->updateAlbum->execute(new UpdateAlbumRequest($albumId, null, $coverUrl, true));
-
-        JsonResponse::success([
-            'albumId' => $albumId,
-            'coverImage' => $coverUrl,
-        ], 201);
-
-        // TODO: mover la lógica de artefactos y file-system a src/Application/Albums/AlbumCoverUploadService.
     }
 
-    /**
-     * @return non-empty-string
-     */
-    private function albumUploadDir(): string
-    {
-        if (!defined('ALBUM_UPLOAD_DIR')) {
-            throw new RuntimeException('ALBUM_UPLOAD_DIR no está definido.');
-        }
-
-        $value = constant('ALBUM_UPLOAD_DIR');
-        if (!is_string($value) || trim($value) === '') {
-            throw new RuntimeException('ALBUM_UPLOAD_DIR debe ser una cadena no vacía.');
-        }
-
-        return $value;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    private function albumUploadUrlPrefix(): string
-    {
-        if (!defined('ALBUM_UPLOAD_URL_PREFIX')) {
-            throw new RuntimeException('ALBUM_UPLOAD_URL_PREFIX no está definido.');
-        }
-
-        $value = constant('ALBUM_UPLOAD_URL_PREFIX');
-        if (!is_string($value) || trim($value) === '') {
-            throw new RuntimeException('ALBUM_UPLOAD_URL_PREFIX debe ser una cadena no vacía.');
-        }
-
-        return $value;
-    }
 
     /**
      * @return positive-int
@@ -235,12 +178,12 @@ final class AlbumController
     private function albumCoverMaxBytes(): int
     {
         if (!defined('ALBUM_COVER_MAX_BYTES')) {
-            throw new RuntimeException('ALBUM_COVER_MAX_BYTES no está definido.');
+            return 5 * 1024 * 1024; // Default 5MB
         }
 
         $value = constant('ALBUM_COVER_MAX_BYTES');
         if (!is_int($value) || $value <= 0) {
-            throw new RuntimeException('ALBUM_COVER_MAX_BYTES debe ser un entero positivo.');
+            return 5 * 1024 * 1024;
         }
 
         return $value;

@@ -11,10 +11,12 @@ use App\Albums\Application\UseCase\CreateAlbumUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
 use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
 use App\Albums\Domain\Repository\AlbumRepository;
 use App\Albums\Domain\Entity\Album;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Shared\Domain\Bus\EventBus;
+use App\Shared\Domain\Filesystem\FilesystemInterface;
 use PHPUnit\Framework\TestCase;
 
 class AlbumControllerTest extends TestCase
@@ -22,12 +24,26 @@ class AlbumControllerTest extends TestCase
     private $repository;
     private $eventBus;
     private $heroRepository;
+    private $filesystem;
+    private $uploadUseCase;
+    private $findAlbumUseCase;
+    private $updateAlbumUseCase;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(AlbumRepository::class);
         $this->eventBus = $this->createMock(EventBus::class);
         $this->heroRepository = $this->createMock(HeroRepository::class);
+        $this->filesystem = $this->createMock(FilesystemInterface::class);
+        
+        $this->findAlbumUseCase = new FindAlbumUseCase($this->repository);
+        $this->updateAlbumUseCase = new UpdateAlbumUseCase($this->repository, $this->eventBus);
+        
+        $this->uploadUseCase = new UploadAlbumCoverUseCase(
+            $this->filesystem,
+            $this->findAlbumUseCase,
+            $this->updateAlbumUseCase
+        );
     }
 
     public function testIndex(): void
@@ -39,9 +55,10 @@ class AlbumControllerTest extends TestCase
         $controller = new AlbumController(
             $listUseCase,
             new CreateAlbumUseCase($this->repository),
-            new UpdateAlbumUseCase($this->repository, $this->eventBus),
+            $this->updateAlbumUseCase,
             new DeleteAlbumUseCase($this->repository, $this->heroRepository),
-            new FindAlbumUseCase($this->repository)
+            $this->findAlbumUseCase,
+            $this->uploadUseCase
         );
 
         $payload = $this->capturePayload(fn () => $controller->index());
@@ -58,9 +75,10 @@ class AlbumControllerTest extends TestCase
         $controller = new AlbumController(
             new ListAlbumsUseCase($this->repository),
             $createUseCase,
-            new UpdateAlbumUseCase($this->repository, $this->eventBus),
+            $this->updateAlbumUseCase,
             new DeleteAlbumUseCase($this->repository, $this->heroRepository),
-            new FindAlbumUseCase($this->repository)
+            $this->findAlbumUseCase,
+            $this->uploadUseCase
         );
 
         Request::withJsonBody(json_encode(['nombre' => 'New Album']));
@@ -75,9 +93,10 @@ class AlbumControllerTest extends TestCase
         $controller = new AlbumController(
             new ListAlbumsUseCase($this->repository),
             new CreateAlbumUseCase($this->repository),
-            new UpdateAlbumUseCase($this->repository, $this->eventBus),
+            $this->updateAlbumUseCase,
             new DeleteAlbumUseCase($this->repository, $this->heroRepository),
-            new FindAlbumUseCase($this->repository)
+            $this->findAlbumUseCase,
+            $this->uploadUseCase
         );
 
         Request::withJsonBody(json_encode(['nombre' => ''])); // Empty name
@@ -93,23 +112,11 @@ class AlbumControllerTest extends TestCase
     private function capturePayload(callable $callable): array
     {
         ob_start();
-        $result = $callable();
-        $contents = (string) ob_get_clean();
+        $callable();
+        ob_get_clean();
 
         $payload = \App\Shared\Http\JsonResponse::lastPayload();
 
-        if (is_array($result)) {
-            return $result;
-        }
-
-        if ($payload !== null) {
-            return $payload;
-        }
-
-        if ($contents !== '') {
-            return json_decode($contents, true) ?? [];
-        }
-
-        return [];
+        return $payload ?? [];
     }
 }

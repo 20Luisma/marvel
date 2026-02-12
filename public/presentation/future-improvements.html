@@ -510,17 +510,17 @@
           </div>
         </div>
         
-        <div class="improvement-card">
-          <div class="improvement-number">2</div>
+        <div class="improvement-card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+          <div class="improvement-number" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #10b981;">✓</div>
           <div class="improvement-content">
-            <h3>Refactor a Application Layer (Album Covers)</h3>
-            <div class="improvement-title-divider"></div>
-            <p>Extraer la lógica de subida de portadas a <code>AlbumCoverUploadService</code> con abstracción de filesystem. Permite testing sin I/O real y cambio de estrategia de almacenamiento.</p>
+            <h3 style="color: #10b981;">✅ Refactor a Application Layer + Filesystem</h3>
+            <div class="improvement-title-divider" style="background: #10b981;"></div>
+            <p>Implementación de <code>UploadAlbumCoverUseCase</code> con abstracción de <code>FilesystemInterface</code>. Código desacoplado del disco local, preparado para AWS S3 y testeado con dobles de prueba.</p>
           </div>
           <div class="improvement-meta">
-            <div class="improvement-hours">3-4h</div>
-            <div class="improvement-hours-label">Estimado</div>
-            <div class="improvement-impact">Arquitectura</div>
+            <div class="improvement-hours" style="color: #10b981;">✓ Done</div>
+            <div class="improvement-hours-label">Completado</div>
+            <div class="improvement-impact">Alta Disponibilidad</div>
           </div>
         </div>
         

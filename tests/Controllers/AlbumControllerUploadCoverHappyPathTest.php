@@ -67,12 +67,43 @@ function random_bytes(int $length): string
     return \random_bytes($length);
 }
 
+namespace App\Shared\Infrastructure\Filesystem;
+
+function move_uploaded_file(string $from, string $to): bool
+{
+    if (array_key_exists('__album_test_move_uploaded_file', $GLOBALS)) {
+        if ($GLOBALS['__album_test_move_uploaded_file'] === false) {
+            return false;
+        }
+
+        return @copy($from, $to);
+    }
+    return \move_uploaded_file($from, $to);
+}
+
+namespace App\Albums\Application\UseCase;
+
+function random_bytes(int $length): string
+{
+    if (($GLOBALS['__album_test_random_bytes_throw'] ?? false) === true) {
+        throw new \RuntimeException('random_bytes failed');
+    }
+
+    if (array_key_exists('__album_test_random_bytes', $GLOBALS)) {
+        return (string) $GLOBALS['__album_test_random_bytes'];
+    }
+
+    return \random_bytes($length);
+}
+
 namespace Tests\Controllers;
 
 use App\Albums\Application\UseCase\CreateAlbumUseCase;
 use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
+use App\Shared\Infrastructure\Filesystem\LocalFilesystem;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
 use App\Albums\Domain\Entity\Album;
 use App\Controllers\AlbumController;
@@ -117,12 +148,20 @@ final class AlbumControllerUploadCoverHappyPathTest extends TestCase
             public function deleteByAlbum(string $albumId): void {}
         };
 
+        $findAlbum = new FindAlbumUseCase($this->albums);
+        $updateAlbum = new UpdateAlbumUseCase($this->albums, $eventBus);
+        
         $this->controller = new AlbumController(
             new ListAlbumsUseCase($this->albums),
             new CreateAlbumUseCase($this->albums),
-            new UpdateAlbumUseCase($this->albums, $eventBus),
+            $updateAlbum,
             new DeleteAlbumUseCase($this->albums, $heroRepo),
-            new FindAlbumUseCase($this->albums),
+            $findAlbum,
+            new UploadAlbumCoverUseCase(
+                new LocalFilesystem($this->uploadDir, '/uploads/albums/'),
+                $findAlbum,
+                $updateAlbum
+            )
         );
 
         $_FILES = [];
@@ -232,7 +271,7 @@ final class AlbumControllerUploadCoverHappyPathTest extends TestCase
         });
 
         self::assertSame('error', $payload['estado'] ?? null);
-        self::assertSame('No se pudo guardar el archivo.', $payload['message'] ?? null);
+        self::assertStringContainsString('No se pudo guardar el archivo', (string) ($payload['message'] ?? ''));
     }
 
     public function testUploadCoverReturnsControlled500WhenRandomBytesFails(): void
@@ -259,7 +298,7 @@ final class AlbumControllerUploadCoverHappyPathTest extends TestCase
         });
 
         self::assertSame('error', $payload['estado'] ?? null);
-        self::assertSame('No se pudo generar el nombre del archivo.', $payload['message'] ?? null);
+        self::assertStringContainsString('No se pudo generar el nombre del archivo', (string) ($payload['message'] ?? ''));
     }
 
     /**

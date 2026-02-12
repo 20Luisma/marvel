@@ -16,6 +16,8 @@ use App\Albums\Application\UseCase\DeleteAlbumUseCase;
 use App\Albums\Application\UseCase\FindAlbumUseCase;
 use App\Albums\Application\UseCase\ListAlbumsUseCase;
 use App\Albums\Application\UseCase\UpdateAlbumUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
+use App\Shared\Infrastructure\Filesystem\LocalFilesystem;
 use App\Albums\Domain\Repository\AlbumRepository;
 use App\Config\ServiceUrlProvider;
 use App\Dev\Seed\SeedHeroesService;
@@ -205,6 +207,14 @@ final class AppBootstrap
                 'generateComic'      => new GenerateComicUseCase(
                     new OpenAIComicGenerator($openAiServiceUrl),
                     new FindHeroUseCase($heroRepository)
+                ),
+                'uploadAlbumCover'   => new UploadAlbumCoverUseCase(
+                    new LocalFilesystem(
+                        defined('ALBUM_UPLOAD_DIR') ? ALBUM_UPLOAD_DIR : ($rootPath . '/public/uploads/albums'),
+                        defined('ALBUM_UPLOAD_URL_PREFIX') ? ALBUM_UPLOAD_URL_PREFIX : '/uploads/albums/'
+                    ),
+                    new FindAlbumUseCase($albumRepository),
+                    new UpdateAlbumUseCase($albumRepository, $eventBus)
                 ),
             ],
         ];
