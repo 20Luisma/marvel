@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bootstrap;
 
 use App\AI\OpenAIComicGenerator;
+use App\Application\Comics\GenerateComicUseCase;
 use App\Activities\Application\UseCase\ClearActivityLogUseCase;
 use App\Activities\Application\UseCase\ListActivityLogUseCase;
 use App\Activities\Application\UseCase\RecordActivityUseCase;
@@ -158,6 +159,15 @@ final class AppBootstrap
 
         $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus, $ragSyncer);
 
+        $openAiServiceUrl = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
+        if (!is_string($openAiServiceUrl) || trim($openAiServiceUrl) === '') {
+            if ($serviceUrlProvider instanceof ServiceUrlProvider) {
+                $openAiServiceUrl = $serviceUrlProvider->getOpenAiChatUrl();
+            } else {
+                $openAiServiceUrl = null;
+            }
+        }
+
         $container = [
             'albumRepository'      => $albumRepository,
             'heroRepository'       => $heroRepository,
@@ -192,6 +202,10 @@ final class AppBootstrap
                 'recordActivity'     => new RecordActivityUseCase($activityRepository),
                 'listActivity'       => new ListActivityLogUseCase($activityRepository),
                 'clearActivity'      => new ClearActivityLogUseCase($activityRepository),
+                'generateComic'      => new GenerateComicUseCase(
+                    new OpenAIComicGenerator($openAiServiceUrl),
+                    new FindHeroUseCase($heroRepository)
+                ),
             ],
         ];
 
@@ -202,16 +216,6 @@ final class AppBootstrap
             $heroRepository,
             $createHeroUseCase
         );
-
-        $openAiServiceUrl = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
-
-        if (!is_string($openAiServiceUrl) || trim($openAiServiceUrl) === '') {
-            if ($serviceUrlProvider instanceof ServiceUrlProvider) {
-                $openAiServiceUrl = $serviceUrlProvider->getOpenAiChatUrl();
-            } else {
-                $openAiServiceUrl = null;
-            }
-        }
 
         $container['ai'] = [
             'comicGenerator' => new OpenAIComicGenerator($openAiServiceUrl),

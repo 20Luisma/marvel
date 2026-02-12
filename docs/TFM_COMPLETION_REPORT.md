@@ -110,5 +110,19 @@ ComicController → ComicGeneratorInterface → OpenAIComicGenerator (adapter)
 | `src/AI/OpenAIComicGenerator.php` | Adapter concreto para OpenAI |
 | `src/Controllers/ComicController.php` | Depende de la interfaz, no del concreto |
 
+## 🏗️ Refactor de Capa de Aplicación (GenerateComicUseCase)
+
+### Problema resuelto
+El controlador de cómics acumulaba demasiada lógica de negocio (orquestación de búsqueda de héroes + validación + llamadas a infraestructura). Esto violaba el **Single Responsibility Principle (SRP)**.
+
+### Solución implementada
+Se ha extraído la lógica a un nuevo **Servicio de Aplicación**: `GenerateComicUseCase`. El controlador ahora es "Skinny", delegando el 100% de la lógica a la capa superior.
+
+### Archivos clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `src/Application/Comics/GenerateComicUseCase.php` | Orquestación completa de la funcionalidad |
+| `src/Controllers/ComicController.php` | Solo maneja HTTP Request/Response (Skinny Controller) |
+
 ---
 *Proyecto finalizado con criterios de nivel profesional (Company Level).* 

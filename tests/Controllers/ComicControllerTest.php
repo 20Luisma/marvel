@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Controllers;
 
 use App\AI\OpenAIComicGenerator;
+use App\Application\Comics\GenerateComicUseCase;
 use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Heroes\Domain\Entity\Hero;
 use PHPUnit\Framework\TestCase;
@@ -17,13 +18,19 @@ final class ComicControllerTest extends TestCase
 {
     private InMemoryHeroRepository $heroRepository;
     private OpenAIComicGenerator $generator;
+    private GenerateComicUseCase $useCase;
     private ComicController $controller;
 
     protected function setUp(): void
     {
         $this->heroRepository = new InMemoryHeroRepository();
         $this->generator = new OpenAIComicGenerator('http://fake-service');
-        $this->controller = new ComicController($this->generator, new FindHeroUseCase($this->heroRepository));
+        $this->useCase = new GenerateComicUseCase(
+            $this->generator,
+            new FindHeroUseCase($this->heroRepository)
+        );
+        $this->controller = new ComicController($this->useCase);
+        
         OpenAITransportStub::reset();
         http_response_code(200);
     }
@@ -137,11 +144,11 @@ final class ComicControllerTest extends TestCase
 
     public function testGenerateReturnsErrorWhenGeneratorNotConfigured(): void
     {
-        // Create a mock generator that reports as not configured
         $unconfiguredGenerator = $this->createMock(OpenAIComicGenerator::class);
         $unconfiguredGenerator->method('isConfigured')->willReturn(false);
         
-        $controller = new ComicController($unconfiguredGenerator, new FindHeroUseCase($this->heroRepository));
+        $useCase = new GenerateComicUseCase($unconfiguredGenerator, new FindHeroUseCase($this->heroRepository));
+        $controller = new ComicController($useCase);
         
         $hero = Hero::create('hero-1', 'album-1', 'Thor', 'Trueno', 'https://example.com/thor.jpg');
         $this->heroRepository->save($hero);
@@ -161,13 +168,11 @@ final class ComicControllerTest extends TestCase
         
         Request::withJsonBody(json_encode(['heroIds' => ['hero-1']]));
         
-        // Simulate a runtime error from the service
         OpenAITransportStub::$response = 'Invalid response';
 
         $payload = $this->captureJson(fn () => $this->controller->generate());
 
-        // This may result in an error depending on JSON parsing
-        self::assertTrue(true); // Test passes if no exception is thrown
+        self::assertTrue(true);
     }
 
     public function testGenerateHandlesMixedValidAndInvalidHeroes(): void
