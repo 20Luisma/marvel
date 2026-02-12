@@ -9,7 +9,7 @@ use InvalidArgumentException;
 use JsonException;
 use RuntimeException;
 
-class OpenAIComicGenerator
+class OpenAIComicGenerator implements ComicGeneratorInterface
 {
     private const STORY_MODEL = 'gpt-4o-mini';
     private const DEFAULT_SERVICE_URL = 'http://localhost:8081/v1/chat';

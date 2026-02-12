@@ -524,17 +524,17 @@
           </div>
         </div>
         
-        <div class="improvement-card">
-          <div class="improvement-number">3</div>
+        <div class="improvement-card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+          <div class="improvement-number" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #10b981;">✓</div>
           <div class="improvement-content">
-            <h3>Cliente LLM Desacoplado</h3>
-            <div class="improvement-title-divider"></div>
-            <p>Implementar <code>ChatClientInterface</code> para desacoplar el proveedor de IA. Permite sustituir OpenAI por otro proveedor sin modificar la lógica de negocio.</p>
+            <h3 style="color: #10b981;">✅ Cliente LLM Desacoplado</h3>
+            <div class="improvement-title-divider" style="background: #10b981;"></div>
+            <p>Interfaz <code>ComicGeneratorInterface</code> implementada. <code>OpenAIComicGenerator</code> es ahora un adapter intercambiable. Permite sustituir OpenAI por Claude, Gemini o Llama sin modificar la lógica de negocio (Dependency Inversion).</p>
           </div>
           <div class="improvement-meta">
-            <div class="improvement-hours">6-8h</div>
-            <div class="improvement-hours-label">Estimado</div>
-            <div class="improvement-impact">Testabilidad</div>
+            <div class="improvement-hours" style="color: #10b981;">✓ Done</div>
+            <div class="improvement-hours-label">Completado</div>
+            <div class="improvement-impact" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Testabilidad</div>
           </div>
         </div>
 

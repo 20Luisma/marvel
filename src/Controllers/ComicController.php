@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\AI\OpenAIComicGenerator;
+use App\AI\ComicGeneratorInterface;
 use App\Heroes\Application\UseCase\FindHeroUseCase;
 use App\Shared\Http\JsonResponse;
 use InvalidArgumentException;
@@ -15,7 +15,7 @@ use Throwable;
 final class ComicController
 {
     public function __construct(
-        private readonly OpenAIComicGenerator $generator,
+        private readonly ComicGeneratorInterface $generator,
         private readonly FindHeroUseCase $findHero,
     ) {
     }

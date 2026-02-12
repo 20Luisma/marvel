@@ -89,5 +89,26 @@ Límites específicos por categoría de endpoint:
 |---------|----------------|
 | `src/Bootstrap/SecurityBootstrap.php` | Configuración de `$routeLimits` por endpoint |
 
+## 🔌 Cliente LLM Desacoplado (Dependency Inversion)
+
+### Problema resuelto
+`ComicController` dependía directamente de `OpenAIComicGenerator`. Si se quisiera usar Claude, Gemini o Llama, habría que reescribir el controller y toda la cadena de inyección.
+
+### Solución implementada
+Interfaz `ComicGeneratorInterface` que define el contrato (`isConfigured()` + `generateComic()`). `OpenAIComicGenerator` es ahora un adapter que implementa esa interfaz:
+
+```
+ComicController → ComicGeneratorInterface → OpenAIComicGenerator (adapter)
+                                           → ClaudeAdapter (futuro)
+                                           → GeminiAdapter (futuro)
+```
+
+### Archivos clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `src/AI/ComicGeneratorInterface.php` | Contrato abstracto para cualquier LLM |
+| `src/AI/OpenAIComicGenerator.php` | Adapter concreto para OpenAI |
+| `src/Controllers/ComicController.php` | Depende de la interfaz, no del concreto |
+
 ---
 *Proyecto finalizado con criterios de nivel profesional (Company Level).* 
