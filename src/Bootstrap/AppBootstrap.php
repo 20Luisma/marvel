@@ -227,9 +227,6 @@ final class AppBootstrap
             $createHeroUseCase
         );
 
-        $container['ai'] = [
-            'comicGenerator' => new OpenAIComicGenerator($openAiServiceUrl),
-        ];
 
         $container['devTools'] = [
             'testRunner' => PhpUnitTestRunner::fromEnvironment($rootPath),

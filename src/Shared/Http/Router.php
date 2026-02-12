@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Http;
 
-use App\AI\ComicGeneratorInterface;
-use App\AI\OpenAIComicGenerator;
 use App\Config\ServiceUrlProvider;
 use App\Activities\Application\UseCase\ClearActivityLogUseCase;
 use App\Activities\Application\UseCase\ListActivityLogUseCase;

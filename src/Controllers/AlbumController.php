@@ -19,7 +19,6 @@ use App\Security\Logging\SecurityLogger;
 use App\Security\Validation\JsonValidator;
 use InvalidArgumentException;
 use RuntimeException;
-use App\Controllers\Helpers\DirectoryHelper;
 use App\Controllers\Http\Request;
 use Throwable;
 
