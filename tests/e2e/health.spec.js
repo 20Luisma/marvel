@@ -27,7 +27,7 @@ test.describe('Health & Smoke', () => {
     expect(typeof body).toBe('object');
     expect(body).not.toBeNull();
 
-    const allowedKeys = ['status', 'ok', 'service', 'timestamp', 'version'];
+    const allowedKeys = ['status', 'services', 'timestamp', 'trace_id', 'environment', 'response_time_ms'];
     const bodyKeys = Object.keys(body);
     expect(bodyKeys.some((key) => allowedKeys.includes(key))).toBeTruthy();
   });
