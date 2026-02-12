@@ -7,8 +7,8 @@ Se ha implementado con éxito el **Filtro de Calidad Quirúrgico** en el pipelin
 - **Arquitectura**: Desacoplamiento total de capas (Clean Architecture).
 - **Infraestructura**: Despliegue automatizado con Puerta de Calidad (Quality Gate).
 - **IA**: Agente RAG y Generación de Cómics validados en Staging y Producción.
-- **Observabilidad**: Distributed Tracing end-to-end con `trace_id` entre microservicios (ver abajo).
-- **Seguridad**: HSTS Preload + HMAC Strict Mode (fail-closed opt-in).
+- **Observabilidad**: Distributed Tracing end-to-end con `trace_id` + Healthchecks proactivos (`/health`).
+- **Seguridad**: HSTS Preload + HMAC Strict Mode + Rate Limiting Granular por endpoint.
 - **Documentación**: Roadmap futuro y presentación técnica actualizados.
 
 ## 🔍 Observabilidad: Distributed Tracing (trace_id)
@@ -39,6 +39,55 @@ Usuario → App Principal (genera trace_id=abc-123)
 ### Referencia
 - **ADR-016**: `docs/architecture/ADR-016-trace-id-observability.md`
 - **Patrón**: Distributed Tracing (mismo concepto que OpenTelemetry, Jaeger, Zipkin)
+
+## 🏥 Healthchecks Proactivos
+
+### Problema resuelto
+No existía forma de saber si los microservicios estaban funcionando sin que un usuario reportara un error.
+
+### Solución implementada
+Endpoint `GET /health` en la App Principal que verifica proactivamente los 3 microservicios:
+
+```json
+{
+  "status": "healthy",
+  "trace_id": "a1b2c3d4-...",
+  "environment": "production",
+  "response_time_ms": 245,
+  "services": {
+    "app": { "status": "healthy", "response_time_ms": 0.1 },
+    "rag-service": { "status": "healthy", "response_time_ms": 120 },
+    "openai-service": { "status": "healthy", "response_time_ms": 124 }
+  }
+}
+```
+
+Siempre devuelve HTTP 200 (patrón AWS/GitHub), con `"status": "degraded"` en el body si algún servicio falla.
+
+### Archivo clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `src/Controllers/HealthCheckController.php` | Orquesta verificación de los 3 servicios |
+
+## 🚦 Rate Limiting Granular
+
+### Problema resuelto
+Todos los endpoints compartían el mismo límite (60 req/min), permitiendo abuso de endpoints costosos (IA) o destructivos (admin).
+
+### Solución implementada
+Límites específicos por categoría de endpoint:
+
+| Categoría | Límite | Ejemplos |
+|-----------|--------|----------|
+| IA (costosos) | 5-10/min | `/comics/generate`, `/agentia` |
+| Login | 10/min | `/login` |
+| Admin | 2-3/min | `/admin/seed-all`, `/dev/tests/run` |
+| Paneles | 20-30/min | `/secret-heatmap`, `/panel-github` |
+
+### Archivo clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `src/Bootstrap/SecurityBootstrap.php` | Configuración de `$routeLimits` por endpoint |
 
 ---
 *Proyecto finalizado con criterios de nivel profesional (Company Level).* 
