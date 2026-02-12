@@ -237,3 +237,5 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - **Datos y Contenido:** Todos los datos, nombres e imágenes de los héroes utilizados en este proyecto son propiedad de **© 2026 MARVEL**. Este es un proyecto fan-made con activos descargados.
 - **Propósito:** Este es un proyecto con fines **exclusivamente académicos y educativos**, desarrollado como Trabajo Final de Máster. No tiene ánimo de lucro ni objetivos comerciales.
 - **Atribución:** Assets property of © 2026 MARVEL
+
+<!-- Deployment Verified: 2026-02-13 00:12 UTC -->
