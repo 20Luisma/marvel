@@ -12,11 +12,18 @@ if [ "$ENTORNO" != "prod" ] && [ "$ENTORNO" != "staging" ]; then
 fi
 
 # Configuración de Conexión
-SSH_USER="REDACTED_SSH_USER"
-SSH_HOST="82.29.185.22"
-SSH_PORT="65002"
-SSH_PASS="REDACTED_SSH_PASS"
-HOME_DIR="/home/REDACTED_SSH_USER"
+# Usar variables de entorno para evitar credenciales hardcodeadas en el repo
+SSH_USER="${DEPLOY_SSH_USER:-}"
+SSH_HOST="${DEPLOY_SSH_HOST:-82.29.185.22}"
+SSH_PORT="${DEPLOY_SSH_PORT:-65002}"
+SSH_PASS="${DEPLOY_SSH_PASS:-}"
+HOME_DIR="/home/${SSH_USER:-REDACTED_SSH_USER}"
+
+if [ -z "$SSH_USER" ] || [ -z "$SSH_PASS" ]; then
+    echo "❌ Error: Las variables DEPLOY_SSH_USER y DEPLOY_SSH_PASS deben estar definidas en el entorno."
+    exit 1
+fi
+
 
 if [ "$ENTORNO" == "prod" ]; then
     REMOTE_BASE="$HOME_DIR/domains/contenido.creawebes.com/public_html/iamasterbigschool"

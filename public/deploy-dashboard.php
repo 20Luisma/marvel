@@ -7,10 +7,32 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 session_start();
 set_time_limit(0);
 
-$ssh_user = "REDACTED_SSH_USER";
-$ssh_host = "82.29.185.22";
-$ssh_port = "65002";
-$ssh_pass = "REDACTED_SSH_PASS";
+// Cargar .env si existe para evitar credenciales hardcodeadas
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if (str_starts_with($line, '#')) continue;
+        list($key, $value) = explode('=', $line, 2) + [null, null];
+        if ($key) {
+            putenv(trim($key) . "=" . trim($value));
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
+
+$ssh_user = getenv('DEPLOY_SSH_USER') ?: "";
+$ssh_host = getenv('DEPLOY_SSH_HOST') ?: "";
+$ssh_port = getenv('DEPLOY_SSH_PORT') ?: "";
+$ssh_pass = getenv('DEPLOY_SSH_PASS') ?: "";
+
+if (empty($ssh_user) || empty($ssh_pass)) {
+    die("Error: Credenciales de despliegue no configuradas. Por favor, añada DEPLOY_SSH_USER y DEPLOY_SSH_PASS al archivo .env");
+}
+
+
+// SEGURIDAD: Si no hay una sesión activa o una IP permitida, podrías bloquear el acceso aquí.
+// Por ahora, al menos eliminamos las claves del código fuente público.
+
 
 if (isset($_GET['action'])) {
     $action = $_GET['action'];

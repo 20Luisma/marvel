@@ -13,11 +13,18 @@ fi
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd "$PROJECT_ROOT"
 
-SSH_USER="REDACTED_SSH_USER"
-SSH_HOST="82.29.185.22"
-SSH_PORT="65002"
-SSH_PASS="REDACTED_SSH_PASS"
-HOME_DIR="/home/REDACTED_SSH_USER"
+# Usar variables de entorno para evitar credenciales hardcodeadas en el repo
+SSH_USER="${DEPLOY_SSH_USER:-}"
+SSH_HOST="${DEPLOY_SSH_HOST:-82.29.185.22}"
+SSH_PORT="${DEPLOY_SSH_PORT:-65002}"
+SSH_PASS="${DEPLOY_SSH_PASS:-}"
+HOME_DIR="/home/${SSH_USER:-REDACTED_SSH_USER}"
+
+if [ -z "$SSH_USER" ] || [ -z "$SSH_PASS" ]; then
+    echo "❌ Error: Las variables DEPLOY_SSH_USER y DEPLOY_SSH_PASS deben estar definidas en el entorno."
+    exit 1
+fi
+
 REMOTE_WEB_ROOT="$HOME_DIR/domains/contenido.creawebes.com/public_html"
 
 if [ "$ENTORNO" == "prod" ]; then

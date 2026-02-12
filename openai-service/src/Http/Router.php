@@ -176,6 +176,12 @@ class Router
         $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
         $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
         if ($normalizedKey === '') {
+            // HMAC Strict Mode (fail-closed): si está activado y no hay clave, rechazar
+            $strictMode = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
+            if ($strictMode === 'true') {
+                $this->lastAuthError = 'hmac-strict-no-key';
+                return false;
+            }
             return true;
         }
 
