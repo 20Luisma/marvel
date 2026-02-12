@@ -26,6 +26,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ConfigController;
 use App\Controllers\ComicController;
 use App\Controllers\DevController;
+use App\Controllers\HealthCheckController;
 use App\Controllers\HeroController;
 use App\Controllers\Http\Request;
 use App\Controllers\NotificationController;
@@ -186,6 +187,13 @@ final class Router
     private function getGetRoutes(): array
     {
         return [
+            [
+                'pattern' => '/health',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->healthCheckController()->check();
+                },
+            ],
             [
                 'pattern' => '/activity/albums',
                 'regex' => false,
@@ -704,6 +712,23 @@ final class Router
         }
 
         return $this->pageController;
+    }
+
+    private ?HealthCheckController $healthCheckController = null;
+
+    private function healthCheckController(): HealthCheckController
+    {
+        if ($this->healthCheckController === null) {
+            $provider = $this->serviceUrlProvider();
+            $environment = $this->container['config']['environment'] ?? 'production';
+            $this->healthCheckController = new HealthCheckController(
+                new \App\Shared\Infrastructure\Http\CurlHttpClient(),
+                $provider,
+                is_string($environment) ? $environment : 'production'
+            );
+        }
+
+        return $this->healthCheckController;
     }
 
     private ?RateLimitMiddleware $rateLimitMiddleware = null;
