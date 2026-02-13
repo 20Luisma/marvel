@@ -45,9 +45,14 @@ jobs:
           server-dir: /domains/contenido.creawebes.com/public_html/clean-marvel-staging/
           
           local-dir: ./
-          state-name: ftp-state-staging.json
+          # Nuevo state para evitar arrastrar rutas antiguas (ej: .git/logs/...)
+          state-name: ftp-state-staging-v2.json
 
           exclude: |
+            .git
+            .git/**
+            **/.git
+            **/.git/**
             **/.git*
             **/.github/**
             node_modules/**
