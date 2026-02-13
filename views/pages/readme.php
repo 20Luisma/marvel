@@ -315,7 +315,7 @@ require_once __DIR__ . '/../layouts/header.php';
         <section class="space-y-3">
           <h3 class="text-2xl text-white">🧪 Calidad y Testing Multinivel</h3>
           <p>
-            El proyecto implementa una <strong>estrategia de testing multinivel</strong> con <strong>646 tests automatizados</strong> y <strong>1,411 assertions</strong>
+            El proyecto implementa una <strong>estrategia de testing multinivel</strong> con <strong>673 tests automatizados</strong> (659 PHPUnit + 14 E2E)
             que cubren desde la lógica de negocio hasta la experiencia de usuario final.
           </p>
 
@@ -385,16 +385,16 @@ require_once __DIR__ . '/../layouts/header.php';
 
           <div class="grid gap-4 md:grid-cols-2 mt-4">
             <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
-              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Suite PHPUnit (646 tests)</p>
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Suite PHPUnit (659 tests)</p>
               <ul class="space-y-2 text-sm text-gray-200">
                 <li><code>vendor/bin/phpunit --colors=always</code> — Ejecuta todos los tests.</li>
-                <li><code>composer test:cov</code> — Genera cobertura (90.28% ✅, supera objetivo 80%+).</li>
+                <li><code>composer test:cov</code> — Genera cobertura (88.89% ✅ a 13 Feb 2026).</li>
                 <li><code>vendor/bin/phpstan analyse</code> — Análisis estático nivel 6.</li>
                 <li><code>vendor/bin/phpunit tests/Security</code> — Solo tests de seguridad.</li>
               </ul>
             </div>
             <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4">
-              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Tests E2E Playwright (6 tests)</p>
+              <p class="text-xs uppercase tracking-[0.24em] text-gray-400 mb-2">Tests E2E Playwright (14 archivos)</p>
               <ul class="space-y-2 text-sm text-gray-200">
                 <li><code>npm run test:e2e</code> — Tests con navegador visible.</li>
                 <li><code>npm run test:e2e:ui</code> — Modo UI interactivo (recomendado).</li>

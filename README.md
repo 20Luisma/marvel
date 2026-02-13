@@ -112,7 +112,7 @@ El proyecto implementa un flujo de **DevSecOps** avanzado mediante GitHub Action
 Como alternativa ultra-rápida y resiliente al flujo de GitHub Actions, el proyecto cuenta con el sistema **Sentinel Deploy**:
 - **Velocidad Extrema**: Despliegues en segundos mediante Sincronización Quirúrgica (`rsync` delta-upload).
 - **Independencia**: Permite desplegar directamente desde el entorno local sin depender de las colas de GitHub Actions.
-- **Control Total**: Dashboard interactivo (`bin/start-dashboard.sh`) para monitorizar tests y subidas en tiempo real.
+- **Control Operativo**: Scripts CLI (`bin/deploy-hostinger.sh`, `bin/rollback.sh`) para despliegue y rollback trazable.
 - **Seguridad**: Validación automática de Quality Gate local y restricción de rama `main` garantizada.
 
 ---
