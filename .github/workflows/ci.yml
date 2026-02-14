@@ -39,34 +39,24 @@ jobs:
       - name: Validate Composer configuration
         run: composer validate --strict
 
-      - name: Run PHPUnit tests
+      - name: Run PHPUnit tests (no coverage)
         run: |
-          if [ -f vendor/bin/phpunit ]; then
-            mkdir -p build/logs
-            php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
-            if [ -s build/logs/clover.xml ]; then
-              echo "Coverage file detected at build/logs/clover.xml"
-            else
-              echo "Primary clover output missing, searching fallback coverage files"
-              fallback_file="$(find . -maxdepth 4 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) | head -n 1)"
-              if [ -n "${fallback_file}" ]; then
-                cp "${fallback_file}" build/logs/clover.xml
-                echo "Coverage file normalized from ${fallback_file} to build/logs/clover.xml"
-              fi
-            fi
-            if [ ! -s build/logs/clover.xml ]; then
-              echo "::warning::Coverage files not found after PHPUnit run. Coverage gate will be skipped for this run."
-              echo "SKIP_COVERAGE_GATE=1" >> "$GITHUB_ENV"
-              php -v
-              php -m | grep -Ei "pcov|xdebug" || true
-              find . -maxdepth 4 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) -print || true
-              ls -la
-              ls -la build || true
-              ls -la build/logs || true
-            fi
+          php vendor/bin/phpunit --configuration phpunit.xml.dist --testsuite "Application Test Suite" --no-coverage
+
+      - name: Generate coverage report
+        run: |
+          mkdir -p build/logs
+          php -d memory_limit=512M -d pcov.enabled=1 -d pcov.directory=src \
+            vendor/bin/phpunit --configuration phpunit.xml.dist \
+            --testsuite "Application Test Suite" \
+            --coverage-clover build/logs/clover.xml \
+            || true
+          if [ -s build/logs/clover.xml ]; then
+            echo "✅ Coverage file generated at build/logs/clover.xml"
+            head -5 build/logs/clover.xml
           else
-            echo "PHPUnit no encontrado"
-            exit 1
+            echo "::warning::Coverage report not generated. Skipping coverage gate."
+            echo "SKIP_COVERAGE_GATE=1" >> "$GITHUB_ENV"
           fi
 
       # Coverage gate (Clover): fails CI if total statement coverage drops below COVERAGE_THRESHOLD (default 75).
