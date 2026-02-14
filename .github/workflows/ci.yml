@@ -44,6 +44,19 @@ jobs:
           if [ -f vendor/bin/phpunit ]; then
             mkdir -p build/logs
             XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
+            # Compat: algunos entornos/phpunit pueden escribir coverage.xml del config.
+            if [ -f build/logs/clover.xml ]; then
+              echo "Coverage file detected at build/logs/clover.xml"
+            elif [ -f coverage.xml ]; then
+              cp coverage.xml build/logs/clover.xml
+              echo "Coverage file normalized from coverage.xml to build/logs/clover.xml"
+            else
+              echo "Coverage files not found after PHPUnit run"
+              ls -la
+              ls -la build || true
+              ls -la build/logs || true
+              exit 1
+            fi
           else
             echo "PHPUnit no encontrado"
             exit 1
