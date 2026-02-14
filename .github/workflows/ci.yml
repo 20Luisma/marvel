@@ -43,7 +43,7 @@ jobs:
         run: |
           if [ -f vendor/bin/phpunit ]; then
             mkdir -p build/logs
-            php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
+            php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
             if [ -s build/logs/clover.xml ]; then
               echo "Coverage file detected at build/logs/clover.xml"
             else
@@ -142,7 +142,7 @@ jobs:
             echo "✅ Using clover.xml downloaded from build artifact."
           else
             echo "⚠️ Artifact missing clover.xml; regenerating with pcov."
-            php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
+            php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
           fi
 
       - name: Debug coverage report (pre-scan)
