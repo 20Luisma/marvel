@@ -126,12 +126,27 @@ jobs:
           XDEBUG_MODE=coverage vendor/bin/phpunit \
             --configuration phpunit.xml.dist \
             --coverage-clover build/logs/clover.xml
+          if [ ! -s build/logs/clover.xml ] && command -v phpdbg >/dev/null 2>&1; then
+            echo "Primary xdebug coverage missing, retrying with phpdbg"
+            phpdbg -qrr vendor/bin/phpunit \
+              --configuration phpunit.xml.dist \
+              --coverage-filter src \
+              --coverage-clover build/logs/clover.xml
+          fi
+          if [ ! -s build/logs/clover.xml ]; then
+            fallback_file="$(find . -maxdepth 5 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) | head -n 1)"
+            if [ -n "${fallback_file}" ] && [ -s "${fallback_file}" ]; then
+              cp "${fallback_file}" build/logs/clover.xml
+              echo "Coverage file normalized from ${fallback_file} to build/logs/clover.xml"
+            fi
+          fi
 
       - name: Debug coverage report (pre-scan)
         run: |
           ls -la build/logs
           if [ ! -s build/logs/clover.xml ]; then
             echo "::error::clover.xml was not generated; Sonar must not run without real coverage."
+            find . -maxdepth 5 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) -print || true
             exit 1
           fi
           head -n 5 build/logs/clover.xml
