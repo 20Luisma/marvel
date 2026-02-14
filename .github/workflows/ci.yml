@@ -130,18 +130,23 @@ jobs:
       - name: Debug coverage report (pre-scan)
         run: |
           ls -la build/logs
-          test -f build/logs/clover.xml
-          head -n 5 build/logs/clover.xml
-          python3 - <<'PY'
-          import xml.etree.ElementTree as ET
-          root = ET.parse('build/logs/clover.xml').getroot()
-          statements = covered = 0
-          for m in root.findall('.//metrics'):
-              statements += int(m.get('statements', 0))
-              covered += int(m.get('coveredstatements', 0))
-          percent = (covered / statements * 100) if statements else 0
-          print(f"Coverage summary: covered {covered}/{statements} statements = {percent:.2f}%")
-          PY
+          if [ -s build/logs/clover.xml ]; then
+            head -n 5 build/logs/clover.xml
+            python3 - <<'PY'
+            import xml.etree.ElementTree as ET
+            root = ET.parse('build/logs/clover.xml').getroot()
+            statements = covered = 0
+            for m in root.findall('.//metrics'):
+                statements += int(m.get('statements', 0))
+                covered += int(m.get('coveredstatements', 0))
+            percent = (covered / statements * 100) if statements else 0
+            print(f"Coverage summary: covered {covered}/{statements} statements = {percent:.2f}%")
+            PY
+            echo "SONAR_COVERAGE_ARGS=-Dsonar.php.coverage.reportPaths=build/logs/clover.xml" >> "$GITHUB_ENV"
+          else
+            echo "::warning::clover.xml not found in sonar job; running SonarCloud scan without coverage report path."
+            echo "SONAR_COVERAGE_ARGS=" >> "$GITHUB_ENV"
+          fi
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
@@ -149,8 +154,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: >
-            -Dsonar.php.coverage.reportPaths=build/logs/clover.xml
+          args: ${{ env.SONAR_COVERAGE_ARGS }}
 
   # 🟦 PA11Y (ACCESIBILIDAD AA)
   pa11y:
