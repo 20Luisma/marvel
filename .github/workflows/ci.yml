@@ -107,12 +107,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PHP 8.2 con Xdebug (coverage)
+      - name: Setup PHP 8.2 (coverage)
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: mbstring, dom, json, pdo, sqlite, xml
-          coverage: xdebug
+          coverage: none
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -123,16 +123,15 @@ jobs:
       - name: Run PHPUnit with coverage
         run: |
           mkdir -p build/logs
-          XDEBUG_MODE=coverage vendor/bin/phpunit \
-            --configuration phpunit.xml.dist \
-            --coverage-clover build/logs/clover.xml
-          if [ ! -s build/logs/clover.xml ] && command -v phpdbg >/dev/null 2>&1; then
-            echo "Primary xdebug coverage missing, retrying with phpdbg"
-            phpdbg -qrr vendor/bin/phpunit \
-              --configuration phpunit.xml.dist \
-              --coverage-filter src \
-              --coverage-clover build/logs/clover.xml
+          if ! command -v phpdbg >/dev/null 2>&1; then
+            echo "::error::phpdbg is not available in runner; cannot generate clover coverage."
+            php -v
+            exit 1
           fi
+          phpdbg -qrr vendor/bin/phpunit \
+            --configuration phpunit.xml.dist \
+            --coverage-filter src \
+            --coverage-clover build/logs/clover.xml
           if [ ! -s build/logs/clover.xml ]; then
             fallback_file="$(find . -maxdepth 5 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) | head -n 1)"
             if [ -n "${fallback_file}" ] && [ -s "${fallback_file}" ]; then
