@@ -27,8 +27,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, dom, json, pdo, sqlite
-          coverage: pcov
+          extensions: mbstring, dom, json, pdo, sqlite, xml
+          coverage: xdebug
+          ini-values: xdebug.mode=coverage
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -40,36 +41,9 @@ jobs:
         run: composer validate --strict
 
       - name: Run PHPUnit tests
-        env:
-          PCOV_DIRECTORY: src
         run: |
-          if [ -f vendor/bin/phpunit ]; then
-            mkdir -p build/logs
-            # Try to run with PCOV, ensuring it covers the src directory
-            php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/phpunit \
-              --configuration phpunit.xml.dist \
-              --coverage-clover build/logs/clover.xml \
-              --do-not-cache-result
-            
-            if [ -s build/logs/clover.xml ]; then
-              echo "✅ Coverage file generated at build/logs/clover.xml"
-            else
-              echo "⚠️ Primary clover output missing, checking root coverage.xml"
-              if [ -s coverage.xml ]; then
-                cp coverage.xml build/logs/clover.xml
-                echo "✅ Coverage file recovered from root coverage.xml"
-              else
-                echo "❌ No coverage file found!"
-                php -v
-                php -m | grep -Ei "pcov|xdebug" || true
-                ls -la
-                exit 1
-              fi
-            fi
-          else
-            echo "❌ PHPUnit not found in vendor/bin"
-            exit 1
-          fi
+          mkdir -p build/logs
+          XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
 
       - name: Enforce coverage threshold
         env:
@@ -116,7 +90,8 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, dom, json, pdo, sqlite, xml
-          coverage: pcov
+          coverage: xdebug
+          ini-values: xdebug.mode=coverage
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -132,23 +107,13 @@ jobs:
         continue-on-error: true
 
       - name: Ensure clover coverage for Sonar
-        env:
-          PCOV_DIRECTORY: src
         run: |
           mkdir -p build/logs
           if [ -s build/logs/clover.xml ]; then
             echo "✅ Using clover.xml downloaded from build artifact."
           else
-            echo "⚠️ Artifact missing clover.xml; regenerating coverage in sonar job with PCOV."
-            php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/phpunit \
-              --configuration phpunit.xml.dist \
-              --coverage-clover build/logs/clover.xml \
-              --do-not-cache-result
-            
-            if [ ! -s build/logs/clover.xml ] && [ -s coverage.xml ]; then
-              cp coverage.xml build/logs/clover.xml
-              echo "✅ Recovered from root coverage.xml"
-            fi
+            echo "⚠️ Artifact missing clover.xml; regenerating with Xdebug."
+            XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
           fi
 
       - name: Debug coverage report (pre-scan)
