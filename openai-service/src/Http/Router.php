@@ -17,6 +17,8 @@ class Router
         $start = microtime(true);
         $normalizedMethod = strtoupper($method);
         
+        $traceId = $this->resolveTraceId();
+        header('X-Trace-Id: ' . $traceId);
         // Detectar y eliminar el prefijo de la carpeta si existe (Base Path)
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
         $basePath = dirname($scriptName);
@@ -123,7 +125,7 @@ class Router
         }
 
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Internal-Signature, X-Internal-Timestamp, X-Internal-Caller, X-Trace-Id');
         header('Access-Control-Max-Age: 86400');
 
         return true;
@@ -176,14 +178,17 @@ class Router
         $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
         $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
         if ($normalizedKey === '') {
-            // HMAC Strict Mode (fail-closed): si está activado y no hay clave, rechazar
-            $strictMode = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
-            if ($strictMode === 'true') {
+            // HMAC Strict Mode (fail-closed): si no hay clave rechazamos por defecto por seguridad
+            $strictModeRaw = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'true';
+            $isStrict = filter_var($strictModeRaw, FILTER_VALIDATE_BOOL) ?: ($strictModeRaw === 'true');
+
+            if ($isStrict) {
                 $this->lastAuthError = 'hmac-strict-no-key';
                 return false;
             }
             return true;
         }
+
 
         $signature = $_SERVER['HTTP_X_INTERNAL_SIGNATURE'] ?? '';
         $timestampHeader = $_SERVER['HTTP_X_INTERNAL_TIMESTAMP'] ?? '';
@@ -284,6 +289,7 @@ class Router
 
         $entry = [
             'timestamp' => date('c'),
+            'trace_id' => $_SERVER['__TRACE_ID__'] ?? null,
             'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
             'path' => $path,
             'status' => $statusCode,
@@ -300,5 +306,37 @@ class Router
         if ($encoded !== false) {
             @file_put_contents($logFile, $encoded . PHP_EOL, FILE_APPEND);
         }
+    }
+
+    private function resolveTraceId(): string
+    {
+        $existing = $_SERVER['__TRACE_ID__'] ?? null;
+        if (is_string($existing) && $existing !== '') {
+            return $existing;
+        }
+
+        $header = $_SERVER['HTTP_X_TRACE_ID'] ?? $_SERVER['HTTP_X_TRACE_ID_'] ?? null;
+        if ($header === null) {
+            // Some environments might underscore headers
+            $header = $_SERVER['HTTP_X_TRACE_ID'] ?? null;
+        }
+
+        if (is_string($header)) {
+            $candidate = trim($header);
+            if ($candidate !== '' && preg_match('/^[A-Za-z0-9._-]{1,128}$/', $candidate) === 1) {
+                $_SERVER['__TRACE_ID__'] = $candidate;
+                return $candidate;
+            }
+        }
+
+        try {
+            $generated = bin2hex(random_bytes(16));
+        } catch (\Throwable) {
+            $generated = str_replace('.', '', uniqid('trace_', true));
+        }
+
+        $_SERVER['__TRACE_ID__'] = $generated;
+
+        return $generated;
     }
 }

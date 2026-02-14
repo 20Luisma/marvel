@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Albums\Domain\Entity;
 
+use App\Albums\Domain\ValueObject\AlbumId;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Throwable;
@@ -11,13 +12,12 @@ use Throwable;
 final class Album
 {
     private function __construct(
-        private readonly string $albumId,
+        private readonly AlbumId $albumId,
         private string $nombre,
         private ?string $coverImage,
         private readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt
     ) {
-        $this->assertAlbumId($albumId);
         $this->assertNombre($nombre);
     }
 
@@ -25,7 +25,7 @@ final class Album
     {
         $now = new DateTimeImmutable();
 
-        return new self($albumId, $nombre, self::normalizeCover($coverImage), $now, $now);
+        return new self(new AlbumId($albumId), $nombre, self::normalizeCover($coverImage), $now, $now);
     }
 
     /**
@@ -34,9 +34,9 @@ final class Album
     public static function fromPrimitives(array $data): self
     {
         $albumIdRaw = $data['albumId'] ?? null;
-        $albumId = is_scalar($albumIdRaw) ? trim((string) $albumIdRaw) : '';
+        $albumIdString = is_scalar($albumIdRaw) ? trim((string) $albumIdRaw) : '';
 
-        if ($albumId === '') {
+        if ($albumIdString === '') {
             throw new InvalidArgumentException('El campo albumId es obligatorio.');
         }
 
@@ -58,7 +58,7 @@ final class Album
         }
 
         return new self(
-            $albumId,
+            new AlbumId($albumIdString),
             $nombre,
             self::normalizeCover($data['coverImage'] ?? $data['cover_image'] ?? null),
             $createdAt,
@@ -85,7 +85,7 @@ final class Album
     public function toPrimitives(): array
     {
         return [
-            'albumId' => $this->albumId,
+            'albumId' => $this->albumId->value(),
             'nombre' => $this->nombre,
             'coverImage' => $this->coverImage,
             'createdAt' => $this->createdAt->format(DATE_ATOM),
@@ -95,8 +95,10 @@ final class Album
 
     public function albumId(): string
     {
-        return $this->albumId;
+        return $this->albumId->value();
     }
+
+
 
     public function nombre(): string
     {
@@ -125,14 +127,8 @@ final class Album
         }
     }
 
-    private function assertAlbumId(string $albumId): void
-    {
-        if (trim($albumId) === '') {
-            throw new InvalidArgumentException('El id del álbum no puede estar vacío.');
-        }
-    }
-
     private static function normalizeCover(?string $value): ?string
+
     {
         $trimmed = $value !== null ? trim($value) : null;
 

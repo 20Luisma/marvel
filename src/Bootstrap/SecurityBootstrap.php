@@ -81,21 +81,30 @@ final class SecurityBootstrap
         $loginAttemptService = new LoginAttemptService($securityLogger);
         $ipBlockerService = new IpBlockerService($loginAttemptService, $securityLogger);
 
+        $envMobileKey = $_ENV['MOBILE_KEY'] ?? getenv('MOBILE_KEY');
+        $mobileKey = is_string($envMobileKey) ? trim($envMobileKey) : '';
+
         return [
             'security' => [
                 'auth' => $authService,
                 'csrf' => $csrfTokenManager,
                 'middleware' => new AuthMiddleware($authService),
                 'internal_api_key' => $internalApiKey !== '' ? $internalApiKey : null,
+                'mobile_key' => $mobileKey !== '' ? $mobileKey : null,
                 'rateLimiter' => $rateLimiter,
                 'rateLimitMiddleware' => new RateLimitMiddleware($rateLimiter, $routeLimits, $securityLogger),
+                'mobileSecurityMiddleware' => new \App\Security\Http\MobileSecurityMiddleware($mobileKey, $appEnvironment),
                 'apiFirewall' => new ApiFirewall($securityLogger),
+                'csrfMiddleware' => new \App\Security\Http\CsrfMiddleware($securityLogger),
+
                 'logger' => $securityLogger,
+
                 'ipBlocker' => $ipBlockerService,
                 'loginAttemptService' => $loginAttemptService,
                 'replayMonitor' => $replayMonitor,
             ],
         ];
+
     }
 
     private static function initializeAntiReplay(SecurityLogger $logger): void
@@ -150,10 +159,7 @@ final class SecurityBootstrap
 
     private static function securityLogPath(SecurityLogger $logger): string
     {
-        $extractPath = static fn(SecurityLogger $l): string => (function (): string {
-            return $this->logFile;
-        })->call($l);
-
-        return $extractPath($logger);
+        return $logger->logFile();
     }
+
 }

@@ -15,6 +15,12 @@ final class SecurityLogger
         $this->logFile = $logFile ?? dirname(__DIR__, 3) . '/storage/logs/security.log';
     }
 
+    public function logFile(): string
+    {
+        return $this->logFile;
+    }
+
+
     /**
      * @param array<string, mixed> $context
      */

@@ -17,6 +17,15 @@ final class CurlHttpClient implements HttpClientInterface
 
     /**
      * @param array<string, string> $headers
+     */
+    public function post(string $url, ?string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+    {
+        $allHeaders = $this->formatHeaders($headers);
+        return $this->executeRequest('POST', $url, $allHeaders, $payload, $timeoutSeconds, $retries);
+    }
+
+    /**
+     * @param array<string, string> $headers
      * @param array<string, mixed>|string $payload
      */
     public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Heroes\Domain\Entity;
 
+use App\Heroes\Domain\ValueObject\HeroId;
+use App\Albums\Domain\ValueObject\AlbumId;
 use App\Shared\Util\Slugger;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -12,8 +14,8 @@ use Throwable;
 final class Hero
 {
     private function __construct(
-        private readonly string $heroId,
-        private readonly string $albumId,
+        private readonly HeroId $heroId,
+        private readonly AlbumId $albumId,
         private string $name,
         private string $slug,
         private string $content,
@@ -21,8 +23,6 @@ final class Hero
         private readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt
     ) {
-        $this->assertHeroId($heroId);
-        $this->assertAlbumId($albumId);
         $this->assertName($name);
         $this->assertImage($image);
     }
@@ -37,7 +37,16 @@ final class Hero
         $now = new DateTimeImmutable();
         $slug = Slugger::slugify($nombre);
 
-        return new self($heroId, $albumId, $nombre, $slug, $contenido, $imagen, $now, $now);
+        return new self(
+            new HeroId($heroId),
+            new AlbumId($albumId),
+            $nombre,
+            $slug,
+            $contenido,
+            $imagen,
+            $now,
+            $now
+        );
     }
 
     /**
@@ -65,8 +74,8 @@ final class Hero
         }
 
         return new self(
-            $data['heroId'],
-            $data['albumId'],
+            new HeroId($data['heroId']),
+            new AlbumId($data['albumId']),
             $nombre,
             $data['slug'],
             $contenido,
@@ -82,8 +91,8 @@ final class Hero
     public function toPrimitives(): array
     {
         return [
-            'heroId' => $this->heroId,
-            'albumId' => $this->albumId,
+            'heroId' => $this->heroId->value(),
+            'albumId' => $this->albumId->value(),
             'nombre' => $this->name,
             'slug' => $this->slug,
             'contenido' => $this->content,
@@ -95,13 +104,15 @@ final class Hero
 
     public function heroId(): string
     {
-        return $this->heroId;
+        return $this->heroId->value();
     }
 
     public function albumId(): string
     {
-        return $this->albumId;
+        return $this->albumId->value();
     }
+
+
 
     public function nombre(): string
     {
@@ -187,18 +198,5 @@ final class Hero
             throw new InvalidArgumentException('La imagen del héroe no puede estar vacía.');
         }
     }
-
-    private function assertHeroId(string $heroId): void
-    {
-        if (trim($heroId) === '') {
-            throw new InvalidArgumentException('El id del héroe no puede estar vacío.');
-        }
-    }
-
-    private function assertAlbumId(string $albumId): void
-    {
-        if (trim($albumId) === '') {
-            throw new InvalidArgumentException('El id del álbum no puede estar vacío.');
-        }
-    }
 }
+

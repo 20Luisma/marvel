@@ -141,25 +141,9 @@ final class AppBootstrap
             ? new DbActivityLogRepository($pdo)
             : new FileActivityLogRepository($storagePath . '/actividad');
 
-        /** @var array{eventBus: InMemoryEventBus, notificationSender: object, notificationRepository: NotificationRepository} $events */
         $events = EventBootstrap::initialize($rootPath);
         $security = SecurityBootstrap::initialize($appEnvironment);
         $observability = ObservabilityBootstrap::initialize($appEnvironment, is_string($traceId) ? $traceId : '');
-
-        /** @var InMemoryEventBus $eventBus */
-        $eventBus = $events['eventBus'];
-        /** @var NotificationRepository $notificationRepository */
-        $notificationRepository = $events['notificationRepository'];
-        $notificationSender = $events['notificationSender'];
-
-        /** @var AlbumRepository $albumRepository */
-        $albumRepository = $persistence['albumRepository'];
-        /** @var HeroRepository $heroRepository */
-        $heroRepository = $persistence['heroRepository'];
-        /** @var PDO|null $pdo */
-        $pdo = $persistence['pdo'] ?? null;
-
-        $createHeroUseCase = new CreateHeroUseCase($heroRepository, $albumRepository, $eventBus, $ragSyncer);
 
         $openAiServiceUrl = $_ENV['OPENAI_SERVICE_URL'] ?? getenv('OPENAI_SERVICE_URL') ?: null;
         if (!is_string($openAiServiceUrl) || trim($openAiServiceUrl) === '') {
@@ -170,63 +154,48 @@ final class AppBootstrap
             }
         }
 
+        $services = [
+            'activityRepository' => $activityRepository,
+            'ragSyncer' => $ragSyncer,
+        ];
+
+        $useCases = ServiceContainer::build(
+            $persistence,
+            $events,
+            $services,
+            $rootPath,
+            $openAiServiceUrl
+        );
+
         $container = [
-            'albumRepository'      => $albumRepository,
-            'heroRepository'       => $heroRepository,
-            'pdo'                  => $pdo,
-            'eventBus'             => $eventBus,
-            'notificationSender'   => $notificationSender,
-            'notificationRepository' => $notificationRepository,
+            'albumRepository'      => $persistence['albumRepository'],
+            'heroRepository'       => $persistence['heroRepository'],
+            'pdo'                  => $persistence['pdo'],
+            'eventBus'             => $events['eventBus'],
+            'notificationSender'   => $events['notificationSender'],
+            'notificationRepository' => $events['notificationRepository'],
             'activityRepository'   => $activityRepository,
             'config' => [
                 'services' => $serviceConfig,
                 'tmdbApiKey' => $tmdbApiKey,
+                'environment' => $appEnvironment,
             ],
             'services' => [
                 'urlProvider' => $serviceUrlProvider,
                 'heatmapApiClient' => new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
                 'ragSyncer' => $ragSyncer,
             ],
-            'useCases' => [
-                'createAlbum'    => new CreateAlbumUseCase($albumRepository),
-                'seedAlbumHeroes' => new SeedAlbumHeroesUseCase($albumRepository, $heroRepository, $eventBus),
-                'updateAlbum'    => new UpdateAlbumUseCase($albumRepository, $eventBus),
-                'listAlbums'     => new ListAlbumsUseCase($albumRepository),
-                'deleteAlbum'    => new DeleteAlbumUseCase($albumRepository, $heroRepository),
-                'findAlbum'      => new FindAlbumUseCase($albumRepository),
-                'createHero'     => $createHeroUseCase,
-                'listHeroes'     => new ListHeroesUseCase($heroRepository),
-                'findHero'       => new FindHeroUseCase($heroRepository),
-                'deleteHero'     => new DeleteHeroUseCase($heroRepository),
-                'updateHero'     => new UpdateHeroUseCase($heroRepository, $ragSyncer),
-                'clearNotifications' => new ClearNotificationsUseCase($notificationRepository),
-                'listNotifications'  => new ListNotificationsUseCase($notificationRepository),
-                'recordActivity'     => new RecordActivityUseCase($activityRepository),
-                'listActivity'       => new ListActivityLogUseCase($activityRepository),
-                'clearActivity'      => new ClearActivityLogUseCase($activityRepository),
-                'generateComic'      => new GenerateComicUseCase(
-                    new OpenAIComicGenerator($openAiServiceUrl),
-                    new FindHeroUseCase($heroRepository)
-                ),
-                'uploadAlbumCover'   => new UploadAlbumCoverUseCase(
-                    new LocalFilesystem(
-                        defined('ALBUM_UPLOAD_DIR') ? ALBUM_UPLOAD_DIR : ($rootPath . '/public/uploads/albums'),
-                        defined('ALBUM_UPLOAD_URL_PREFIX') ? ALBUM_UPLOAD_URL_PREFIX : '/uploads/albums/'
-                    ),
-                    new FindAlbumUseCase($albumRepository),
-                    new UpdateAlbumUseCase($albumRepository, $eventBus)
-                ),
-            ],
+            'useCases' => $useCases,
         ];
 
         $container = array_merge($container, $security);
+        $container = array_merge($container, $observability);
 
         $container['seedHeroesService'] = new SeedHeroesService(
-            $albumRepository,
-            $heroRepository,
-            $createHeroUseCase
+            $container['albumRepository'],
+            $container['heroRepository'],
+            $container['useCases']['createHero']
         );
-
 
         $container['devTools'] = [
             'testRunner' => PhpUnitTestRunner::fromEnvironment($rootPath),
@@ -235,8 +204,6 @@ final class AppBootstrap
         $container['http'] = [
             'client' => $httpClient,
         ];
-
-        $container = array_merge($container, $observability);
 
         if (!isset($container['monitoring']['trace_id'])) {
             $container['monitoring']['trace_id'] = is_string($traceId) ? $traceId : '';

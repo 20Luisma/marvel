@@ -200,6 +200,12 @@ PROMPT,
             }
 
             $headers = ['Content-Type: application/json'];
+            
+            $traceId = $_SERVER['X_TRACE_ID'] ?? null;
+            if (is_string($traceId) && $traceId !== '') {
+                $headers[] = 'X-Trace-Id: ' . $traceId;
+            }
+
             if ($this->internalApiKey !== null) {
                 $headers = array_merge($headers, $this->signatureHeaders($encodedPayload));
             }

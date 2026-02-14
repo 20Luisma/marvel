@@ -32,6 +32,12 @@ use App\Controllers\NotificationController;
 use App\Controllers\PageController;
 use App\Controllers\RagProxyController;
 use App\Shared\Metrics\PrometheusMetrics;
+use App\Albums\Application\UseCase\CreateAlbumUseCase;
+use App\Albums\Application\UseCase\DeleteAlbumUseCase;
+use App\Albums\Application\UseCase\FindAlbumUseCase;
+use App\Albums\Application\UseCase\ListAlbumsUseCase;
+use App\Albums\Application\UseCase\UpdateAlbumUseCase;
+use App\Albums\Application\UseCase\UploadAlbumCoverUseCase;
 use RuntimeException;
 use Throwable;
 
@@ -66,6 +72,17 @@ final class Router
         if ($firewall !== null && !$firewall->handle($method, $path)) {
             return;
         }
+
+        $mobileSecurity = $this->mobileSecurityMiddleware();
+        if ($mobileSecurity !== null && !$mobileSecurity->handle($method, $path)) {
+            return;
+        }
+
+        $csrfMiddleware = $this->csrfMiddleware();
+        if ($csrfMiddleware !== null && !$csrfMiddleware->handle($path)) {
+            return;
+        }
+
 
         $rateLimiter = $this->rateLimitMiddleware();
         if ($rateLimiter !== null && !$rateLimiter->handle($method, $path)) {
@@ -187,6 +204,20 @@ final class Router
     {
         return [
             [
+                'pattern' => '/api/movies',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->movieController()->index();
+                },
+            ],
+            [
+                'pattern' => '/api/marvel-movies.php',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->movieController()->index();
+                },
+            ],
+            [
                 'pattern' => '/health',
                 'regex' => false,
                 'handler' => function (): void {
@@ -263,6 +294,13 @@ final class Router
                     $this->heroController()->show($heroId);
                 },
             ],
+            [
+                'pattern' => '/api/tts',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->ttsController()->generate();
+                },
+            ],
         ];
     }
 
@@ -272,6 +310,41 @@ final class Router
     private function getPostRoutes(): array
     {
         return [
+            [
+                'pattern' => '/api/monitoring/accessibility',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->monitoringController()->accessibility();
+                },
+            ],
+            [
+                'pattern' => '/api/monitoring/performance',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->monitoringController()->performance();
+                },
+            ],
+            [
+                'pattern' => '/api/monitoring/github',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->monitoringController()->github();
+                },
+            ],
+            [
+                'pattern' => '/api/github-activity.php',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->monitoringController()->github();
+                },
+            ],
+            [
+                'pattern' => '/api/performance-marvel.php',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->monitoringController()->performance();
+                },
+            ],
             [
                 'pattern' => '/activity/albums',
                 'regex' => false,
@@ -360,6 +433,27 @@ final class Router
                 'regex' => false,
                 'handler' => function (): void {
                     $this->ragProxyController()->forwardHeroesComparison();
+                },
+            ],
+            [
+                'pattern' => '/api/rag/agent',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->ragProxyController()->forwardAgent();
+                },
+            ],
+            [
+                'pattern' => '/api/marvel-agent.php',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->ragProxyController()->forwardAgent();
+                },
+            ],
+            [
+                'pattern' => '/api/tts',
+                'regex' => false,
+                'handler' => function (): void {
+                    $this->ttsController()->generate();
                 },
             ],
         ];
@@ -540,13 +634,29 @@ final class Router
         if ($this->albumController === null) {
             $useCases = $this->useCases();
 
+            $listAlbums = $useCases['listAlbums'] ?? null;
+            $createAlbum = $useCases['createAlbum'] ?? null;
+            $updateAlbum = $useCases['updateAlbum'] ?? null;
+            $deleteAlbum = $useCases['deleteAlbum'] ?? null;
+            $findAlbum = $useCases['findAlbum'] ?? null;
+            $uploadAlbumCover = $useCases['uploadAlbumCover'] ?? null;
+
+            if (!$listAlbums instanceof ListAlbumsUseCase
+                || !$createAlbum instanceof CreateAlbumUseCase
+                || !$updateAlbum instanceof UpdateAlbumUseCase
+                || !$deleteAlbum instanceof DeleteAlbumUseCase
+                || !$findAlbum instanceof FindAlbumUseCase
+                || !$uploadAlbumCover instanceof UploadAlbumCoverUseCase) {
+                throw new RuntimeException('Casos de uso de álbum no disponibles.');
+            }
+
             $this->albumController = new AlbumController(
-                $useCases['listAlbums'],
-                $useCases['createAlbum'],
-                $useCases['updateAlbum'],
-                $useCases['deleteAlbum'],
-                $useCases['findAlbum'],
-                $useCases['uploadAlbumCover'],
+                $listAlbums,
+                $createAlbum,
+                $updateAlbum,
+                $deleteAlbum,
+                $findAlbum,
+                $uploadAlbumCover,
             );
         }
 
@@ -662,7 +772,7 @@ final class Router
     {
         if ($this->ragProxyController === null) {
             $provider = $this->serviceUrlProvider();
-            $ragUrl = $provider->getRagHeroesUrl();
+            $ragUrl = $provider->getRagBaseUrl();
             
             $security = $this->security();
             $internalKey = $security['internal_api_key'] ?? null;
@@ -706,6 +816,26 @@ final class Router
         }
 
         return $this->pageController;
+    }
+
+    private ?\App\Controllers\TtsController $ttsController = null;
+
+    private function ttsController(): \App\Controllers\TtsController
+    {
+        if ($this->ttsController === null) {
+            $apiKey = $_ENV['ELEVENLABS_API_KEY'] ?? getenv('ELEVENLABS_API_KEY') ?: null;
+            $voiceId = $_ENV['ELEVENLABS_VOICE_ID'] ?? getenv('ELEVENLABS_VOICE_ID') ?: 'EXAVITQu4vr4xnSDxMaL';
+            $modelId = $_ENV['ELEVENLABS_MODEL_ID'] ?? getenv('ELEVENLABS_MODEL_ID') ?: 'eleven_multilingual_v2';
+
+            $this->ttsController = new \App\Controllers\TtsController(
+                new \App\Shared\Infrastructure\Http\CurlHttpClient(),
+                is_string($apiKey) ? $apiKey : null,
+                is_string($voiceId) ? $voiceId : 'EXAVITQu4vr4xnSDxMaL',
+                is_string($modelId) ? $modelId : 'eleven_multilingual_v2'
+            );
+        }
+
+        return $this->ttsController;
     }
 
     private ?HealthCheckController $healthCheckController = null;
@@ -753,4 +883,53 @@ final class Router
 
         return $this->apiFirewall;
     }
+
+    private ?\App\Security\Http\MobileSecurityMiddleware $mobileSecurityMiddleware = null;
+
+    private function mobileSecurityMiddleware(): ?\App\Security\Http\MobileSecurityMiddleware
+    {
+        if ($this->mobileSecurityMiddleware === null) {
+            $security = $this->security();
+            $middleware = $security['mobileSecurityMiddleware'] ?? null;
+            if ($middleware instanceof \App\Security\Http\MobileSecurityMiddleware) {
+                $this->mobileSecurityMiddleware = $middleware;
+            }
+        }
+
+        return $this->mobileSecurityMiddleware;
+    }
+
+    private ?\App\Security\Http\CsrfMiddleware $csrfMiddleware = null;
+
+    private function csrfMiddleware(): ?\App\Security\Http\CsrfMiddleware
+    {
+        if ($this->csrfMiddleware === null) {
+            $security = $this->security();
+            $middleware = $security['csrfMiddleware'] ?? null;
+            if ($middleware instanceof \App\Security\Http\CsrfMiddleware) {
+                $this->csrfMiddleware = $middleware;
+            }
+        }
+
+        return $this->csrfMiddleware;
+    }
+
+    private function monitoringController(): \App\Controllers\MonitoringController
+    {
+        return new \App\Controllers\MonitoringController(
+            $this->container['http']['client'],
+            dirname(__DIR__, 3) // Apunta a la raíz desde src/Shared/Http
+        );
+    }
+
+    private function movieController(): \App\Controllers\MovieController
+    {
+        $config = $this->container['config'] ?? [];
+        return new \App\Controllers\MovieController(
+            $this->container['http']['client'],
+            $config['tmdbApiKey'] ?? null
+        );
+    }
 }
+
+

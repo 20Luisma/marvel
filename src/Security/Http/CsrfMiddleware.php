@@ -28,32 +28,45 @@ class CsrfMiddleware
     {
     }
 
-    public function handle(string $path): void
+    public function handle(string $path): bool
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? '';
         
-        // Proteger POST, PUT y DELETE (operaciones de escritura)
+        // CSRF solo aplica a métodos mutantes
         if (!in_array($method, ['POST', 'PUT', 'DELETE'], true)) {
-            return;
+            return true;
         }
 
+        // Saltarse CSRF para peticiones API legítimas (App Móvil o Inter-servicio)
+        if (!empty($_SERVER['HTTP_X_MOBILE_KEY']) || !empty($_SERVER['HTTP_X_INTERNAL_SIGNER'])) {
+            return true;
+        }
+
+        // Si no está en la lista de protegidas, no aplicamos CSRF
         if (!in_array($path, $this->protectedPostRoutes, true)) {
-            return;
+            return true;
         }
 
         $token = $_POST['csrf_token']
+
             ?? ($_POST['_token'] ?? null)
             ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null);
 
         if (!CsrfService::validateToken(is_string($token) ? $token : null)) {
             $this->logFailure($path, $token);
 
-            http_response_code(403);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => 'Invalid CSRF token'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            $this->terminate();
+            \App\Shared\Http\JsonResponse::error(
+                'Token CSRF inválido o ausente. Por favor, recarga la página para restaurar la sesión de seguridad.',
+                403
+            );
+            return false;
         }
+
+
+        return true;
     }
+
+
 
     protected function terminate(): void
     {

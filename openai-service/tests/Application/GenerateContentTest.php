@@ -27,7 +27,8 @@ final class GenerateContentTest extends TestCase
 
         $result = $useCase->handle([['role' => 'user', 'content' => 'hola']]);
 
-        $this->assertSame('{"title":"Ok"}', $result);
+        $this->assertIsArray($result);
+        $this->assertSame('{"title":"Ok"}', $result['content']);
     }
 
     public function testFallsBackWhenClientThrows(): void
@@ -42,7 +43,9 @@ final class GenerateContentTest extends TestCase
         $useCase = new GenerateContent($client);
 
         $result = $useCase->handle([]);
-        $decoded = json_decode($result, true);
+
+        $this->assertIsArray($result);
+        $decoded = json_decode($result['content'], true);
 
         $this->assertIsArray($decoded);
         $this->assertSame('No se pudo generar el cómic', $decoded['title'] ?? null);
@@ -59,7 +62,9 @@ final class GenerateContentTest extends TestCase
         $useCase = new GenerateContent($client);
 
         $result = $useCase->handle([]);
-        $decoded = json_decode($result, true);
+
+        $this->assertIsArray($result);
+        $decoded = json_decode($result['content'], true);
 
         $this->assertIsArray($decoded);
         $this->assertSame('No se pudo generar el cómic', $decoded['title'] ?? null);

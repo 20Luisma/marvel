@@ -239,13 +239,16 @@ function authorize_internal_request(string $method, string $path, string $rawBod
     $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
     $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
     if ($normalizedKey === '') {
-        // HMAC Strict Mode (fail-closed): si está activado y no hay clave, rechazar
-        $strictMode = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
-        if ($strictMode === 'true') {
+        // HMAC Strict Mode (fail-closed): si no hay clave lo consideramos un riesgo y rechazamos por defecto
+        $strictModeRaw = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'true';
+        $isStrict = filter_var($strictModeRaw, FILTER_VALIDATE_BOOL) ?: ($strictModeRaw === 'true');
+
+        if ($isStrict) {
             return ['ok' => false, 'reason' => 'hmac-strict-no-key'];
         }
         return ['ok' => true, 'reason' => 'signature-disabled'];
     }
+
 
     // Bypass de emergencia para CI/CD si la llave principal falla
     $bypassKey = $_ENV['CI_BYPASS_KEY'] ?? getenv('CI_BYPASS_KEY') ?: '';
