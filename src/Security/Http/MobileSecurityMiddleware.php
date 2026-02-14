@@ -31,7 +31,8 @@ final class MobileSecurityMiddleware
             return true;
         }
 
-        $providedKey = $_SERVER['HTTP_X_MOBILE_KEY'] ?? '';
+        $serverHeaderKey = 'HTTP_' . strtoupper(str_replace('-', '_', self::MOBILE_KEY_HEADER));
+        $providedKey = $_SERVER[$serverHeaderKey] ?? '';
 
         if (!hash_equals($this->expectedKey, $providedKey)) {
             JsonResponse::error('Acceso denegado: Mobile Key inválida o ausente.', 403);

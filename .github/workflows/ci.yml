@@ -42,7 +42,8 @@ jobs:
       - name: Run PHPUnit tests
         run: |
           if [ -f vendor/bin/phpunit ]; then
-            XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover coverage.xml
+            mkdir -p build/logs
+            XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
           else
             echo "PHPUnit no encontrado"
             exit 1
@@ -52,7 +53,7 @@ jobs:
       - name: Enforce coverage threshold
         env:
           COVERAGE_THRESHOLD: ${{ vars.COVERAGE_THRESHOLD || 75 }}
-        run: php scripts/coverage-gate.php coverage.xml
+        run: php scripts/coverage-gate.php build/logs/clover.xml
 
       - name: Run PHPStan analysis
         run: |

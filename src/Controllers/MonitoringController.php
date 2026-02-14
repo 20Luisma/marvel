@@ -66,6 +66,9 @@ final class MonitoringController
         echo json_encode($json, JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     private function analyzeWave(string $url, string $key): array
     {
         $endpoint = 'https://wave.webaim.org/api/request';
