@@ -15,7 +15,8 @@ test.describe('Negative - CSRF', () => {
 
     const body = await response.json();
     expect(body).toBeTruthy();
-    expect(body.error).toBe('Invalid CSRF token');
+    expect(body.estado).toBe('error');
+    expect(typeof body.message).toBe('string');
+    expect(body.message.toLowerCase()).toContain('csrf');
   });
 });
-

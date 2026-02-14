@@ -132,16 +132,7 @@ jobs:
           ls -la build/logs
           if [ -s build/logs/clover.xml ]; then
             head -n 5 build/logs/clover.xml
-            python3 - <<'PY'
-            import xml.etree.ElementTree as ET
-            root = ET.parse('build/logs/clover.xml').getroot()
-            statements = covered = 0
-            for m in root.findall('.//metrics'):
-                statements += int(m.get('statements', 0))
-                covered += int(m.get('coveredstatements', 0))
-            percent = (covered / statements * 100) if statements else 0
-            print(f"Coverage summary: covered {covered}/{statements} statements = {percent:.2f}%")
-            PY
+            php -r '$xml=simplexml_load_file("build/logs/clover.xml"); $m=$xml?($xml->project->metrics??null):null; $s=$m?intval($m["statements"]):0; $c=$m?intval($m["coveredstatements"]):0; $p=$s>0?($c/$s*100):0; echo "Coverage summary: covered {$c}/{$s} statements = ".number_format($p,2)."%\n";'
             echo "SONAR_COVERAGE_ARGS=-Dsonar.php.coverage.reportPaths=build/logs/clover.xml" >> "$GITHUB_ENV"
           else
             echo "::warning::clover.xml not found in sonar job; running SonarCloud scan without coverage report path."
