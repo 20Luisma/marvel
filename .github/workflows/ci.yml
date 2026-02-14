@@ -23,12 +23,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP 8.4
+      - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.2'
           extensions: mbstring, dom, json, pdo, sqlite
-          coverage: xdebug
+          coverage: pcov
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -43,15 +43,17 @@ jobs:
         run: |
           if [ -f vendor/bin/phpunit ]; then
             mkdir -p build/logs
-            XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
-            # Compat: algunos entornos/phpunit pueden escribir coverage.xml del config.
-            if [ -f build/logs/clover.xml ]; then
+            php -d pcov.enabled=1 vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
+            if [ ! -s build/logs/clover.xml ]; then
+              echo "Primary coverage output missing, retrying with explicit --coverage-filter=src"
+              php -d pcov.enabled=1 vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-filter src --coverage-clover build/logs/clover.xml
+            fi
+            if [ -s build/logs/clover.xml ]; then
               echo "Coverage file detected at build/logs/clover.xml"
-            elif [ -f coverage.xml ]; then
-              cp coverage.xml build/logs/clover.xml
-              echo "Coverage file normalized from coverage.xml to build/logs/clover.xml"
             else
               echo "Coverage files not found after PHPUnit run"
+              php -v
+              php -m | grep -Ei "pcov|xdebug" || true
               ls -la
               ls -la build || true
               ls -la build/logs || true
