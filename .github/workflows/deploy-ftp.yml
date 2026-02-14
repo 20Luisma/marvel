@@ -120,6 +120,7 @@ jobs:
   deploy_app:
     name: Deploy app principal
     runs-on: ubuntu-latest
+    needs: quality_gate
 
     steps:
       - name: Checkout repo
