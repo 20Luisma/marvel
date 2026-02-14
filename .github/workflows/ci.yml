@@ -151,10 +151,8 @@ jobs:
           if [ -s build/logs/clover.xml ]; then
             head -n 5 build/logs/clover.xml
             php -r '$xml=simplexml_load_file("build/logs/clover.xml"); $m=$xml?($xml->project->metrics??null):null; $s=$m?intval($m["statements"]):0; $c=$m?intval($m["coveredstatements"]):0; $p=$s>0?($c/$s*100):0; echo "Coverage summary: covered {$c}/{$s} statements = ".number_format($p,2)."%\n";'
-            echo "SONAR_COVERAGE_ARGS=-Dsonar.php.coverage.reportPaths=build/logs/clover.xml" >> "$GITHUB_ENV"
           else
-            echo "::warning::clover.xml not found in sonar job; running SonarCloud scan without coverage report path."
-            echo "SONAR_COVERAGE_ARGS=" >> "$GITHUB_ENV"
+            echo "::warning::clover.xml not found in sonar job; SonarCloud will report 0% coverage."
           fi
 
       - name: SonarCloud Scan
@@ -162,8 +160,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: ${{ env.SONAR_COVERAGE_ARGS }}
 
   # 🟦 PA11Y (ACCESIBILIDAD AA)
   pa11y:
