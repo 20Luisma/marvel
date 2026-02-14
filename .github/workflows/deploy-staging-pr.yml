@@ -53,6 +53,8 @@ jobs:
             node_modules/**
             .scannerwork/**
             tests/**
+            openai-service/**
+            rag-service/**
             **/*.log
             pa11y-*.sh
             package-lock.json
