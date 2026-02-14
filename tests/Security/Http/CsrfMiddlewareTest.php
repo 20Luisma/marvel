@@ -89,7 +89,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->middleware->handle('/login');
         $output = ob_get_clean();
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertEquals(403, \http_response_code());
         $this->assertStringContainsString('Token CSRF inválido o ausente', $output);
     }
 
@@ -149,7 +149,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->middleware->handle('/login');
         ob_get_clean();
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertEquals(403, \http_response_code());
     }
 
     public function testHandleLogsWhenTokenPresentButInvalid(): void
@@ -163,7 +163,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->middleware->handle('/login');
         ob_get_clean();
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertEquals(403, \http_response_code());
         
         // Verify log was created
         $this->assertFileExists($this->logFile);
@@ -189,7 +189,7 @@ class CsrfMiddlewareTest extends TestCase
         $middlewareNoLogger->handle('/login');
         ob_get_clean();
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertEquals(403, \http_response_code());
     }
 
     public function testHandleProtectedApiRoute(): void
