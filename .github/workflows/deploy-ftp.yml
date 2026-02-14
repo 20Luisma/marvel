@@ -162,6 +162,8 @@ jobs:
 
           # 📌 Archivos/carpetas que NO deben subirse
           exclude: |
+            .git/**
+            **/.git/**
             **/.git*
             **/.github/**
             node_modules/**
