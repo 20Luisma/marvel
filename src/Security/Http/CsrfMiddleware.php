@@ -54,6 +54,7 @@ class CsrfMiddleware
 
         if (!CsrfService::validateToken(is_string($token) ? $token : null)) {
             $this->logFailure($path, $token);
+            http_response_code(403);
 
             \App\Shared\Http\JsonResponse::error(
                 'Token CSRF inválido o ausente. Por favor, recarga la página para restaurar la sesión de seguridad.',
