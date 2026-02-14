@@ -208,8 +208,8 @@ final class HeadersSecurityTest extends TestCase
         ob_start();
         try {
             (new Router($container))->handle($method, $path);
-        } catch (\RuntimeException $e) {
-            // CSRF middleware throws RuntimeException('CSRF terminated') in test env
+        } catch (\App\Security\Http\CsrfTerminationException) {
+            // CSRF middleware throws CsrfTerminationException on validation failure
         }
         $output = (string) ob_get_clean();
         $headers = headers_list();

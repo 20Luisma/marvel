@@ -51,7 +51,6 @@ jobs:
           php -d pcov.enabled=1 -d pcov.directory=src \
             vendor/bin/phpunit --configuration phpunit.xml.dist \
             --testsuite "Application Test Suite" \
-            --exclude-group no-coverage \
             --coverage-clover build/logs/clover.xml \
             2>&1 || PHPUNIT_EXIT=$?
           echo "PHPUnit exit code: ${PHPUNIT_EXIT:-0}"

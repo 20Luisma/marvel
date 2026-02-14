@@ -64,7 +64,10 @@ maxEntries*
 
 maxEntriesintR
 app\security\sanitizer8
-sanitizestring&app\security\sanitizer::sanitizestring
+sanitizestring&app\security\sanitizer::sanitizestring`
+!app\bootstrap\controllerbootstrap;
+
+initialize-app\bootstrap\controllerbootstrap::initialize
 app\bootstrap\securitybootstrap9
 
 initialize+app\bootstrap\securitybootstrap::initializeM
@@ -99,7 +102,15 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 store)app\controllers\activitycontroller::store"clearActivity"listActivity"recordActivity*K
 clearActivity:app\activities\application\usecase\clearactivitylogusecase*I
 listActivity9app\activities\application\usecase\listactivitylogusecase*J
-recordActivity8app\activities\application\usecase\recordactivityusecaseå
+recordActivity8app\activities\application\usecase\recordactivityusecaseº
+6app\albums\application\usecase\uploadalbumcoverusecaseR
+__constructCapp\albums\application\usecase\uploadalbumcoverusecase::__constructJ
+execute?app\albums\application\usecase\uploadalbumcoverusecase::execute"
+filesystem"	findAlbum"updateAlbum*>
+
+filesystem0app\shared\domain\filesystem\filesysteminterface*<
+	findAlbum/app\albums\application\usecase\findalbumusecase*@
+updateAlbum1app\albums\application\usecase\updatealbumusecaseå
 app\http\requestbodyreader8
 getjsonarray(app\http\requestbodyreader::getjsonarray4
 
@@ -115,17 +126,28 @@ getrawbody&app\http\requestbodyreader::getrawbodyF
 statusCode*
 bodystring*
 
-statusCodeintê
+statusCodeint÷
+$app\controllers\monitoringcontroller@
+__construct1app\controllers\monitoringcontroller::__constructD
+accessibility3app\controllers\monitoringcontroller::accessibility@
+analyzewave1app\controllers\monitoringcontroller::analyzewave6
+github,app\controllers\monitoringcontroller::github@
+performance1app\controllers\monitoringcontroller::performance"
+httpClient"rootPath*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterface*
+rootPathstring‚
 app\controllers\comiccontroller;
 __construct,app\controllers\comiccontroller::__construct5
-generate)app\controllers\comiccontroller::generate"findHero"	generator*:
-findHero.app\heroes\application\usecase\findherousecase*(
-	generatorapp\ai\openaicomicgenerator†
+generate)app\controllers\comiccontroller::generate"generateComic*<
+generateComic+app\application\comics\generatecomicusecase†
 ,app\albums\domain\repository\albumrepository8
 all1app\albums\domain\repository\albumrepository::all>
 delete4app\albums\domain\repository\albumrepository::delete:
 find2app\albums\domain\repository\albumrepository::find:
-save2app\albums\domain\repository\albumrepository::save´
+save2app\albums\domain\repository\albumrepository::saveN
+app\ai\comicgeneratorfactory.
+create$app\ai\comicgeneratorfactory::create´
 6app\notifications\application\listnotificationsusecaseR
 __constructCapp\notifications\application\listnotificationsusecase::__constructJ
 execute?app\notifications\application\listnotificationsusecase::execute"
@@ -133,7 +155,11 @@ repository*E
 
 repository7app\notifications\infrastructure\notificationrepositoryF
 app\shared\util\slugger+
-slugify app\shared\util\slugger::slugifyÙ
+slugify app\shared\util\slugger::slugify∞
+0app\shared\domain\filesystem\filesysteminterfaceT
+ensuredirectoryAapp\shared\domain\filesystem\filesysteminterface::ensuredirectoryN
+getpublicurl>app\shared\domain\filesystem\filesysteminterface::getpublicurlV
+saveuploadedfileBapp\shared\domain\filesystem\filesysteminterface::saveuploadedfileÙ
  app\security\http\csrfmiddleware<
 __construct-app\security\http\csrfmiddleware::__construct2
 handle(app\security\http\csrfmiddleware::handle:
@@ -146,7 +172,7 @@ logfailure,app\security\http\csrfmiddleware::logfailure8
 resolve,app\bootstrap\shared\driverresolver::resolveù
 app\security\csrf\csrfservice=
 generatetoken,app\security\csrf\csrfservice::generatetoken=
-validatetoken,app\security\csrf\csrfservice::validatetokenÉ
+validatetoken,app\security\csrf\csrfservice::validatetoken…
 app\shared\http\router2
 __construct#app\shared\http\router::__construct@
 activitycontroller*app\shared\http\router::activitycontroller:
@@ -156,7 +182,8 @@ logfailure,app\security\http\csrfmiddleware::logfailure8
 authcontroller&app\shared\http\router::authcontroller8
 authmiddleware&app\shared\http\router::authmiddleware:
 comiccontroller'app\shared\http\router::comiccontroller<
-configcontroller(app\shared\http\router::configcontroller6
+configcontroller(app\shared\http\router::configcontroller8
+csrfmiddleware&app\shared\http\router::csrfmiddleware6
 devcontroller%app\shared\http\router::devcontroller,
 dispatch app\shared\http\router::dispatch8
 dispatchroutes&app\shared\http\router::dispatchroutes:
@@ -169,17 +196,22 @@ logfailure,app\security\http\csrfmiddleware::logfailure8
 	handleget!app\shared\http\router::handleget0
 
 handlepost"app\shared\http\router::handlepost.
-	handleput!app\shared\http\router::handleput8
+	handleput!app\shared\http\router::handleputF
+healthcheckcontroller-app\shared\http\router::healthcheckcontroller8
 herocontroller&app\shared\http\router::herocontroller<
-methodnotallowed(app\shared\http\router::methodnotallowedH
+methodnotallowed(app\shared\http\router::methodnotallowedL
+mobilesecuritymiddleware0app\shared\http\router::mobilesecuritymiddlewareD
+monitoringcontroller,app\shared\http\router::monitoringcontroller:
+moviecontroller'app\shared\http\router::moviecontrollerH
 notificationcontroller.app\shared\http\router::notificationcontroller8
 pagecontroller&app\shared\http\router::pagecontroller@
 ragproxycontroller*app\shared\http\router::ragproxycontrollerB
 ratelimitmiddleware+app\shared\http\router::ratelimitmiddleware<
 readmecontroller(app\shared\http\router::readmecontroller,
 security app\shared\http\router::security@
-serviceurlprovider*app\shared\http\router::serviceurlprovider,
-usecases app\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"devController"heroController"notificationController"pageController"ragProxyController"rateLimitMiddleware"readmeController*8
+serviceurlprovider*app\shared\http\router::serviceurlprovider6
+ttscontroller%app\shared\http\router::ttscontroller,
+usecases app\shared\http\router::usecases"activityController"adminController"adminControllerInitialized"albumController"apiFirewall"authController"authMiddleware"comicController"configController"	container"csrfMiddleware"devController"healthCheckController"heroController"mobileSecurityMiddleware"notificationController"pageController"ragProxyController"rateLimitMiddleware"readmeController"ttsController*8
 activityController"app\controllers\activitycontroller*2
 adminControllerapp\controllers\admincontroller*"
 adminControllerInitializedbool*2
@@ -189,14 +221,18 @@ handlepost"app\shared\http\router::handlepost.
 authMiddleware app\security\http\authmiddleware*2
 comicControllerapp\controllers\comiccontroller*4
 configController app\controllers\configcontroller*
-	containerarray*.
-devControllerapp\controllers\devcontroller*0
-heroControllerapp\controllers\herocontroller*@
+	containerarray*2
+csrfMiddleware app\security\http\csrfmiddleware*.
+devControllerapp\controllers\devcontroller*>
+healthCheckController%app\controllers\healthcheckcontroller*0
+heroControllerapp\controllers\herocontroller*F
+mobileSecurityMiddleware*app\security\http\mobilesecuritymiddleware*@
 notificationController&app\controllers\notificationcontroller*0
 pageControllerapp\controllers\pagecontroller*8
 ragProxyController"app\controllers\ragproxycontroller*<
 rateLimitMiddleware%app\security\http\ratelimitmiddleware*4
-readmeController app\shared\http\readmecontrollerº
+readmeController app\shared\http\readmecontroller*.
+ttsControllerapp\controllers\ttscontrollerº
 app\ai\openaicomicgenerator7
 __construct(app\ai\openaicomicgenerator::__construct9
 extractmodel)app\ai\openaicomicgenerator::extractmodel9
@@ -211,7 +247,16 @@ serviceUrl*
 internalApiKeystring*
 internalCallerstring*
 
-serviceUrlstringx
+serviceUrlstringˇ
+app\controllers\moviecontroller;
+__construct,app\controllers\moviecontroller::__construct/
+index&app\controllers\moviecontroller::index"
+httpClient"
+tmdbApiKey*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterface*
+
+tmdbApiKeystringx
 3app\notifications\domain\service\notificationsenderA
 send9app\notifications\domain\service\notificationsender::sendå
 7app\notifications\infrastructure\notificationrepositoryS
@@ -235,7 +280,24 @@ getmetrics.app\monitoring\tokenmetricsservice::getmetricsD
 app\security\logsanitizer;
 issensitivekey)app\security\logsanitizer::issensitivekey1
 	maskvalue$app\security\logsanitizer::maskvalue=
-sanitizecontext*app\security\logsanitizer::sanitizecontextD
+sanitizecontext*app\security\logsanitizer::sanitizecontext≤
+@app\shared\infrastructure\resilience\circuitbreakeropenexceptionruntimeexception\
+__constructMapp\shared\infrastructure\resilience\circuitbreakeropenexception::__construct 
+*app\security\http\mobilesecuritymiddlewareF
+__construct7app\security\http\mobilesecuritymiddleware::__construct<
+handle2app\security\http\mobilesecuritymiddleware::handleN
+issensitivepath;app\security\http\mobilesecuritymiddleware::issensitivepath"environment"expectedKey*
+environmentstring*
+expectedKeystringÃ
+3app\shared\application\usecase\resetdemodatausecaseO
+__construct@app\shared\application\usecase\resetdemodatausecase::__constructW
+deleteallalbumsDapp\shared\application\usecase\resetdemodatausecase::deleteallalbumsW
+deleteallheroesDapp\shared\application\usecase\resetdemodatausecase::deleteallheroesG
+execute<app\shared\application\usecase\resetdemodatausecase::executeS
+restorealbumsBapp\shared\application\usecase\resetdemodatausecase::restorealbumsS
+restoreheroesBapp\shared\application\usecase\resetdemodatausecase::restoreheroes"albumRepository"heroRepository*?
+albumRepository,app\albums\domain\repository\albumrepository*=
+heroRepository+app\heroes\domain\repository\herorepositoryD
 app\monitoring\tokenlogger&
 logapp\monitoring\tokenlogger::log 
 8app\shared\infrastructure\security\internalrequestsignerT
@@ -322,24 +384,32 @@ $app\shared\markdown\markdownrenderer6
 render,app\shared\markdown\markdownrenderer::renderf
 $app\bootstrap\observabilitybootstrap>
 
-initialize0app\bootstrap\observabilitybootstrap::initializeƒ
+initialize0app\bootstrap\observabilitybootstrap::initializeù
+$app\heroes\domain\valueobject\heroid/app\shared\domain\valueobject\stringvalueobjectD
+ensureisvalid3app\heroes\domain\valueobject\heroid::ensureisvalid–
+4app\shared\infrastructure\filesystem\localfilesystemP
+__constructAapp\shared\infrastructure\filesystem\localfilesystem::__constructX
+ensuredirectoryEapp\shared\infrastructure\filesystem\localfilesystem::ensuredirectoryR
+getpublicurlBapp\shared\infrastructure\filesystem\localfilesystem::getpublicurlZ
+saveuploadedfileFapp\shared\infrastructure\filesystem\localfilesystem::saveuploadedfile"basePath"	urlPrefix*
+basePathstring*
+	urlPrefixstringê
 app\controllers\albumcontroller;
 __construct,app\controllers\albumcontroller::__constructI
-albumcovermaxbytes3app\controllers\albumcontroller::albumcovermaxbytesA
-albumuploaddir/app\controllers\albumcontroller::albumuploaddirM
-albumuploadurlprefix5app\controllers\albumcontroller::albumuploadurlprefix3
+albumcovermaxbytes3app\controllers\albumcontroller::albumcovermaxbytes3
 destroy(app\controllers\albumcontroller::destroy/
 index&app\controllers\albumcontroller::index/
 store&app\controllers\albumcontroller::store1
 update'app\controllers\albumcontroller::update;
 uploadcover,app\controllers\albumcontroller::uploadcover"createAlbum"deleteAlbum"	findAlbum"
-listAlbums"updateAlbum*@
+listAlbums"updateAlbum"uploadAlbumCover*@
 createAlbum1app\albums\application\usecase\createalbumusecase*@
 deleteAlbum1app\albums\application\usecase\deletealbumusecase*<
 	findAlbum/app\albums\application\usecase\findalbumusecase*>
 
 listAlbums0app\albums\application\usecase\listalbumsusecase*@
-updateAlbum1app\albums\application\usecase\updatealbumusecaseﬁ
+updateAlbum1app\albums\application\usecase\updatealbumusecase*J
+uploadAlbumCover6app\albums\application\usecase\uploadalbumcoverusecaseﬁ
 #app\security\config\configvalidator?
 __construct0app\security\config\configvalidator::__constructA
 isproduction1app\security\config\configvalidator::isproduction7
@@ -354,7 +424,35 @@ listAlbums0app\albums\application\usecase\listalbumsusecase*@
 executeAapp\activities\application\usecase\recordactivityusecase::execute"
 repository*9
 
-repository+app\activities\domain\activitylogrepositoryî
+repository+app\activities\domain\activitylogrepositoryç
+
+#app\bootstrap\config\securityconfig?
+__construct0app\bootstrap\config\securityconfig::__construct=
+
+fortesting/app\bootstrap\config\securityconfig::fortesting7
+fromenv,app\bootstrap\config\securityconfig::fromenv=
+
+getenvbool/app\bootstrap\config\securityconfig::getenvbool;
+	getenvint.app\bootstrap\config\securityconfig::getenvintA
+getenvstring1app\bootstrap\config\securityconfig::getenvstringK
+loginblockseconds6app\bootstrap\config\securityconfig::loginblocksecondsU
+sessionlifetimeseconds;app\bootstrap\config\securityconfig::sessionlifetimesecondsK
+sessionttlseconds6app\bootstrap\config\securityconfig::sessionttlseconds7
+toarray,app\bootstrap\config\securityconfig::toarray9
+validate-app\bootstrap\config\securityconfig::validateE
+verifypassword3app\bootstrap\config\securityconfig::verifypassword"
+adminEmail"adminPasswordHash"antiReplayEnabled"csrfEnabled"loginBlockMinutes"loginMaxAttempts"rateLimitMaxAttempts"rateLimitWindowSeconds"sessionLifetimeHours"sessionTtlMinutes*
+
+adminEmailstring*
+adminPasswordHashstring*
+antiReplayEnabledbool*
+csrfEnabledbool*
+loginBlockMinutesint*
+loginMaxAttemptsint*
+rateLimitMaxAttemptsint*
+rateLimitWindowSecondsint*
+sessionLifetimeHoursint*
+sessionTtlMinutesintî
 -app\albums\application\dto\updatealbumrequestI
 __construct:app\albums\application\dto\updatealbumrequest::__constructA
 albumid6app\albums\application\dto\updatealbumrequest::albumidG
@@ -411,12 +509,11 @@ httpClient2app\shared\infrastructure\http\httpclientinterface*
 repository**
 eventBusapp\shared\domain\bus\eventbus*:
 
-repository,app\albums\domain\repository\albumrepository∏
+repository,app\albums\domain\repository\albumrepositoryó
 app\albums\domain\entity\album:
 __construct+app\albums\domain\entity\album::__constructB
 actualizarcover/app\albums\domain\entity\album::actualizarcover2
-albumid'app\albums\domain\entity\album::albumid>
-assertalbumid-app\albums\domain\entity\album::assertalbumid<
+albumid'app\albums\domain\entity\album::albumid<
 assertnombre,app\albums\domain\entity\album::assertnombre8
 
 coverimage*app\albums\domain\entity\album::coverimage0
@@ -429,8 +526,8 @@ coverimage*app\albums\domain\entity\album::coverimage0
 toprimitives,app\albums\domain\entity\album::toprimitives.
 touch%app\albums\domain\entity\album::touch6
 	updatedat)app\albums\domain\entity\album::updatedat"albumId"
-coverImage"	createdAt"nombre"	updatedAt*
-albumIdstring*
+coverImage"	createdAt"nombre"	updatedAt*0
+albumId%app\albums\domain\valueobject\albumid*
 
 coverImagestring*
 	createdAtdatetimeimmutable*
@@ -442,11 +539,20 @@ coverImagestring*
 generateuuidCapp\heroes\application\usecase\seedalbumheroesusecase::generateuuid"albumRepository"eventBus"heroRepository*?
 albumRepository,app\albums\domain\repository\albumrepository**
 eventBusapp\shared\domain\bus\eventbus*=
-heroRepository+app\heroes\domain\repository\herorepository“
+heroRepository+app\heroes\domain\repository\herorepositoryµ
++app\application\comics\generatecomicusecaseG
+__construct8app\application\comics\generatecomicusecase::__construct?
+execute4app\application\comics\generatecomicusecase::execute"findHero"	generator*:
+findHero.app\heroes\application\usecase\findherousecase*+
+	generatorapp\ai\comicgeneratorinterfaceÿ
 "app\controllers\ragproxycontroller>
-__construct/app\controllers\ragproxycontroller::__constructV
+__construct/app\controllers\ragproxycontroller::__construct6
+forward+app\controllers\ragproxycontroller::forward@
+forwardagent0app\controllers\ragproxycontroller::forwardagentV
 forwardheroescomparison;app\controllers\ragproxycontroller::forwardheroescomparisonR
-isdebugloggingenabled9app\controllers\ragproxycontroller::isdebugloggingenabled"
+isdebugloggingenabled9app\controllers\ragproxycontroller::isdebugloggingenabled:
+	jsonerror-app\controllers\ragproxycontroller::jsonerrorN
+logmicroservicecall7app\controllers\ragproxycontroller::logmicroservicecall"
 httpClient"ragServiceUrl"signer*@
 
 httpClient2app\shared\infrastructure\http\httpclientinterface*
@@ -459,15 +565,19 @@ httpClient2app\shared\infrastructure\http\httpclientinterface*
 app\config\securityconfig9
 getadminemail(app\config\securityconfig::getadminemailG
 getadminpasswordhash/app\config\securityconfig::getadminpasswordhashA
-getinternalapikey,app\config\securityconfig::getinternalapikeyæ
+getinternalapikey,app\config\securityconfig::getinternalapikeyÄ
 2app\shared\infrastructure\http\httpclientinterface>
-get7app\shared\infrastructure\http\httpclientinterface::getH
+get7app\shared\infrastructure\http\httpclientinterface::get@
+post8app\shared\infrastructure\http\httpclientinterface::postH
 postjson<app\shared\infrastructure\http\httpclientinterface::postjsonè
 <app\notifications\application\herocreatednotificationhandlerX
 __constructIapp\notifications\application\herocreatednotificationhandler::__constructR
 __invokeFapp\notifications\application\herocreatednotificationhandler::__invokeZ
 subscribedtoJapp\notifications\application\herocreatednotificationhandler::subscribedto"sender*=
-sender3app\notifications\domain\service\notificationsenderb
+sender3app\notifications\domain\service\notificationsenderû
+app\ai\comicgeneratorinterface>
+generatecomic-app\ai\comicgeneratorinterface::generatecomic<
+isconfigured,app\ai\comicgeneratorinterface::isconfiguredb
 "app\bootstrap\persistencebootstrap<
 
 initialize.app\bootstrap\persistencebootstrap::initialize√
@@ -546,11 +656,12 @@ repository,app\albums\domain\repository\albumrepositoryÏ
 	isLimitedbool*
 maxRequestsint*
 	remainingint*
-resetAtintÇ
+resetAtintª
 #app\security\logging\securitylogger?
 __construct0app\security\logging\securitylogger::__constructC
 formatcontext2app\security\logging\securitylogger::formatcontext9
-logevent-app\security\logging\securitylogger::logevent"logFile*
+logevent-app\security\logging\securitylogger::logevent7
+logfile,app\security\logging\securitylogger::logfile"logFile*
 logFilestringÇ
 app\controllers\herocontroller:
 __construct+app\controllers\herocontroller::__construct2
@@ -597,16 +708,31 @@ flasherror*app\controllers\authcontroller::flasherror.
 heroRepository+app\heroes\domain\repository\herorepository*5
 	ragSyncer(app\heroes\application\rag\heroragsyncer`
 $app\bootstrap\appenvironmentresolver8
-resolve-app\bootstrap\appenvironmentresolver::resolveŸ
+resolve-app\bootstrap\appenvironmentresolver::resolveﬁ
+%app\controllers\healthcheckcontrollerA
+__construct2app\controllers\healthcheckcontroller::__construct5
+check,app\controllers\healthcheckcontroller::check;
+checkapp/app\controllers\healthcheckcontroller::checkappC
+checkservice3app\controllers\healthcheckcontroller::checkservice"environment"
+httpClient"serviceUrlProvider*
+environmentstring*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterface*3
+serviceUrlProviderapp\config\serviceurlproviderŸ
 .app\shared\infrastructure\bus\inmemoryeventbusB
 publish7app\shared\infrastructure\bus\inmemoryeventbus::publishF
 	subscribe9app\shared\infrastructure\bus\inmemoryeventbus::subscribe"handlers*
-handlersarrayÊ
+handlersarrayƒ
+$app\shared\metrics\prometheusmetricsJ
+escapelabelvalue6app\shared\metrics\prometheusmetrics::escapelabelvalueH
+incrementerrors5app\shared\metrics\prometheusmetrics::incrementerrorsL
+incrementrequests7app\shared\metrics\prometheusmetrics::incrementrequests6
+render,app\shared\metrics\prometheusmetrics::renderF
+resolveversion4app\shared\metrics\prometheusmetrics::resolveversion8
+respond-app\shared\metrics\prometheusmetrics::respondß
 app\heroes\domain\entity\hero9
 __construct*app\heroes\domain\entity\hero::__construct1
-albumid&app\heroes\domain\entity\hero::albumid=
-assertalbumid,app\heroes\domain\entity\hero::assertalbumid;
-assertheroid+app\heroes\domain\entity\hero::assertheroid9
+albumid&app\heroes\domain\entity\hero::albumid9
 assertimage*app\heroes\domain\entity\hero::assertimage7
 
 assertname)app\heroes\domain\entity\hero::assertname9
@@ -626,11 +752,11 @@ assertname)app\heroes\domain\entity\hero::assertname9
 toprimitives+app\heroes\domain\entity\hero::toprimitives-
 touch$app\heroes\domain\entity\hero::touch=
 updatecontent,app\heroes\domain\entity\hero::updatecontent5
-	updatedat(app\heroes\domain\entity\hero::updatedat"albumId"content"	createdAt"heroId"image"name"slug"	updatedAt*
-albumIdstring*
+	updatedat(app\heroes\domain\entity\hero::updatedat"albumId"content"	createdAt"heroId"image"name"slug"	updatedAt*0
+albumId%app\albums\domain\valueobject\albumid*
 contentstring*
-	createdAtdatetimeimmutable*
-heroIdstring*
+	createdAtdatetimeimmutable*.
+heroId$app\heroes\domain\valueobject\heroid*
 imagestring*
 namestring*
 slugstring*
@@ -638,7 +764,11 @@ assertname)app\heroes\domain\entity\hero::assertname9
  app\controllers\configcontroller<
 __construct-app\controllers\configcontroller::__construct6
 services*app\controllers\configcontroller::services"serviceUrlProvider*3
-serviceUrlProviderapp\config\serviceurlprovider®
+serviceUrlProviderapp\config\serviceurlproviderP
+app\bootstrap\servicecontainer.
+build%app\bootstrap\servicecontainer::buildü
+%app\albums\domain\valueobject\albumid/app\shared\domain\valueobject\stringvalueobjectE
+ensureisvalid4app\albums\domain\valueobject\albumid::ensureisvalid®
 app\security\http\apifirewall9
 __construct*app\security\http\apifirewall::__construct=
 checkbodysize,app\security\http\apifirewall::checkbodysize+
@@ -696,7 +826,24 @@ coverImagestring*
 isprotected-app\security\http\authmiddleware::isprotected"authService"protectedPaths"protectedPrefixes*,
 authServiceapp\security\auth\authservice*
 protectedPathsarray*
-protectedPrefixesarray 
+protectedPrefixesarray¡
+3app\shared\infrastructure\resilience\circuitbreakerO
+__construct@app\shared\infrastructure\resilience\circuitbreaker::__constructQ
+allowrequestAapp\shared\infrastructure\resilience\circuitbreaker::allowrequestG
+execute<app\shared\infrastructure\resilience\circuitbreaker::executeI
+getstate=app\shared\infrastructure\resilience\circuitbreaker::getstateE
+isopen;app\shared\infrastructure\resilience\circuitbreaker::isopenK
+	loadstate>app\shared\infrastructure\resilience\circuitbreaker::loadstateO
+opencircuit@app\shared\infrastructure\resilience\circuitbreaker::opencircuitS
+recordfailureBapp\shared\infrastructure\resilience\circuitbreaker::recordfailureS
+recordsuccessBapp\shared\infrastructure\resilience\circuitbreaker::recordsuccessC
+reset:app\shared\infrastructure\resilience\circuitbreaker::resetK
+	savestate>app\shared\infrastructure\resilience\circuitbreaker::savestate"failureThreshold"halfOpenMaxCalls"name"openTtlSeconds"	stateFile*
+failureThresholdint*
+halfOpenMaxCallsint*
+namestring*
+openTtlSecondsint*
+	stateFilestring 
 'app\heroes\application\dto\heroresponseC
 __construct4app\heroes\application\dto\heroresponse::__construct=
 fromhero1app\heroes\application\dto\heroresponse::fromhero;
@@ -781,12 +928,13 @@ coverimage0app\albums\domain\event\albumupdated::coverimage<
 coverImage"nombre*
 
 coverImagestring*
-nombrestringè
+nombrestringÃ
 -app\shared\infrastructure\http\curlhttpclientI
 __construct:app\shared\infrastructure\http\curlhttpclient::__constructO
 executerequest=app\shared\infrastructure\http\curlhttpclient::executerequestM
 formatheaders<app\shared\infrastructure\http\curlhttpclient::formatheaders9
-get2app\shared\infrastructure\http\curlhttpclient::getC
+get2app\shared\infrastructure\http\curlhttpclient::get;
+post3app\shared\infrastructure\http\curlhttpclient::postC
 postjson7app\shared\infrastructure\http\curlhttpclient::postjsonK
 sleepbackoff;app\shared\infrastructure\http\curlhttpclient::sleepbackoff"internalToken*
 internalTokenstring…
@@ -795,7 +943,8 @@ coverImagestring*
 runtests'app\controllers\devcontroller::runtests"
 testRunner*,
 
-testRunnerapp\dev\test\phpunittestrunner˙	
+testRunnerapp\dev\test\phpunittestrunner¡
+
 app\config\serviceurlprovider9
 __construct*app\config\serviceurlprovider::__construct7
 
@@ -803,7 +952,8 @@ appendpath)app\config\serviceurlprovider::appendpathE
 ensureenvironment0app\config\serviceurlprovider::ensureenvironment=
 getappbaseurl,app\config\serviceurlprovider::getappbaseurl7
 
-getapphost)app\config\serviceurlprovider::getapphostC
+getapphost)app\config\serviceurlprovider::getapphostE
+getheatmapbaseurl0app\config\serviceurlprovider::getheatmapbaseurlC
 getopenaibaseurl/app\config\serviceurlprovider::getopenaibaseurlC
 getopenaichaturl/app\config\serviceurlprovider::getopenaichaturl=
 getopenaihost,app\config\serviceurlprovider::getopenaihost=
@@ -839,7 +989,15 @@ initialize(app\bootstrap\eventbootstrap::initializeç
 execute9app\heroes\application\usecase\listheroesusecase::execute"
 repository*9
 
-repository+app\heroes\domain\repository\herorepository
+repository+app\heroes\domain\repository\herorepository∂
+/app\shared\domain\valueobject\stringvalueobjectK
+__construct<app\shared\domain\valueobject\stringvalueobject::__constructI
+
+__tostring;app\shared\domain\valueobject\stringvalueobject::__tostringO
+ensureisvalid>app\shared\domain\valueobject\stringvalueobject::ensureisvalidA
+equals7app\shared\domain\valueobject\stringvalueobject::equals?
+value6app\shared\domain\valueobject\stringvalueobject::value"value*
+valuestring
 ,app\heroes\application\dto\createherorequestH
 __construct9app\heroes\application\dto\createherorequest::__construct@
 albumid5app\heroes\application\dto\createherorequest::albumidD
@@ -871,7 +1029,16 @@ repository+app\heroes\domain\repository\herorepository
 execute@app\notifications\application\clearnotificationsusecase::execute"
 repository*E
 
-repository7app\notifications\infrastructure\notificationrepositoryˇ
+repository7app\notifications\infrastructure\notificationrepositoryÀ
+app\controllers\ttscontroller9
+__construct*app\controllers\ttscontroller::__construct3
+generate'app\controllers\ttscontroller::generate"apiKey"defaultModelId"defaultVoiceId"
+httpClient*
+apiKeystring*
+defaultModelIdstring*
+defaultVoiceIdstring*@
+
+httpClient2app\shared\infrastructure\http\httpclientinterfaceˇ
 ,app\application\security\loginattemptserviceH
 __construct9app\application\security\loginattemptservice::__constructB
 cleanold6app\application\security\loginattemptservice::cleanoldL

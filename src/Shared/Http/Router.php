@@ -79,8 +79,14 @@ final class Router
         }
 
         $csrfMiddleware = $this->csrfMiddleware();
-        if ($csrfMiddleware !== null && !$csrfMiddleware->handle($path)) {
-            return;
+        if ($csrfMiddleware !== null) {
+            try {
+                if (!$csrfMiddleware->handle($path)) {
+                    return;
+                }
+            } catch (\App\Security\Http\CsrfTerminationException) {
+                return; // 403 response already sent by middleware
+            }
         }
 
 

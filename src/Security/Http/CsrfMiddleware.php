@@ -73,10 +73,7 @@ class CsrfMiddleware
     protected function terminate(): void
     {
         http_response_code(403);
-        if (defined('PHPUNIT_RUNNING')) {
-            throw new \RuntimeException('CSRF terminated');
-        }
-        exit;  // @codeCoverageIgnore
+        throw new CsrfTerminationException();
     }
 
     private function logFailure(string $path, mixed $token): void
