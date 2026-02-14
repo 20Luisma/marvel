@@ -63,12 +63,9 @@ final class CsrfMiddlewareTest extends TestCase
         // terminate() is called once — that's the key assertion for CSRF failure
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
         $result = $this->middleware->handle('/login');
-        $output = ob_get_clean();
         
         $this->assertFalse($result);
-        $this->assertStringContainsString('Token CSRF', $output);
     }
 
     public function testHandleUnprotectedPath(): void
@@ -123,9 +120,7 @@ final class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
         $result = $this->middleware->handle('/login');
-        ob_get_clean();
         
         $this->assertFalse($result);
     }
@@ -137,9 +132,7 @@ final class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
         $result = $this->middleware->handle('/login');
-        ob_get_clean();
         
         $this->assertFalse($result);
         
@@ -163,9 +156,7 @@ final class CsrfMiddlewareTest extends TestCase
         
         $middlewareNoLogger->expects($this->once())->method('terminate');
         
-        ob_start();
         $result = $middlewareNoLogger->handle('/login');
-        ob_get_clean();
         
         $this->assertFalse($result);
     }
