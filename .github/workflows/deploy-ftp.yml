@@ -255,4 +255,4 @@ jobs:
           # ✅ Estado aislado (evita colisiones entre despliegues)
           state-name: ftp-state-rag.json
 # Triggering deploy via GitHub
-# Updated at Sat Feb 14 18:22:00 CET 2026
+# Updated at Fri Feb 14 19:01:00 CET 2026
