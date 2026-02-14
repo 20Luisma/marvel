@@ -45,10 +45,12 @@ foreach (['ALBUMS_DRIVER', 'HEROES_DRIVER', 'ACTIVITY_DRIVER'] as $driverEnv) {
     $_SERVER[$driverEnv] = 'file';
 }
 
-// Silenciar avisos PHP en consola de PHPUnit y redirigirlos a un log temporal.
-ini_set('display_errors', '0');
-ini_set('log_errors', '0');
-ini_set('error_log', sys_get_temp_dir() . '/phpunit-clean-marvel.log');
+// Silenciar avisos PHP en consola de PHPUnit y redirigirlos a un log temporal (solo fuera de CI).
+if (!getenv('GITHUB_ACTIONS')) {
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '0');
+    ini_set('error_log', sys_get_temp_dir() . '/phpunit-clean-marvel.log');
+}
 
 // Redirigir warning de PDO fallback a JSON para no ensuciar la salida de PHPUnit.
 set_error_handler(static function (int $severity, string $message, ?string $file = null, ?int $line = null): bool {

@@ -43,7 +43,22 @@ jobs:
       - name: Run PHPUnit tests
         run: |
           mkdir -p build/logs
-          XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
+          XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml.dist
+          
+          # Detección y normalización si PHPUnit ignoró el CLI o la ruta del XML
+          if [ -s build/logs/clover.xml ]; then
+            echo "✅ Coverage file found at build/logs/clover.xml"
+          elif [ -s coverage.xml ]; then
+            mv coverage.xml build/logs/clover.xml
+            echo "✅ Coverage file moved from root to build/logs/clover.xml"
+          fi
+          
+          if [ ! -s build/logs/clover.xml ]; then
+            echo "❌ CRITICAL: No coverage file generated!"
+            ls -la
+            find . -name "clover.xml" || true
+            exit 1
+          fi
 
       - name: Enforce coverage threshold
         env:
@@ -136,6 +151,10 @@ jobs:
         with:
           args: >
             -Dsonar.php.coverage.reportPaths=build/logs/clover.xml
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.verbose=true
+            -Dsonar.projectBaseDir=.
 
   # 🟦 PA11Y (ACCESIBILIDAD AA)
   pa11y:
