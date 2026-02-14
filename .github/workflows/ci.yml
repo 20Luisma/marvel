@@ -49,6 +49,7 @@ jobs:
           php -d memory_limit=512M -d pcov.enabled=1 -d pcov.directory=src \
             vendor/bin/phpunit --configuration phpunit.xml.dist \
             --testsuite "Application Test Suite" \
+            --exclude-group no-coverage \
             --coverage-clover build/logs/clover.xml \
             || true
           if [ -s build/logs/clover.xml ]; then

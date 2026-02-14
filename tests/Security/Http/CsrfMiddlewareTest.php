@@ -25,6 +25,9 @@ use App\Security\Http\CsrfMiddleware;
 use App\Security\Logging\SecurityLogger;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group no-coverage
+ */
 class CsrfMiddlewareTest extends TestCase
 {
     private $logger;
