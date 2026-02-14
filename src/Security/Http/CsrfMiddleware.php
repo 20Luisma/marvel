@@ -59,6 +59,7 @@ class CsrfMiddleware
                 'Token CSRF inválido o ausente. Por favor, recarga la página para restaurar la sesión de seguridad.',
                 403
             );
+            $this->terminate();
             return false;
         }
 
@@ -70,6 +71,7 @@ class CsrfMiddleware
 
     protected function terminate(): void
     {
+        http_response_code(403);
         exit;
     }
 

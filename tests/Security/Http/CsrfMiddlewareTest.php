@@ -87,7 +87,7 @@ class CsrfMiddlewareTest extends TestCase
         $output = ob_get_clean();
         
         $this->assertEquals(403, $GLOBALS['response_code']);
-        $this->assertStringContainsString('Invalid CSRF token', $output);
+        $this->assertStringContainsString('Token CSRF inválido o ausente', $output);
     }
 
     public function testHandleUnprotectedPath(): void

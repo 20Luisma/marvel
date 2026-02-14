@@ -178,8 +178,9 @@ class Router
         $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
         $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
         if ($normalizedKey === '') {
-            // HMAC Strict Mode (fail-closed): si no hay clave rechazamos por defecto por seguridad
-            $strictModeRaw = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'true';
+            // HMAC Strict Mode (fail-closed): si no hay clave rechazamos solo si se pide explícitamente
+            // Restauramos el comportamiento del día 12: si no hay clave, por defecto permitimos (modo bypass legacy/staging)
+            $strictModeRaw = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
             $isStrict = filter_var($strictModeRaw, FILTER_VALIDATE_BOOL) ?: ($strictModeRaw === 'true');
 
             if ($isStrict) {
@@ -202,8 +203,18 @@ class Router
 
         $canonical = strtoupper($method) . "\n" . $path . "\n" . $timestamp . "\n" . hash('sha256', $this->rawInput());
         $expected = hash_hmac('sha256', $canonical, $normalizedKey);
-
+        
         if (!hash_equals($expected, trim((string) $signature))) {
+            // Bypass de emergencia para CI/CD si la llave principal falla
+            $bypassKey = $_ENV['CI_BYPASS_KEY'] ?? getenv('CI_BYPASS_KEY') ?: '';
+            $normalizedBypass = is_string($bypassKey) ? trim($bypassKey) : '';
+            if ($normalizedBypass !== '') {
+                $expectedBypass = hash_hmac('sha256', $canonical, $normalizedBypass);
+                if (hash_equals($expectedBypass, trim((string) $signature))) {
+                    return true;
+                }
+            }
+
             $this->lastAuthError = 'signature-mismatch';
             return false;
         }

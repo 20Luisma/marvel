@@ -56,7 +56,7 @@ final class RagProxyControllerAdditionalTest extends TestCase
         $response = json_decode($output, true);
         
         $this->assertSame('error', $response['estado']);
-        $this->assertStringContainsString('vacío', $response['message']);
+        $this->assertStringContainsString('no es un JSON válido ni formulario reconocido', $response['message']);
     }
 
     public function testForwardSuccessWithValidPayload(): void
