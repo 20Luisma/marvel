@@ -43,17 +43,22 @@ jobs:
         run: |
           if [ -f vendor/bin/phpunit ]; then
             mkdir -p build/logs
-            php -d pcov.enabled=1 vendor/bin/phpunit --testdox --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
-            if [ ! -s build/logs/clover.xml ]; then
-              echo "Primary coverage output missing, retrying with explicit --coverage-filter=src"
-              php -d pcov.enabled=1 vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-filter src --coverage-clover build/logs/clover.xml
-            fi
+            php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover build/logs/clover.xml
             if [ -s build/logs/clover.xml ]; then
               echo "Coverage file detected at build/logs/clover.xml"
             else
+              echo "Primary clover output missing, searching fallback coverage files"
+              fallback_file="$(find . -maxdepth 4 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) | head -n 1)"
+              if [ -n "${fallback_file}" ]; then
+                cp "${fallback_file}" build/logs/clover.xml
+                echo "Coverage file normalized from ${fallback_file} to build/logs/clover.xml"
+              fi
+            fi
+            if [ ! -s build/logs/clover.xml ]; then
               echo "Coverage files not found after PHPUnit run"
               php -v
               php -m | grep -Ei "pcov|xdebug" || true
+              find . -maxdepth 4 -type f \( -name 'clover.xml' -o -name 'coverage.xml' \) -print || true
               ls -la
               ls -la build || true
               ls -la build/logs || true
