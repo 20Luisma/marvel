@@ -40,6 +40,8 @@ if (isset($_GET['action'])) {
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache');
     header('Connection: keep-alive');
+    session_write_close(); // Liberar bloqueo de sesión para evitar deadlock con procesos hijos
+
 
     $script_path = strpos($action, 'rollback-') === 0 
         ? realpath(__DIR__ . '/../bin/rollback.sh') 
