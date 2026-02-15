@@ -6,8 +6,8 @@
 
 ## Contexto
 
-El proyecto necesita demostrar capacidades de Machine Learning aplicadas al dominio Marvel.
-Se requiere una implementación ML real integrada en la arquitectura existente, 
+El proyecto necesita demostrar capacidades de recomendación por similitud aplicadas al dominio Marvel.
+Se requiere una implementación técnica integrada en la arquitectura existente, 
 que funcione en el hosting compartido (Hostinger) sin dependencias de Python ni GPU.
 
 ## Decisión
@@ -42,13 +42,13 @@ Infrastructure: PhpMlMovieRecommender (implementación ML)
 |--------|-------------------|
 | Python + scikit-learn | No soportado en Hostinger (hosting PHP only) |
 | API ML externa (AWS/GCP) | Coste y dependencia externa innecesaria |
-| Simple sort by vote | No es ML real, no demuestra conocimiento |
+| Simple sort by vote | No aporta una lógica de similitud suficiente para el objetivo del TFM |
 | TensorFlow.js frontend | Over-engineering para el caso de uso |
 
 ## Consecuencias
 
 **Positivas:**
-- ML real integrado en Clean Architecture
+- Recomendador por similitud integrado en Clean Architecture
 - Compatible con hosting compartido PHP
 - Tests unitarios verifican precisión del modelo
 - Endpoint REST documentado con metadata del algoritmo

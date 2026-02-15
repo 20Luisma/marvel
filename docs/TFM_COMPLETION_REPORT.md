@@ -134,10 +134,10 @@ La subida de portadas de álbumes estaba acoplada a funciones nativas de PHP (`m
 | `src/Application/Comics/GenerateComicUseCase.php` | Orquestación completa de la funcionalidad |
 | `src/Controllers/ComicController.php` | Solo maneja HTTP Request/Response (Skinny Controller) |
 
-## 🤖 Machine Learning: Recomendador de Películas Marvel
+## 🤖 Recomendador por Similitud: Películas Marvel
 
 ### Problema resuelto
-El proyecto consumía IA exclusivamente a través de APIs externas (OpenAI), sin implementar ningún modelo de Machine Learning propio. Para un TFM de un máster de IA, era necesario demostrar capacidad de entrenar y usar un modelo ML real.
+El proyecto consumía IA exclusivamente a través de APIs externas (OpenAI), sin implementar ningún modelo de recomendación propio. Para un TFM de un máster de IA, era necesario demostrar capacidad de diseñar e integrar un recomendador basado en similitud.
 
 ### Solución implementada
 Recomendador de películas Marvel basado en **KNN (K-Nearest Neighbors)** con distancia Euclidiana + **Jaccard Similarity** para comparación textual. Implementado con **PHP-ML**, compatible con hosting compartido.
@@ -172,4 +172,4 @@ Película seleccionada → Feature Extraction → KNN Distance + Jaccard Text �
 - **Endpoint**: `GET /api/movie-recommend.php?id={tmdb_id}&limit=5`
 
 ---
-*Proyecto finalizado con criterios de nivel profesional (Company Level).*
+*Proyecto finalizado con criterios académicos sólidos y trazabilidad técnica.*

@@ -17,8 +17,8 @@ use Phpml\Math\Distance\Euclidean;
  * 2. release_year (normalized 0-1)
  * 3. overview_similarity (TF-IDF cosine similarity approximation)
  *
- * This is a real ML implementation using PHP-ML's distance metrics,
- * not just a simple filter or sort.
+ * Similarity-based recommender built with PHP-ML distance metrics.
+ * Designed as a practical academic implementation.
  */
 final class PhpMlMovieRecommender implements MovieRecommenderInterface
 {
