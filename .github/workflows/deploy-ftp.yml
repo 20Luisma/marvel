@@ -119,6 +119,7 @@ jobs:
 
   deploy_app:
     name: Deploy app principal
+    needs: quality_gate
     runs-on: ubuntu-latest
 
     steps:
