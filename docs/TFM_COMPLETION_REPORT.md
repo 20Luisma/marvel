@@ -164,7 +164,7 @@ Película seleccionada → Feature Extraction → KNN Distance + Jaccard Text �
 | Application | `src/Movies/Application/RecommendMoviesUseCase.php` | Orquestación |
 | Infrastructure | `src/Movies/Infrastructure/ML/PhpMlMovieRecommender.php` | Implementación ML |
 | API | `public/api/movie-recommend.php` | Endpoint REST |
-| Tests | `tests/Movies/MovieRecommenderTest.php` | 11 tests, 76 assertions |
+| Tests | `tests/Movies/MovieRecommenderTest.php` | 12 tests, 81 assertions (98.36% coverage) |
 
 ### Referencia
 - **ADR-021**: `docs/architecture/ADR-021-ml-movie-recommender.md`
