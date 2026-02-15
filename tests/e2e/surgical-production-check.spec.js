@@ -38,16 +38,23 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
       '/api/ai-token-metrics.php'
     ];
 
+    // Códigos aceptables por endpoint:
+    // - 200: OK (público)
+    // - 400: Falta payload requerido (marvel-agent.php sin parámetros)
+    // - 403: Endpoint protegido por auth (ai-token-metrics.php requiere admin)
+    // Cualquiera de estos confirma que el servicio está VIVO y responde.
+    const acceptableStatus = {
+      '/heroes': [200],
+      '/api/marvel-agent.php': [200, 400],
+      '/api/ai-token-metrics.php': [200, 403],
+    };
+
     for (const path of criticalPaths) {
       const response = await request.get(path);
       const status = response.status();
+      const allowed = acceptableStatus[path] || [200];
       
-      // marvel-agent.php devuelve 400 si no hay parámetros, lo cual es correcto (está vivo)
-      if (path === '/api/marvel-agent.php') {
-         expect([200, 400], `La API en ${path} respondió con status ${status}`).toContain(status);
-      } else {
-         expect(status, `La API en ${path} está caída! (Recibido: ${status})`).toBe(200);
-      }
+      expect(allowed, `La API en ${path} está caída! (Recibido: ${status})`).toContain(status);
     }
   });
 

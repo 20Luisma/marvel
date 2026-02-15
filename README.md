@@ -238,4 +238,4 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - **Propósito:** Este es un proyecto con fines **exclusivamente académicos y educativos**, desarrollado como Trabajo Final de Máster. No tiene ánimo de lucro ni objetivos comerciales.
 - **Atribución:** Assets property of © 2026 MARVEL
 
-<!-- Deployment Verified: 2026-02-14 22:58 UTC -->
+<!-- Deployment Verified: 2026-02-13 00:12 UTC -->
