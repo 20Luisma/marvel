@@ -112,7 +112,7 @@ El proyecto implementa un flujo de **DevSecOps** avanzado mediante GitHub Action
 Como alternativa ultra-rápida y resiliente al flujo de GitHub Actions, el proyecto cuenta con el sistema **Sentinel Deploy**:
 - **Velocidad Extrema**: Despliegues en segundos mediante Sincronización Quirúrgica (`rsync` delta-upload).
 - **Independencia**: Permite desplegar directamente desde el entorno local sin depender de las colas de GitHub Actions.
-- **Control Total**: Dashboard interactivo (`bin/start-dashboard.sh`) para monitorizar tests y subidas en tiempo real.
+- **Control Operativo**: Scripts CLI (`bin/deploy-hostinger.sh`, `bin/rollback.sh`) para despliegue y rollback trazable.
 - **Seguridad**: Validación automática de Quality Gate local y restricción de rama `main` garantizada.
 
 ---
@@ -237,3 +237,5 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - **Datos y Contenido:** Todos los datos, nombres e imágenes de los héroes utilizados en este proyecto son propiedad de **© 2026 MARVEL**. Este es un proyecto fan-made con activos descargados.
 - **Propósito:** Este es un proyecto con fines **exclusivamente académicos y educativos**, desarrollado como Trabajo Final de Máster. No tiene ánimo de lucro ni objetivos comerciales.
 - **Atribución:** Assets property of © 2026 MARVEL
+
+<!-- Deployment Verified: 2026-02-13 00:12 UTC -->
