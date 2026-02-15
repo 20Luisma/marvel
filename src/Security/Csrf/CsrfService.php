@@ -11,7 +11,7 @@ final class CsrfService
 
     public static function generateToken(): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !defined('PHPUNIT_RUNNING')) {
             session_start();
         }
 
@@ -27,7 +27,7 @@ final class CsrfService
 
     public static function validateToken(?string $token): bool
     {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !defined('PHPUNIT_RUNNING')) {
             session_start();
         }
 

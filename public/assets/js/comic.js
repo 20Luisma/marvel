@@ -164,6 +164,11 @@ function resetAudioPlayer(audioElement) {
   audioElement.style.display = 'none';
 }
 
+function getCsrfToken() {
+  const input = document.querySelector('input[name="csrf_token"]') || document.querySelector('input[name="_token"]');
+  return input ? input.value : '';
+}
+
 async function requestTtsPlayback({ getText, button, audioElement, emptyMessage }) {
   if (!button || !audioElement) return;
   const textSource = typeof getText === 'function' ? getText() : getText;
@@ -188,7 +193,10 @@ async function requestTtsPlayback({ getText, button, audioElement, emptyMessage 
   try {
     const response = await fetch(ELEVENLABS_TTS_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': getCsrfToken()
+      },
       body: JSON.stringify({ text: normalizedText }),
       cache: 'no-store'
     });
@@ -1127,7 +1135,10 @@ comicForm.addEventListener('submit', async (event) => {
   try {
     const response = await fetch('/comics/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': getCsrfToken()
+      },
       body: JSON.stringify({ heroIds: selectedHeroes.map(hero => hero.heroId) })
     });
 

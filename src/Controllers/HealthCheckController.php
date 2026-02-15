@@ -33,6 +33,11 @@ final class HealthCheckController
                 $this->serviceUrlProvider->getOpenAiBaseUrl($this->environment),
                 'openai-service'
             ),
+            'heatmap-service' => $this->checkService(
+                $this->serviceUrlProvider->getHeatmapBaseUrl($this->environment),
+                'heatmap-service',
+                '/health'
+            ),
         ];
 
         $allHealthy = true;
@@ -79,7 +84,7 @@ final class HealthCheckController
     /**
      * @return array{status: string, response_time_ms: float, error?: string}
      */
-    private function checkService(string $baseUrl, string $serviceName): array
+    private function checkService(string $baseUrl, string $serviceName, string $path = '/health'): array
     {
         $start = microtime(true);
 
@@ -91,7 +96,7 @@ final class HealthCheckController
             ];
         }
 
-        $healthUrl = rtrim($baseUrl, '/') . '/health';
+        $healthUrl = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
 
         try {
             $response = $this->httpClient->get(

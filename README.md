@@ -189,7 +189,7 @@ El objetivo académico es demostrar un sistema real funcionando, no un prototipo
 Este proyecto sigue el estándar de las mejores empresas tecnológicas (FAANG/MAANG), implementando un ciclo de vida de desarrollo de software (SDLC) robusto:
 
 1.  **Local (Laboratorio):** Desarrollo en `localhost`. El código es agnóstico y auto-detecta el entorno.
-2.  **Staging (Espejo 100%):** Al hacer push a ramas `feature/`, se despliega automáticamente en Staging. Aquí se valida la integración real del sistema tripartito (App + OpenAI + RAG) en la nube.
+2.  **Staging (Espejo 100%):** El despliegue automático a Staging se activa en pushes a `staging`, `staging-final` y `feature/staging-final` (y también en PRs hacia `main`, según workflow). Aquí se valida la integración real del sistema tripartito (App + OpenAI + RAG) en la nube.
 3.  **Producción (VIP):** El deploy a la web oficial solo ocurre tras un **Merge/Pull Request** exitoso a la rama `main`. Esto garantiza que NUNCA se suba código no probado.
 
 > **Regla de Oro:** La rama `main` es sagrada. Solo contiene código validado en Staging.

@@ -306,12 +306,12 @@
           <div class="metric-label">Líneas de código</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">152+</div>
+          <div class="metric-value">159</div>
           <div class="metric-label">Archivos de test (PHPUnit + E2E)</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">90%</div>
-          <div class="metric-label">Code coverage (src/)</div>
+          <div class="metric-value">88.93%</div>
+          <div class="metric-label">Code coverage (src/) <br><small>a 14 Feb 2026</small></div>
         </div>
         <div class="metric-card">
           <div class="metric-value">4</div>
@@ -437,7 +437,7 @@
         <div class="card">
           <div class="card-title">Concepto de "Espejo"</div>
           <ul class="list">
-            <li><strong>Paridad total:</strong> Entornos Local, Staging y Producción 100% idénticos.</li>
+            <li><strong>Paridad objetivo:</strong> Entornos Local, Staging y Producción con configuración homologada y validación en CI/CD.</li>
             <li><strong>Código Agnóstico:</strong> El software es ciego a la ruta; se adapta vía <code>.env</code>.</li>
             <li><strong>Aislamiento:</strong> Triada de microservicios propia para cada entorno.</li>
           </ul>
@@ -465,9 +465,9 @@
         <div class="card">
           <div class="card-title">Arquitectura Distribuida</div>
           <ul class="list">
-            <li>🐍 <strong>Heatmap Service</strong> · Analítica en Python (GCP).</li>
-            <li>🤖 <strong>OpenAI Service</strong> · Proxy seguro a la API.</li>
-            <li>🧠 <strong>RAG Service</strong> · Cerebro del Agente IA.</li>
+            <li>🐍 <strong>Heatmap Service</strong> · Analítica en Python (GCP). <em style="font-size:0.8em; color:rgba(255,255,255,0.5);">[Servicio externo · solo el cliente PHP está en este repo]</em></li>
+            <li>🤖 <strong>OpenAI Service</strong> · Proxy seguro a la API. <em style="font-size:0.8em; color:rgba(255,255,255,0.5);">[44 tests, 90 assertions]</em></li>
+            <li>🧠 <strong>RAG Service</strong> · Cerebro del Agente IA. <em style="font-size:0.8em; color:rgba(255,255,255,0.5);">[13 archivos de test]</em></li>
           </ul>
         </div>
         <div class="card">
@@ -493,7 +493,7 @@
             <li><strong>Propósito:</strong> Comparación y Creación de Cómics.</li>
             <li><strong>Datos:</strong> Base local <code>heroes.json</code>.</li>
             <li><strong>Motor:</strong> Similitud Coseno + PHP puro.</li>
-            <li><strong>Ventaja:</strong> Latencia ultra-baja (< 300ms).</li>
+            <li><strong>Ventaja:</strong> Latencia baja en local (depende del entorno y la carga).</li>
           </ul>
         </div>
         <div class="card" style="border-top: 4px solid #667eea;">
@@ -522,7 +522,7 @@
           <ul class="list">
             <li><strong>Agentia (Cloud First):</strong> Prioriza la precisión de Pinecone.</li>
             <li><strong>Failover Inteligente:</strong> Si Pinecone falla, conmuta al instante a la <strong>Knowledge Base local (JSON)</strong>.</li>
-            <li><strong>Continuidad:</strong> El usuario nunca recibe un error, solo una respuesta desde la base de datos de respaldo.</li>
+            <li><strong>Continuidad:</strong> Se prioriza respuesta degradada con fallback local antes de devolver error.</li>
           </ul>
         </div>
         <div class="card">
@@ -585,7 +585,7 @@
       <div class="grid-2">
         <div class="card">
           <ul class="list">
-            <li>🧪 <strong>PHPUnit</strong> · 152 archivos de test, 90% coverage (src/)</li>
+            <li>🧪 <strong>PHPUnit</strong> · 159 archivos de test, 88.93% coverage (src/)</li>
             <li>📊 <strong>SonarCloud</strong> · Análisis de calidad</li>
             <li>🤖 <strong>CodeRabbit</strong> · Revisión por IA</li>
             <li>🎭 <strong>Playwright</strong> · Tests E2E</li>
@@ -597,7 +597,7 @@
             <li>🔐 <strong>CSRF tokens</strong> en todos los formularios</li>
             <li>🛡️ <strong>Quality Gates</strong> · Filtro pre-producción</li>
             <li>🚀 <strong>GitHub Actions</strong> · Deploy automático</li>
-            <li>☸️ <strong>Kubernetes</strong> · Manifiestos preparados</li>
+            <li>☸️ <strong>Kubernetes</strong> · Manifiestos de demostración <em style="font-size:0.75em; color:rgba(255,255,255,0.5);">[documentación técnica, no desplegados en cluster real]</em></li>
           </ul>
         </div>
       </div>
@@ -720,7 +720,7 @@
     </section>
 
     <section class="slide" data-slide="18">
-      <div class="slide-title">🚀 Sentinel Command: Sistema de Deploy con Quality Gate</div>
+      <div class="slide-title">🚀 Sentinel Deploy: Sistema de Deploy con Quality Gate</div>
       <div class="divider"></div>
       
       <div class="card" style="border-left: 5px solid #38bdf8; background: rgba(56, 189, 248, 0.02); margin-bottom: 20px;">
@@ -728,7 +728,7 @@
         <p style="margin-bottom: 15px;">Infraestructura avanzada de despliegue mediante un centro de operaciones visual:</p>
         <div class="grid-2">
           <ul class="list">
-            <li>🖥️ <strong>Command Hub</strong>: Panel visual (PHP/JS) para control total de Producción y Staging.</li>
+            <li>🖥️ <strong>Operación CLI</strong>: Scripts de despliegue/rollback con trazabilidad por entorno.</li>
             <li>🧪 <strong>Quality Gate</strong>: Tests unitarios/integración obligatorios antes del despliegue.</li>
           </ul>
           <ul class="list">
@@ -765,14 +765,14 @@
           <ul class="list">
             <li>📄 <strong>README.md</strong> · Guía de inicio rápido</li>
             <li>🏗️ <strong>ARCHITECTURE.md</strong> · Capas y <strong>Diagramas UML</strong></li>
-            <li>📜 <strong>/docs/architecture/</strong> · 14 Registros <strong>ADR</strong></li>
+            <li>📜 <strong>/docs/architecture/</strong> · 18 Registros <strong>ADR</strong></li>
             <li>🔐 <strong>SECURITY.md</strong> · Políticas y prácticas</li>
           </ul>
         </div>
         <div class="card">
           <ul class="list">
             <li>📚 <strong>/docs/guides/</strong> · Guías detalladas</li>
-            <li>🤖 <strong>/docs/ai/</strong> · Documentación de IA</li>
+            <li>🤖 <strong>/docs/marvel-agent/</strong> · Documentación de IA</li>
             <li>🧪 <strong>KPIs & Coverage</strong> · Métricas de calidad</li>
             <li>🌐 <strong>README web</strong> · Versión interactiva</li>
             <li>🔗 <strong>API Docs</strong> · <a href="https://iamasterbigschool.contenido.creawebes.com/api/docs.html" target="_blank" style="color: #e23636; text-decoration: underline;">Contrato OpenAPI / Swagger</a></li>
@@ -824,7 +824,7 @@
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <span class="timeline-date" id="current-date-timeline">25 Ene 2026</span>
-          <span class="timeline-label">Estado Actual (v1.0.11)</span>
+          <span class="timeline-label">Estado Actual (v1.3.2)</span>
         </div>
       </div>
       
@@ -899,7 +899,7 @@
       </div>
 
       <div style="text-align:center; font-size:0.65rem; color:rgba(255,255,255,0.35); margin-top:10px; font-style:italic;">
-        Los indicadores verdes realizan peticiones <code style="font-size:0.6rem; color:#00ff88;">fetch()</code> reales a cada API desde este navegador. Los azules son servicios que bloquean CORS y se verifican vía CI/CD.
+        Los indicadores verdes realizan peticiones <code style="font-size:0.6rem; color:#00ff88;">fetch()</code> desde el navegador cuando CORS lo permite. Los azules se validan por integración y CI/CD.
       </div>
 
       <span class="slide-number">21 / 27</span>
@@ -945,7 +945,7 @@
         <div class="mobile-info">
           <div class="card" style="margin-bottom: 20px;">
             <ul class="list">
-              <li>📱 <strong>App Multiplataforma</strong> · Cliente nativo desarrollado en Flutter</li>
+              <li>📱 <strong>App Multiplataforma</strong> · Cliente nativo Flutter en repositorio externo</li>
               <li>🔌 <strong>Consumo de API Real</strong> · Validación de endpoints en entornos externos</li>
               <li>⚡ <strong>Prueba de Desacoplamiento</strong> · Demostración práctica de Arquitectura Limpia</li>
               <li>🧩 <strong>Ecosistema Escalable</strong> · Backend agnóstico al cliente (Web/Móvil)</li>
@@ -1015,7 +1015,8 @@
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Refactor Application Layer</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Client LLM Desacoplado</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Abstracción Filesystem</li>
-            <li style="padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ RAG Enterprise (Pinecone)</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ RAG Enterprise (Pinecone)</li>
+            <li style="padding-left: 10px; border-left: 2px solid #ef4444; color: #ef4444; font-weight: 700;">Architecture Tests (Deptrac)</li>
           </ul>
         </div>
         <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);">
@@ -1023,7 +1024,10 @@
           <ul style="font-size: 0.8rem; color: #cbd5e1; list-style: none; padding: 0;">
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Healthchecks Proactivos</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Seguridad CSP Estricta</li>
-            <li style="padding-left: 10px; border-left: 2px solid #f59e0b;">EventBus con Persistencia</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">EventBus con Persistencia</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Dashboard de Resiliencia</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Stress Testing (k6)</li>
+            <li style="padding-left: 10px; border-left: 2px solid #f59e0b;">Contract Testing (Pact)</li>
           </ul>
         </div>
         <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);">
@@ -1031,7 +1035,8 @@
           <ul style="font-size: 0.8rem; color: #cbd5e1; list-style: none; padding: 0;">
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Logging Centralizado (trace_id)</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ HSTS Preload + HMAC</li>
-            <li style="padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Rate Limiting Granular</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Rate Limiting Granular</li>
+            <li style="padding-left: 10px; border-left: 2px solid #3b82f6;">Mutation Testing (Infection)</li>
           </ul>
         </div>
       </div>

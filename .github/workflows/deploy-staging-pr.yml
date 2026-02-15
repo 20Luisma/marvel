@@ -48,11 +48,15 @@ jobs:
           state-name: ftp-state-staging.json
 
           exclude: |
+            .git/**
+            **/.git/**
             **/.git*
             **/.github/**
             node_modules/**
             .scannerwork/**
             tests/**
+            openai-service/**
+            rag-service/**
             **/*.log
             pa11y-*.sh
             package-lock.json

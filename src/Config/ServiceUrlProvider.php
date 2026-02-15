@@ -122,6 +122,21 @@ final class ServiceUrlProvider
         return (string) ($this->config['environments'][$env]['rag']['host'] ?? '');
     }
 
+    public function getHeatmapBaseUrl(?string $environment = null): string
+    {
+        $envBase = getenv('HEATMAP_API_BASE_URL');
+        if (is_string($envBase)) {
+            $trimmed = trim($envBase);
+            if ($trimmed !== '') {
+                return $trimmed;
+            }
+        }
+
+        $env = $this->ensureEnvironment($environment);
+
+        return (string) ($this->config['environments'][$env]['heatmap']['base_url'] ?? 'http://34.74.102.123:8080');
+    }
+
     /**
      * @return array<string, mixed>
      */

@@ -2,30 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Http;
-
-if (!function_exists('App\Security\Http\http_response_code')) {
-    function http_response_code(int $code = 0): int|bool {
-        if ($code !== 0) {
-            $GLOBALS['response_code'] = $code;
-        }
-        return $GLOBALS['response_code'] ?? 200;
-    }
-}
-
-if (!function_exists('App\Security\Http\header')) {
-    function header(string $header, bool $replace = true, int $response_code = 0): void {
-        $GLOBALS['headers'][] = $header;
-    }
-}
-
 namespace Tests\Security\Http;
 
 use App\Security\Http\CsrfMiddleware;
+use App\Security\Http\CsrfTerminationException;
 use App\Security\Logging\SecurityLogger;
 use PHPUnit\Framework\TestCase;
 
-class CsrfMiddlewareTest extends TestCase
+final class CsrfMiddlewareTest extends TestCase
 {
     private $logger;
     private $middleware;
@@ -40,14 +24,12 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->logger = new SecurityLogger($this->logFile);
         
-        // Partial mock to override terminate
+        // Partial mock to override terminate (prevents real termination)
         $this->middleware = $this->getMockBuilder(CsrfMiddleware::class)
             ->setConstructorArgs([$this->logger])
             ->onlyMethods(['terminate'])
             ->getMock();
             
-        $GLOBALS['headers'] = [];
-        $GLOBALS['response_code'] = 200;
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_POST = [];
@@ -56,8 +38,6 @@ class CsrfMiddlewareTest extends TestCase
 
     protected function tearDown(): void
     {
-        unset($GLOBALS['headers']);
-        unset($GLOBALS['response_code']);
         if (file_exists($this->logFile)) {
             unlink($this->logFile);
         }
@@ -70,9 +50,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/login');
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
 
     public function testHandleProtectedPathFailure(): void
@@ -80,23 +60,21 @@ class CsrfMiddlewareTest extends TestCase
         $_SESSION['_csrf_token'] = 'valid_token';
         $_POST['csrf_token'] = 'invalid_token';
         
+        // terminate() is called once — that's the key assertion for CSRF failure
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
-        $this->middleware->handle('/login');
-        $output = ob_get_clean();
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
-        $this->assertStringContainsString('Invalid CSRF token', $output);
+        $this->assertFalse($result);
     }
 
     public function testHandleUnprotectedPath(): void
     {
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/public');
+        $result = $this->middleware->handle('/public');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
     
     public function testHandleGetMethod(): void
@@ -105,9 +83,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/login');
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
 
     public function testHandleWithTokenFromHeader(): void
@@ -118,9 +96,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/login');
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
 
     public function testHandleWithTokenFromAltField(): void
@@ -130,9 +108,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/login');
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
 
     public function testHandleFailureWithMissingToken(): void
@@ -142,11 +120,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
-        $this->middleware->handle('/login');
-        ob_get_clean();
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertFalse($result);
     }
 
     public function testHandleLogsWhenTokenPresentButInvalid(): void
@@ -156,11 +132,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->once())->method('terminate');
         
-        ob_start();
-        $this->middleware->handle('/login');
-        ob_get_clean();
+        $result = $this->middleware->handle('/login');
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertFalse($result);
         
         // Verify log was created
         $this->assertFileExists($this->logFile);
@@ -182,11 +156,9 @@ class CsrfMiddlewareTest extends TestCase
         
         $middlewareNoLogger->expects($this->once())->method('terminate');
         
-        ob_start();
-        $middlewareNoLogger->handle('/login');
-        ob_get_clean();
+        $result = $middlewareNoLogger->handle('/login');
         
-        $this->assertEquals(403, $GLOBALS['response_code']);
+        $this->assertFalse($result);
     }
 
     public function testHandleProtectedApiRoute(): void
@@ -196,8 +168,8 @@ class CsrfMiddlewareTest extends TestCase
         
         $this->middleware->expects($this->never())->method('terminate');
         
-        $this->middleware->handle('/api/rag/heroes');
+        $result = $this->middleware->handle('/api/rag/heroes');
         
-        $this->assertEquals(200, $GLOBALS['response_code']);
+        $this->assertTrue($result);
     }
 }

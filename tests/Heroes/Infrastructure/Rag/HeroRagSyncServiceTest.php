@@ -45,6 +45,12 @@ final class HeroRagSyncServiceTest extends TestCase
         $http = new class implements HttpClientInterface {
             public string $lastUrl = '';
 
+            public function post(string $url, ?string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+            {
+                $this->lastUrl = $url;
+                return new HttpResponse(200, '{"status":"ok"}');
+            }
+
             public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
             {
                 $this->lastUrl = $url;
@@ -78,6 +84,12 @@ final class HeroRagSyncServiceTest extends TestCase
 
         $http = new class implements HttpClientInterface {
             public string $lastUrl = '';
+
+            public function post(string $url, ?string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+            {
+                $this->lastUrl = $url;
+                return new HttpResponse(200, '{"status":"ok"}');
+            }
 
             public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
             {

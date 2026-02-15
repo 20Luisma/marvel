@@ -40,6 +40,8 @@ if (isset($_GET['action'])) {
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache');
     header('Connection: keep-alive');
+    session_write_close(); // Liberar bloqueo de sesión para evitar deadlock con procesos hijos
+
 
     $script_path = strpos($action, 'rollback-') === 0 
         ? realpath(__DIR__ . '/../bin/rollback.sh') 
@@ -204,6 +206,7 @@ $back_prod = getBackups('prod', $ssh_user, $ssh_host, $ssh_port, $ssh_pass);
         .log-line { margin-bottom: 4px; border-left: 2px solid transparent; padding-left: 10px; }
         .log-info { color: var(--primary); font-weight: 600; border-left-color: var(--primary); background: rgba(56, 189, 248, 0.05); padding: 8px 10px; margin: 10px 0; border-radius: 0 4px 4px 0; }
         .log-success { color: var(--success); font-weight: 800; border-left-color: var(--success); background: rgba(16, 185, 129, 0.05); padding: 8px 10px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+        .log-error { color: #ef4444; font-weight: 800; border-left-color: #ef4444; background: rgba(239, 68, 68, 0.08); padding: 8px 10px; margin: 10px 0; border-radius: 0 4px 4px 0; }
         .log-meta { color: var(--muted); opacity: 0.5; font-size: 0.75rem; margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 10px; }
 
         /* Progress Bar Overlay */
@@ -295,6 +298,7 @@ $back_prod = getBackups('prod', $ssh_user, $ssh_host, $ssh_port, $ssh_pass);
             const log = document.getElementById('log');
             const btns = document.querySelectorAll('.btn');
             const version = selId ? document.getElementById(selId).value : '';
+            let hasFailure = false;
 
             if (act.includes('rollback') && !version) {
                 alert('Please select a restoration point first.');
@@ -313,8 +317,13 @@ $back_prod = getBackups('prod', $ssh_user, $ssh_host, $ssh_port, $ssh_pass);
                 if (e.data === '[DONE]') {
                     es.close();
                     btns.forEach(b => b.disabled = false);
-                    log.innerHTML += "<div class='log-success'>[SUCCESS] OPERATION FINALIZED SUCCESSFULLY.</div>";
-                    updateProgress(100);
+                    if (hasFailure) {
+                        log.innerHTML += "<div class='log-error'>[FAILED] OPERATION FINALIZED WITH ERRORS.</div>";
+                        updateProgress(0);
+                    } else {
+                        log.innerHTML += "<div class='log-success'>[SUCCESS] OPERATION FINALIZED SUCCESSFULLY.</div>";
+                        updateProgress(100);
+                    }
                     
                     // Actualización silenciosa de los desplegables
                     setTimeout(() => {
@@ -334,11 +343,13 @@ $back_prod = getBackups('prod', $ssh_user, $ssh_host, $ssh_port, $ssh_pass);
                 if(line.includes('[1/3]') || line.includes('Snapshot') || line.includes('Buscando')) updateProgress(20);
                 if(line.includes('[2/3]') || line.includes('Sincronizando') || line.includes('Descomprimiendo')) updateProgress(50);
                 if(line.includes('[3/3]') || line.includes('Microservicios') || line.includes('Integridad')) updateProgress(85);
+                if(line.includes('ERROR') || line.includes('ABORTADO') || line.includes('FAILED')) hasFailure = true;
 
                 // Styling logic
                 let cls = "log-line";
                 if(line.includes('EXITOSAMENTE') || line.includes('FINALIZADO')) cls = "log-success";
                 if(line.includes('INITIATING') || line.includes('Creando')) cls = "log-info";
+                if(line.includes('ERROR') || line.includes('ABORTADO') || line.includes('FAILED')) cls = "log-error";
                 
                 log.innerHTML += `<div class='${cls}'>${line}</div>`;
                 log.scrollTop = log.scrollHeight;

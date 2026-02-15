@@ -27,10 +27,15 @@ function resolve_allowed_origins(): array
         }
     }
 
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+
     return [
         'http://localhost:8080',
         'https://iamasterbigschool.contenido.creawebes.com',
         'https://rag-service.contenido.creawebes.com',
+        'https://staging.contenido.creawebes.com',
+        $protocol . '://' . $host,
     ];
 }
 
@@ -239,13 +244,17 @@ function authorize_internal_request(string $method, string $path, string $rawBod
     $sharedKey = $_ENV['INTERNAL_API_KEY'] ?? getenv('INTERNAL_API_KEY') ?: '';
     $normalizedKey = is_string($sharedKey) ? trim($sharedKey) : '';
     if ($normalizedKey === '') {
-        // HMAC Strict Mode (fail-closed): si está activado y no hay clave, rechazar
-        $strictMode = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
-        if ($strictMode === 'true') {
+        // HMAC Strict Mode (fail-closed): si no hay clave lo consideramos un riesgo y rechazamos solo si se pide explícitamente
+        // Restauramos el comportamiento del día 12: si no hay clave, por defecto permitimos (modo bypass legacy/staging)
+        $strictModeRaw = $_ENV['HMAC_STRICT_MODE'] ?? getenv('HMAC_STRICT_MODE') ?: 'false';
+        $isStrict = filter_var($strictModeRaw, FILTER_VALIDATE_BOOL) ?: ($strictModeRaw === 'true');
+
+        if ($isStrict) {
             return ['ok' => false, 'reason' => 'hmac-strict-no-key'];
         }
         return ['ok' => true, 'reason' => 'signature-disabled'];
     }
+
 
     // Bypass de emergencia para CI/CD si la llave principal falla
     $bypassKey = $_ENV['CI_BYPASS_KEY'] ?? getenv('CI_BYPASS_KEY') ?: '';

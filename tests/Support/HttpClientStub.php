@@ -15,6 +15,24 @@ final class HttpClientStub implements HttpClientInterface
 
     /**
      * @param array<string, string> $headers
+     * @param string|null $payload
+     */
+    public function post(string $url, ?string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
+    {
+        $this->requests[] = [
+            'method' => 'POST',
+            'url' => $url,
+            'payload' => $payload,
+            'headers' => $headers,
+            'timeout' => $timeoutSeconds,
+            'retries' => $retries,
+        ];
+
+        return new HttpResponse($this->statusCode, $this->body);
+    }
+
+    /**
+     * @param array<string, string> $headers
      */
     public function postJson(string $url, array|string $payload, array $headers = [], int $timeoutSeconds = 20, int $retries = 1): HttpResponse
     {

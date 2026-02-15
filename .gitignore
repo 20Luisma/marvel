@@ -29,11 +29,15 @@ Thumbs.db
 # Storage y backups
 # -----------------------------
 # Ignorar absolutamente todos los JSON generados...
-/storage/*.json
+/storage/**/*.json
+/storage/**/*.log
 /storage/backups/
 /storage/tmp/
 /storage/cache/
 /storage/logs/
+/storage/rate_limit/
+/storage/security/
+/storage/ai/
 
 # ...pero permitir los SEEDS necesarios para E2E
 !/storage/albums.json

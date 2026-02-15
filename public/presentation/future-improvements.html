@@ -469,20 +469,20 @@
     <!-- Summary Cards -->
     <div class="summary-grid">
       <div class="summary-card" style="border-top: 3px solid var(--accent-primary);">
-        <div class="summary-value">11</div>
+        <div class="summary-value">16</div>
         <div class="summary-label">Puntos de Mejora</div>
       </div>
       <div class="summary-card" style="border-top: 3px solid var(--accent-success);">
-        <div class="summary-value">52-73h</div>
+        <div class="summary-value">82-118h</div>
         <div class="summary-label">Esfuerzo Estimado</div>
       </div>
       <div class="summary-card" style="border-top: 3px solid var(--accent-warning);">
-        <div class="summary-value">85%</div>
+        <div class="summary-value">92%</div>
         <div class="summary-label">Cobertura Objetivo</div>
       </div>
       <div class="summary-card" style="border-top: 3px solid var(--accent-danger);">
-        <div class="summary-value">ALTO</div>
-        <div class="summary-label">Impacto Global</div>
+        <div class="summary-value">SENIOR</div>
+        <div class="summary-label">Nivel de Ingeniería</div>
       </div>
     </div>
     
@@ -551,6 +551,34 @@
             <div class="improvement-impact">IA Scalability</div>
           </div>
         </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">12</div>
+          <div class="improvement-content">
+            <h3>Tests de Arquitectura (Deptrac)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Automatizar las reglas de <strong>Clean Architecture</strong>. Garantizar por test que <code>Domain</code> no dependa de nada externo y que los controladores se mantengan <code>Skinny</code>.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Arquitectura</div>
+          </div>
+        </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">13</div>
+          <div class="improvement-content">
+            <h3>Contract Testing (Pact / Schema)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Validación de contratos entre microservicios. Evita que cambios en <code>openai-service</code> o <code>rag-service</code> rompan la App principal de forma silenciosa.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">6-8h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Resiliencia</div>
+          </div>
+        </div>
       </div>
     </section>
     
@@ -603,6 +631,34 @@
             <div class="improvement-hours">8-12h</div>
             <div class="improvement-hours-label">Estimado</div>
             <div class="improvement-impact">Resiliencia</div>
+          </div>
+        </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">14</div>
+          <div class="improvement-content">
+            <h3>Dashboard de Resiliencia Real-time</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Panel visual que muestra el estado de los <strong>Circuit Breakers</strong>. Permite ver si un circuito está <code>Open</code>, <code>Half-Open</code> o <code>Closed</code> sin necesidad de auditar logs manually.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">6-8h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Observabilidad</div>
+          </div>
+        </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">15</div>
+          <div class="improvement-content">
+            <h3>Stress Testing (k6)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Validar el comportamiento del sistema bajo carga masiva. Asegurar que el <strong>Rate Limiting</strong> y el <strong>Circuit Breaker</strong> responden correctamente antes de un colapso.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">4-6h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Performance</div>
           </div>
         </div>
       </div>
@@ -673,6 +729,20 @@
             <div class="improvement-impact" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Seguridad</div>
           </div>
         </div>
+
+        <div class="improvement-card">
+          <div class="improvement-number">16</div>
+          <div class="improvement-content">
+            <h3>Mutation Testing (Infection PHP)</h3>
+            <div class="improvement-title-divider"></div>
+            <p>Medir la <strong>calidad real</strong> de los tests. No se trata de qué líneas se ejecutan (cobertura), sino de si los tests fallarían si el código cambiara sutilmente.</p>
+          </div>
+          <div class="improvement-meta">
+            <div class="improvement-hours">6-8h</div>
+            <div class="improvement-hours-label">Estimado</div>
+            <div class="improvement-impact">Calidad</div>
+          </div>
+        </div>
       </div>
     </section>
     
@@ -695,27 +765,27 @@
         </thead>
         <tbody>
           <tr>
-            <td><span style="color: var(--accent-danger);">●</span> Evolución e Inteligencia</td>
-            <td>Abstracción de servicios y Escalabilidad RAG Enterprise (#1, #2, #3, #4)</td>
-            <td style="font-weight: 600;">28h</td>
+            <td><span style="color: var(--accent-danger);">●</span> Evolución e Inteligencia Senior</td>
+            <td>Abstracción, RAG Enterprise, ArchTests y Contratos (#1, #2, #3, #4, #12, #13)</td>
+            <td style="font-weight: 600;">42h</td>
             <td style="text-align: right;"><span style="color: var(--accent-danger); font-size: 0.75rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 8px; border-radius: 4px;">CRÍTICA</span></td>
           </tr>
           <tr>
-            <td><span style="color: var(--accent-warning);">●</span> Robustez y Observabilidad</td>
-            <td>Healthchecks, Seguridad CSP y EventBus (#5, #6, #7)</td>
-            <td style="font-weight: 600;">24h</td>
+            <td><span style="color: var(--accent-warning);">●</span> Robustez y Resiliencia</td>
+            <td>Healthchecks, CSP, EventBus, Stress y Dashboard (#5, #6, #7, #14, #15)</td>
+            <td style="font-weight: 600;">38h</td>
             <td style="text-align: right;"><span style="color: var(--accent-warning); font-size: 0.75rem; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px;">ALTA</span></td>
           </tr>
           <tr>
             <td><span style="color: var(--accent-primary);">●</span> Calidad y Hardening</td>
-            <td>Logging centralizado, Tests de seguridad y Rate Limiting (#8, #9, #10, #11)</td>
-            <td style="font-weight: 600;">21h</td>
+            <td>Logging, Tests seguridad, Rate Limit y Mutation Testing (#8, #9, #10, #11, #16)</td>
+            <td style="font-weight: 600;">38h</td>
             <td style="text-align: right;"><span style="color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 8px; border-radius: 4px;">MEDIA</span></td>
           </tr>
           <tr class="total-row" style="background: rgba(255,255,255,0.03);">
             <td colspan="2"><strong style="color: #fff;">ESFUERZO TOTAL ESTIMADO</strong></td>
-            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">73h</strong></td>
-            <td style="text-align: right;"><strong style="color: var(--text-secondary); font-size: 0.8rem;">PROYECTO VIVO</strong></td>
+            <td><strong style="color: var(--accent-success); font-size: 1.2rem;">118h</strong></td>
+            <td style="text-align: right;"><strong style="color: var(--text-secondary); font-size: 0.8rem;">SISTEMA BANCARIO</strong></td>
           </tr>
         </tbody>
       </table>
@@ -749,8 +819,8 @@
       </div>
       <div class="roadmap-phase">
         <div class="phase-number">Fase 4</div>
-        <div class="phase-title">Resiliencia</div>
-        <div class="phase-desc">Mejora #7 · Sistema tolerante a fallos</div>
+        <div class="phase-title">Resiliencia y CD</div>
+        <div class="phase-desc">Mejora #7, #13, #15 · Contratos y Stress Testing</div>
       </div>
     </div>
     

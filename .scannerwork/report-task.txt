@@ -1,7 +1,0 @@
-organization=20luisma
-projectKey=20Luisma_marvel
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.77381
-dashboardUrl=https://sonarcloud.io/dashboard?id=20Luisma_marvel
-ceTaskId=AZscgGlx7KqRQ60XW1hj
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZscgGlx7KqRQ60XW1hj
