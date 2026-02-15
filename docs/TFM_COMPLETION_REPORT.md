@@ -134,5 +134,42 @@ La subida de portadas de álbumes estaba acoplada a funciones nativas de PHP (`m
 | `src/Application/Comics/GenerateComicUseCase.php` | Orquestación completa de la funcionalidad |
 | `src/Controllers/ComicController.php` | Solo maneja HTTP Request/Response (Skinny Controller) |
 
+## 🤖 Machine Learning: Recomendador de Películas Marvel
+
+### Problema resuelto
+El proyecto consumía IA exclusivamente a través de APIs externas (OpenAI), sin implementar ningún modelo de Machine Learning propio. Para un TFM de un máster de IA, era necesario demostrar capacidad de entrenar y usar un modelo ML real.
+
+### Solución implementada
+Recomendador de películas Marvel basado en **KNN (K-Nearest Neighbors)** con distancia Euclidiana + **Jaccard Similarity** para comparación textual. Implementado con **PHP-ML**, compatible con hosting compartido.
+
+**Flujo técnico:**
+```
+Película seleccionada → Feature Extraction → KNN Distance + Jaccard Text → Top-N similares
+```
+
+**Features del modelo:**
+| Feature | Tipo | Normalización |
+|---------|------|---------------|
+| `vote_average` | Numérico | 0-1 (dividido por 10) |
+| `release_year` | Numérico | 0-1 (rango 2008-2030) |
+| `overview_length` | Numérico | 0-1 (max 500 chars) |
+| `overview_words` | Texto | Jaccard similarity con stop words ES/EN |
+
+**Pesos:** 60% features numéricos, 40% similitud textual.
+
+### Arquitectura (Clean Architecture)
+| Capa | Archivo | Responsabilidad |
+|------|---------|----------------|
+| Domain | `src/Movies/Domain/MovieRecommenderInterface.php` | Contrato abstracto |
+| Application | `src/Movies/Application/RecommendMoviesUseCase.php` | Orquestación |
+| Infrastructure | `src/Movies/Infrastructure/ML/PhpMlMovieRecommender.php` | Implementación ML |
+| API | `public/api/movie-recommend.php` | Endpoint REST |
+| Tests | `tests/Movies/MovieRecommenderTest.php` | 11 tests, 76 assertions |
+
+### Referencia
+- **ADR-021**: `docs/architecture/ADR-021-ml-movie-recommender.md`
+- **Librería**: PHP-ML 0.10 (`php-ai/php-ml`)
+- **Endpoint**: `GET /api/movie-recommend.php?id={tmdb_id}&limit=5`
+
 ---
-*Proyecto finalizado con criterios de nivel profesional (Company Level).* 
+*Proyecto finalizado con criterios de nivel profesional (Company Level).*

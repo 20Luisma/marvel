@@ -31,9 +31,10 @@ Incluye secciones adicionales sobre observabilidad, CI/CD, refactors estructural
 ## Stack tecnológico
 - **Backend:** PHP 8.2
 - **Arquitectura:** Clean Architecture
+- **Machine Learning:** PHP-ML (KNN, Euclidean Distance, Jaccard Similarity)
 - **Persistencia:** JSON en local y MySQL en hosting
 - **Microservicios:** OpenAI Service, RAG Service (PHP) y Heatmap Service (Python/Flask)
-- **Servicios externos:** OpenAI API
+- **Servicios externos:** OpenAI API, TMDB API
 - **Control de versiones:** Git / GitHub
 - **Auditoría de Código IA:** CodeRabbit (AI Code Reviewer)
 - **Despliegue:** entorno propio funcional (app + microservicios)
@@ -121,6 +122,7 @@ Como alternativa ultra-rápida y resiliente al flujo de GitHub Actions, el proye
 - Gestión de álbumes y héroes (dominio Marvel)
 - Separación estricta de capas (Domain / Application / Infrastructure)
 - Integración con microservicios de IA (OpenAI / RAG)
+- **🤖 Machine Learning**: Recomendador de películas con KNN + Jaccard (PHP-ML)
 - Evolución de persistencia: JSON en local → MySQL en hosting
 - Arquitectura preparada para crecer sin romper el dominio
 
