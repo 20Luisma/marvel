@@ -52,6 +52,105 @@
   let searchTimeout;
   let statusExtraLabel = '';
 
+  // --- ML Recommendation Panel ---
+  const showRecommendations = async (movie) => {
+    const panel = document.getElementById('movie-detail');
+    if (!panel) return;
+
+    moviesPanel?.classList.add('hidden');
+    panel.classList.remove('hidden');
+
+    const posterPath = movie.poster_path
+      ? `${detailPosterBase}${movie.poster_path}`
+      : detailPlaceholder;
+
+    panel.innerHTML = `
+      <button id="movie-detail-back" class="btn btn-secondary text-xs mb-4">&larr; Volver</button>
+      <div class="flex flex-col md:flex-row gap-6">
+        <img src="${posterPath}" alt="${movie.title}" class="w-48 h-72 object-cover rounded-xl border border-slate-700" />
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-white mb-2">${movie.title}</h2>
+          <p class="text-sm text-gray-400 mb-3">${movie.release_date?.slice(0, 4) || '—'} · ⭐ ${movie.vote_average?.toFixed(1) || '—'}</p>
+          <p class="text-sm text-gray-300 mb-4">${movie.overview || ''}</p>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-purple-600/30 text-purple-300 border border-purple-500/30">
+              🤖 Recomendaciones ML
+            </span>
+            <span class="text-xs text-gray-500">KNN + Jaccard · PHP-ML</span>
+          </div>
+          <div id="ml-recommendations" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <p class="text-sm text-gray-400 animate-pulse col-span-full">Analizando similitudes...</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('movie-detail-back')?.addEventListener('click', hideMovieDetail);
+
+    try {
+      const res = await fetch(`/api/movie-recommend.php?id=${movie.id}&limit=5`, {
+        headers: { Accept: 'application/json' },
+      });
+      const data = await res.json();
+      const container = document.getElementById('ml-recommendations');
+      if (!container) return;
+
+      if (!data.ok || !data.recommendations?.length) {
+        container.innerHTML = '<p class="text-sm text-gray-500">No se encontraron películas similares.</p>';
+        return;
+      }
+
+      container.innerHTML = data.recommendations.map((rec) => {
+        const recPoster = rec.poster_path
+          ? `https://image.tmdb.org/t/p/w200${rec.poster_path}`
+          : 'https://via.placeholder.com/200x300?text=Sin+poster';
+        const score = rec.similarity_score || 0;
+        const barColor = score >= 60 ? 'bg-green-500' : score >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+
+        return `
+          <div class="rounded-xl border border-slate-700/60 bg-slate-800/50 p-3 flex flex-col gap-2 hover:border-purple-500/40 transition-colors">
+            <img src="${recPoster}" alt="${rec.title}" class="w-full h-40 object-cover rounded-lg bg-slate-700" />
+            <h4 class="text-sm font-bold text-white leading-tight">${rec.title}</h4>
+            <div class="flex items-center justify-between text-xs text-gray-400">
+              <span>${rec.release_date?.slice(0, 4) || '—'}</span>
+              <span>⭐ ${rec.vote_average?.toFixed(1) || '—'}</span>
+            </div>
+            <div class="mt-auto">
+              <div class="flex items-center justify-between text-xs mb-1">
+                <span class="text-purple-300">Similitud</span>
+                <span class="text-white font-bold">${score}%</span>
+              </div>
+              <div class="w-full bg-slate-700 rounded-full h-1.5">
+                <div class="${barColor} h-1.5 rounded-full transition-all" style="width: ${score}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Add ML metadata badge
+      if (data.ml_metadata) {
+        const meta = data.ml_metadata;
+        container.insertAdjacentHTML('afterend', `
+          <div class="mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/40">
+            <p class="text-xs text-gray-500">
+              🧠 <strong>Algoritmo:</strong> ${meta.algorithm} ·
+              <strong>Features:</strong> ${meta.features?.join(', ')} ·
+              <strong>Catálogo:</strong> ${meta.catalog_size} películas ·
+              <strong>Lib:</strong> ${meta.library}
+            </p>
+          </div>
+        `);
+      }
+    } catch (err) {
+      console.error('ML recommendation error:', err);
+      const container = document.getElementById('ml-recommendations');
+      if (container) {
+        container.innerHTML = '<p class="text-sm text-red-400">Error al obtener recomendaciones.</p>';
+      }
+    }
+  };
+
   const hideMovieDetail = () => {
     movieDetailPanel?.classList.add('hidden');
     moviesPanel?.classList.remove('hidden');
@@ -161,6 +260,15 @@
     details.textContent = 'Ver detalles';
     details.addEventListener('click', () => showMovieDetail(movie));
     actions.appendChild(details);
+
+    // ML Recommendation button
+    const mlBtn = document.createElement('button');
+    mlBtn.type = 'button';
+    mlBtn.className = 'btn btn-secondary text-xs';
+    mlBtn.style.cssText = 'background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border-color: #7c3aed; color: white;';
+    mlBtn.textContent = '🤖 Similares';
+    mlBtn.addEventListener('click', () => showRecommendations(movie));
+    actions.appendChild(mlBtn);
 
     article.append(figure, title, meta, overview, actions);
     return article;
