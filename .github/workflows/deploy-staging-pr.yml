@@ -11,8 +11,34 @@ on:
   workflow_dispatch:
 
 jobs:
+  quality_gate:
+    name: Quality Gate (Staging)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_mysql, json
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --colors=always --testdox
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=1G
+
   deploy_staging:
     name: Deploy to Staging Subdomains
+    needs: quality_gate
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
