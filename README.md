@@ -239,3 +239,4 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - **Atribución:** Assets property of © 2026 MARVEL
 
 <!-- Deployment Verified: 2026-02-13 00:12 UTC -->
+
