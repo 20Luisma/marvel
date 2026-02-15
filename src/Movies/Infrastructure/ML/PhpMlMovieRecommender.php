@@ -99,6 +99,7 @@ final class PhpMlMovieRecommender implements MovieRecommenderInterface
     /**
      * Extract numerical features from a movie for ML comparison.
      *
+     * @param array<string, mixed> $movie
      * @return array<int, float> Feature vector [vote_normalized, year_normalized]
      */
     private function extractFeatures(array $movie): array
@@ -151,6 +152,9 @@ final class PhpMlMovieRecommender implements MovieRecommenderInterface
     /**
      * Jaccard similarity between two word sets.
      * Returns a value between 0 (no common words) and 1 (identical).
+     *
+     * @param array<string, bool> $setA
+     * @param array<string, bool> $setB
      */
     private function jaccardSimilarity(array $setA, array $setB): float
     {

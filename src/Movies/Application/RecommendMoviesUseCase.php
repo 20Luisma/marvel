@@ -23,7 +23,7 @@ final class RecommendMoviesUseCase
      * @param int $movieId Target movie ID
      * @param array<int, array<string, mixed>> $catalog All movies from TMDB
      * @param int $limit Number of recommendations
-     * @return array{ok: bool, target: array<string, mixed>, recommendations: array<int, array<string, mixed>>}
+     * @return array{ok: bool, target?: array<string, mixed>, recommendations: array<int, array<string, mixed>>, error?: string}
      */
     public function execute(int $movieId, array $catalog, int $limit = 5): array
     {
