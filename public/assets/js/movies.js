@@ -73,13 +73,12 @@
           <p class="text-sm text-gray-400 mb-3">${movie.release_date?.slice(0, 4) || '—'} · ⭐ ${movie.vote_average?.toFixed(1) || '—'}</p>
           <p class="text-sm text-gray-300 mb-4">${movie.overview || ''}</p>
           <div class="flex items-center gap-2 mb-4">
-            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-purple-600/30 text-purple-300 border border-purple-500/30">
-              🤖 Recomendaciones ML
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-600/20 text-blue-300 border border-blue-500/20">
+              🎬 Películas similares
             </span>
-            <span class="text-xs text-gray-500">KNN + Jaccard · PHP-ML</span>
           </div>
           <div id="ml-recommendations" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <p class="text-sm text-gray-400 animate-pulse col-span-full">Analizando similitudes...</p>
+            <p class="text-sm text-gray-400 animate-pulse col-span-full">Buscando películas similares...</p>
           </div>
         </div>
       </div>
@@ -128,18 +127,10 @@
         `;
       }).join('');
 
-      // Add ML metadata badge
+      // Catalog info
       if (data.ml_metadata) {
-        const meta = data.ml_metadata;
         container.insertAdjacentHTML('afterend', `
-          <div class="mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/40">
-            <p class="text-xs text-gray-500">
-              🧠 <strong>Algoritmo:</strong> ${meta.algorithm} ·
-              <strong>Features:</strong> ${meta.features?.join(', ')} ·
-              <strong>Catálogo:</strong> ${meta.catalog_size} películas ·
-              <strong>Lib:</strong> ${meta.library}
-            </p>
-          </div>
+          <p class="mt-3 text-xs text-gray-600">Basado en ${data.ml_metadata.catalog_size} películas del catálogo Marvel</p>
         `);
       }
     } catch (err) {
@@ -265,8 +256,7 @@
     const mlBtn = document.createElement('button');
     mlBtn.type = 'button';
     mlBtn.className = 'btn btn-secondary text-xs';
-    mlBtn.style.cssText = 'background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border-color: #7c3aed; color: white;';
-    mlBtn.textContent = '🤖 Similares';
+    mlBtn.textContent = '🎬 Similares';
     mlBtn.addEventListener('click', () => showRecommendations(movie));
     actions.appendChild(mlBtn);
 
