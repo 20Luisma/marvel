@@ -194,4 +194,22 @@ final class MovieRecommenderTest extends TestCase
         $this->assertTrue($result['ok']);
         $this->assertEmpty($result['recommendations']);
     }
+
+    public function testHandlesEmptyOverviewsAndMissingData(): void
+    {
+        $catalog = [
+            ['id' => 1, 'title' => 'Target', 'overview' => ''],
+            ['id' => 2, 'title' => 'Empty', 'overview' => ''],
+            ['id' => 3, 'title' => 'Only Stop Words', 'overview' => 'el la los'],
+            ['id' => 4, 'title' => 'No Year', 'vote_average' => 5.0],
+        ];
+
+        $result = $this->useCase->execute(1, $catalog, 5);
+
+        $this->assertTrue($result['ok']);
+        $this->assertCount(3, $result['recommendations']);
+        foreach ($result['recommendations'] as $rec) {
+            $this->assertIsFloat($rec['similarity_score']);
+        }
+    }
 }
