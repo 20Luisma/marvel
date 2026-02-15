@@ -63,3 +63,6 @@ jobs:
             playwright-report/**
             coverage.xml
             .phpunit.result.cache
+            vendor/**
+            openai-service/vendor/**
+            rag-service/vendor/**
