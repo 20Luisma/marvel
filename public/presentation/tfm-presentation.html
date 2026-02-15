@@ -966,8 +966,75 @@
       <span class="slide-number">23 / 27</span>
     </section>
 
-    <!-- SLIDE 22: Reflexión -->
+    <!-- SLIDE: Machine Learning — Recomendador de Películas -->
     <section class="slide" data-slide="24">
+      <div class="slide-title">🤖 Machine Learning: Recomendador de Películas</div>
+      <div class="divider"></div>
+
+      <!-- Algoritmo y Resultado -->
+      <div style="display: flex; gap: 24px; margin-bottom: 20px;">
+        <!-- Lado izquierdo: Algoritmo -->
+        <div style="flex: 1; background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 14px; padding: 20px;">
+          <div style="font-size: 0.7rem; font-weight: 800; color: #a855f7; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Algoritmo ML Propio</div>
+          <div style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.7;">
+            <div style="margin-bottom: 8px;">📐 <strong>KNN</strong> (K-Nearest Neighbors) con distancia Euclidiana</div>
+            <div style="margin-bottom: 8px;">📝 <strong>Jaccard Similarity</strong> para comparación textual</div>
+            <div style="margin-bottom: 8px;">⚖️ <strong>Pesos:</strong> 60% numérico · 40% texto</div>
+            <div>📦 <strong>Librería:</strong> PHP-ML 0.10</div>
+          </div>
+        </div>
+        <!-- Lado derecho: Features -->
+        <div style="flex: 1; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px;">
+          <div style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Feature Extraction</div>
+          <table style="width: 100%; font-size: 0.8rem; color: #cbd5e1; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <td style="padding: 6px 0; color: #94a3b8;">vote_average</td>
+              <td style="padding: 6px 0;">Numérico</td>
+              <td style="padding: 6px 0; color: #64748b;">0-1 normalizado</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <td style="padding: 6px 0; color: #94a3b8;">release_year</td>
+              <td style="padding: 6px 0;">Numérico</td>
+              <td style="padding: 6px 0; color: #64748b;">2008-2030 range</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <td style="padding: 6px 0; color: #94a3b8;">overview_length</td>
+              <td style="padding: 6px 0;">Numérico</td>
+              <td style="padding: 6px 0; color: #64748b;">max 500 chars</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #94a3b8;">overview_words</td>
+              <td style="padding: 6px 0;">Texto</td>
+              <td style="padding: 6px 0; color: #64748b;">Jaccard + stop words</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Flujo y Arquitectura -->
+      <div style="display: flex; gap: 24px;">
+        <div style="flex: 2; background: rgba(30, 41, 59, 0.35); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 18px;">
+          <div style="font-size: 0.7rem; font-weight: 800; color: #3b82f6; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Arquitectura Clean</div>
+          <div style="font-family: monospace; font-size: 0.75rem; color: #94a3b8; line-height: 1.8;">
+            <span style="color: #a855f7;">Domain:</span> MovieRecommenderInterface<br>
+            <span style="color: #f59e0b;">Application:</span> RecommendMoviesUseCase<br>
+            <span style="color: #10b981;">Infrastructure:</span> PhpMlMovieRecommender (KNN + Jaccard)<br>
+            <span style="color: #3b82f6;">API:</span> GET /api/movie-recommend.php?id={tmdb_id}
+          </div>
+        </div>
+        <div style="flex: 1; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 14px; padding: 18px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+          <div style="font-size: 2rem; font-weight: 800; color: #fff;">11</div>
+          <div style="font-size: 0.7rem; color: #10b981; text-transform: uppercase; letter-spacing: 1px;">Tests unitarios</div>
+          <div style="font-size: 1.4rem; font-weight: 700; color: #10b981; margin-top: 4px;">76 assertions ✅</div>
+          <div style="margin-top: 10px; font-size: 0.7rem; color: #64748b;">ADR-021 documentado</div>
+        </div>
+      </div>
+
+      <span class="slide-number">24 / 28</span>
+    </section>
+
+    <!-- SLIDE 22: Reflexión -->
+    <section class="slide" data-slide="25">
       <div class="slide-title">Reflexión personal</div>
       <div class="divider"></div>
       <div class="card">
@@ -983,7 +1050,7 @@
           <p><strong>Lo que más me impactó:</strong> descubrir que una arquitectura bien pensada no solo beneficia a los humanos, sino también a las herramientas de IA. A lo largo del desarrollo, utilicé varios asistentes de inteligencia artificial, y todos <em>navegaron el proyecto con fluidez</em>, entendiendo la estructura, sugiriendo mejoras coherentes y respetando los patrones establecidos. Fue como si el código limpio hablara un idioma universal. <strong>La buena arquitectura enamora hasta a las máquinas.</strong></p>
         </div>
       </div>
-      <span class="slide-number">24 / 27</span>
+      <span class="slide-number">25 / 28</span>
     </section>
 
     <!-- SLIDE 23: Futuras Mejoras -->
