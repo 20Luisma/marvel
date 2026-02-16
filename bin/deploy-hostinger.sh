@@ -45,11 +45,11 @@ echo " 🛡️  SENTINEL DEPLOY v3.9.5: [$ENTORNO]"
 echo "=========================================================="
 
 # --- 0. QUALITY GATE ---
-echo "🧪 [QUALITY GATE] Ejecutando batería de tests..."
-if ./vendor/bin/phpunit > /dev/null 2>&1; then
+echo "🧪 [QUALITY GATE] Ejecutando batería de tests (Unitarios + E2E)..."
+if ./vendor/bin/phpunit > /dev/null 2>&1 && npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs > /dev/null 2>&1; then
     echo "✅ Tests validados. Estabilidad confirmada."
 else
-    echo "❌ ERROR: Los tests han fallado. Despliegue ABORTADO."
+    echo "❌ ERROR: Los tests (PHPUnit o Playwright) han fallado. Despliegue ABORTADO."
     exit 1
 fi
 

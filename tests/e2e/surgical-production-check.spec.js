@@ -148,4 +148,27 @@ test.describe('🛡️ Quality Gate: Surgical Production Check', () => {
     expect(data.ok).toBeTruthy();
   });
 
+  // 7. VERIFICACIÓN DE RECURSOS VISUALES (MARVEL TECH)
+  test('Visual: Las imágenes de MARVEL TECH deben cargar correctamente', async ({ page }) => {
+    await page.goto('/marveltech');
+    
+    // Obtener todas las imágenes del carrusel
+    const images = page.locator('.carousel-slide img');
+    const count = await images.count();
+    expect(count, 'No se encontraron imágenes en el carrusel de Marvel Tech').toBeGreaterThan(0);
+
+    for (let i = 0; i < count; i++) {
+      const img = images.nth(i);
+      
+      // 1. Verificar que el atributo src no esté vacío
+      const src = await img.getAttribute('src');
+      expect(src, `La imagen ${i} no tiene atributo src`).not.toBeNull();
+      expect(src.length, `El src de la imagen ${i} está vacío`).toBeGreaterThan(0);
+
+      // 2. Verificar que la imagen se ha cargado físicamente (naturalWidth > 0)
+      const isLoaded = await img.evaluate((node) => node.complete && node.naturalWidth > 0);
+      expect(isLoaded, `La imagen con src "${src}" está rota o no carga`).toBeTruthy();
+    }
+  });
+
 });

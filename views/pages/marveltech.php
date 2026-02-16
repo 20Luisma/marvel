@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $pageTitle = 'MARVEL TECH – Clean Marvel Album';
-$additionalStyles = ['/assets/css/marveltech.css'];
+$additionalStyles = ['/assets/css/marveltech.css']; 
 $activeTopAction = 'marveltech';
 require_once __DIR__ . '/../layouts/header.php';
 ?>
