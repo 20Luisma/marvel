@@ -12,8 +12,8 @@ on:
         default: "Deploy manual"
 
 jobs:
-  quality_gate:
-    name: 🛡️ Filtro de Calidad Quirúrgico
+  test_quirurgico:
+    name: 🔬 TEST QUIRÚRGICO
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -119,7 +119,7 @@ jobs:
 
   deploy_app:
     name: Deploy app principal
-    needs: quality_gate
+    needs: test_quirurgico
     runs-on: ubuntu-latest
 
     steps:
