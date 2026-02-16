@@ -41,13 +41,13 @@ require_once __DIR__ . '/../layouts/header.php';
 
         <div class="carousel-track">
           <div class="carousel-slide is-active">
-            <img src="/assets/images/MARVEL TECH/1.png" alt="10 puntos de seguridad de Clean Marvel Album">
+            <img src="/assets/images/marvel-tech/1.png" alt="10 puntos de seguridad de Clean Marvel Album">
           </div>
           <div class="carousel-slide">
-            <img src="/assets/images/MARVEL TECH/2.png" alt="Flujo arquitectónico de Clean Marvel Album">
+            <img src="/assets/images/marvel-tech/2.png" alt="Flujo arquitectónico de Clean Marvel Album">
           </div>
           <div class="carousel-slide">
-            <img src="/assets/images/MARVEL TECH/3.png" alt="Best Practices Album de Clean Marvel Album">
+            <img src="/assets/images/marvel-tech/3.png" alt="Best Practices Album de Clean Marvel Album">
           </div>
         </div>
 
