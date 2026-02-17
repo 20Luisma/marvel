@@ -42,7 +42,7 @@ final class FailoverHeatmapApiClient implements HeatmapApiClient
 
         foreach ($this->clients as $client) {
             try {
-                $result = call_user_func_array([$client, $method], $arguments);
+                $result = $client->$method(...$arguments);
                 if ($result['statusCode'] >= 200 && $result['statusCode'] < 300) {
                     return $result;
                 }

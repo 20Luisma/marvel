@@ -181,10 +181,16 @@ final class AppBootstrap
             ],
             'services' => [
                 'urlProvider' => $serviceUrlProvider,
-                'heatmapApiClient' => new FailoverHeatmapApiClient(
-                    new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
-                    new HttpHeatmapApiClient($heatmapSecondaryUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null)
-                ),
+                'heatmapApiClient' => (function() use ($heatmapBaseUrl, $heatmapSecondaryUrl, $heatmapApiToken) {
+                    $clients = [];
+                    if ($heatmapBaseUrl !== '') {
+                        $clients[] = new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null);
+                    }
+                    if ($heatmapSecondaryUrl !== '') {
+                        $clients[] = new HttpHeatmapApiClient($heatmapSecondaryUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null);
+                    }
+                    return new FailoverHeatmapApiClient(...$clients);
+                })(),
                 'ragSyncer' => $ragSyncer,
             ],
             'useCases' => $useCases,
