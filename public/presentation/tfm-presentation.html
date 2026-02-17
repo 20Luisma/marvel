@@ -1033,64 +1033,64 @@
       <span class="slide-number">24 / 29</span>
     </section>
 
-    <!-- SLIDE 25: FinOps — Heatmap Service en Google Cloud -->
-    <section class="slide" data-slide="25" style="gap: 12px;">
-      <div class="slide-title" style="font-size: 2rem; padding-bottom: 12px; min-height: auto;">☁️ FinOps: Heatmap Service en Google Cloud</div>
-      <div class="grid-2" style="gap: 14px;">
-        <div class="card" style="padding: 16px 20px;">
-          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 10px; padding-bottom: 8px;">Microservicio auditado</div>
-          <ul class="list" style="gap: 8px;">
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">🐍 <strong>Heatmap Service</strong> · Python + Flask + Docker en VM <code>e2-micro</code> (GCP)</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">💾 <strong>SQLite</strong> · 1.3 MB de datos analíticos reconstruibles</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">🌍 <strong>Infraestructura</strong> · Google Cloud · us-east1-b · 24/7 (free tier)</li>
-          </ul>
-        </div>
-        <div class="card" style="padding: 16px 20px;">
-          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 10px; padding-bottom: 8px;">Optimizaciones ejecutadas</div>
-          <ul class="list" style="gap: 8px;">
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">🗑️ <strong>14 snapshots</strong> + 2 schedules eliminados (3.63 GB)</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">🔒 <strong>4 reglas firewall</strong> eliminadas → puertos públicos 5→2</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">🔌 <strong>7 APIs</strong> desactivadas (BigQuery, Dataplex, Dataform…)</li>
-          </ul>
-        </div>
-      </div>
-      <div class="grid-2" style="gap: 14px;">
-        <div class="card" style="padding: 16px 20px;">
-          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 10px; padding-bottom: 8px;">Análisis de costes — Antes vs Después</div>
-          <table style="width: 100%; font-size: 0.85rem; color: #cbd5e1; border-collapse: collapse;">
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #64748b; font-size: 0.7rem;">
-              <td style="padding: 3px 0;">Recurso</td><td style="padding: 3px 0;">Antes</td><td style="padding: 3px 0;">Después</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 3px 0;">VM e2-micro (Heatmap)</td><td style="padding: 3px 0;">$0.00</td><td style="padding: 3px 0;">$0.00</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 3px 0;">Disco 10 GB</td><td style="padding: 3px 0;">$1.00</td><td style="padding: 3px 0;">$1.00</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 3px 0;">Snapshots + APIs</td><td style="padding: 3px 0; color: #ef4444;">$0.094</td><td style="padding: 3px 0; color: #10b981;">$0.00 ✅</td>
-            </tr>
-            <tr style="font-weight: 700;">
-              <td style="padding: 4px 0; color: #fff;">Total /mes</td><td style="padding: 4px 0;">~$1.10</td><td style="padding: 4px 0; color: #10b981;">~$1.00</td>
-            </tr>
-          </table>
-        </div>
-        <div class="card" style="padding: 16px 20px;">
-          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 10px; padding-bottom: 8px;">Decisión: VM vs Cloud Run</div>
-          <ul class="list" style="gap: 8px;">
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">💰 <strong>VM: ~$1/mes</strong> vs Cloud Run: ~$8-12/mes (×8 coste)</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">💾 <strong>SQLite nativo</strong> vs Cloud SQL obligatorio (+$7/mes)</li>
-            <li style="font-size: 0.9rem; line-height: 1.4; padding-left: 22px;">✅ <strong>Decisión</strong> · Mantener VM — migrar no aporta valor</li>
-          </ul>
+    <!-- SLIDE 25: Multi-Cloud & FinOps Overview -->
+    <section class="slide" data-slide="25" style="gap: 20px;">
+      <div class="slide-title" style="font-size: 1.8rem; padding-bottom: 8px; min-height: auto;">☁️ Infraestructura Resiliente & FinOps</div>
+      
+      <!-- Fila 1: El Setup de Infraestructura + Optimización -->
+      <div class="card" style="padding: 20px 25px; border-left: 4px solid #3b82f6;">
+        <div class="grid-2" style="gap: 40px; align-items: start;">
+          <div>
+            <div class="card-title" style="font-size: 0.75rem; border-bottom: none; margin-bottom: 12px; padding: 0; color: #3b82f6; text-transform: uppercase;">Arquitectura Multi-Cloud (DRP)</div>
+            <ul class="list" style="gap: 8px; font-size: 0.85rem;">
+              <li style="line-height: 1.4;">🔵 <strong>Nodo 1 (GCP)</strong> · VM e2-micro · South Carolina</li>
+              <li style="line-height: 1.4;">🟠 <strong>Nodo 2 (AWS)</strong> · EC2 t3.micro · París (Failover)</li>
+              <li style="line-height: 1.4;">🔄 <strong>Failover</strong> · Conmutación automática en cliente PHP</li>
+            </ul>
+          </div>
+          <div>
+            <div class="card-title" style="font-size: 0.75rem; border-bottom: none; margin-bottom: 12px; padding: 0; color: #10b981; text-transform: uppercase;">Optimización FinOps (ADR-022/24)</div>
+            <ul class="list" style="gap: 8px; font-size: 0.85rem;">
+              <li style="line-height: 1.4;">🇬 <strong>GCP</strong> · 14 snapshots eliminados (-3.6 GB)</li>
+              <li style="line-height: 1.4;">🇦 <strong>AWS</strong> · Migración a <code>gp3</code> (Ahorro 20%)</li>
+              <li style="line-height: 1.4;">🔒 <strong>Security</strong> · Hardening de Firewall en ambos nodos</li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <div class="release-seal" style="margin-top: 4px; padding: 10px 16px;">
+      <!-- Fila 2: Datos y Lógica -->
+      <div class="grid-2" style="gap: 25px;">
+        <div class="card" style="padding: 18px 22px;">
+          <div class="card-title" style="font-size: 0.7rem; margin-bottom: 12px;">Análisis de costes mensuales</div>
+          <table style="width: 100%; font-size: 0.75rem; color: #cbd5e1; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #64748b; font-size: 0.65rem;">
+              <td style="padding: 4px 0;">Proveedor</td><td style="padding: 4px 0;">Recurso</td><td style="padding: 4px 0;">Coste Final</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 4px 0;">Google Cloud</td><td style="padding: 4px 0;">VM + Disk</td><td style="padding: 4px 0; color: #10b981;">~$1.00 /mes ✅</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 4px 0;">Amazon (AWS)</td><td style="padding: 4px 0;">EC2 + Traffic</td><td style="padding: 4px 0;">$0.00 (Free Tier)</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card" style="padding: 18px 22px;">
+          <div class="card-title" style="font-size: 0.7rem; margin-bottom: 12px;">Failover Logic (ADR-023)</div>
+          <div style="font-family: monospace; font-size: 0.8rem; line-height: 1.4;">
+            <span style="color: #94a3b8;">// Intenta GCP, si falla salta a AWS</span><br>
+            <code style="color: #3b82f6;">try { return GCP->track(); }</code><br>
+            <code style="color: #f59e0b;">catch { return AWS->track(); }</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="release-seal" style="margin-top: 25px; padding: 15px 25px;">
         <div class="seal-icon" style="font-size: 1.2rem;">💰</div>
         <div>
-          <div class="seal-text-main" style="font-size: 0.65rem;">Principios FinOps · ADR-022</div>
+          <div class="seal-text-main" style="font-size: 0.65rem;">Principios FinOps · ADR-022 & 024</div>
           <div class="seal-text-sub" style="font-size: 0.8rem;">
-            <strong>Visibilidad</strong> · <strong>Optimización</strong> · <strong>Gobernanza</strong> — Cada decisión documentada con justificación técnica y análisis de coste.
+            <strong>Visibilidad</strong> · <strong>Optimización</strong> · <strong>Gobernanza</strong> — Estrategia de ahorro y seguridad auditada en Google Cloud y Amazon Web Services.
           </div>
         </div>
       </div>
@@ -1126,7 +1126,7 @@
       <!-- Resumen Ejecutivo Sobrio pero Visual -->
       <div style="display: flex; gap: 20px; margin-bottom: 30px;">
         <div style="flex: 1; padding: 15px; border-bottom: 2px solid rgba(59, 130, 246, 0.3); text-align: center; background: rgba(59, 130, 246, 0.05); border-radius: 8px 8px 0 0;">
-          <div style="font-size: 2rem; font-weight: 700; color: #fff;">11</div>
+          <div style="font-size: 2rem; font-weight: 700; color: #fff;">13</div>
           <div style="font-size: 0.7rem; letter-spacing: 1px; color: #94a3b8; text-transform: uppercase;">Mejoras identificadas</div>
         </div>
         <div style="flex: 1; padding: 15px; border-bottom: 2px solid rgba(16, 185, 129, 0.3); text-align: center; background: rgba(16, 185, 129, 0.05); border-radius: 8px 8px 0 0;">
@@ -1154,12 +1154,14 @@
         <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);">
           <div style="font-size: 0.7rem; font-weight: 800; color: #f59e0b; margin-bottom: 12px; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 8px;">PRIORIDAD: ALTA</div>
           <ul style="font-size: 0.8rem; color: #cbd5e1; list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Failover Multi-Cloud</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #10b981; color: #10b981; font-weight: 700;">✅ Healthchecks Proactivos</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Seguridad CSP Estricta</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">EventBus con Persistencia</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Dashboard de Resiliencia</li>
             <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Stress Testing (k6)</li>
-            <li style="padding-left: 10px; border-left: 2px solid #f59e0b;">Contract Testing (Pact)</li>
+            <li style="margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #f59e0b;">Contract Testing (Pact)</li>
+            <li style="padding-left: 10px; border-left: 2px solid #f59e0b;">🤖 Multi-Agente (LangGraph)</li>
           </ul>
         </div>
         <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);">

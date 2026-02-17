@@ -5,7 +5,7 @@ namespace App\Heatmap\Infrastructure;
 
 final class HttpHeatmapApiClient implements HeatmapApiClient
 {
-    private const DEFAULT_TIMEOUT = 10;
+    private const DEFAULT_TIMEOUT = 3;
 
     private string $baseUrl;
     private ?string $apiToken;

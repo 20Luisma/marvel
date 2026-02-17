@@ -60,16 +60,21 @@ body {
 }
 
 .slide-number {
-  position: absolute;
-  bottom: 36px;
-  right: 26px;
-  font-size: 12px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
   letter-spacing: 2px;
-  color: var(--muted);
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  padding: 6px 14px;
-  border-radius: 999px;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  pointer-events: none;
 }
 
 /* Typography System */

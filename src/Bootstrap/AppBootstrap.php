@@ -23,6 +23,7 @@ use App\Config\ServiceUrlProvider;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
+use App\Heatmap\Infrastructure\FailoverHeatmapApiClient;
 use App\Heroes\Application\Rag\HeroRagSyncer;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Heroes\Application\UseCase\CreateHeroUseCase;
@@ -112,9 +113,7 @@ final class AppBootstrap
 
         $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
         $heatmapBaseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? 'http://34.74.102.123:8080')));
-        if ($heatmapBaseUrl === '') {
-            $heatmapBaseUrl = 'http://34.74.102.123:8080';
-        }
+        $heatmapSecondaryUrl = trim((string) (getenv('HEATMAP_API_SECONDARY_URL') ?: ($_ENV['HEATMAP_API_SECONDARY_URL'] ?? '')));
         $heatmapApiToken = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
         $httpClient = new CurlHttpClient();
 
@@ -182,7 +181,10 @@ final class AppBootstrap
             ],
             'services' => [
                 'urlProvider' => $serviceUrlProvider,
-                'heatmapApiClient' => new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
+                'heatmapApiClient' => new FailoverHeatmapApiClient(
+                    new HttpHeatmapApiClient($heatmapBaseUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null),
+                    new HttpHeatmapApiClient($heatmapSecondaryUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null)
+                ),
                 'ragSyncer' => $ragSyncer,
             ],
             'useCases' => $useCases,

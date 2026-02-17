@@ -94,8 +94,11 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 - Tests unitarios completos
 - Generación offline de embeddings para no gastar tokens en producción
 
-### Heatmap Service (Python/Flask)
-Registra eventos de clic para análisis de interacción. Dockerizado en VM externa (Google Cloud).
+### Heatmap Service (Python/Flask) — Multi-Cloud HA
+Microservicio que registra eventos de clic para análisis de interacción. Implementado con una arquitectura de **Alta Disponibilidad (High Availability)**:
+- **Redundancia Geográfica:** Desplegado simultáneamente en Google Cloud (USA) y AWS (Europa).
+- **Failover Automático:** La aplicación principal detecta caídas y conmuta entre proveedores en tiempo real sin interrupción del servicio.
+- **Dockerizado:** Ejecución aislada en contenedores para portabilidad total.
 
 ## CI/CD & Quality Gate (Filtro Quirúrgico) 🛡️
 
@@ -224,7 +227,7 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 - `docs/api/` — referencia de endpoints
 - `docs/guides/` — guías técnicas
 - `docs/guides/entorno-staging-mirroring.md` — Paridad de entornos y CI/CD Staging
-- 🚀 `docs/FUTURE_IMPROVEMENTS.md` — **Informe de consultoría: 10 mejoras priorizadas con estimaciones**
+- 🚀 `docs/FUTURE_IMPROVEMENTS.md` — **Informe de consultoría: 13 mejoras priorizadas con estimaciones**
 📚 La documentación técnica ampliada del proyecto se encuentra en `docs/README_TECHNICAL.md`.
 
 ---

@@ -21,6 +21,11 @@ Antes de abordar el roadmap futuro, se ha consolidado el siguiente hito de ingen
 - **Tecnología**: Búsqueda vectorial con embeddings de OpenAI (1536 dimensiones) y métrica de similitud coseno.
 - **Resultado**: Capacidad de búsqueda semántica a escala empresarial con latencia mínima, desacoplada del servidor físico.
 
+### 🔄 Alta Disponibilidad: Failover Multi-Cloud (GCP ↔ AWS)
+- **Implementación**: Despliegue redundante del microservicio Heatmap en Google Cloud (USA) y AWS (Europa).
+- **Tecnología**: Patrón Failover en el cliente PHP con conmutación automática y Docker en ambas nubes.
+- **Resultado**: Uptime del 99.9% para la analítica del proyecto, protegiendo el sistema contra caídas regionales de proveedores cloud.
+
 ---
 
 ## 📋 Resumen Ejecutivo

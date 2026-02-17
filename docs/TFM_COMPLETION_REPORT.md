@@ -8,8 +8,9 @@ Se ha implementado con éxito el **Filtro de Calidad Quirúrgico** en el pipelin
 - **Infraestructura**: Despliegue automatizado con Puerta de Calidad (Quality Gate).
 - **IA**: Agente RAG y Generación de Cómics validados en Staging y Producción.
 - **Observabilidad**: Distributed Tracing end-to-end con `trace_id` + Healthchecks proactivos (`/health`).
+- **Disponibilidad**: Failover Multi-Cloud (GCP ↔ AWS) para servicios críticos.
 - **Seguridad**: HSTS Preload + HMAC Strict Mode + Rate Limiting Granular por endpoint.
-- **Documentación**: Roadmap futuro y presentación técnica actualizados.
+- **Documentación**: 13 mejoras identificadas, Roadmap futuro y presentación técnica actualizados.
 
 ## 🔍 Observabilidad: Distributed Tracing (trace_id)
 
@@ -146,6 +147,38 @@ Recomendador de películas Marvel basado en **KNN (K-Nearest Neighbors)** con di
 ```
 Película seleccionada → Feature Extraction → KNN Distance + Jaccard Text → Top-N similares
 ```
+
+## ☁️ Failover Multi-Cloud: Alta Disponibilidad (DRP)
+
+### Problema resuelto
+El microservicio Heatmap (Python/GCP) representaba un "Single Point of Failure". Si Google Cloud o la región de Carolina del Sur caían, la analítica del proyecto dejaba de funcionar.
+
+### Solución implementada
+Estrategia de **Disaster Recovery Plan (DRP)** mediante una réplica activa en AWS. El sistema detecta caídas y conmuta automáticamente entre proveedores:
+
+1.  **Réplica en AWS**: Despliegue de una instancia EC2 (Ubuntu + Docker) en la región de París con copia exacta del servicio Heatmap.
+2.  **FailoverHeatmapApiClient**: Un nuevo cliente PHP que implementa el patrón de reintento secuencial.
+3.  **Lógica Decisional**:
+    ```
+    App PHP → Reintento 1: GCP (us-east-1)
+      └── Fallo (Timeout/5xx) → Reintento 2: AWS (eu-west-3)
+    ```
+
+### Beneficios para el TFM
+- Demuestra capacidad de orquestación en entornos **Multi-Cloud**.
+- Implementación de patrones de resiliencia y tolerancia a fallos.
+- Independencia de proveedor (Cloud Agnostic).
+
+### Archivos clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `src/Heatmap/Infrastructure/FailoverHeatmapApiClient.php` | Lógica de conmutación automática |
+| `src/Bootstrap/AppBootstrap.php` | Inyección de endpoints GCP y AWS |
+| `docs/architecture/ADR-023-multi-cloud-failover.md` | Justificación del diseño |
+| `docs/architecture/ADR-022-gcp-cloud-optimization.md` | Auditoría y optimización GCP |
+| `docs/architecture/ADR-024-aws-cloud-optimization.md` | Auditoría y optimización AWS |
+
+## 🤖 Recomendador por Similitud: Películas Marvel
 
 **Features del modelo:**
 | Feature | Tipo | Normalización |
