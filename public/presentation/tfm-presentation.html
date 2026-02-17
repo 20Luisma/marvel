@@ -845,7 +845,7 @@
         <div class="api-monitor-title">Ecosistema Integrado · Verificación en Tiempo Real</div>
         <div style="text-align:center; font-size:0.65rem; color:rgba(255,255,255,0.4); margin-bottom:8px;">🟢 Online (verificado) · 🔵 Integrada (sin CORS) · 🔴 No disponible</div>
         <div class="api-grid">
-          <div class="api-item" data-check-url="https://api.github.com/repos/20Luisma/marvel" data-check-mode="cors">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-github"></div>
             <span class="api-name">GitHub API</span>
             <span class="api-endpoint">api.github.com</span>
@@ -890,7 +890,7 @@
             <span class="api-name">CodeRabbit</span>
             <span class="api-endpoint">coderabbit.ai/reviews</span>
           </div>
-          <div class="api-item" data-check-url="https://api.github.com/repos/20Luisma/marvel/actions/runs?per_page=1" data-check-mode="cors">
+          <div class="api-item" data-check-mode="integrated">
             <div class="status-led" id="status-deploy"></div>
             <span class="api-name">CI/CD Pipeline</span>
             <span class="api-endpoint">gh-actions/deploy</span>
@@ -1205,23 +1205,27 @@
         const GITHUB_API = 'https://api.github.com';
         const REPO_OWNER = '20Luisma';
         const REPO_NAME = 'marvel';
+        const GITHUB_TOKEN = '<?= getenv("GITHUB_API_KEY") ?: ($_ENV["GITHUB_API_KEY"] ?? "") ?>';
         
         let dataLoaded = false;
         
         async function loadGitHubData() {
           if (dataLoaded) return; // Evitar múltiples peticiones y bloqueos por rate limit
           
-          const cacheBuster = `?t=${new Date().getTime()}`;
+          const headers = {};
+          if (GITHUB_TOKEN) {
+            headers['Authorization'] = `token ${GITHUB_TOKEN}`;
+          }
           
           try {
-            const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}${cacheBuster}`);
+            const repoResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}${cacheBuster}`, { headers });
             if (!repoResponse.ok) throw new Error('Repo not found');
             const repoData = await repoResponse.json();
 
-            const userResponse = await fetch(`${GITHUB_API}/users/${REPO_OWNER}${cacheBuster}`);
+            const userResponse = await fetch(`${GITHUB_API}/users/${REPO_OWNER}${cacheBuster}`, { headers });
             const userData = await userResponse.json();
             
-            const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits${cacheBuster}&per_page=1`);
+            const commitsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits${cacheBuster}&per_page=1`, { headers });
             const linkHeader = commitsResponse.headers.get('Link');
             let totalCommits = 1;
             if (linkHeader) {
@@ -1231,12 +1235,12 @@
             
             let totalVersions = 0;
             try {
-              const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases${cacheBuster}`);
+              const releasesResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/releases${cacheBuster}`, { headers });
               const releases = await releasesResponse.json();
               totalVersions = Array.isArray(releases) ? releases.length : 0;
               
               if (totalVersions === 0) {
-                const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}`);
+                const tagsResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}`, { headers });
                 const tags = await tagsResponse.json();
                 totalVersions = Array.isArray(tags) ? tags.length : 0;
               }
@@ -1260,7 +1264,7 @@
               const latestTagLabel = document.querySelector('.timeline-item:last-child .timeline-label');
               if (latestTagLabel && totalVersions > 0) {
                 try {
-                  const tagsRes = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}&per_page=1`);
+                  const tagsRes = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/tags${cacheBuster}&per_page=1`, { headers });
                   const tags = await tagsRes.json();
                   if (tags && tags.length > 0) {
                     latestTagLabel.textContent = `Estado Actual (${tags[0].name})`;
