@@ -22,7 +22,7 @@ if (!acceptsApplicationJson()) {
 }
 
 try {
-    $apiResponse = $client->getPages();
+    $apiResponse = $client->getSummary(['limit' => '50000']);
     $statusCode = (int) $apiResponse['statusCode'];
     if ($statusCode < 200 || $statusCode >= 300) {
         $message = extractErrorMessage($apiResponse['body']);

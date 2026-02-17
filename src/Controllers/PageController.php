@@ -29,6 +29,7 @@ final class PageController
         '/secret-ai-metrics' => 'pages/secret-ai-metrics',
         '/seccion' => 'pages/seccion',
         '/secret-heatmap' => 'pages/secret-heatmap',
+        '/secret-cloud-ops' => 'pages/secret-cloud-ops',
         '/secret/heatmap' => 'pages/secret-heatmap',
         '/secret/sonar' => 'pages/sonar',
         '/secret/sentry' => 'pages/sentry',

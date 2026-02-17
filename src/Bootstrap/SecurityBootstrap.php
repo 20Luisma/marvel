@@ -61,6 +61,7 @@ final class SecurityBootstrap
 
             // Paneles de observabilidad: consultas moderadas
             '/secret-heatmap'    => ['max' => 30,  'window' => 60],
+            '/secret-cloud-ops'  => ['max' => 20,  'window' => 60],
             '/panel-github'      => ['max' => 20,  'window' => 60],
             '/panel-performance' => ['max' => 20,  'window' => 60],
             '/panel-accessibility' => ['max' => 20, 'window' => 60],

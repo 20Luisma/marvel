@@ -171,5 +171,89 @@ Película seleccionada → Feature Extraction → KNN Distance + Jaccard Text �
 - **Librería**: PHP-ML 0.10 (`php-ai/php-ml`)
 - **Endpoint**: `GET /api/movie-recommend.php?id={tmdb_id}&limit=5`
 
+## ☁️ FinOps: Auditoría y Optimización de Costes en Google Cloud
+
+### Problema resuelto
+El microservicio Heatmap corre sobre una VM `e2-micro` en Google Cloud (proyecto `marvel-479213`). Tras meses de operación, se acumularon **recursos innecesarios** generando costes evitables, **reglas de firewall redundantes** que ampliaban la superficie de ataque, y **APIs habilitadas sin uso real**. No existía una auditoría formal de la infraestructura cloud.
+
+### Auditoría técnica realizada
+
+Se ejecutó una auditoría completa del proyecto GCP con `gcloud CLI`, verificando:
+
+| Recurso auditado | Estado previo | Hallazgo |
+|-------------------|--------------|----------|
+| VM `headmap` (`e2-micro`) | RUNNING 24/7 (85 días) | ✅ Correcto — free tier eligible |
+| Disco 10 GB `pd-balanced` | Asociado a la VM | ✅ Correcto |
+| 14 snapshots incrementales | 3.63 GB reales | 🔴 Innecesarios — datos reconstruibles (1.3 MB) |
+| Schedule diario (×2 regiones) | Activo desde Nov 2025 | 🔴 Desproporcionado para el caso de uso |
+| 8 reglas de firewall | 4 redundantes/peligrosas | 🔴 Superficie de ataque innecesaria |
+| 24 APIs habilitadas | 7 BigQuery/Data sin uso | 🟡 Riesgo de coste por compromiso de credenciales |
+
+### Validaciones de seguridad pre-eliminación
+
+Antes de ejecutar cambios, se verificó en la VM vía SSH:
+- **Sin dependencia de snapshots**: No hay crontab, scripts, ni pipelines de restore.
+- **Sin marcas de criticidad**: Disco sin labels, VM sin deletion protection.
+- **Datos reconstruibles**: `heatmap.db` pesa 1.3 MB y se regenera automáticamente.
+- **IP efímera**: No hay IPs estáticas reservadas (ahorro implícito: $2.88/mes).
+
+### Optimizaciones ejecutadas
+
+#### 1. Eliminación de snapshots y schedule
+- **Eliminados**: 14 snapshots diarios (3.63 GB de almacenamiento incremental).
+- **Eliminados**: 2 schedules (`default-schedule-1` en `us-east1` y `europe-west4`).
+- **Ahorro**: ~$0.10/mes en almacenamiento de snapshots.
+- **Justificación**: Ratio coste/protección absurdo — snapshots de disco de 10 GB para proteger 1.3 MB de datos analíticos no críticos.
+
+#### 2. Hardening de firewall
+
+| Regla eliminada | Puerto | Razón |
+|-----------------|--------|-------|
+| `allow-8080-everywhere` | tcp:8080 | Duplicada con `allow-heatmap-8080` |
+| `default-allow-rdp` | tcp:3389 → 0.0.0.0/0 | Remote Desktop abierto al mundo en VM Linux |
+| `default-allow-http` | tcp:80 | Sin uso — servicio solo en 8080 |
+| `default-allow-https` | tcp:443 | Sin uso — sin TLS configurado |
+
+**Resultado**: Puertos públicos reducidos de 5 a 2 (8080 + SSH).
+
+#### 3. Desactivación de APIs innecesarias
+Desactivadas 7 APIs (BigQuery, Dataplex, Dataform, Analytics Hub) que no son utilizadas por el proyecto. Reduce la superficie de ataque ante compromiso de credenciales.
+
+### Análisis de costes — Antes vs Después
+
+| Recurso | Coste antes | Coste después | Ahorro |
+|---------|-------------|---------------|--------|
+| VM `e2-micro` (free tier) | $0.00/mes | $0.00/mes | — |
+| Disco 10 GB `pd-balanced` | $1.00/mes | $1.00/mes | — |
+| Snapshots (14 × incremental) | $0.094/mes | $0.00/mes | $0.094 |
+| IP estática (no reservada) | $0.00/mes | $0.00/mes | — |
+| APIs sin uso | $0 (riesgo) | Eliminadas | Prevención |
+| **Total mensual** | **~$1.10** | **~$1.00** | **$0.10 + seguridad** |
+
+### Decisión arquitectónica: VM vs Cloud Run
+
+Se evaluó migrar el microservicio a Cloud Run (serverless, escala a cero):
+
+| Criterio | VM `e2-micro` | Cloud Run + Cloud SQL |
+|----------|--------------|----------------------|
+| Coste mensual | ~$1.00 (free tier) | ~$8-12 (Cloud SQL $7/mes mínimo) |
+| Persistencia | SQLite nativo | Requiere Cloud SQL/Firestore |
+| Cold start | N/A | 2-5s (Python/Flask) |
+| Complejidad | Ya funciona | Reescritura de capa de datos |
+
+**Decisión**: Mantener la VM. Migrar a Cloud Run **multiplicaría el coste ×8** sin beneficio tangible. La VM `e2-micro` es free-tier eligible y el servicio tiene 85+ días de uptime sin incidentes.
+
+### Archivos clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `docs/architecture/ADR-022-gcp-cloud-optimization.md` | Decisión arquitectónica documentada |
+| `public/api/heatmap/summary.php` | Proxy corregido (bug `page` → `page_url`) |
+| `public/api/heatmap/pages.php` | Proxy corregido (limit 100 → 50000) |
+
+### Referencia
+- **ADR-022**: `docs/architecture/ADR-022-gcp-cloud-optimization.md`
+- **Principios FinOps**: Visibilidad, optimización, gobernanza de costes cloud
+- **Google Cloud Free Tier**: [cloud.google.com/free](https://cloud.google.com/free)
+
 ---
 *Proyecto finalizado con criterios académicos sólidos y trazabilidad técnica.*

@@ -14,6 +14,7 @@ final class AuthMiddleware
     private array $protectedPaths = [
         '/seccion',
         '/secret-heatmap',
+        '/secret-cloud-ops',
         '/secret/heatmap',
         '/secret/sonar',
         '/secret/sentry',

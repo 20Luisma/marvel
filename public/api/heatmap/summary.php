@@ -21,11 +21,11 @@ if (!acceptsApplicationJson()) {
     respondJson(['status' => 'error', 'message' => 'Se requiere el encabezado Accept: application/json.'], 406);
 }
 
-$query = [];
+$query = ['limit' => '50000'];
 $pageFilter = null;
 if (isset($_GET['page']) && trim((string) $_GET['page']) !== '') {
     $pageFilter = (string) $_GET['page'];
-    $query['page'] = $pageFilter;
+    $query['page_url'] = $pageFilter;
 }
 
 try {

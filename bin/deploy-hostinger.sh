@@ -53,10 +53,16 @@ else
     exit 1
 fi
 
+set -e # Salir inmediatamente si falla cualquier comando
+
 # --- 1. CREAR SNAPSHOT ---
 echo "📦 Generando Snapshot de seguridad..."
 REMOTE_LOGIC="mkdir -p $BACKUP_PATH && cd $REMOTE_BASE && zip -r $BACKUP_PATH/backup_$TIMESTAMP.zip . -x 'deploy_backups/*' 'vendor/*' 'node_modules/*' > /dev/null 2>&1; echo 'SENTINEL_OK'"
-sshpass -p "$SSH_PASS" ssh -p "$SSH_PORT" -q -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "$REMOTE_LOGIC" > /dev/null
+
+if ! sshpass -p "$SSH_PASS" ssh -p "$SSH_PORT" -q -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "$REMOTE_LOGIC" > /dev/null; then
+    echo "❌ ERROR: No se pudo establecer conexión SSH. Verifica tu clave en el .env"
+    exit 1
+fi
 
 # --- 2. RSYNC SYNC ---
 echo "🔄 Sincronizando código (Limpieza quirúrgica activa)..."
