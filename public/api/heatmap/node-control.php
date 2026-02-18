@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificación básica de sesión (ajustado a AuthService de la app)
+// Verificación básica de sesión
 if (!isset($_SESSION['auth'])) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
@@ -34,28 +34,45 @@ if (!is_dir($storageDir)) {
 $statusFile = $storageDir . '/node_status.json';
 $queueFile  = $storageDir . '/pending_clicks.json';
 
-
-// ─── Estado por defecto ───────────────────────────────────────────────────────
-function loadStatus(string $file): array
+// ─── Estructura base garantizada ──────────────────────────────────────────────
+function getBaseStatus(): array
 {
-    if (!is_file($file)) {
-        return [
-            'nodes' => [
-                'gcp' => ['status' => 'online', 'label' => 'Google Cloud'],
-                'aws' => ['status' => 'online', 'label' => 'Amazon Web Services']
-            ],
-            'updated_at' => time()
-        ];
-    }
-    $raw = file_get_contents($file);
-    $decoded = json_decode($raw ?: '', true);
-    return is_array($decoded) ? $decoded : [
+    return [
         'nodes' => [
             'gcp' => ['status' => 'online', 'label' => 'Google Cloud'],
             'aws' => ['status' => 'online', 'label' => 'Amazon Web Services']
         ],
         'updated_at' => time()
     ];
+}
+
+function loadStatus(string $file): array
+{
+    $status = getBaseStatus();
+    if (is_file($file)) {
+        $raw = file_get_contents($file);
+        $decoded = json_decode($raw ?: '', true);
+        if (is_array($decoded)) {
+            // Migración/Merge: asegurar que 'nodes' existe y tiene claves
+            if (isset($decoded['nodes']) && is_array($decoded['nodes'])) {
+                foreach (['gcp', 'aws'] as $k) {
+                    if (isset($decoded['nodes'][$k]['status'])) {
+                        $status['nodes'][$k]['status'] = $decoded['nodes'][$k]['status'];
+                    }
+                }
+            }
+            // Soporte para formato antiguo si existiera
+            foreach (['gcp', 'aws'] as $k) {
+                if (isset($decoded[$k]) && is_string($decoded[$k])) {
+                    $status['nodes'][$k]['status'] = $decoded[$k];
+                }
+            }
+            if (isset($decoded['updated_at'])) {
+                $status['updated_at'] = $decoded['updated_at'];
+            }
+        }
+    }
+    return $status;
 }
 
 function queueCount(string $queueFile): int
@@ -92,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     file_put_contents($statusFile, json_encode($status));
 
-    // Si recuperamos un nodo, intentamos sincronizar la cola inmediatamente de forma proactiva
+    // Si recuperamos un nodo, intentamos sincronizar la cola
     if ($action === 'enable') {
         try {
             $rootPath = dirname(__DIR__, 3);
@@ -101,15 +118,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $client = $container['services']['heatmapApiClient'] ?? null;
             
             if ($client instanceof \App\Heatmap\Infrastructure\ReplicatedHeatmapApiClient) {
-                // Forzamos el vaciado de la cola usando Reflection para acceder al método privado
                 $reflection = new \ReflectionClass($client);
                 $method = $reflection->getMethod('flushPendingQueue');
                 $method->setAccessible(true);
                 $method->invoke($client);
             }
-        } catch (\Throwable $e) {
-            // Error silencioso, el sync continuará en segundo plano con los clicks normales
-        }
+        } catch (\Throwable $e) {}
     }
 
     echo json_encode([
