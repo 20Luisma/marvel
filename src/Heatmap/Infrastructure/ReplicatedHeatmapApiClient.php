@@ -20,7 +20,6 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 {
     private const QUEUE_FILENAME = 'pending_clicks.json';
     private const MAX_QUEUE      = 5000;  // máximo clicks en cola
-    private const WRITE_TIMEOUT  = 4;     // segundos para escritura normal
 
     private string $queueFile;
 
