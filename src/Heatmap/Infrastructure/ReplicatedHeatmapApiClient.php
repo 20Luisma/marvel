@@ -121,7 +121,7 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
         $results = [];
 
         foreach ($this->clients as $idx => $client) {
-            $nodeKey = $this->resolveNodeKey($this->urls[$idx] ?? '');
+            $nodeKey = $this->resolveNodeKey($this->urls[$idx] ?? '', $idx);
 
             // Si el panel marcó este nodo como offline → simular fallo directamente
             if (($nodeStatus[$nodeKey] ?? 'online') === 'offline') {
@@ -166,13 +166,14 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 
     /**
      * Mapea una URL base al identificador de nodo usado en node_status.json.
+     * Usa el índice como fallback: 0 = gcp, 1 = aws.
      */
-    private function resolveNodeKey(string $url): string
+    private function resolveNodeKey(string $url, int $idx = 0): string
     {
         if (str_contains($url, '34.74.102.123')) return 'gcp';
         if (str_contains($url, '35.181.60.162')) return 'aws';
-        // Fallback: usa 'gcp' para el primer nodo, 'aws' para el segundo
-        return 'gcp';
+        // Fallback por índice: primer nodo = gcp, segundo = aws
+        return $idx === 0 ? 'gcp' : 'aws';
     }
 
     // ─────────────────────────────────────────────────────────────────────────
