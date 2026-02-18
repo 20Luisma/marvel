@@ -1,6 +1,20 @@
 <?php
 declare(strict_types=1);
 
+// Cargar .env manualmente para que las variables estén disponibles
+$rootPath = dirname(__DIR__, 3);
+$envPath = $rootPath . '/.env';
+if (is_file($envPath)) {
+    foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+        if (str_starts_with($line, '#')) continue;
+        [$key, $value] = array_map('trim', explode('=', $line, 2) + [1 => '']);
+        if ($key !== '') {
+            $_ENV[$key] = $value;
+            putenv($key . '=' . $value);
+        }
+    }
+}
+
 // Configuración de cabeceras para permitir CORS y JSON
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -109,21 +123,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     file_put_contents($statusFile, json_encode($status));
 
-    // Si recuperamos un nodo, intentamos sincronizar la cola
+    // Si recuperamos un nodo, intentamos sincronizar la cola inmediatamente
     if ($action === 'enable') {
         try {
             $rootPath = dirname(__DIR__, 3);
             require_once $rootPath . '/vendor/autoload.php';
-            $container = require_once $rootPath . '/src/bootstrap.php';
-            $client = $container['services']['heatmapApiClient'] ?? null;
             
-            if ($client instanceof \App\Heatmap\Infrastructure\ReplicatedHeatmapApiClient) {
-                $reflection = new \ReflectionClass($client);
-                $method = $reflection->getMethod('flushPendingQueue');
-                $method->setAccessible(true);
-                $method->invoke($client);
+            // Crear cliente directamente en vez de depender del bootstrap
+            $baseUrl   = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? '')));
+            $secUrl    = trim((string) (getenv('HEATMAP_API_SECONDARY_URL') ?: ($_ENV['HEATMAP_API_SECONDARY_URL'] ?? '')));
+            $token     = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
+            
+            $clients = [];
+            if ($baseUrl !== '') {
+                $clients[] = new \App\Heatmap\Infrastructure\HttpHeatmapApiClient($baseUrl, $token !== '' ? $token : null);
             }
-        } catch (\Throwable $e) {}
+            if ($secUrl !== '') {
+                $clients[] = new \App\Heatmap\Infrastructure\HttpHeatmapApiClient($secUrl, $token !== '' ? $token : null);
+            }
+            
+            if (!empty($clients)) {
+                $replicatedClient = new \App\Heatmap\Infrastructure\ReplicatedHeatmapApiClient(...$clients);
+                $replicatedClient->flushPendingQueue();
+                error_log('[Heatmap Panel] Queue flush completed after enabling node: ' . $node);
+            }
+        } catch (\Throwable $e) {
+            error_log('[Heatmap Panel] Queue flush failed: ' . $e->getMessage());
+        }
     }
 
     echo json_encode([

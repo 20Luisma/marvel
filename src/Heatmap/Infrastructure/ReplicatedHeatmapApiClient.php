@@ -281,7 +281,7 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
      * Intenta reenviar los clicks pendientes a los nodos que ahora están disponibles.
      * Se ejecuta al inicio de cada request (con timeout corto para no bloquear).
      */
-    private function flushPendingQueue(): void
+    public function flushPendingQueue(): void
     {
         $queue = $this->loadQueue();
         if (empty($queue)) {
