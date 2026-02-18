@@ -102,13 +102,13 @@ require_once __DIR__ . '/../layouts/header.php';
               </div>
             </div>
             <p style="font-size:0.7rem;color:#475569;margin:0 0 14px;font-family:monospace;">34.74.102.123:8080</p>
-            <button id="mc-btn-gcp" onclick="toggleNode('gcp')" style="
+            <button id="mc-btn-gcp" style="
               width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;
               font-size:0.75rem;font-weight:600;letter-spacing:0.05em;
               background:rgba(239,68,68,0.15);color:#f87171;
               border:1px solid rgba(239,68,68,0.3);
               transition:all 0.2s ease;
-            " onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+            ">
               ⏸ SIMULAR CAÍDA
             </button>
           </div>
@@ -140,13 +140,13 @@ require_once __DIR__ . '/../layouts/header.php';
               </div>
             </div>
             <p style="font-size:0.7rem;color:#475569;margin:0 0 14px;font-family:monospace;">35.181.60.162:8080</p>
-            <button id="mc-btn-aws" onclick="toggleNode('aws')" style="
+            <button id="mc-btn-aws" style="
               width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;
               font-size:0.75rem;font-weight:600;letter-spacing:0.05em;
               background:rgba(239,68,68,0.15);color:#f87171;
               border:1px solid rgba(239,68,68,0.3);
               transition:all 0.2s ease;
-            " onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+            ">
               ⏸ SIMULAR CAÍDA
             </button>
           </div>
@@ -161,7 +161,7 @@ require_once __DIR__ . '/../layouts/header.php';
         </div>
       </div>
 
-      <style>
+      <style<?= isset($cspNonce) ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
         @keyframes mc-pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(0.85); }
@@ -172,7 +172,7 @@ require_once __DIR__ . '/../layouts/header.php';
         }
       </style>
 
-      <script>
+      <script<?= isset($cspNonce) ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
       (function() {
         const nodeState = { gcp: 'online', aws: 'online' };
 
@@ -273,6 +273,10 @@ require_once __DIR__ . '/../layouts/header.php';
             addLog('❌ Error al cambiar estado del nodo ' + node.toUpperCase());
           });
         };
+
+        // Event listeners para botones (evita onclick inline bloqueado por CSP)
+        document.getElementById('mc-btn-gcp').addEventListener('click', function() { toggleNode('gcp'); });
+        document.getElementById('mc-btn-aws').addEventListener('click', function() { toggleNode('aws'); });
 
         // Polling cada 5 segundos
         fetchStatus();
@@ -385,6 +389,7 @@ require_once __DIR__ . '/../layouts/header.php';
 <script
   src="https://cdn.jsdelivr.net/npm/chart.js"
   crossorigin="anonymous"
+  <?= isset($cspNonce) ? 'nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>
 ></script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
