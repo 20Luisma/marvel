@@ -52,8 +52,7 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
         $this->queueFile  = $storageDir . '/' . self::QUEUE_FILENAME;
         $this->statusFile = $storageDir . '/' . self::STATUS_FILENAME;
 
-        // Al arrancar, intentamos sincronizar clicks pendientes
-        $this->flushPendingQueue();
+        // NO llamamos flushPendingQueue() aquí para no bloquear cada request
     }
 
     /**
@@ -81,7 +80,21 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             }
         }
 
+        // Sincronización ocasional de cola (1 de cada 10 requests)
+        $this->maybeFlushQueue();
+
         return $lastResult;
+    }
+
+    /**
+     * Intenta sincronizar la cola con probabilidad 1/10 para no bloquear
+     * cada request. Se ejecuta en el mismo proceso, tras devolver el resultado.
+     */
+    private function maybeFlushQueue(): void
+    {
+        if (random_int(1, 10) === 1) {
+            $this->flushPendingQueue();
+        }
     }
 
     /**

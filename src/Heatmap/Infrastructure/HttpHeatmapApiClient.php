@@ -5,7 +5,8 @@ namespace App\Heatmap\Infrastructure;
 
 final class HttpHeatmapApiClient implements HeatmapApiClient
 {
-    private const DEFAULT_TIMEOUT = 3;
+    private const DEFAULT_TIMEOUT    = 1;  // timeout total por nodo
+    private const DEFAULT_CONNECT_TO  = 1;  // timeout de conexión
 
     private string $baseUrl;
     private ?string $apiToken;
@@ -82,6 +83,7 @@ final class HttpHeatmapApiClient implements HeatmapApiClient
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::DEFAULT_CONNECT_TO);
 
         if ($payload !== null) {
             $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
