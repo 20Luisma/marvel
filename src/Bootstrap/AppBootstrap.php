@@ -86,10 +86,10 @@ final class AppBootstrap
 
         (new ConfigValidator($_ENV + ['APP_ENV' => $appEnvironment], $serviceUrlProvider, $appEnvironment))->validate();
 
-        // Seguridad de cabeceras (se mantiene comportamiento original).
+        // Seguridad de cabeceras.
         $isTestEnv = ($appEnvironment === 'test');
         if (!$isTestEnv) {
-            $cspNonce = \App\Security\Http\CspNonceGenerator::generate();
+            $cspNonce = $_SERVER['CSP_NONCE'] ?? \App\Security\Http\CspNonceGenerator::generate();
             $_SERVER['CSP_NONCE'] = $cspNonce;
             SecurityHeaders::apply($cspNonce);
         }
