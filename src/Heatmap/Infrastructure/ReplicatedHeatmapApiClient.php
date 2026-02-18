@@ -174,6 +174,8 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
     /**
      * Lee el estado de los nodos desde node_status.json (escrito por el panel de control).
      * Devuelve formato plano: ['gcp' => 'online'|'offline', 'aws' => 'online'|'offline']
+     *
+     * @return array<string, string>
      */
     private function loadNodeStatus(): array
     {
