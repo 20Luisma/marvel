@@ -12,8 +12,13 @@ Implementar un mecanismo de **Failover Activo-Pasivo** utilizando dos proveedore
 1.  **Primario (GCP)**: `us-east1-b` (Carolina del Sur, USA).
 2.  **Secundario (AWS)**: `eu-west-3` (París, Francia).
 
-### Detalles Técnicos
-- Se ha replicado el microservicio Heatmap (Python/Flask + Docker) en una instancia EC2 (`t3.micro`) de AWS.
+### Detalles Técnicos e Infraestructura Real
+- **Nodo Primario (GCP)**: `http://34.74.102.123:8080`
+  - Ubicación: `us-east1-b` (Carolina del Sur).
+  - Tecnología: VM e2-micro con Docker (Flask + SQLite).
+- **Nodo Secundario (AWS)**: `http://35.181.60.162:8080`
+  - Ubicación: `eu-west-3` (París).
+  - Tecnología: Instancia EC2 t3.micro.
 - Se ha implementado el patrón **Failover** en el cliente PHP mediante el nuevo `FailoverHeatmapApiClient`.
 - El cliente intentará siempre el nodo primario (GCP). Si el código de respuesta es de error (5xx) o hay un timeout, reintentará automáticamente en el nodo secundario (AWS).
 

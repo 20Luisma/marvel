@@ -123,25 +123,27 @@ Permite persistencia incluso al reiniciar contenedor o VM (mientras se mantenga 
 
 ---
 
-## ☁️ Despliegue en Google Cloud
+## ☁️ Despliegue Multi-Cloud (GCP + AWS)
+El microservicio está desplegado en dos nubes distintas para garantizar alta disponibilidad:
 
-- VM Debian estándar
-- Firewall abierto solo al puerto 8080
-- Docker instalado manualmente
-- Deploy manual:
-  - subir archivos
-  - reconstruir imagen
-  - reiniciar contenedor
+### 🔵 Nodo Primario: Google Cloud (GCP)
+- **URL**: `http://34.74.102.123:8080`
+- **Ubicación**: Región `us-east1-b` (USA).
+- **Tecnología**: VM e2-micro.
 
-El servicio queda expuesto globalmente en:
-
-```
-http://34.74.102.123:8080
-```
+### 🟠 Nodo Secundario: Amazon Web Services (AWS)
+- **URL**: `http://35.181.60.162:8080`
+- **Ubicación**: Región `eu-west-3` (París).
+- **Tecnología**: EC2 t3.micro.
 
 ---
 
 ## Integración con Clean Marvel Album (PHP)
+
+### Estrategia de Failover
+La aplicación principal utiliza un cliente inteligente que monitoriza el estado de los nodos:
+1. Siempre intenta enviar el evento al **Nodo Primario (GCP)**.
+2. Si falla (timeout o error 5xx), redirige automáticamente el tráfico al **Nodo Secundario (AWS)**.
 
 ### JavaScript tracker (frontend)
 
