@@ -4,21 +4,25 @@ declare(strict_types=1);
 namespace App\Heatmap\Infrastructure;
 
 /**
- * ReplicatedHeatmapApiClient — Write-to-Both con cola de sincronización.
+ * ReplicatedHeatmapApiClient — Write-to-Both con cola de sincronización persistente.
  *
  * Estrategia:
- *  - ESCRITURA (sendClick): se envía a TODOS los nodos en paralelo (cURL multi).
- *    Si un nodo falla, el click se encola en disco para reintentarlo después.
+ *  - ESCRITURA (sendClick): se envía a TODOS los nodos simultáneamente.
+ *    Si un nodo falla, el click se encola en disco (storage/ persistente) para reintentarlo.
  *  - LECTURA (getSummary / getPages): primer nodo disponible (GCP primero).
  *  - SYNC: al inicio de cada request, intenta vaciar la cola de clicks pendientes
  *    en los nodos que antes fallaron y ahora están disponibles.
+ *
+ * La cola se guarda en storage/heatmap/pending_clicks.json (NO en /tmp)
+ * para sobrevivir reinicios del servidor PHP.
  */
 final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 {
-    private const QUEUE_FILE    = '/tmp/heatmap_pending_clicks.json';
-    private const MAX_QUEUE     = 5000;   // máximo clicks en cola
-    private const SYNC_TIMEOUT  = 2;      // segundos para el sync al inicio
-    private const WRITE_TIMEOUT = 4;      // segundos para escritura normal
+    private const QUEUE_FILENAME = 'pending_clicks.json';
+    private const MAX_QUEUE      = 5000;  // máximo clicks en cola
+    private const WRITE_TIMEOUT  = 4;     // segundos para escritura normal
+
+    private string $queueFile;
 
     /** @var HttpHeatmapApiClient[] */
     private array $clients;
@@ -28,12 +32,23 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 
     public function __construct(HttpHeatmapApiClient ...$clients)
     {
+        // Último argumento opcional: ruta del directorio de storage persistente
+        // Se inyecta desde el Bootstrap para seguir Clean Architecture.
+        // Por defecto usa storage/heatmap/ relativo al directorio de trabajo.
         $this->clients = $clients;
+
         // Extraemos las URLs base para identificar qué nodo falló
         $this->urls = array_map(
             static fn(HttpHeatmapApiClient $c) => $c->getBaseUrl(),
             $clients
         );
+
+        // Ruta persistente de la cola (sobrevive reinicios del servidor PHP)
+        $storageDir = dirname(__DIR__, 4) . '/storage/heatmap';
+        if (!is_dir($storageDir)) {
+            @mkdir($storageDir, 0755, true);
+        }
+        $this->queueFile = $storageDir . '/' . self::QUEUE_FILENAME;
 
         // Al arrancar, intentamos sincronizar clicks pendientes
         $this->flushPendingQueue();
@@ -225,16 +240,16 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // PERSISTENCIA DE LA COLA (fichero JSON en /tmp)
+    // PERSISTENCIA DE LA COLA (storage/heatmap/pending_clicks.json — persistente)
     // ─────────────────────────────────────────────────────────────────────────
 
     /** @return array<int,array<string,mixed>> */
     private function loadQueue(): array
     {
-        if (!is_file(self::QUEUE_FILE)) {
+        if (!is_file($this->queueFile)) {
             return [];
         }
-        $raw = file_get_contents(self::QUEUE_FILE);
+        $raw = file_get_contents($this->queueFile);
         if ($raw === false || $raw === '') {
             return [];
         }
@@ -246,7 +261,7 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
     private function saveQueue(array $queue): void
     {
         file_put_contents(
-            self::QUEUE_FILE,
+            $this->queueFile,
             json_encode($queue, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
             LOCK_EX
         );

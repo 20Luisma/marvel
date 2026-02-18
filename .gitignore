@@ -110,3 +110,4 @@ pa11y-results/
 coverage.xml
 test-report.xml
 storage/rate_limit/*.json
+storage/heatmap/pending_clicks.json
