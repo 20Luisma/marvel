@@ -25,11 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Requiere autenticación (solo admin puede controlar nodos)
-require_once dirname(__DIR__, 3) . '/src/Bootstrap/AppBootstrap.php';
-use App\Infrastructure\Http\AuthGuards;
-AuthGuards::requireAuth();
-AuthGuards::requireAdmin();
+// Verificación de sesión (devuelve JSON, no redirige)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['auth']) || !is_array($_SESSION['auth'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'No autorizado']);
+    exit;
+}
 
 $storageDir  = dirname(__DIR__, 3) . '/storage/heatmap';
 $statusFile  = $storageDir . '/node_status.json';
