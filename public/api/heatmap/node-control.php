@@ -35,13 +35,21 @@ if (empty($_SESSION['auth']) || !is_array($_SESSION['auth'])) {
     exit;
 }
 
-$storageDir  = dirname(__DIR__, 3) . '/storage/heatmap';
-$statusFile  = $storageDir . '/node_status.json';
-$queueFile   = $storageDir . '/pending_clicks.json';
+// Determinar ruta según entorno
+$appEnv = (string) (getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local'));
+$isHosting = (strpos($_SERVER['HTTP_HOST'] ?? '', 'contenido.creawebes.com') !== false || $appEnv === 'hosting');
+
+$storageDir = $isHosting
+    ? '/home/u968396048/domains/contenido.creawebes.com/public_html/iamasterbigschool/storage/heatmap'
+    : dirname(__DIR__, 3) . '/storage/heatmap';
 
 if (!is_dir($storageDir)) {
-    mkdir($storageDir, 0755, true);
+    @mkdir($storageDir, 0755, true);
 }
+
+$statusFile = $storageDir . '/node_status.json';
+$queueFile  = $storageDir . '/pending_clicks.json';
+
 
 // ─── Estado por defecto ───────────────────────────────────────────────────────
 function loadStatus(string $file): array
