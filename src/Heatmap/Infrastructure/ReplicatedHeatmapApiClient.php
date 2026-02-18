@@ -44,8 +44,9 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             $clients
         );
 
-        // Ruta persistente — siempre relativa al proyecto raíz
-        $storageDir = dirname(__DIR__, 4) . '/storage/heatmap';
+        // Ruta persistente — relativa al proyecto raíz
+        // src/Heatmap/Infrastructure → dirname(3) → raíz del proyecto
+        $storageDir = dirname(__DIR__, 3) . '/storage/heatmap';
 
         if (!is_dir($storageDir)) {
             @mkdir($storageDir, 0755, true);
