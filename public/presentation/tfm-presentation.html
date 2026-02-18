@@ -845,7 +845,7 @@
         <div class="api-monitor-title">Ecosistema Integrado · Verificación en Tiempo Real</div>
         <div style="text-align:center; font-size:0.65rem; color:rgba(255,255,255,0.4); margin-bottom:8px;">🟢 Online (verificado) · 🔵 Integrada (sin CORS) · 🔴 No disponible</div>
         <div class="api-grid">
-          <div class="api-item" data-check-mode="integrated">
+          <div class="api-item" data-check-url="github-proxy.php?action=repo" data-check-mode="cors">
             <div class="status-led" id="status-github"></div>
             <span class="api-name">GitHub API</span>
             <span class="api-endpoint">api.github.com</span>
@@ -890,7 +890,7 @@
             <span class="api-name">CodeRabbit</span>
             <span class="api-endpoint">coderabbit.ai/reviews</span>
           </div>
-          <div class="api-item" data-check-mode="integrated">
+          <div class="api-item" data-check-url="github-proxy.php?action=commits" data-check-mode="cors">
             <div class="status-led" id="status-deploy"></div>
             <span class="api-name">CI/CD Pipeline</span>
             <span class="api-endpoint">gh-actions/deploy</span>
