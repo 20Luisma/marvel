@@ -94,10 +94,12 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 - Tests unitarios completos
 - Generación offline de embeddings para no gastar tokens en producción
 
-### Heatmap Service (Python/Flask) — Multi-Cloud HA
-Microservicio que registra eventos de clic para análisis de interacción. Implementado con una arquitectura de **Alta Disponibilidad (High Availability)**:
+### Heatmap Service (Python/Flask) — Multi-Cloud Write-to-Both
+Microservicio que registra eventos de clic para análisis de interacción. Implementado con una arquitectura de **Alta Disponibilidad y Consistencia Eventual**:
 - **Redundancia Geográfica:** Desplegado simultáneamente en Google Cloud (USA) y AWS (Europa).
-- **Failover Automático:** La aplicación principal detecta caídas y conmuta entre proveedores en tiempo real sin interrupción del servicio.
+- **Write-to-Both (ADR-025):** Cada click se escribe en **GCP y AWS simultáneamente**. Si un nodo falla, el click se encola en `storage/heatmap/pending_clicks.json` (cola persistente en disco).
+- **Sincronización Automática:** Al recuperarse un nodo, `flushPendingQueue()` reenvía automáticamente los clicks encolados. **Nunca se pierden datos.**
+- **Consistencia Eventual:** Ambos nodos convergen siempre al mismo estado sin intervención manual.
 - **Dockerizado:** Ejecución aislada en contenedores para portabilidad total.
 
 ## CI/CD & Quality Gate (Filtro Quirúrgico) 🛡️
@@ -223,7 +225,9 @@ Este proyecto está diseñado como una **guía técnica y demo interactiva**, no
 ---
 
 ## Documentación adicional
-- `docs/architecture/` — decisiones de arquitectura
+- `docs/architecture/` — decisiones de arquitectura (ADR-001 a ADR-025)
+  - **ADR-023** — Failover Multi-Cloud GCP/AWS
+  - **ADR-025** — Write-to-Both con cola de sincronización persistente (Heatmap)
 - `docs/api/` — referencia de endpoints
 - `docs/guides/` — guías técnicas
 - `docs/guides/entorno-staging-mirroring.md` — Paridad de entornos y CI/CD Staging

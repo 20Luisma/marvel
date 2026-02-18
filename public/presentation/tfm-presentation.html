@@ -1044,8 +1044,9 @@
             <div class="card-title" style="font-size: 0.75rem; border-bottom: none; margin-bottom: 12px; padding: 0; color: #3b82f6; text-transform: uppercase;">Arquitectura Multi-Cloud (DRP)</div>
             <ul class="list" style="gap: 8px; font-size: 0.85rem;">
               <li style="line-height: 1.4;">🔵 <strong>Nodo 1 (GCP)</strong> · VM e2-micro · South Carolina</li>
-              <li style="line-height: 1.4;">🟠 <strong>Nodo 2 (AWS)</strong> · EC2 t3.micro · París (Failover)</li>
-              <li style="line-height: 1.4;">🔄 <strong>Failover</strong> · Conmutación automática en cliente PHP</li>
+              <li style="line-height: 1.4;">🟠 <strong>Nodo 2 (AWS)</strong> · EC2 t3.micro · París</li>
+              <li style="line-height: 1.4;">🔄 <strong>Write-to-Both</strong> · Escritura simultánea en ambos nodos</li>
+              <li style="line-height: 1.4;">🔁 <strong>Sync automático</strong> · Cola persistente si un nodo cae</li>
             </ul>
           </div>
           <div>
@@ -1076,27 +1077,31 @@
           </table>
         </div>
         <div class="card" style="padding: 18px 22px;">
-          <div class="card-title" style="font-size: 0.7rem; margin-bottom: 12px;">Failover Logic (ADR-023)</div>
-          <div style="font-family: monospace; font-size: 0.8rem; line-height: 1.4;">
-            <span style="color: #94a3b8;">// Intenta GCP, si falla salta a AWS</span><br>
-            <code style="color: #3b82f6;">try { return GCP->track(); }</code><br>
-            <code style="color: #f59e0b;">catch { return AWS->track(); }</code>
+          <div class="card-title" style="font-size: 0.7rem; margin-bottom: 12px;">Replication Logic (ADR-023 + ADR-025)</div>
+          <div style="font-family: monospace; font-size: 0.75rem; line-height: 1.6;">
+            <span style="color: #94a3b8;">// Escribe en GCP y AWS simultáneamente</span><br>
+            <code style="color: #3b82f6;">GCP→track(click) ✅</code><br>
+            <code style="color: #f59e0b;">AWS→track(click) ✅</code><br>
+            <span style="color: #94a3b8;">// Si un nodo falla → cola persistente</span><br>
+            <code style="color: #10b981;">onRecover → flushQueue() 🔁</code>
           </div>
         </div>
       </div>
 
-      <div class="release-seal" style="margin-top: 25px; padding: 15px 25px;">
-        <div class="seal-icon" style="font-size: 1.2rem;">💰</div>
+      <!-- Sello: consistencia de datos -->
+      <div class="release-seal" style="margin-top: 20px; padding: 12px 25px;">
+        <div class="seal-icon" style="font-size: 1.2rem;">🔁</div>
         <div>
-          <div class="seal-text-main" style="font-size: 0.65rem;">Principios FinOps · ADR-022 & 024</div>
+          <div class="seal-text-main" style="font-size: 0.65rem;">Consistencia Eventual · ADR-025</div>
           <div class="seal-text-sub" style="font-size: 0.8rem;">
-            <strong>Visibilidad</strong> · <strong>Optimización</strong> · <strong>Gobernanza</strong> — Estrategia de ahorro y seguridad auditada en Google Cloud y Amazon Web Services.
+            <strong>Write-to-Both</strong>: cada click llega a GCP y AWS. Si un nodo cae, la <strong>cola persistente</strong> sincroniza los datos automáticamente al recuperarse. <strong>Nunca se pierden clicks.</strong>
           </div>
         </div>
       </div>
 
       <span class="slide-number">25 / 29</span>
     </section>
+
 
     <!-- SLIDE 26: Reflexión -->
     <section class="slide" data-slide="26">
