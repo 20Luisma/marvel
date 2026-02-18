@@ -23,7 +23,7 @@ use App\Config\ServiceUrlProvider;
 use App\Dev\Seed\SeedHeroesService;
 use App\Dev\Test\PhpUnitTestRunner;
 use App\Heatmap\Infrastructure\HttpHeatmapApiClient;
-use App\Heatmap\Infrastructure\FailoverHeatmapApiClient;
+use App\Heatmap\Infrastructure\ReplicatedHeatmapApiClient;
 use App\Heroes\Application\Rag\HeroRagSyncer;
 use App\Heroes\Domain\Repository\HeroRepository;
 use App\Heroes\Application\UseCase\CreateHeroUseCase;
@@ -189,7 +189,9 @@ final class AppBootstrap
                     if ($heatmapSecondaryUrl !== '') {
                         $clients[] = new HttpHeatmapApiClient($heatmapSecondaryUrl, $heatmapApiToken !== '' ? $heatmapApiToken : null);
                     }
-                    return new FailoverHeatmapApiClient(...$clients);
+                    // ReplicatedHeatmapApiClient: escribe en TODOS los nodos simultáneamente.
+                    // Si un nodo falla, encola el click y lo sincroniza cuando el nodo se recupera.
+                    return new ReplicatedHeatmapApiClient(...$clients);
                 })(),
                 'ragSyncer' => $ragSyncer,
             ],

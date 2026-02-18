@@ -16,6 +16,11 @@ final class HttpHeatmapApiClient implements HeatmapApiClient
         $this->apiToken = $apiToken !== null && $apiToken !== '' ? $apiToken : null;
     }
 
+    public function getBaseUrl(): string
+    {
+        return $this->baseUrl;
+    }
+
     /**
      * @param array<string, mixed> $payload
      * @return array{statusCode: int, body: string}
