@@ -229,36 +229,8 @@ require_once __DIR__ . '/../layouts/header.php';
         }
 
         // Carga estado inicial
-        window.simulateTraffic = function() {
-              setTimeout(fetchStatus, 500);
-              return;
-            }
+        function fetchStatus() {
 
-            fetch('/api/heatmap/click.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                page: page,
-                x: Math.random(),
-                y: Math.random(),
-                viewportW: 1920,
-                viewportH: 1080,
-                scrollY: 0,
-                timestamp: Date.now()
-              })
-            }).finally(() => {
-              sent++;
-              setTimeout(sendOne, 150);
-            });
-          };
-
-          sendOne();
-        };
-
-        const fetchStatus = () => {
           fetch('/api/heatmap/node-control.php')
             .then(r => r.json())
             .then(data => {
@@ -412,7 +384,6 @@ require_once __DIR__ . '/../layouts/header.php';
 <!-- TODO: añadir hash real de SRI de la versión de Chart.js usada -->
 <script
   src="https://cdn.jsdelivr.net/npm/chart.js"
-  integrity="TODO_ADD_REAL_HASH_HERE"
   crossorigin="anonymous"
 ></script>
 
