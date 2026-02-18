@@ -173,16 +173,41 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 
     /**
      * Lee el estado de los nodos desde node_status.json (escrito por el panel de control).
-     * @return array<string,string>  ['gcp' => 'online'|'offline', 'aws' => 'online'|'offline']
+     * Devuelve formato plano: ['gcp' => 'online'|'offline', 'aws' => 'online'|'offline']
      */
     private function loadNodeStatus(): array
     {
+        $default = ['gcp' => 'online', 'aws' => 'online'];
+
         if (!is_file($this->statusFile)) {
-            return ['gcp' => 'online', 'aws' => 'online'];
+            return $default;
         }
         $raw = file_get_contents($this->statusFile);
         $decoded = json_decode($raw ?: '', true);
-        return is_array($decoded) ? $decoded : ['gcp' => 'online', 'aws' => 'online'];
+        if (!is_array($decoded)) {
+            return $default;
+        }
+
+        $result = $default;
+
+        // Formato del panel: {"nodes": {"gcp": {"status": "offline"}, "aws": {"status": "online"}}}
+        if (isset($decoded['nodes']) && is_array($decoded['nodes'])) {
+            foreach (['gcp', 'aws'] as $key) {
+                if (isset($decoded['nodes'][$key]['status'])) {
+                    $result[$key] = $decoded['nodes'][$key]['status'];
+                }
+            }
+            return $result;
+        }
+
+        // Formato plano legacy: {"gcp": "offline", "aws": "online"}
+        foreach (['gcp', 'aws'] as $key) {
+            if (isset($decoded[$key]) && is_string($decoded[$key])) {
+                $result[$key] = $decoded[$key];
+            }
+        }
+
+        return $result;
     }
 
     /**
