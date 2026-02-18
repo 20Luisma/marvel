@@ -65,10 +65,29 @@ require_once __DIR__ . '/../layouts/header.php';
               <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin:2px 0 0;">Control de Nodos — Demo Write-to-Both</h3>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 14px;">
-            <span style="font-size:0.7rem;color:#94a3b8;">Cola pendiente:</span>
-            <span id="mc-queue-count" style="font-size:1rem;font-weight:700;color:#f59e0b;">—</span>
-            <span style="font-size:0.7rem;color:#94a3b8;">clicks</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="simulateTraffic()" id="mc-btn-traffic" style="
+              background:rgba(245,158,11,0.15);
+              border:1px solid rgba(245,158,11,0.4);
+              color:#f59e0b;
+              font-size:0.7rem;
+              font-weight:700;
+              text-transform:uppercase;
+              padding:8px 14px;
+              border-radius:8px;
+              cursor:pointer;
+              display:flex;
+              align-items:center;
+              gap:6px;
+              transition:all 0.2s;
+            " onmouseover="this.style.background='rgba(245,158,11,0.25)'" onmouseout="this.style.background='rgba(245,158,11,0.15)'">
+              <span>⚡</span> Simular Tráfico
+            </button>
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 14px;">
+              <span style="font-size:0.7rem;color:#94a3b8;">Cola pendiente:</span>
+              <span id="mc-queue-count" style="font-size:1rem;font-weight:700;color:#f59e0b;">—</span>
+              <span style="font-size:0.7rem;color:#94a3b8;">clicks</span>
+            </div>
           </div>
         </div>
 
@@ -229,7 +248,50 @@ require_once __DIR__ . '/../layouts/header.php';
         }
 
         // Carga estado inicial
-        function fetchStatus() {
+        window.simulateTraffic = function() {
+          const btn = document.getElementById('mc-btn-traffic');
+          btn.disabled = true;
+          btn.innerHTML = '⚡ Generando...';
+          addLog('⚡ Iniciando simulación de tráfico (10 clicks automáticos)...');
+
+          let sent = 0;
+          const total = 10;
+          const page = selectors.pageSelect.value || '/seccion';
+
+          const sendOne = () => {
+            if (sent >= total) {
+              btn.disabled = false;
+              btn.innerHTML = '<span>⚡</span> Simular Tráfico';
+              addLog('✅ Simulación completada. Revisa la cola si hay nodos offline.');
+              setTimeout(fetchStatus, 500);
+              return;
+            }
+
+            fetch('/api/heatmap/click.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                page: page,
+                x: Math.random(),
+                y: Math.random(),
+                viewportW: 1920,
+                viewportH: 1080,
+                scrollY: 0,
+                timestamp: Date.now()
+              })
+            }).finally(() => {
+              sent++;
+              setTimeout(sendOne, 150);
+            });
+          };
+
+          sendOne();
+        };
+
+        const fetchStatus = () => {
           fetch('/api/heatmap/node-control.php')
             .then(r => r.json())
             .then(data => {

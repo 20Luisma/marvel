@@ -122,16 +122,32 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 
     /**
      * Ejecuta el método en todos los clientes (Write-to-Both).
-     * Siempre intenta escribir en todos los nodos disponibles.
+     * Respeta el estado del panel de control (node_status.json):
+     * si un nodo está marcado offline, lo salta y encola directamente.
      *
      * @param array<int,mixed> $arguments
      * @return array<int,array{statusCode:int,body:string}>
      */
     private function writeToAll(string $method, array $arguments): array
     {
+        $nodeStatus = $this->loadNodeStatus();
         $results = [];
 
         foreach ($this->clients as $idx => $client) {
+            $nodeKey = $this->resolveNodeKey($this->urls[$idx] ?? '', $idx);
+
+            // Simulación de caída desde el panel:
+            if (($nodeStatus[$nodeKey] ?? 'online') === 'offline') {
+                $results[$idx] = [
+                    'statusCode' => 503,
+                    'body' => (string) json_encode([
+                        'status' => 'error',
+                        'message' => "Node {$nodeKey} simulated offline",
+                    ]),
+                ];
+                continue;
+            }
+
             try {
                 $results[$idx] = $client->$method(...$arguments);
             } catch (\Throwable $e) {
