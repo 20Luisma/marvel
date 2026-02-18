@@ -44,14 +44,8 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             $clients
         );
 
-        // Ruta persistente para Hostinger o Local
-        // Determinar ruta según entorno
-        $appEnv = (string) (getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local'));
-        $isHosting = ($appEnv === 'hosting');
-
-        $storageDir = $isHosting
-            ? '/home/u968396048/domains/contenido.creawebes.com/public_html/iamasterbigschool/storage/heatmap'
-            : dirname(__DIR__, 4) . '/storage/heatmap';
+        // Ruta persistente — siempre relativa al proyecto raíz
+        $storageDir = dirname(__DIR__, 4) . '/storage/heatmap';
 
         if (!is_dir($storageDir)) {
             @mkdir($storageDir, 0755, true);

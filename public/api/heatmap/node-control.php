@@ -33,13 +33,8 @@ if (!isset($_SESSION['auth'])) {
     exit;
 }
 
-// Determinar ruta según entorno
-$appEnv = (string) (getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local'));
-$isHosting = (strpos($_SERVER['HTTP_HOST'] ?? '', 'contenido.creawebes.com') !== false || $appEnv === 'hosting');
-
-$storageDir = $isHosting
-    ? '/home/u968396048/domains/contenido.creawebes.com/public_html/iamasterbigschool/storage/heatmap'
-    : dirname(__DIR__, 3) . '/storage/heatmap';
+// Ruta de storage — siempre relativa al proyecto raíz
+$storageDir = dirname(__DIR__, 3) . '/storage/heatmap';
 
 if (!is_dir($storageDir)) {
     @mkdir($storageDir, 0755, true);
