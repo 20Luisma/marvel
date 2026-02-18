@@ -18,10 +18,12 @@ namespace App\Heatmap\Infrastructure;
  */
 final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 {
-    private const QUEUE_FILENAME = 'pending_clicks.json';
-    private const MAX_QUEUE      = 5000;  // máximo clicks en cola
+    private const QUEUE_FILENAME  = 'pending_clicks.json';
+    private const STATUS_FILENAME = 'node_status.json';
+    private const MAX_QUEUE       = 5000;
 
     private string $queueFile;
+    private string $statusFile;
 
     /** @var HttpHeatmapApiClient[] */
     private array $clients;
@@ -42,12 +44,13 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             $clients
         );
 
-        // Ruta persistente de la cola (sobrevive reinicios del servidor PHP)
+        // Ruta persistente de la cola y del estado de nodos
         $storageDir = dirname(__DIR__, 4) . '/storage/heatmap';
         if (!is_dir($storageDir)) {
             @mkdir($storageDir, 0755, true);
         }
-        $this->queueFile = $storageDir . '/' . self::QUEUE_FILENAME;
+        $this->queueFile  = $storageDir . '/' . self::QUEUE_FILENAME;
+        $this->statusFile = $storageDir . '/' . self::STATUS_FILENAME;
 
         // Al arrancar, intentamos sincronizar clicks pendientes
         $this->flushPendingQueue();
@@ -105,15 +108,33 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Ejecuta el método en todos los clientes usando cURL multi para paralelismo.
+     * Ejecuta el método en todos los clientes.
+     * Respeta el estado del panel de control (node_status.json):
+     * si un nodo está marcado offline, lo salta y encola directamente.
      *
      * @param array<int,mixed> $arguments
      * @return array<int,array{statusCode:int,body:string}>
      */
     private function writeToAll(string $method, array $arguments): array
     {
+        $nodeStatus = $this->loadNodeStatus();
         $results = [];
+
         foreach ($this->clients as $idx => $client) {
+            $nodeKey = $this->resolveNodeKey($this->urls[$idx] ?? '');
+
+            // Si el panel marcó este nodo como offline → simular fallo directamente
+            if (($nodeStatus[$nodeKey] ?? 'online') === 'offline') {
+                $results[$idx] = [
+                    'statusCode' => 503,
+                    'body' => (string) json_encode([
+                        'status'  => 'error',
+                        'message' => "Node {$nodeKey} is offline (panel simulation)",
+                    ]),
+                ];
+                continue;
+            }
+
             try {
                 $results[$idx] = $client->$method(...$arguments);
             } catch (\Throwable $e) {
@@ -127,6 +148,31 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             }
         }
         return $results;
+    }
+
+    /**
+     * Lee el estado de los nodos desde node_status.json (escrito por el panel de control).
+     * @return array<string,string>  ['gcp' => 'online'|'offline', 'aws' => 'online'|'offline']
+     */
+    private function loadNodeStatus(): array
+    {
+        if (!is_file($this->statusFile)) {
+            return ['gcp' => 'online', 'aws' => 'online'];
+        }
+        $raw = file_get_contents($this->statusFile);
+        $decoded = json_decode($raw ?: '', true);
+        return is_array($decoded) ? $decoded : ['gcp' => 'online', 'aws' => 'online'];
+    }
+
+    /**
+     * Mapea una URL base al identificador de nodo usado en node_status.json.
+     */
+    private function resolveNodeKey(string $url): string
+    {
+        if (str_contains($url, '34.74.102.123')) return 'gcp';
+        if (str_contains($url, '35.181.60.162')) return 'aws';
+        // Fallback: usa 'gcp' para el primer nodo, 'aws' para el segundo
+        return 'gcp';
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -204,6 +250,14 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
             $client = $this->findClientByUrl($nodeUrl);
             if ($client === null) {
                 // Nodo ya no existe en la config → descartar
+                continue;
+            }
+
+            // Si el panel sigue marcando el nodo como offline → no intentar sync
+            $nodeStatus = $this->loadNodeStatus();
+            $nodeKey    = $this->resolveNodeKey($nodeUrl);
+            if (($nodeStatus[$nodeKey] ?? 'online') === 'offline') {
+                $remaining[] = $entry; // Mantener en cola
                 continue;
             }
 
