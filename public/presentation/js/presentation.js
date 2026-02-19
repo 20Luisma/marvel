@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentActiveSlide = document.querySelector('.slide.active');
     const isSlide18 = currentActiveSlide && currentActiveSlide.getAttribute('data-slide') === "18";
 
-    // EXCEPCIÓN: Si el clic es en los controles o en el botón de video, PERMITIRLO
-    if (e.target.closest('.nav-controls') || e.target.closest('.link-box')) return;
+    // EXCEPCIÓN: Si el clic es en los controles, botones o enlaces interactivos, PERMITIRLO
+    if (e.target.closest('.nav-controls') || e.target.closest('.link-box') || e.target.closest('#btn-deploy-live') || e.target.closest('a[href]') || e.target.closest('button')) return;
 
     // Bloqueo en la 18 para el resto de la pantalla
     if (isSlide18) {

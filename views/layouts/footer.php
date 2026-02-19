@@ -34,7 +34,8 @@ foreach ($scripts as $script):
         }
     }
 ?>
-  <script type="module" src="<?= htmlspecialchars($normalizedScript . $versionSuffix, ENT_QUOTES, 'UTF-8') ?>"></script>
+  <?php $cspNonce = $_SERVER['CSP_NONCE'] ?? null; ?>
+  <script type="module" src="<?= htmlspecialchars($normalizedScript . $versionSuffix, ENT_QUOTES, 'UTF-8') ?>"<?= $cspNonce ? ' nonce="' . htmlspecialchars($cspNonce, ENT_QUOTES, 'UTF-8') . '"' : '' ?>></script>
 <?php endforeach; ?>
 </body>
 </html>

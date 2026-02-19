@@ -21,7 +21,7 @@ El reporte se genera en `coverage.xml` y el pipeline CI aplica un umbral mínimo
 
 | Directory | Coverage | Verificación |
 |-----------|----------|--------------|
-| `src/` | **88.89%** (a 13 Feb 2026) | `coverage.xml` (Clover) |
+| `src/` | **82.81%** (a 19 Feb 2026) | `coverage.xml` (Clover) |
 | `public/`, `views/` | N/A (no se mide con PHPUnit) | Tests E2E y auditorías en CI |
 
 \* *El frontend (assets/vistas) se valida con herramientas de navegador (Playwright) y auditorías de accesibilidad/rendimiento en CI. No se refleja en la cobertura de PHPUnit.*

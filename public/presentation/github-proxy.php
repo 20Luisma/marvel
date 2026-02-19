@@ -32,6 +32,51 @@ $urls = [
 
 $targetUrl = $urls[$action] ?? $urls['repo'];
 
+// ─── Acción especial: Disparar deploy via workflow_dispatch ───
+if ($action === 'deploy') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Content-Type: application/json');
+        http_response_code(405);
+        echo json_encode(['error' => 'Solo POST permitido']);
+        exit;
+    }
+
+    $dispatchUrl = "https://api.github.com/repos/$repoOwner/$repoName/actions/workflows/deploy-ftp.yml/dispatches";
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $dispatchUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Clean-Marvel-TFM-Proxy');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: token $githubToken",
+        "Accept: application/vnd.github.v3+json",
+        "Content-Type: application/json"
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'ref' => 'main',
+        'inputs' => ['motivo' => 'Deploy en vivo desde presentación TFM 🚀']
+    ]));
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    header('Content-Type: application/json');
+    // GitHub devuelve 204 si el dispatch fue exitoso
+    if ($httpCode === 204) {
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Deploy lanzado correctamente',
+            'actions_url' => "https://github.com/$repoOwner/$repoName/actions/workflows/deploy-ftp.yml"
+        ]);
+    } else {
+        http_response_code($httpCode ?: 500);
+        echo json_encode(['status' => 'error', 'detail' => $response]);
+    }
+    exit;
+}
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $targetUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

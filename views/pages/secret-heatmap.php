@@ -12,6 +12,7 @@ $activeTopAction = 'secret';
 $scripts = ['/assets/js/heatmap-viewer.js'];
 
 require_once __DIR__ . '/../layouts/header.php';
+$cspNonce = $_SERVER['CSP_NONCE'] ?? null;
 ?>
 
 <header class="app-hero app-hero--tech heatmap-hero">
