@@ -1,11 +1,3 @@
----
-title: "Libro Guía Marvel - Clean Marvel Album"
-author: "Martín Pallante Cardeo"
----
-
-<title>Libro Guía Marvel - Clean Marvel Album</title>
-
-# Clean Marvel Album: Libro Guía Marvel de la Ciudad de Héroes
 
 ## Prólogo: La ciudad que parecía un álbum
 
@@ -217,7 +209,29 @@ La modularización del arranque, la separación de responsabilidades, los contra
 
 Incluso las nuevas capacidades, como recomendaciones de películas por similitud, se integran respetando la estructura general. No entran a martillazos. Entran como nuevos héroes que entienden las reglas de la casa.
 
-## Capítulo 18: Lo que realmente enseña este proyecto
+## Capítulo 18: Dos continentes, una misión
+
+Hay un momento en la historia de cualquier sistema serio en el que alguien hace la pregunta incómoda: ¿qué pasa si se cae la base principal?
+
+En Marvel, cuando cae la Torre Stark, hay un plan B. Siempre. Porque los héroes que dependen de una sola sede no sobreviven a la primera invasión real.
+
+Clean Marvel Album aplicó esa filosofía a su servicio de heatmap. En lugar de confiar en un solo proveedor cloud, desplegó dos nodos en dos continentes distintos: uno en Google Cloud (South Carolina) y otro en Amazon Web Services (París).
+
+La estrategia se llama Write-to-Both: cada click del usuario se envía simultáneamente a ambos nodos. No es un respaldo pasivo esperando turno. Es una operación activa en paralelo, como dos centinelas mirando la misma puerta desde ángulos diferentes.
+
+Pero lo interesante llega cuando un nodo cae. Porque caerá. Todo cae.
+
+Si el nodo de GCP se desconecta, el sistema no entra en pánico. Encola los datos pendientes en una cola persistente y sigue operando con el nodo de AWS como único activo. Cuando GCP se recupera, los datos encolados se sincronizan automáticamente. Ningún click se pierde. Ninguna misión se aborta.
+
+Es consistencia eventual con resiliencia real. No un slide bonito sobre disaster recovery, sino un mecanismo que funciona y se puede probar en directo.
+
+Y hay un capítulo financiero que pocas veces se cuenta en proyectos académicos: FinOps. La auditoría de costes reveló snapshots innecesarios en GCP (14 eliminados, 3.6 GB recuperados), oportunidades de migración a gp3 en AWS con un 20% de ahorro, y hardening de firewall en ambos nodos.
+
+El resultado: una infraestructura multi-cloud resiliente por aproximadamente un dólar al mes en GCP y cero euros en AWS (Free Tier). Demostrar que la resiliencia no requiere presupuesto de Stark Industries es, quizá, el argumento más poderoso de todo el proyecto.
+
+Porque cualquiera puede diseñar redundancia con dinero infinito. Lo difícil es hacerlo con un euro y un free tier.
+
+## Capítulo 19: Lo que realmente enseña este proyecto
 
 Si este libro tuviera que resumirse en una sola imagen, sería esta: una gran mesa de coordinación en la Torre Stark.
 
