@@ -153,8 +153,19 @@ require_once __DIR__ . '/../layouts/header.php';
 
         <!-- HEATMAP -->
         <section class="space-y-3">
-          <h3 class="text-2xl text-white">🌡️ Heatmap de interacción</h3>
+          <h3 class="text-2xl text-white">🌡️ Heatmap de interacción (Multi-Cloud / Write-to-Both)</h3>
           <p>El tracker global (<code>public/assets/js/heatmap-tracker.js</code>) arma un payload con la página actual, coordenadas normalizadas (incluyendo scroll) y viewport para que cada clic viaje al microservicio Python.</p>
+          
+          <div class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4 mt-2 mb-2">
+            <p class="text-xs uppercase tracking-widest text-gray-400 mb-2">Redundancia Geográfica y Consistencia (Dos Nodos)</p>
+            <ul class="space-y-2 text-sm text-gray-200">
+              <li>• Desplegado simultáneamente en <strong>Google Cloud (USA)</strong> y <strong>AWS (Europa)</strong>.</li>
+              <li>• <strong>Write-to-Both (ADR-025):</strong> Cada click se escribe en ambos nodos simultáneamente.</li>
+              <li>• Si un nodo falla, el click se encola temporalmente (cola persistente en disco `storage/heatmap/pending_clicks.json`).</li>
+              <li>• <strong>Sincronización Automática:</strong> Al recuperarse el nodo caído, se reenvían automáticamente los clics encolados sin perder datos.</li>
+            </ul>
+          </div>
+
           <p>Los endpoints <code>/api/heatmap/click.php</code>, <code>summary.php</code> y <code>pages.php</code> funcionan ahora como proxies autenticados: reenvían POST/GET al microservicio (<code>http://34.74.102.123:8080</code> por defecto) adjuntando el token <code>HEATMAP_API_TOKEN</code> y devuelven el JSON tal cual para que el viewer siga operando con la misma matriz 20×20.</p>
           <p>Configuración: en la VM Python exporta <code>HEATMAP_API_TOKEN</code> (p. ej. <code>dev-heatmap-token</code> en local) y en Marvel establece <code>HEATMAP_API_BASE_URL</code> + <code>HEATMAP_API_TOKEN</code> en el entorno del servidor.</p>
           <p>El microservicio se puede contenerizar: el README del heatmap incluye los comandos de <code>docker build</code>/<code>docker run</code> para levantarlo en local o en una VM con el token ya inyectado.</p>

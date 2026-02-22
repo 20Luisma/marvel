@@ -46,6 +46,13 @@ echo "=========================================================="
 
 # --- 0. QUALITY GATE ---
 echo "🧪 [QUALITY GATE] Ejecutando batería de tests (Unitarios + E2E)..."
+
+if [ "$ENTORNO" == "prod" ]; then
+    export PLAYWRIGHT_BASE_URL="https://iamasterbigschool.contenido.creawebes.com"
+else
+    export PLAYWRIGHT_BASE_URL="https://staging.contenido.creawebes.com"
+fi
+
 if ./vendor/bin/phpunit > /dev/null 2>&1 && npx playwright test tests/e2e/surgical-production-check.spec.js --config=playwright.config.cjs > /dev/null 2>&1; then
     echo "✅ Tests validados. Estabilidad confirmada."
 else

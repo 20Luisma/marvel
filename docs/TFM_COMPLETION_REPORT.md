@@ -288,5 +288,50 @@ Se evaluó migrar el microservicio a Cloud Run (serverless, escala a cero):
 - **Principios FinOps**: Visibilidad, optimización, gobernanza de costes cloud
 - **Google Cloud Free Tier**: [cloud.google.com/free](https://cloud.google.com/free)
 
+## 🛡️ Sistema de Backup de Base de Datos (Estrategia Empresarial)
+
+### Problema resuelto
+El proyecto carecía de un sistema formal de respaldo de la base de datos MySQL en producción, necesario para cumplir con los estándares de **Business Continuity** que aplican en entornos enterprise (bancos, aseguradoras, plataformas SaaS).
+
+### Solución implementada
+Sistema de **Full Backup Automático** con `mysqldump`, al estilo de grandes organizaciones:
+
+| Característica | Detalle |
+|---------------|---------|
+| Tipo | Full Backup comprimido (`gzip -9`) |
+| Retención | 7 días con rotación automática (~7 archivos, <2MB) |
+| Integridad | Checksum **SHA-256** por cada backup |
+| Auditoría | Log detallado de todas las operaciones |
+| Modo transaccional | `--single-transaction` (sin bloqueos en producción) |
+| Cron preparado | Cada 24h a las 3:00 AM (listo para activar en Hostinger) |
+
+**Flujo del proceso (4 pasos automáticos):**
+```
+1. Verificar conectividad MySQL
+       ↓
+2. mysqldump --single-transaction + gzip -9
+       ↓
+3. Generar SHA-256 (verificación de integridad)
+       ↓
+4. Rotación automática: eliminar backups > 7 días
+```
+
+### Cron preparado para producción (no activado)
+```cron
+# Backup automático cada 24h a las 3:00 AM
+0 3 * * * /ruta/proyecto/scripts/backup-marvel-db.sh >> /var/log/marvel-backup.log 2>&1
+```
+
+### Archivos clave
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `scripts/backup-marvel-db.sh` | Script principal de backup con rotación |
+| `scripts/restore-marvel-db.sh` | Restauración con verificación de integridad y confirmación |
+| `storage/backups/` | Directorio de almacenamiento de backups |
+
+### Referencia
+- **ADR-023**: `docs/architecture/ADR-023-database-backup-strategy.md`
+- **Patrones**: ISO 22301 Business Continuity, Regla 3-2-1, RPO/RTO
+
 ---
 *Proyecto finalizado con criterios académicos sólidos y trazabilidad técnica.*
