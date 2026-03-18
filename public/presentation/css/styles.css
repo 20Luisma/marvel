@@ -492,10 +492,11 @@ body {
 
   /* Slide number */
   .slide-number {
-    bottom: 70px;
+    bottom: 95px;
     right: 14px;
     font-size: 0.65rem;
     padding: 6px 10px;
+    z-index: 1100;
   }
 
   /* Navegación: mover al inferior, hacerla horizontal */
