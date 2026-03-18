@@ -281,6 +281,136 @@
       from { opacity: 0; transform: translateX(-30px); }
       to { opacity: 1; transform: translateX(0); }
     }
+
+    /* =========================================
+       OVERRIDES MÓVIL para estilos inline
+       ========================================= */
+    @media (max-width: 768px) {
+
+      /* Timeline: de horizontal a vertical */
+      .timeline {
+        flex-direction: column;
+        gap: 18px;
+        padding: 16px;
+        align-items: flex-start;
+      }
+      .timeline::before {
+        display: none;
+      }
+      .speedster, .speed-trail {
+        display: none;
+      }
+      .timeline-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+      }
+      .timeline-dot {
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      /* API grid: 1 columna en móvil */
+      .api-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .api-item {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+      }
+
+      /* Mobile showcase: stack vertical */
+      .mobile-showcase {
+        flex-direction: column;
+        gap: 20px;
+        height: auto;
+      }
+      .mobile-screens {
+        padding: 10px;
+      }
+      .phone-mockup {
+        width: 160px;
+        height: 330px;
+        margin: 0 auto;
+      }
+
+      /* Release seal: compactar */
+      .release-seal {
+        gap: 12px;
+        padding: 10px 14px;
+      }
+      .seal-icon {
+        font-size: 1.3rem;
+      }
+
+      /* Slides con flex inline (slides 24, 25, 27, cierre) */
+      /* Slide 24 - Recomendador */
+      [data-slide="24"] > div[style*="display: flex"],
+      [data-slide="25"] > div[style*="display: flex"],
+      [data-slide="27"] > div[style*="display: flex"],
+      [data-slide="29"] > div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 14px !important;
+      }
+
+      /* Grids inline de 3 columnas (slide 27) */
+      [data-slide="27"] > div[style*="grid-template-columns"],
+      [data-slide="24"] > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+
+      /* Tablas: scroll horizontal */
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Ocultar columna extra en tablas densas */
+      [data-slide="25"] td:last-child {
+        display: none;
+      }
+
+      /* Code blocks / monospace: wrap */
+      div[style*="font-family: monospace"],
+      div[style*="font-family: 'JetBrains Mono'"] {
+        font-size: 0.7rem !important;
+        word-break: break-all;
+        white-space: pre-wrap !important;
+      }
+
+      /* Bloques internos de slide 25 */
+      [data-slide="25"] .card > .grid-2 {
+        gap: 20px !important;
+      }
+
+      /* Slide 29 - cierre: links verticales */
+      [data-slide="29"] > div {
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+
+      /* Botón CTA inline en slides 16, 18, 25 */
+      a[style*="display: inline-flex"] {
+        font-size: 0.7rem !important;
+        padding: 8px 14px !important;
+        letter-spacing: 0.8px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .phone-mockup {
+        width: 140px;
+        height: 290px;
+      }
+      .api-item {
+        font-size: 0.75rem;
+      }
+    }
   </style>
 </head>
 <body>
