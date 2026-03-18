@@ -367,3 +367,203 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   TABLET (≤ 768px)
+   ========================================= */
+@media (max-width: 768px) {
+  :root {
+    --nav-safe: clamp(120px, 15vh, 160px);
+  }
+
+  body {
+    overflow-y: auto;
+    height: auto;
+  }
+
+  .presentation {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  /* Slides: de posición absolute a flujo normal en móvil */
+  .slide {
+    position: relative;
+    display: none;
+    padding: 24px 18px 130px 18px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: visible;
+    gap: 18px;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide.cover {
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  /* Tipografía */
+  .cover .title {
+    font-size: 2rem;
+  }
+
+  .slide-title {
+    font-size: 1.5rem;
+    min-height: auto;
+    padding-bottom: 12px;
+  }
+
+  .slide-subtitle {
+    font-size: 1rem;
+  }
+
+  .cover .meta {
+    font-size: 0.7rem;
+  }
+
+  .cover .byline {
+    font-size: 0.85rem;
+    margin-top: 12px;
+  }
+
+  /* Cards */
+  .card {
+    padding: 16px 14px;
+  }
+
+  .card-title {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+
+  /* Listas */
+  .list {
+    gap: 10px;
+  }
+
+  .list li {
+    font-size: 0.9rem;
+    padding-left: 20px;
+    line-height: 1.5;
+  }
+
+  /* Grids: siempre 1 columna en móvil */
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Metric cards */
+  .metric-value {
+    font-size: 2rem;
+  }
+
+  .metric-card {
+    padding: 16px;
+  }
+
+  /* Diagrama de arquitectura */
+  .arch-diagram {
+    font-size: 0.7rem;
+    padding: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: hidden;
+  }
+
+  /* Link boxes */
+  .link-box {
+    padding: 10px 14px;
+    word-break: break-all;
+  }
+
+  .link-box .url {
+    font-size: 0.75rem;
+  }
+
+  /* Slide number */
+  .slide-number {
+    bottom: 95px;
+    right: 14px;
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    z-index: 1100;
+  }
+
+  /* Navegación: mover al inferior, hacerla horizontal */
+  .nav-controls {
+    position: fixed;
+    right: auto;
+    top: auto;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    z-index: 1000;
+    background: rgba(7, 12, 22, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .nav-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    border-radius: 14px;
+  }
+
+  /* Reflexión */
+  .reflexion {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+}
+
+/* =========================================
+   MÓVIL PEQUEÑO (≤ 480px)
+   ========================================= */
+@media (max-width: 480px) {
+  .slide {
+    padding: 20px 14px 130px 14px;
+    gap: 14px;
+  }
+
+  .cover .title {
+    font-size: 1.6rem;
+  }
+
+  .slide-title {
+    font-size: 1.25rem;
+  }
+
+  .metric-value {
+    font-size: 1.7rem;
+  }
+
+  .list li {
+    font-size: 0.85rem;
+  }
+
+  .card {
+    padding: 12px 10px;
+  }
+
+  .nav-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.1rem;
+  }
+}
