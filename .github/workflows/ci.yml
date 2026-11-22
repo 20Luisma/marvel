@@ -113,7 +113,8 @@ jobs:
 
   # 🟪 SONARCLOUD (CALIDAD + BUGS + VULNERABILIDADES + COVERAGE)
   sonarcloud:
-    runs-on: ubuntu-latest
+    # Fijado a 24.04: ubuntu-latest (26.04, kernel 7.x) rompe el scanner en Docker
+    runs-on: ubuntu-24.04
     needs: [build, tests]
 
     steps:
