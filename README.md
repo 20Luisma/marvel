@@ -201,7 +201,7 @@ Este proyecto sigue buenas prácticas habituales de la industria, con un ciclo d
 
 1.  **Local (Laboratorio):** Desarrollo en `localhost`. El código es agnóstico y auto-detecta el entorno.
 2.  **Staging (Espejo 100%):** El despliegue automático a Staging se activa en pushes a `staging`, `staging-final` y `feature/staging-final` (y también en PRs hacia `main`, según workflow). Aquí se valida la integración real del sistema tripartito (App + OpenAI + RAG) en la nube.
-3.  **Producción (VIP):** El deploy a la web oficial solo ocurre tras un **Merge/Pull Request** exitoso a la rama `main`. Esto reduce el riesgo de subir código no probado.
+3.  **Producción (VIP):** El deploy a la web oficial se lanzaba tras un **Merge/Pull Request** exitoso a la rama `main` (hoy el workflow de deploy es solo manual, porque el hosting está offline). Esto reduce el riesgo de subir código no probado.
 
 > **Regla de Oro:** La rama `main` es sagrada. Solo contiene código validado en Staging.
 
