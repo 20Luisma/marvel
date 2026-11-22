@@ -47,9 +47,9 @@ function resolveHeatmapClient(?array $container): HeatmapApiClient
         return $instance;
     }
 
-    $baseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: 'http://34.74.102.123:8080'));
+    $baseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: 'http://localhost:5000'));
     if ($baseUrl === '') {
-        $baseUrl = 'http://34.74.102.123:8080';
+        $baseUrl = 'http://localhost:5000';
     }
     $token = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ''));
 

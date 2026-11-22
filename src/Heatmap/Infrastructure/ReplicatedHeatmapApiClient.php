@@ -209,14 +209,14 @@ final class ReplicatedHeatmapApiClient implements HeatmapApiClient
 
     /**
      * Mapea una URL base al identificador de nodo usado en node_status.json.
-     * Usa el índice como fallback: 0 = gcp, 1 = aws.
+     * Se resuelve por la posición del nodo en la configuración inyectada
+     * (0 = gcp / primario, 1 en adelante = aws / secundario), sin depender de IPs concretas.
      */
-    private function resolveNodeKey(string $url, int $idx = 0): string
+    private function resolveNodeKey(string $url, ?int $idx = null): string
     {
-        if (str_contains($url, '34.74.102.123')) return 'gcp';
-        if (str_contains($url, '35.181.60.162')) return 'aws';
-        // Fallback por índice: primer nodo = gcp, segundo = aws
-        return $idx === 0 ? 'gcp' : 'aws';
+        $position = $idx ?? array_search($url, $this->urls, true);
+
+        return $position === false || $position === 0 ? 'gcp' : 'aws';
     }
 
     // ─────────────────────────────────────────────────────────────────────────

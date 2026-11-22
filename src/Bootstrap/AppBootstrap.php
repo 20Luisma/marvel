@@ -112,7 +112,7 @@ final class AppBootstrap
         $addHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
 
         $tmdbApiKey = trim((string) (getenv('TMDB_API_KEY') ?: ($_ENV['TMDB_API_KEY'] ?? '')));
-        $heatmapBaseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? 'http://34.74.102.123:8080')));
+        $heatmapBaseUrl = trim((string) (getenv('HEATMAP_API_BASE_URL') ?: ($_ENV['HEATMAP_API_BASE_URL'] ?? 'http://localhost:5000')));
         $heatmapSecondaryUrl = trim((string) (getenv('HEATMAP_API_SECONDARY_URL') ?: ($_ENV['HEATMAP_API_SECONDARY_URL'] ?? '')));
         $heatmapApiToken = trim((string) (getenv('HEATMAP_API_TOKEN') ?: ($_ENV['HEATMAP_API_TOKEN'] ?? '')));
         $httpClient = new CurlHttpClient();

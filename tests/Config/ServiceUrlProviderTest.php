@@ -109,4 +109,42 @@ final class ServiceUrlProviderTest extends TestCase
 
         self::assertSame('https://api.example.com/v1/chat', $provider->getOpenAiChatUrl('custom'));
     }
+
+    public function testGetHeatmapBaseUrlDefaultsToLocalhostWithoutHardcodedIp(): void
+    {
+        putenv('HEATMAP_API_BASE_URL');
+        $provider = new ServiceUrlProvider([
+            'default_environment' => 'custom',
+            'environments' => ['custom' => []],
+        ]);
+
+        self::assertSame('http://localhost:5000', $provider->getHeatmapBaseUrl('custom'));
+    }
+
+    public function testGetHeatmapBaseUrlUsesConfiguredValue(): void
+    {
+        putenv('HEATMAP_API_BASE_URL');
+        $provider = new ServiceUrlProvider([
+            'default_environment' => 'custom',
+            'environments' => ['custom' => ['heatmap' => ['base_url' => 'https://heatmap.example.com']]],
+        ]);
+
+        self::assertSame('https://heatmap.example.com', $provider->getHeatmapBaseUrl('custom'));
+    }
+
+    public function testGetHeatmapBaseUrlPrefersEnvironmentVariable(): void
+    {
+        putenv('HEATMAP_API_BASE_URL=https://env-heatmap.example.com');
+
+        try {
+            $provider = new ServiceUrlProvider([
+                'default_environment' => 'custom',
+                'environments' => ['custom' => ['heatmap' => ['base_url' => 'https://heatmap.example.com']]],
+            ]);
+
+            self::assertSame('https://env-heatmap.example.com', $provider->getHeatmapBaseUrl('custom'));
+        } finally {
+            putenv('HEATMAP_API_BASE_URL');
+        }
+    }
 }
