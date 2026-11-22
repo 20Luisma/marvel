@@ -334,6 +334,8 @@ jobs:
           const { defineConfig } = require('@playwright/test');
           module.exports = defineConfig({
             testDir: 'tests/e2e',
+            // Specs que verifican producción en vivo (creawebes.com): van en monitoring.yml, no en el CI de cada PR
+            testIgnore: ['**/security-hardening.spec.js', '**/surgical-production-check.spec.js'],
             reporter: 'line',
             use: {
               baseURL: 'http://localhost:8080',
