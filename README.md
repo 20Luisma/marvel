@@ -2,7 +2,7 @@
 
 ## Descripción general
 **Clean Marvel Album** es un proyecto académico en **PHP 8.2** para gestionar álbumes y héroes del universo Marvel. Aplica **Arquitectura Limpia** para separar presentación, casos de uso, dominio e infraestructura, y se apoya en microservicios propios para integrar IA (OpenAI/RAG).  
-Es un sistema real desplegado y en evolución, con foco en mantenibilidad y escalabilidad.
+Estuvo desplegado en un hosting propio (hoy offline) y se conserva como ejemplo de arquitectura, testing y calidad.
 
 Repositorio (GitHub): https://github.com/20Luisma/marvel
 
@@ -37,7 +37,7 @@ Incluye secciones adicionales sobre observabilidad, CI/CD, refactors estructural
 - **Servicios externos:** OpenAI API, TMDB API
 - **Control de versiones:** Git / GitHub
 - **Auditoría de Código IA:** CodeRabbit (AI Code Reviewer)
-- **Despliegue:** entorno propio funcional (app + microservicios)
+- **Despliegue:** hosting propio (app + microservicios), actualmente offline
 
 ---
 
@@ -51,8 +51,8 @@ La aplicación se organiza en cuatro capas con responsabilidades claras:
 
 La capa de dominio es independiente de frameworks y de HTTP, lo que mejora la testabilidad y reduce el acoplamiento.
 
-### 🧩 Arquitectura Evolutiva (Últimas Mejoras Senior)
-Recientemente el proyecto ha evolucionado para alcanzar un estándar de ingeniería **Senior**:
+### 🧩 Arquitectura Evolutiva (últimas mejoras)
+En las últimas iteraciones el proyecto mejoró su separación de responsabilidades:
 - **Skinny Controllers**: Los controladores se han vaciado de lógica de negocio, delegando toda la orquestación a la **Capa de Aplicación** (`UseCases`).
 - **Abstracción de Filesystem**: Se ha implementado una `FilesystemInterface` para desacoplar el almacenamiento de imágenes del disco duro, permitiendo una migración inmediata a **AWS S3** o **Google Cloud Storage** sin tocar el código de negocio.
 - **Dependency Inversion (DIP)**: Se han desacoplado los clientes de IA y almacenamiento usando interfaces, garantizando que el sistema sea agnóstico a proveedores externos.
@@ -80,7 +80,7 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 **Componentes implementados:**
 - **Knowledge Base Master:** Información estructurada en archivos JSON que sirven de fuente de verdad.
 - **RAG Local (Modo Ligero):** Búsqueda vectorial local usando embeddings JSON precalculados. Ideal para entornos aislados o de bajo consumo.
-- **RAG Enterprise (Modo Cloud):** Integración con **Pinecone (Vector Database)**. Los embeddings se almacenan en la nube para máxima escalabilidad y rendimiento semántico profesional.
+- **RAG Enterprise (Modo Cloud):** Integración con **Pinecone (Vector Database)**. Los embeddings se almacenan en la nube para ganar escalabilidad en la búsqueda semántica.
 - **Embeddings:** Vectores de 1536 dimensiones generados con OpenAI (`text-embedding-3-small`).
 - **Retriever Híbrido:** Conmutación automática entre Pinecone (Cloud) y el motor local (JSON) en caso de fallo, garantizando alta disponibilidad.
 - **Cliente LLM desacoplado:** Comunicación segura con `openai-service` mediante firma HMAC.
@@ -98,7 +98,7 @@ Pregunta → Retriever (KB) → Top-N contextos → Prompt con contexto → LLM 
 Microservicio que registra eventos de clic para análisis de interacción. Implementado con una arquitectura de **Alta Disponibilidad y Consistencia Eventual**:
 - **Redundancia Geográfica:** Desplegado simultáneamente en Google Cloud (USA) y AWS (Europa).
 - **Write-to-Both (ADR-025):** Cada click se escribe en **GCP y AWS simultáneamente**. Si un nodo falla, el click se encola en `storage/heatmap/pending_clicks.json` (cola persistente en disco).
-- **Sincronización Automática:** Al recuperarse un nodo, `flushPendingQueue()` reenvía automáticamente los clicks encolados. **Nunca se pierden datos.**
+- **Sincronización Automática:** Al recuperarse un nodo, `flushPendingQueue()` reenvía automáticamente los clicks encolados. Está pensado para no perder clicks mientras un nodo esté caído.
 - **Consistencia Eventual:** Ambos nodos convergen siempre al mismo estado sin intervención manual.
 - **Dockerizado:** Ejecución aislada en contenedores para portabilidad total.
 
@@ -115,8 +115,8 @@ El proyecto implementa un flujo de **DevSecOps** avanzado mediante GitHub Action
 - **Despliegue por Promoción:** El código solo se "promociona" a Hostinger si el robot de calidad da luz verde, bloqueando automáticamente cualquier subida errónea.
 
 ### 🚀 Sentinel Deploy (Plan B) — Despliegue Local Independiente
-Como alternativa ultra-rápida y resiliente al flujo de GitHub Actions, el proyecto cuenta con el sistema **Sentinel Deploy**:
-- **Velocidad Extrema**: Despliegues en segundos mediante Sincronización Quirúrgica (`rsync` delta-upload).
+Como alternativa rápida al flujo de GitHub Actions, el proyecto cuenta con el sistema **Sentinel Deploy**:
+- **Rapidez**: Despliegues en segundos mediante Sincronización Quirúrgica (`rsync` delta-upload).
 - **Independencia**: Permite desplegar directamente desde el entorno local sin depender de las colas de GitHub Actions.
 - **Control Operativo**: Scripts CLI (`bin/deploy-hostinger.sh`, `bin/rollback.sh`) para despliegue y rollback trazable.
 - **Seguridad**: Validación automática de Quality Gate local y restricción de rama `main` garantizada.
@@ -186,7 +186,7 @@ php -S localhost:8082 -t public
 ---
 
 ## Despliegue
-La aplicación principal y los microservicios están desplegados en un entorno propio.  
+La aplicación principal y los microservicios estuvieron desplegados en un entorno propio (hoy offline).  
 Se mantiene la separación de servicios y la misma arquitectura que en local.  
 El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
 
@@ -195,13 +195,13 @@ El objetivo académico es demostrar un sistema real funcionando, no un prototipo
 - **Staging:** https://staging.contenido.creawebes.com/
 - **API Docs (Swagger):** https://iamasterbigschool.contenido.creawebes.com/api/docs.html
 
-### 🛠️ Flujo de Ingeniería Profesional (CI/CD)
+### 🛠️ Flujo de Ingeniería (CI/CD)
 
-Este proyecto sigue el estándar de las mejores empresas tecnológicas (FAANG/MAANG), implementando un ciclo de vida de desarrollo de software (SDLC) robusto:
+Este proyecto sigue buenas prácticas habituales de la industria, con un ciclo de vida de desarrollo claro y automatizado:
 
 1.  **Local (Laboratorio):** Desarrollo en `localhost`. El código es agnóstico y auto-detecta el entorno.
 2.  **Staging (Espejo 100%):** El despliegue automático a Staging se activa en pushes a `staging`, `staging-final` y `feature/staging-final` (y también en PRs hacia `main`, según workflow). Aquí se valida la integración real del sistema tripartito (App + OpenAI + RAG) en la nube.
-3.  **Producción (VIP):** El deploy a la web oficial solo ocurre tras un **Merge/Pull Request** exitoso a la rama `main`. Esto garantiza que NUNCA se suba código no probado.
+3.  **Producción (VIP):** El deploy a la web oficial se lanzaba tras un **Merge/Pull Request** exitoso a la rama `main` (hoy el workflow de deploy es solo manual, porque el hosting está offline). Esto reduce el riesgo de subir código no probado.
 
 > **Regla de Oro:** La rama `main` es sagrada. Solo contiene código validado en Staging.
 
