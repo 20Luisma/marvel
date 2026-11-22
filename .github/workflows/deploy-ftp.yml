@@ -1,9 +1,8 @@
 name: Deploy Marvel a Hostinger (FTP)
 
 on:
-  push:
-    branches:
-      - main
+  # Demo offline: el deploy ya no se dispara solo en cada push a main.
+  # Para volver a desplegar: restaurar el trigger `push` o ejecutar manualmente (workflow_dispatch).
   workflow_dispatch:
     inputs:
       motivo:

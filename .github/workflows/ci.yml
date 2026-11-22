@@ -285,7 +285,8 @@ jobs:
 
   # 🟩 PLAYWRIGHT (E2E)
   playwright:
-    runs-on: ubuntu-latest
+    # Fijado: Playwright 1.58 no soporta ubuntu 26.04 (ubuntu-latest)
+    runs-on: ubuntu-24.04
     needs: [build, tests]
     steps:
       - name: Checkout repository
@@ -333,6 +334,8 @@ jobs:
           const { defineConfig } = require('@playwright/test');
           module.exports = defineConfig({
             testDir: 'tests/e2e',
+            // Specs que verifican producción en vivo (creawebes.com): van en monitoring.yml, no en el CI de cada PR
+            testIgnore: ['**/security-hardening.spec.js', '**/surgical-production-check.spec.js'],
             reporter: 'line',
             use: {
               baseURL: 'http://localhost:8080',
