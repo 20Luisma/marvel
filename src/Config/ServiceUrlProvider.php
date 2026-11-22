@@ -134,7 +134,7 @@ final class ServiceUrlProvider
 
         $env = $this->ensureEnvironment($environment);
 
-        return (string) ($this->config['environments'][$env]['heatmap']['base_url'] ?? 'http://34.74.102.123:8080');
+        return (string) ($this->config['environments'][$env]['heatmap']['base_url'] ?? 'http://localhost:5000');
     }
 
     /**
