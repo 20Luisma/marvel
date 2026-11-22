@@ -113,8 +113,7 @@ jobs:
 
   # 🟪 SONARCLOUD (CALIDAD + BUGS + VULNERABILIDADES + COVERAGE)
   sonarcloud:
-    # Fijado a 24.04: ubuntu-latest (26.04, kernel 7.x) rompe el scanner en Docker
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: [build, tests]
 
     steps:
@@ -163,8 +162,10 @@ jobs:
             echo "::warning::clover.xml not found in sonar job; SonarCloud will report 0% coverage."
           fi
 
+      # sonarcloud-github-action@v2 está deprecada y traía un scanner con Java 17 (ya no soportado por SonarCloud).
+      # sonarqube-scan-action es el reemplazo oficial directo (scanner actual con JRE auto-provisioning).
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
+        uses: sonarsource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
