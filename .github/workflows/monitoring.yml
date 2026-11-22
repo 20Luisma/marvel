@@ -9,7 +9,8 @@ on:
 
 jobs:
   monitor-production:
-    runs-on: ubuntu-latest
+    # Fijado: Playwright 1.58 no soporta ubuntu 26.04 (ubuntu-latest)
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

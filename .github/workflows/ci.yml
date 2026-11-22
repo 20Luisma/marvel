@@ -285,7 +285,8 @@ jobs:
 
   # 🟩 PLAYWRIGHT (E2E)
   playwright:
-    runs-on: ubuntu-latest
+    # Fijado: Playwright 1.58 no soporta ubuntu 26.04 (ubuntu-latest)
+    runs-on: ubuntu-24.04
     needs: [build, tests]
     steps:
       - name: Checkout repository
