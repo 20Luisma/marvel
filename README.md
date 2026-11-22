@@ -10,9 +10,9 @@ Repositorio (GitHub): https://github.com/20Luisma/marvel
 
 ## 📊 Presentación del TFM
 
-La presentación del Trabajo Fin de Máster está disponible en formato web interactivo en la siguiente dirección:
+La presentación del Trabajo Fin de Máster en formato web interactivo estuvo desplegada en:
 
-🔗 https://iamasterbigschool.contenido.creawebes.com/presentation/tfm-presentation.html
+🔗 https://iamasterbigschool.contenido.creawebes.com/presentation/tfm-presentation.html *(entorno de demo actualmente offline)*
 
 Esta presentación resume los objetivos, arquitectura, stack tecnológico, microservicios, despliegue y aprendizajes del proyecto.
 
@@ -20,9 +20,9 @@ Esta presentación resume los objetivos, arquitectura, stack tecnológico, micro
 
 ## 📖 README Extendido
 
-La versión extendida y visual de este README está disponible en:
+La versión extendida y visual de este README estuvo desplegada en:
 
-🔗 https://iamasterbigschool.contenido.creawebes.com/readme
+🔗 https://iamasterbigschool.contenido.creawebes.com/readme *(entorno de demo actualmente offline)*
 
 Incluye secciones adicionales sobre observabilidad, CI/CD, refactors estructurales, seguridad y más detalles técnicos del proyecto.
 
@@ -177,6 +177,10 @@ cd rag-service
 php -S localhost:8082 -t public
 ```
 
+> **Nota para ejecución rápida sin servicios externos:**
+> - La aplicación principal (persistencia JSON en `storage/`), la suite completa de **PHPUnit** (`vendor/bin/phpunit`) y **PHPStan** (`vendor/bin/phpstan analyse`) funcionan en local **sin MySQL ni API keys** (Sentry y el resto de integraciones externas degradan de forma segura si no están configuradas).
+> - Para probar el RAG localmente sin Pinecone ni embeddings de OpenAI, configurá `PINECONE_MODE=false` y `RAG_USE_EMBEDDINGS=0` en `.env` (modo léxico local).
+
 
 
 ---
@@ -186,7 +190,7 @@ La aplicación principal y los microservicios están desplegados en un entorno p
 Se mantiene la separación de servicios y la misma arquitectura que en local.  
 El objetivo académico es demostrar un sistema real funcionando, no un prototipo aislado.
 
-### Entornos Disponibles
+### Entornos de Despliegue (referencia histórica — demo actualmente offline)
 - **Producción:** https://iamasterbigschool.contenido.creawebes.com/
 - **Staging:** https://staging.contenido.creawebes.com/
 - **API Docs (Swagger):** https://iamasterbigschool.contenido.creawebes.com/api/docs.html
