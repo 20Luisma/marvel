@@ -48,12 +48,13 @@ jobs:
       - name: Run PHPUnit tests with coverage
         run: |
           mkdir -p build/logs
+          PHPUNIT_EXIT=0
           php -d pcov.enabled=1 -d pcov.directory=src \
             vendor/bin/phpunit --configuration phpunit.xml.dist \
             --testsuite "Application Test Suite" \
             --coverage-clover build/logs/clover.xml \
             2>&1 || PHPUNIT_EXIT=$?
-          echo "PHPUnit exit code: ${PHPUNIT_EXIT:-0}"
+          echo "PHPUnit exit code: ${PHPUNIT_EXIT}"
           if [ -s build/logs/clover.xml ]; then
             echo "✅ Coverage file generated"
             head -20 build/logs/clover.xml
@@ -64,6 +65,10 @@ jobs:
             echo "::warning::Coverage report not generated."
             echo "SKIP_COVERAGE_GATE=1" >> "$GITHUB_ENV"
             ls -la build/logs/ || true
+          fi
+          if [ "$PHPUNIT_EXIT" -ne 0 ]; then
+            echo "❌ PHPUnit failed with exit code ${PHPUNIT_EXIT}"
+            exit "$PHPUNIT_EXIT"
           fi
 
       # Coverage gate (Clover): fails CI if total statement coverage drops below COVERAGE_THRESHOLD (default 75).
@@ -84,6 +89,11 @@ jobs:
           name: clover-coverage
           path: build/logs/clover.xml
           if-no-files-found: ignore
+
+      - name: Run microservice tests (openai-service & rag-service)
+        run: |
+          vendor/bin/phpunit --no-configuration --bootstrap openai-service/vendor/autoload.php openai-service/tests
+          vendor/bin/phpunit --no-configuration --bootstrap rag-service/vendor/autoload.php rag-service/tests
 
       - name: Run PHPStan analysis
         run: |
