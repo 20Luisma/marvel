@@ -1,11 +1,9 @@
 name: Production Continuous Monitoring
 
 on:
-  schedule:
-    # Configuración de Modo Demo / Ahorro (configurable según criticidad)
-    # Ejecuta una revisión completa cada 3 días a las 00:00 UTC
-    - cron: '0 0 */3 * *'
-  workflow_dispatch: # Permite ejecución manual para pruebas
+  # Demo offline: el monitoreo programado (cada 3 días) está desactivado porque producción ya no existe.
+  # Para reactivarlo: restaurar `schedule: - cron: '0 0 */3 * *'`.
+  workflow_dispatch: # Ejecución manual
 
 jobs:
   monitor-production:
